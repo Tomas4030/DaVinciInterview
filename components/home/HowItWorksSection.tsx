@@ -2,7 +2,7 @@ import { HOW_IT_WORKS } from "./config";
 
 export default function HowItWorksSection() {
   return (
-    <section id="como-funciona" className="bg-[var(--c-surface)]">
+    <section id="como-funciona" className="">
       <div className="mx-auto max-w-6xl px-6 py-24">
         <div className="mb-16">
           <h2 className="text-[1.15rem] font-semibold tracking-tight text-[var(--c-text)]">

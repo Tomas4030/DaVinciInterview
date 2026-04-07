@@ -38,5 +38,6 @@ out/
 settings.local.json
 OpenClaude
 
-#MD
+#filheiros criticos + md
 *.md
+*.supabase

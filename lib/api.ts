@@ -75,6 +75,26 @@ export async function listarVagas(): Promise<VagaResumo[]> {
 /** Lista apenas vagas ativas para os candidatos (Mock API) */
 export async function listarVagasAtivas(): Promise<VagaResumo[]> {
   try {
+    // Tentar fetch via API route primeiro (para cliente)
+    // Se falhar (SSR), usar mock-api diretamente
+    if (typeof window === "undefined") {
+      // Server-side: usar mock-api diretamente
+      const { getAllVagas } = await import("./mock-api");
+      const vagas = await getAllVagas();
+
+      return vagas.map((v: any) => ({
+        id: v.id,
+        titulo: v.titulo,
+        descricao: v.descricao ?? "",
+        modalidade: v.modalidade,
+        duracao_min: v.duracao_min,
+        total_perguntas: v.perguntas?.length || 0,
+        ativa: v.ativa,
+        criada_em: v.criada_em,
+      }));
+    }
+
+    // Client-side: usar API route
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_APP_URL || ""}/api/vagas`,
       {
@@ -86,9 +106,10 @@ export async function listarVagasAtivas(): Promise<VagaResumo[]> {
       throw new Error("Erro ao listar vagas");
     }
 
-    const vagas = await response.json();
+    const json = await response.json();
+    const vagas = json.data || json;
 
-    return vagas.map((v: any) => ({
+    return (Array.isArray(vagas) ? vagas : []).map((v: any) => ({
       id: v.id,
       titulo: v.titulo,
       descricao: v.descricao ?? "",
@@ -118,8 +139,10 @@ export async function obterVaga(vagaId: string): Promise<Vaga> {
       throw new Error("Erro ao obter vaga");
     }
 
-    const vagas = await response.json();
-    const vaga = vagas.find((v: any) => v.id === vagaId);
+    const json = await response.json();
+    const vagas = json.data || json;
+    const vagasArray = Array.isArray(vagas) ? vagas : [];
+    const vaga = vagasArray.find((v: any) => v.id === vagaId);
 
     if (!vaga) {
       throw new Error("Vaga não encontrada");

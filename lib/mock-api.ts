@@ -19,14 +19,14 @@ export const getAllVagas = async (): Promise<VagaFromMock[]> => {
   // Simula delay de API
   await new Promise((resolve) => setTimeout(resolve, 100));
 
-  return vagasData.vagas.filter((vaga) => vaga.ativa);
+  return vagasData.vagas.filter((vaga) => vaga.ativa) as VagaFromMock[];
 };
 
 export const getVagaById = async (id: string): Promise<VagaFromMock | null> => {
   await new Promise((resolve) => setTimeout(resolve, 100));
 
   const vaga = vagasData.vagas.find((v) => v.id === id);
-  return vaga && vaga.ativa ? vaga : null;
+  return vaga && vaga.ativa ? (vaga as VagaFromMock) : null;
 };
 
 export const addVaga = async (newVaga: VagaFromMock): Promise<void> => {

@@ -1,5 +1,5 @@
 // app/page.tsx
-import { listarVagasAtivas } from "@/lib/api";
+import { listarVagasAtivas, type VagaResumo } from "@/lib/api";
 import {
   Header,
   HeroSection,
@@ -9,7 +9,7 @@ import {
 } from "@/components/home";
 
 export default async function HomePage() {
-  let vagas = [];
+  let vagas: VagaResumo[] = [];
 
   try {
     vagas = await listarVagasAtivas();
