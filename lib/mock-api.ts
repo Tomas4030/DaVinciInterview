@@ -25,7 +25,7 @@ export const getAllVagas = async (): Promise<VagaFromMock[]> => {
     }
 
     const response = await fetch(`${MOCKAPI_ENDPOINT}/vagas`, {
-      cache: "no-store",
+      next: { revalidate: 60 }, // ISR: revalidar a cada 60 segundos
     });
 
     if (!response.ok) {
@@ -47,7 +47,7 @@ export const getVagaById = async (id: string): Promise<VagaFromMock | null> => {
     }
 
     const response = await fetch(`${MOCKAPI_ENDPOINT}/vagas/${id}`, {
-      cache: "no-store",
+      next: { revalidate: 60 }, // ISR: revalidar a cada 60 segundos
     });
 
     if (response.status === 404) {

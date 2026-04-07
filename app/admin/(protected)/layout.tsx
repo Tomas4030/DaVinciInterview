@@ -2,6 +2,8 @@ import { redirect } from "next/navigation";
 import { createServerClient } from "@/lib/supabase-server";
 import AdminNav from "@/components/admin/AdminNav";
 
+export const dynamic = "force-dynamic"; // Cookies required for auth
+
 export default async function ProtectedAdminLayout({
   children,
 }: {

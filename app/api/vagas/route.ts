@@ -43,7 +43,9 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const response = await fetch(`${MOCKAPI_ENDPOINT}/vagas`);
+    const response = await fetch(`${MOCKAPI_ENDPOINT}/vagas`, {
+      next: { revalidate: 60 }, // ISR: revalidate every 60s
+    });
 
     if (!response.ok) {
       throw new Error(`MockAPI error: ${response.statusText}`);

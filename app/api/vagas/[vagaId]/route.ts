@@ -48,7 +48,9 @@ export async function GET(_req: NextRequest, { params }: Params) {
       );
     }
 
-    const response = await fetch(`${MOCKAPI_ENDPOINT}/vagas/${params.vagaId}`);
+    const response = await fetch(`${MOCKAPI_ENDPOINT}/vagas/${params.vagaId}`, {
+      next: { revalidate: 60 }, // ISR: revalidate every 60s
+    });
 
     if (response.status === 404) {
       return NextResponse.json(

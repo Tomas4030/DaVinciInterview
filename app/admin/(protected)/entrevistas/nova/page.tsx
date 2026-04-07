@@ -2,6 +2,7 @@
 import EntrevistaForm from "@/components/admin/EntrevistaForm";
 import type { Metadata } from "next";
 
+export const dynamic = "force-dynamic"; // Cookies no middleware
 export const metadata: Metadata = { title: "Admin — Nova entrevista" };
 
 export default function NovaEntrevistaPage() {

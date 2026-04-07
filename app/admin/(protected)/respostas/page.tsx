@@ -3,6 +3,7 @@ import { listarSessoes, obterVaga, listarVagas } from "@/lib/api";
 import Link from "next/link";
 import type { Metadata } from "next";
 
+export const dynamic = "force-dynamic"; // Cookies no middleware
 export const metadata: Metadata = { title: "Admin — Respostas" };
 
 interface Props {
@@ -46,8 +47,12 @@ export default async function RespostasPage({ searchParams }: Props) {
   let vaga = vagaFiltro ? await obterVaga(vagaFiltro).catch(() => null) : null;
   let todasVagas: Awaited<ReturnType<typeof listarVagas>> = [];
 
-  try { sessoes = await listarSessoes(vagaFiltro); } catch {}
-  try { todasVagas = await listarVagas(); } catch {}
+  try {
+    sessoes = await listarSessoes(vagaFiltro);
+  } catch {}
+  try {
+    todasVagas = await listarVagas();
+  } catch {}
 
   return (
     <div>
@@ -55,10 +60,16 @@ export default async function RespostasPage({ searchParams }: Props) {
       <div className="mb-8 flex items-start justify-between">
         <div>
           <h1 className="text-[1.35rem] font-semibold text-[var(--c-text)] tracking-tight">
-            Respostas {vaga && <span className="text-[var(--c-muted)] font-normal">— {vaga.titulo}</span>}
+            Respostas{" "}
+            {vaga && (
+              <span className="text-[var(--c-muted)] font-normal">
+                — {vaga.titulo}
+              </span>
+            )}
           </h1>
           <p className="mt-1 text-[0.82rem] text-[var(--c-muted)]">
-            {sessoes.length} sess{sessoes.length === 1 ? "ão" : "ões"} encontrad{sessoes.length === 1 ? "a" : "as"}
+            {sessoes.length} sess{sessoes.length === 1 ? "ão" : "ões"} encontrad
+            {sessoes.length === 1 ? "a" : "as"}
           </p>
         </div>
         <Link
@@ -72,7 +83,9 @@ export default async function RespostasPage({ searchParams }: Props) {
       {/* filter chips */}
       {todasVagas.length > 0 && (
         <div className="mb-8 flex flex-wrap items-center gap-1.5">
-          <span className="mr-1 text-[11px] font-medium text-[var(--c-muted)]">Filtrar:</span>
+          <span className="mr-1 text-[11px] font-medium text-[var(--c-muted)]">
+            Filtrar:
+          </span>
           <Link
             href="/admin/respostas"
             className={`rounded-lg px-3 py-1.5 text-[11px] font-medium ring-1 transition-all duration-150 ${
@@ -103,11 +116,23 @@ export default async function RespostasPage({ searchParams }: Props) {
       {sessoes.length === 0 ? (
         <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-[var(--c-border)] bg-[var(--c-surface)] py-20 px-6 text-center">
           <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-brand-50 text-brand-500 ring-1 ring-brand-100">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
               <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />
             </svg>
           </div>
-          <p className="text-sm font-medium text-[var(--c-text)]">Nenhuma resposta recebida ainda.</p>
+          <p className="text-sm font-medium text-[var(--c-text)]">
+            Nenhuma resposta recebida ainda.
+          </p>
           <p className="mt-1.5 text-[0.78rem] text-[var(--c-muted)]">
             As respostas dos candidatos aparecerão aqui.
           </p>
@@ -142,9 +167,12 @@ export default async function RespostasPage({ searchParams }: Props) {
 
                   {/* meta */}
                   <div className="text-right shrink-0 hidden sm:block">
-                    <p className="text-[11px] text-[var(--c-muted)]">{formatDate(sessao.criada_em)}</p>
+                    <p className="text-[11px] text-[var(--c-muted)]">
+                      {formatDate(sessao.criada_em)}
+                    </p>
                     <p className="text-[10px] text-[var(--c-muted)]/50 mt-0.5">
-                      {sessao.respostas.length} {sessao.respostas.length === 1 ? "resposta" : "respostas"}
+                      {sessao.respostas.length}{" "}
+                      {sessao.respostas.length === 1 ? "resposta" : "respostas"}
                     </p>
                   </div>
 
@@ -156,10 +184,9 @@ export default async function RespostasPage({ searchParams }: Props) {
                   {sessao.respostas
                     .sort((a, b) => a.pergunta_id - b.pergunta_id)
                     .map((resp) => {
-                      const pergunta =
-                        (vaga?.perguntas ?? []).find(
-                          (p) => p.id === resp.pergunta_id,
-                        );
+                      const pergunta = (vaga?.perguntas ?? []).find(
+                        (p) => p.id === resp.pergunta_id,
+                      );
 
                       return (
                         <div key={resp.id} className="px-5 py-4">
@@ -168,7 +195,9 @@ export default async function RespostasPage({ searchParams }: Props) {
                               Q{resp.pergunta_id}
                             </span>
                             {pergunta?.texto && (
-                              <span className="text-[0.72rem] font-medium text-[var(--c-text)]/60 truncate">{pergunta.texto}</span>
+                              <span className="text-[0.72rem] font-medium text-[var(--c-text)]/60 truncate">
+                                {pergunta.texto}
+                              </span>
                             )}
                           </p>
                           <p className="text-[0.82rem] text-[var(--c-text)]/80 leading-relaxed whitespace-pre-wrap pl-1">
