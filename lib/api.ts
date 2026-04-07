@@ -46,6 +46,20 @@ export interface SessaoComRespostas {
   criada_em: string;
 }
 
+function getAppBaseUrl(): string {
+  if (typeof window !== "undefined") return "";
+
+  if (process.env.NEXT_PUBLIC_APP_URL) {
+    return process.env.NEXT_PUBLIC_APP_URL;
+  }
+
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}`;
+  }
+
+  return "http://localhost:3000";
+}
+
 // ─── Vagas ────────────────────────────────────────────────────────────────────
 
 /** Lista todas as vagas ativas (usado no homepage e admin) */
@@ -95,12 +109,9 @@ export async function listarVagasAtivas(): Promise<VagaResumo[]> {
     }
 
     // Client-side: usar API route
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_APP_URL || ""}/api/vagas`,
-      {
-        next: { revalidate: 60 }, // Cache por 60 segundos
-      },
-    );
+    const response = await fetch(`${getAppBaseUrl()}/api/vagas`, {
+      next: { revalidate: 60 }, // Cache por 60 segundos
+    });
 
     if (!response.ok) {
       throw new Error("Erro ao listar vagas");
@@ -128,12 +139,9 @@ export async function listarVagasAtivas(): Promise<VagaResumo[]> {
 /** Obtém uma vaga completa (com perguntas) por ID (Mock API) */
 export async function obterVaga(vagaId: string): Promise<Vaga> {
   try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_APP_URL || ""}/api/vagas/${vagaId}`,
-      {
-        next: { revalidate: 60 },
-      },
-    );
+    const response = await fetch(`${getAppBaseUrl()}/api/vagas/${vagaId}`, {
+      next: { revalidate: 60 },
+    });
 
     if (!response.ok) {
       throw new Error("Erro ao obter vaga");
