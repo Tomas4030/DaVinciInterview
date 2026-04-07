@@ -37,3 +37,6 @@ out/
 .claude/
 settings.local.json
 OpenClaude
+
+#MD
+*.md
