@@ -17,7 +17,7 @@ export default async function ProtectedAdminLayout({
   return (
     <div className="min-h-screen bg-[var(--c-bg)]">
       <AdminNav userEmail={session.user?.email ?? ""} />
-      <main className="max-w-5xl mx-auto px-4 py-8">{children}</main>
+      <main className="mx-auto max-w-6xl px-6 py-10">{children}</main>
     </div>
   );
 }

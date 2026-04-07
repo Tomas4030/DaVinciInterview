@@ -7,26 +7,6 @@ const nextConfig = {
   headers: async () => {
     return [
       {
-        source: "/:path((?!_next|public|api).*)",
-        headers: [
-          {
-            key: "Cache-Control",
-            value: "no-cache, no-store, must-revalidate",
-          },
-        ],
-      },
-      {
-        source: "/_next/static/:path*",
-        headers: [
-          {
-            key: "Cache-Control",
-            value: "public, no-cache, no-store, must-revalidate",
-          },
-          { key: "Pragma", value: "no-cache" },
-          { key: "Expires", value: "0" },
-        ],
-      },
-      {
         source: "/sw.js",
         headers: [
           {

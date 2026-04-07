@@ -108,8 +108,11 @@
   .font-display { font-family: var(--font-display); }
   .font-mono    { font-family: var(--font-mono); }
 
-  .animate-fade-in  { animation: fadeIn  0.25s ease-out both; }
-  .animate-slide-up { animation: slideUp 0.3s  ease-out both; }
+  .animate-fade-in   { animation: fadeIn    0.25s ease-out both; }
+  .animate-slide-up  { animation: slideUp   0.3s  ease-out both; }
+  .animate-reveal    { animation: reveal    0.55s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+  .text-balance { text-wrap: balance; }
 
   /* Stagger helpers */
   .delay-75  { animation-delay: 75ms; }
@@ -119,6 +122,27 @@
 
 @keyframes fadeIn   { from { opacity: 0 }            to { opacity: 1 } }
 @keyframes slideUp  { from { opacity: 0; transform: translateY(10px) } to { opacity: 1; transform: translateY(0) } }
+
+/* fade-in + slide-up combined (staggered page load) */
+@keyframes reveal {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Smooth scrolling for anchor links */
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    transition-duration: 0.01ms !important;
+  }
+  html { scroll-behavior: auto; }
+}
 @keyframes bounceDot{
   0%, 80%, 100% { transform: scale(0); opacity: 0.4; }
   40%           { transform: scale(1); opacity: 1; }

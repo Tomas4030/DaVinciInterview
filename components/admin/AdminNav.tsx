@@ -16,33 +16,37 @@ export default function AdminNav({ userEmail }: { userEmail: string }) {
   }
 
   const links = [
-    { href: '/admin',           label: 'Dashboard' },
-    { href: '/admin/respostas', label: 'Respostas' },
+    { href: '/admin',           label: 'Dashboard',   icon: 'dashboard' },
+    { href: '/admin/respostas', label: 'Respostas',   icon: 'respostas' },
   ]
 
   return (
-    <nav className="bg-white border-b border-[var(--c-border)] sticky top-0 z-10">
-      <div className="max-w-5xl mx-auto px-4 h-13 flex items-center justify-between" style={{ height: 52 }}>
-        {/* Logo + links */}
-        <div className="flex items-center gap-6">
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-brand-600 flex items-center justify-center">
-              <span className="text-white text-xs font-bold font-display">D</span>
+    <nav className="sticky top-0 z-20 border-b border-[var(--c-border)]/60 bg-[var(--c-surface)]/80 backdrop-blur-xl">
+      <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-6">
+        {/* left: brand + nav */}
+        <div className="flex items-center gap-7">
+          <Link href="/admin" className="flex items-center gap-2.5 group" aria-label="Admin">
+            <div className="flex h-8 w-8 items-center justify-center rounded-[7px] bg-[var(--c-brand)] text-white text-[11px] font-bold font-display shadow-[0_1px_3px_rgba(67,85,232,0.18)] transition-transform duration-200 group-hover:scale-[1.06]">
+              D
             </div>
-            <span className="text-sm font-semibold text-gray-900 hidden sm:block">DaVinci Admin</span>
-          </div>
+            <div className="hidden sm:flex flex-col leading-tight">
+              <span className="text-[0.82rem] font-semibold text-[var(--c-text)] tracking-tight">DaVinci</span>
+              <span className="text-[9px] text-[var(--c-muted)] tracking-[0.04em] uppercase">Admin</span>
+            </div>
+          </Link>
 
-          <div className="flex items-center gap-1">
+          {/* tab nav */}
+          <div className="flex items-center gap-1" role="navigation" aria-label="Navegação admin">
             {links.map(link => {
               const active = pathname === link.href || (link.href !== '/admin' && pathname.startsWith(link.href))
               return (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`text-sm px-3 py-1.5 rounded-lg transition-colors ${
+                  className={`relative rounded-lg px-3 py-1.5 text-[0.78rem] font-medium transition-colors duration-150 ${
                     active
-                      ? 'text-brand-700 bg-brand-50 font-medium'
-                      : 'text-gray-500 hover:text-gray-800 hover:bg-gray-50'
+                      ? 'text-[var(--c-text)] bg-[var(--c-bg)]'
+                      : 'text-[var(--c-muted)] hover:text-[var(--c-text)] hover:bg-[var(--c-bg)]/60'
                   }`}
                 >
                   {link.label}
@@ -52,30 +56,43 @@ export default function AdminNav({ userEmail }: { userEmail: string }) {
           </div>
         </div>
 
-        {/* User + actions */}
-        <div className="flex items-center gap-3">
+        {/* right: quick action + user */}
+        <div className="flex items-center gap-2">
           <Link
             href="/"
-            target="_blank"
-            className="text-xs text-gray-400 hover:text-gray-700 transition-colors hidden sm:block"
+            className="rounded-lg px-2.5 py-1.5 text-[11px] text-[var(--c-muted)] hover:text-[var(--c-text)] transition-colors duration-150 hidden sm:block"
+            aria-label="Ver site público"
           >
-            Ver site ↗
+            Ver site
+            <span className="opacity-40 ml-0.5">↗</span>
           </Link>
+
           <Link
             href="/admin/entrevistas/nova"
-            className="btn-primary py-1.5 px-3 text-xs hidden sm:inline-flex"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-[var(--c-brand)] px-3 py-[7px] text-[11px] font-semibold text-white shadow-[0_1px_2px_rgba(67,85,232,0.1)] transition-[transform,box-shadow] duration-200 hover:-translate-y-[1px] hover:shadow-[0_2px_6px_rgba(67,85,232,0.2)] active:scale-[0.98]"
           >
-            + Nova
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" aria-hidden="true">
+              <path d="M12 5v14M5 12h14" />
+            </svg>
+            Nova entrevista
           </Link>
-          <div className="flex items-center gap-2 border-l border-gray-100 pl-3 ml-1">
-            <span className="text-xs text-gray-400 max-w-[120px] truncate hidden md:block">{userEmail}</span>
-            <button
-              onClick={logout}
-              className="text-xs text-gray-400 hover:text-gray-800 border border-gray-200 rounded-lg px-2.5 py-1.5 transition-colors"
-            >
-              Sair
-            </button>
+
+          <span className="mx-1 h-4 w-px bg-[var(--c-border)] hidden sm:block" aria-hidden="true" />
+
+          <div className="hidden md:flex items-center gap-2 ml-1">
+            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[var(--c-bg)] text-[10px] font-semibold text-[var(--c-muted)] ring-1 ring-[var(--c-border)]/60" aria-hidden="true">
+              {userEmail?.charAt(0).toUpperCase() ?? 'U'}
+            </div>
+            <span className="text-[11px] text-[var(--c-muted)] max-w-[100px] truncate">{userEmail}</span>
           </div>
+
+          <button
+            onClick={logout}
+            className="rounded-lg border border-[var(--c-border)]/80 px-2.5 py-1.5 text-[11px] text-[var(--c-muted)] hover:text-[var(--c-text)] hover:border-[var(--c-border)] transition-[color,border-color] duration-150"
+            aria-label="Terminar sessão"
+          >
+            Sair
+          </button>
         </div>
       </div>
     </nav>
