@@ -11,7 +11,7 @@ export default function VagasSection({ vagas }: { vagas: VagaResumo[] }) {
   const vagasCount = vagas.length;
 
   return (
-    <section id="vagas" className="relative mx-auto max-w-6xl px-6 pb-20">
+    <section id="vagas" className="relative mx-auto max-w-6xl px-6">
       <div className="mb-10 flex items-end gap-6">
         <div>
           <h2 className="text-[1.15rem] font-semibold tracking-tight text-[var(--c-text)]">

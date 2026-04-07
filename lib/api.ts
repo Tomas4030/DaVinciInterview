@@ -129,7 +129,7 @@ export async function listarVagasAtivas(): Promise<VagaResumo[]> {
 export async function obterVaga(vagaId: string): Promise<Vaga> {
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_APP_URL || ""}/api/vagas`,
+      `${process.env.NEXT_PUBLIC_APP_URL || ""}/api/vagas/${vagaId}`,
       {
         next: { revalidate: 60 },
       },
@@ -140,9 +140,7 @@ export async function obterVaga(vagaId: string): Promise<Vaga> {
     }
 
     const json = await response.json();
-    const vagas = json.data || json;
-    const vagasArray = Array.isArray(vagas) ? vagas : [];
-    const vaga = vagasArray.find((v: any) => v.id === vagaId);
+    const vaga = json.data || json;
 
     if (!vaga) {
       throw new Error("Vaga não encontrada");
