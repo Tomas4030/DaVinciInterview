@@ -1,44 +1,82 @@
 // app/api/vagas/route.ts
-// GET  /api/vagas    → lista vagas ativas
-// POST /api/vagas    → cria nova vaga (requer auth)
+// GET  /api/vagas    → lista vagas ativas (Mock API)
+// POST /api/vagas    → cria nova vaga (requer auth admin)
 
 import { NextRequest, NextResponse } from "next/server";
-import { createServerClient } from "@/lib/supabase-server";
+import { getAllVagas, addVaga } from "@/lib/mock-api";
 
 export async function GET() {
-  const supabase = createServerClient();
-  const { data, error } = await (supabase as any)
-    .from("vagas")
-    .select("*")
-    .eq("ativa", true)
-    .order("criada_em", { ascending: false });
+  try {
+    const vagas = await getAllVagas();
 
-  if (error)
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    // Adicionar contagem de perguntas
+    const vagasFormatadas = vagas.map((v) => ({
+      ...v,
+      total_perguntas: v.perguntas.length,
+    }));
 
-  const vagas = (data ?? []).map((v: any) => ({
-    ...v,
-    total_perguntas: Array.isArray(v.perguntas) ? v.perguntas.length : 0,
-  }));
-
-  return NextResponse.json(vagas);
+    return NextResponse.json(vagasFormatadas);
+  } catch (error) {
+    console.error("Erro ao listar vagas:", error);
+    return NextResponse.json(
+      { error: "Erro ao listar vagas" },
+      { status: 500 },
+    );
+  }
 }
 
-export async function POST(req: NextRequest) {
-  const supabase = createServerClient();
-  const {
-    data: { session },
-  } = await (supabase as any).auth.getSession();
-  if (!session)
-    return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
+export async function POST(request: NextRequest) {
+  try {
+    // Verificar autenticação admin
+    const authHeader = request.headers.get("authorization");
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
+    }
 
-  const body = await req.json();
-  const { data, error } = await (supabase as any)
-    .from("vagas")
-    .insert(body)
-    .select()
-    .single();
-  if (error)
-    return NextResponse.json({ error: error.message }, { status: 400 });
-  return NextResponse.json(data, { status: 201 });
+    const token = authHeader.substring(7);
+    let isAdmin = false;
+
+    try {
+      const decoded = JSON.parse(Buffer.from(token, "base64").toString());
+      isAdmin = decoded.role === "admin";
+    } catch {
+      return NextResponse.json({ error: "Token inválido" }, { status: 401 });
+    }
+
+    if (!isAdmin) {
+      return NextResponse.json(
+        { error: "Apenas admin pode criar vagas" },
+        { status: 403 },
+      );
+    }
+
+    const body = await request.json();
+    const { id, titulo, descricao, modalidade, duracao_min, perguntas } = body;
+
+    // Validação básica
+    if (!id || !titulo) {
+      return NextResponse.json(
+        { error: "ID e título são obrigatórios" },
+        { status: 400 },
+      );
+    }
+
+    const newVaga = {
+      id,
+      titulo,
+      descricao: descricao || "",
+      modalidade: modalidade || "Remoto",
+      duracao_min: duracao_min || 15,
+      ativa: true,
+      criada_em: new Date().toISOString(),
+      perguntas: perguntas || [],
+    };
+
+    await addVaga(newVaga);
+
+    return NextResponse.json(newVaga, { status: 201 });
+  } catch (error) {
+    console.error("Erro ao criar vaga:", error);
+    return NextResponse.json({ error: "Erro ao criar vaga" }, { status: 500 });
+  }
 }

@@ -50,6 +50,30 @@ create index if not exists respostas_sessao_idx on public.respostas(sessao_id);
 create index if not exists respostas_vaga_idx   on public.respostas(vaga_id);
 
 -- ============================================================
+-- TABELA: candidacies
+-- ============================================================
+create table if not exists public.candidacies (
+  id           uuid        primary key default gen_random_uuid(),
+  email        text        not null,
+  telefone     text        not null,
+  vaga_id      text        not null references public.vagas(id) on delete cascade,
+  sessao_id    uuid        not null unique references public.respostas(sessao_id) on delete cascade,
+  email_verificado boolean  not null default false,
+  criada_em    timestamptz not null default now(),
+  atualizada_em timestamptz not null default now()
+);
+
+-- Índice para buscar candidaturas duplicadas
+create unique index if not exists candidacies_unique_idx 
+  on public.candidacies(email, telefone, vaga_id) 
+  where criada_em > now() - interval '90 days';
+
+-- Atualizar atualizada_em
+create trigger candidacies_updated_at
+  before update on public.candidacies
+  for each row execute procedure public.set_updated_at();
+
+-- ============================================================
 -- RLS (Row Level Security)
 -- ============================================================
 

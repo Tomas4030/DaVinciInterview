@@ -1,33 +1,48 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase'
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function LoginForm() {
-  const router   = useRouter()
-  const supabase = createClient()
+  const router = useRouter();
 
-  const [email,    setEmail]    = useState('')
-  const [password, setPassword] = useState('')
-  const [erro,     setErro]     = useState('')
-  const [loading,  setLoading]  = useState(false)
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [erro, setErro] = useState("");
+  const [loading, setLoading] = useState(false);
 
   async function handleLogin(e: React.FormEvent) {
-    e.preventDefault()
-    setErro('')
-    setLoading(true)
+    e.preventDefault();
+    setErro("");
+    setLoading(true);
 
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
+    try {
+      const response = await fetch("/api/auth/login-admin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
 
-    if (error) {
-      setErro('Email ou password incorretos. Tenta novamente.')
-      setLoading(false)
-      return
+      if (!response.ok) {
+        const data = await response.json();
+        setErro(data.error || "Email ou password incorretos");
+        setLoading(false);
+        return;
+      }
+
+      const data = await response.json();
+
+      // Guardar token no localStorage
+      localStorage.setItem("admin_token", data.token);
+      localStorage.setItem("admin_email", data.admin.email);
+
+      router.push("/admin");
+      router.refresh();
+    } catch (err) {
+      setErro("Erro ao fazer login. Tenta novamente.");
+      console.error("Login error:", err);
+      setLoading(false);
     }
-
-    router.push('/admin')
-    router.refresh()
   }
 
   return (
@@ -39,30 +54,36 @@ export default function LoginForm() {
       )}
 
       <div>
-        <label className="block text-xs font-medium text-gray-600 mb-1.5" htmlFor="email">
+        <label
+          className="block text-xs font-medium text-gray-600 mb-1.5"
+          htmlFor="email"
+        >
           Email
         </label>
         <input
           id="email"
           type="email"
           value={email}
-          onChange={e => setEmail(e.target.value)}
+          onChange={(e) => setEmail(e.target.value)}
           required
           autoComplete="email"
-          placeholder="admin@empresa.pt"
+          placeholder="admin@davincinterviews.com"
           className="input-base"
         />
       </div>
 
       <div>
-        <label className="block text-xs font-medium text-gray-600 mb-1.5" htmlFor="password">
+        <label
+          className="block text-xs font-medium text-gray-600 mb-1.5"
+          htmlFor="password"
+        >
           Password
         </label>
         <input
           id="password"
           type="password"
           value={password}
-          onChange={e => setPassword(e.target.value)}
+          onChange={(e) => setPassword(e.target.value)}
           required
           autoComplete="current-password"
           placeholder="••••••••"
@@ -77,14 +98,35 @@ export default function LoginForm() {
       >
         {loading ? (
           <span className="flex items-center gap-2">
-            <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+            <svg
+              className="animate-spin w-4 h-4"
+              viewBox="0 0 24 24"
+              fill="none"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              />
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8v8H4z"
+              />
             </svg>
             A entrar…
           </span>
-        ) : 'Entrar'}
+        ) : (
+          "Entrar"
+        )}
       </button>
+
+      <p className="text-xs text-gray-500 text-center mt-4">
+        Demo: admin@davincinterviews.com
+      </p>
     </form>
-  )
+  );
 }

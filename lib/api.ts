@@ -72,53 +72,74 @@ export async function listarVagas(): Promise<VagaResumo[]> {
   }));
 }
 
-/** Lista apenas vagas ativas para os candidatos */
+/** Lista apenas vagas ativas para os candidatos (Mock API) */
 export async function listarVagasAtivas(): Promise<VagaResumo[]> {
-  const supabase = createServerClient() as any;
-  const { data, error } = await supabase
-    .from("vagas")
-    .select(
-      "id, titulo, descricao, modalidade, duracao_min, ativa, criada_em, perguntas",
-    )
-    .eq("ativa", true)
-    .order("criada_em", { ascending: false });
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_APP_URL || ""}/api/vagas`,
+      {
+        next: { revalidate: 60 }, // Cache por 60 segundos
+      },
+    );
 
-  if (error) throw new Error(error.message);
+    if (!response.ok) {
+      throw new Error("Erro ao listar vagas");
+    }
 
-  return (data ?? []).map((v: any) => ({
-    id: v.id,
-    titulo: v.titulo,
-    descricao: v.descricao ?? "",
-    modalidade: v.modalidade,
-    duracao_min: v.duracao_min,
-    total_perguntas: Array.isArray(v.perguntas) ? v.perguntas.length : 0,
-    ativa: v.ativa,
-    criada_em: v.criada_em,
-  }));
+    const vagas = await response.json();
+
+    return vagas.map((v: any) => ({
+      id: v.id,
+      titulo: v.titulo,
+      descricao: v.descricao ?? "",
+      modalidade: v.modalidade,
+      duracao_min: v.duracao_min,
+      total_perguntas: v.total_perguntas,
+      ativa: v.ativa,
+      criada_em: v.criada_em,
+    }));
+  } catch (error) {
+    console.error("Erro ao listar vagas da Mock API:", error);
+    return [];
+  }
 }
 
-/** Obtém uma vaga completa (com perguntas) por ID */
+/** Obtém uma vaga completa (com perguntas) por ID (Mock API) */
 export async function obterVaga(vagaId: string): Promise<Vaga> {
-  const supabase = createServerClient() as any;
-  const { data, error } = await supabase
-    .from("vagas")
-    .select("*")
-    .eq("id", vagaId)
-    .single();
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_APP_URL || ""}/api/vagas`,
+      {
+        next: { revalidate: 60 },
+      },
+    );
 
-  if (error || !data) throw new Error("Vaga não encontrada");
+    if (!response.ok) {
+      throw new Error("Erro ao obter vaga");
+    }
 
-  return {
-    id: data.id,
-    titulo: data.titulo,
-    descricao: data.descricao ?? "",
-    modalidade: data.modalidade,
-    duracao_min: data.duracao_min,
-    perguntas: Array.isArray(data.perguntas)
-      ? (data.perguntas as Pergunta[])
-      : [],
-    ativa: data.ativa,
-  };
+    const vagas = await response.json();
+    const vaga = vagas.find((v: any) => v.id === vagaId);
+
+    if (!vaga) {
+      throw new Error("Vaga não encontrada");
+    }
+
+    return {
+      id: vaga.id,
+      titulo: vaga.titulo,
+      descricao: vaga.descricao ?? "",
+      modalidade: vaga.modalidade,
+      duracao_min: vaga.duracao_min,
+      perguntas: Array.isArray(vaga.perguntas)
+        ? (vaga.perguntas as Pergunta[])
+        : [],
+      ativa: vaga.ativa,
+    };
+  } catch (error) {
+    console.error("Erro ao obter vaga da Mock API:", error);
+    throw new Error("Vaga não encontrada");
+  }
 }
 
 // ─── Respostas ────────────────────────────────────────────────────────────────
