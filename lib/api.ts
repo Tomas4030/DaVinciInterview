@@ -139,6 +139,27 @@ export async function listarVagasAtivas(): Promise<VagaResumo[]> {
 /** Obtém uma vaga completa (com perguntas) por ID (Mock API) */
 export async function obterVaga(vagaId: string): Promise<Vaga> {
   try {
+    if (typeof window === "undefined") {
+      const { getVagaById } = await import("./mock-api");
+      const vaga = await getVagaById(vagaId);
+
+      if (!vaga) {
+        throw new Error("Vaga não encontrada");
+      }
+
+      return {
+        id: vaga.id,
+        titulo: vaga.titulo,
+        descricao: vaga.descricao ?? "",
+        modalidade: vaga.modalidade,
+        duracao_min: vaga.duracao_min,
+        perguntas: Array.isArray(vaga.perguntas)
+          ? (vaga.perguntas as Pergunta[])
+          : [],
+        ativa: vaga.ativa,
+      };
+    }
+
     const response = await fetch(`${getAppBaseUrl()}/api/vagas/${vagaId}`, {
       next: { revalidate: 60 },
     });
