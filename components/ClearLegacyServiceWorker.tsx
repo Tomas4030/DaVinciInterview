@@ -6,7 +6,7 @@ export default function ClearLegacyServiceWorker() {
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    const clearAllCaches = async () => {
+    const clearLegacyCaches = async () => {
       try {
         // Unregister all service workers
         if ("serviceWorker" in navigator) {
@@ -22,23 +22,12 @@ export default function ClearLegacyServiceWorker() {
           const cacheKeys = await caches.keys();
           await Promise.all(cacheKeys.map((key) => caches.delete(key)));
         }
-
-        // Clear localStorage and sessionStorage
-        try {
-          localStorage.clear();
-          sessionStorage.clear();
-        } catch {}
-
-        // Force hard reload to bust browser cache
-        if (performance.getEntriesByType("navigation")[0]?.type !== "reload") {
-          window.location.href = window.location.href;
-        }
       } catch {
         // Silently fail to avoid breaking page render
       }
     };
 
-    void clearAllCaches();
+    void clearLegacyCaches();
   }, []);
 
   return null;
