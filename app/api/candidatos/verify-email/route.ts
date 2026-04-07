@@ -24,14 +24,30 @@ export async function POST(request: NextRequest) {
     }
 
     const supabase = createClient(supabaseUrl, supabaseAnonKey);
+    const normalizedEmail = String(email).trim().toLowerCase();
+    const redirectBase =
+      process.env.NEXT_PUBLIC_APP_URL || request.nextUrl.origin;
+    const redirectUrl = `${redirectBase}/entrevista/verify`;
 
     // Enviar magic link para verificação de email
-    const { error } = await supabase.auth.signInWithOtp({
-      email: String(email).trim().toLowerCase(),
+    let { error } = await supabase.auth.signInWithOtp({
+      email: normalizedEmail,
       options: {
-        emailRedirectTo: `${request.nextUrl.origin}/entrevista/verify`,
+        emailRedirectTo: redirectUrl,
       },
     });
+
+    // Em produção, a URL pode não estar na allow-list do Supabase.
+    // Se isso acontecer, tentar novamente sem emailRedirectTo.
+    if (
+      error &&
+      /redirect|allow.?list|allowed|invalid.*url/i.test(error.message || "")
+    ) {
+      const retry = await supabase.auth.signInWithOtp({
+        email: normalizedEmail,
+      });
+      error = retry.error;
+    }
 
     if (error) {
       console.error("Erro ao enviar email de verificação:", error);
