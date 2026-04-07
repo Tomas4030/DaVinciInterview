@@ -1,5 +1,8 @@
 // lib/mock-api.ts
-import vagasData from "@/data/vagas.json";
+// Comunicação com MockAPI (https://mockapi.io)
+// Fonte de verdade: perguntas de vagas armazenadas na MockAPI
+
+const MOCKAPI_ENDPOINT = process.env.MOCKAPI_ENDPOINT;
 
 export interface VagaFromMock {
   id: string;
@@ -16,21 +19,70 @@ export interface VagaFromMock {
 }
 
 export const getAllVagas = async (): Promise<VagaFromMock[]> => {
-  // Simula delay de API
-  await new Promise((resolve) => setTimeout(resolve, 100));
+  try {
+    if (!MOCKAPI_ENDPOINT) {
+      throw new Error("MOCKAPI_ENDPOINT not configured");
+    }
 
-  return vagasData.vagas.filter((vaga) => vaga.ativa) as VagaFromMock[];
+    const response = await fetch(`${MOCKAPI_ENDPOINT}/vagas`, {
+      cache: "no-store",
+    });
+
+    if (!response.ok) {
+      throw new Error(`MockAPI error: ${response.statusText}`);
+    }
+
+    const vagas = await response.json();
+    return Array.isArray(vagas) ? vagas.filter((v: any) => v.ativa) : [];
+  } catch (error) {
+    console.error("Erro ao buscar vagas da MockAPI:", error);
+    return [];
+  }
 };
 
 export const getVagaById = async (id: string): Promise<VagaFromMock | null> => {
-  await new Promise((resolve) => setTimeout(resolve, 100));
+  try {
+    if (!MOCKAPI_ENDPOINT) {
+      throw new Error("MOCKAPI_ENDPOINT not configured");
+    }
 
-  const vaga = vagasData.vagas.find((v) => v.id === id);
-  return vaga && vaga.ativa ? (vaga as VagaFromMock) : null;
+    const response = await fetch(`${MOCKAPI_ENDPOINT}/vagas/${id}`, {
+      cache: "no-store",
+    });
+
+    if (response.status === 404) {
+      return null;
+    }
+
+    if (!response.ok) {
+      throw new Error(`MockAPI error: ${response.statusText}`);
+    }
+
+    const vaga = await response.json();
+    return vaga && vaga.ativa ? vaga : null;
+  } catch (error) {
+    console.error("Erro ao buscar vaga da MockAPI:", error);
+    return null;
+  }
 };
 
 export const addVaga = async (newVaga: VagaFromMock): Promise<void> => {
-  // Em produção, isto seria guardado numa base de dados
-  // Aqui apenas simula a adição
-  vagasData.vagas.push(newVaga);
+  try {
+    if (!MOCKAPI_ENDPOINT) {
+      throw new Error("MOCKAPI_ENDPOINT not configured");
+    }
+
+    const response = await fetch(`${MOCKAPI_ENDPOINT}/vagas`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newVaga),
+    });
+
+    if (!response.ok) {
+      throw new Error(`MockAPI error: ${response.statusText}`);
+    }
+  } catch (error) {
+    console.error("Erro ao adicionar vaga na MockAPI:", error);
+    throw error;
+  }
 };
