@@ -1,6 +1,6 @@
 // app/api/candidatos/check/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { createServerClient } from "@/lib/supabase-server";
+import { createClient } from "@supabase/supabase-js";
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,19 +14,32 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const supabase = createServerClient();
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+    if (!supabaseUrl || !supabaseAnonKey) {
+      return NextResponse.json(
+        { error: "Supabase não configurado no servidor" },
+        { status: 500 },
+      );
+    }
+
+    const supabase = createClient(supabaseUrl, supabaseAnonKey);
+    const normalizedEmail = String(email).trim().toLowerCase();
+    const normalizedPhone = String(telefone).trim();
 
     // Verificar se já existe candidatura com estes dados
-    const { data: existing, error } = await (supabase as any)
-      .from("candidacies")
-      .select("*")
-      .eq("email", email)
-      .eq("telefone", telefone)
+    const { data: existing, error } = await supabase
+      .from("candidato_respostas")
+      .select("id, status, criada_em")
+      .eq("email", normalizedEmail)
+      .eq("telefone", normalizedPhone)
       .eq("vaga_id", vaga_id)
-      .single();
+      .order("criada_em", { ascending: false })
+      .limit(1)
+      .maybeSingle();
 
-    if (error && error.code !== "PGRST116") {
-      // PGRST116 = não encontrou registos
+    if (error) {
       console.error("Erro ao verificar candidatura:", error);
       return NextResponse.json(
         { error: "Erro ao verificar candidatura" },

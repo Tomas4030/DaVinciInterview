@@ -62,6 +62,13 @@ export default function CandidateInfoForm({
 
       const data = await response.json();
 
+      if (!response.ok) {
+        setErrors({
+          email: data?.error || "Erro ao verificar candidatura",
+        });
+        return;
+      }
+
       if (data.exists) {
         setDuplicateWarning(data.message);
         return;
@@ -74,8 +81,12 @@ export default function CandidateInfoForm({
         body: JSON.stringify({ email }),
       });
 
+      const verifyData = await verifyResponse.json();
+
       if (!verifyResponse.ok) {
-        setErrors({ email: "Erro ao enviar email de verificação" });
+        setErrors({
+          email: verifyData?.error || "Erro ao enviar email de verificação",
+        });
         return;
       }
 

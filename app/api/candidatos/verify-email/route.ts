@@ -1,6 +1,6 @@
 // app/api/candidatos/verify-email/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { createServerClient } from "@/lib/supabase-server";
+import { createClient } from "@supabase/supabase-js";
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,11 +13,21 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const supabase = createServerClient();
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+    if (!supabaseUrl || !supabaseAnonKey) {
+      return NextResponse.json(
+        { error: "Supabase não configurado no servidor" },
+        { status: 500 },
+      );
+    }
+
+    const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
     // Enviar magic link para verificação de email
-    const { error } = await (supabase as any).auth.signInWithOtp({
-      email,
+    const { error } = await supabase.auth.signInWithOtp({
+      email: String(email).trim().toLowerCase(),
       options: {
         emailRedirectTo: `${request.nextUrl.origin}/entrevista/verify`,
       },
@@ -26,8 +36,10 @@ export async function POST(request: NextRequest) {
     if (error) {
       console.error("Erro ao enviar email de verificação:", error);
       return NextResponse.json(
-        { error: "Erro ao enviar email de verificação" },
-        { status: 500 },
+        {
+          error: error.message || "Erro ao enviar email de verificação",
+        },
+        { status: 400 },
       );
     }
 
