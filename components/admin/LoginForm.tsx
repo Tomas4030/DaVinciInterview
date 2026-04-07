@@ -41,6 +41,7 @@ export default function LoginForm() {
     } catch (err) {
       setErro("Erro ao fazer login. Tenta novamente.");
       console.error("Login error:", err);
+    } finally {
       setLoading(false);
     }
   }

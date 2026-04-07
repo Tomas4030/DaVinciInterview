@@ -1,6 +1,10 @@
 // app/api/auth/login-admin/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { verifyAdminCredentials } from "@/lib/admin-auth";
+import {
+  ADMIN_SESSION_COOKIE,
+  createAdminToken,
+  verifyAdminCredentials,
+} from "@/lib/admin-auth";
 
 export async function POST(request: NextRequest) {
   try {
@@ -21,16 +25,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Gerar token simples (em produção, seria JWT real)
-    const token = Buffer.from(
-      JSON.stringify({
-        email,
-        role: "admin",
-        iat: Date.now(),
-      }),
-    ).toString("base64");
+    const token = createAdminToken(email);
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       success: true,
       token,
       admin: {
@@ -38,6 +35,16 @@ export async function POST(request: NextRequest) {
         role: "admin",
       },
     });
+
+    response.cookies.set(ADMIN_SESSION_COOKIE, token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: 60 * 60 * 12,
+    });
+
+    return response;
   } catch (error) {
     console.error("Erro ao fazer login de admin:", error);
     return NextResponse.json({ error: "Erro ao fazer login" }, { status: 500 });

@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
-import { createServerClient } from "@/lib/supabase-server";
+import { cookies } from "next/headers";
 import AdminNav from "@/components/admin/AdminNav";
+import { ADMIN_SESSION_COOKIE, parseAdminToken } from "@/lib/admin-auth";
 
 export const dynamic = "force-dynamic"; // Cookies required for auth
 
@@ -9,16 +10,15 @@ export default async function ProtectedAdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const supabase = createServerClient() as any;
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
+  const cookieStore = cookies();
+  const token = cookieStore.get(ADMIN_SESSION_COOKIE)?.value;
+  const session = parseAdminToken(token);
 
   if (!session) redirect("/admin/login");
 
   return (
     <div className="min-h-screen bg-[var(--c-bg)]">
-      <AdminNav userEmail={session.user?.email ?? ""} />
+      <AdminNav userEmail={session.email} />
       <main className="mx-auto max-w-6xl px-6 py-10">{children}</main>
     </div>
   );
