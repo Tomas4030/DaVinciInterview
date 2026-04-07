@@ -1,14 +1,13 @@
-// app/admin/layout.tsx
 import { redirect } from "next/navigation";
 import { createServerClient } from "@/lib/supabase-server";
 import AdminNav from "@/components/admin/AdminNav";
 
-export default async function AdminLayout({
+export default async function ProtectedAdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const supabase = createServerClient();
+  const supabase = createServerClient() as any;
   const {
     data: { session },
   } = await supabase.auth.getSession();
@@ -17,7 +16,7 @@ export default async function AdminLayout({
 
   return (
     <div className="min-h-screen bg-[var(--c-bg)]">
-      <AdminNav userEmail={session.user.email ?? ""} />
+      <AdminNav userEmail={session.user?.email ?? ""} />
       <main className="max-w-5xl mx-auto px-4 py-8">{children}</main>
     </div>
   );

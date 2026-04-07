@@ -2,11 +2,15 @@
 // POST /api/respostas → guarda uma resposta (público, sem auth)
 
 import { NextRequest, NextResponse } from "next/server";
-import { createServerClient } from "@/lib/supabase-server";
+import { createClient } from "@supabase/supabase-js";
+
+const supabase = () =>
+  createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  ) as any;
 
 export async function POST(req: NextRequest) {
-  const supabase = createServerClient();
-
   const body = await req.json();
   const { vaga_id, pergunta_id, resposta, sessao_id } = body;
 
@@ -17,7 +21,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const { data, error } = await supabase
+  const { data, error } = await supabase()
     .from("respostas")
     .insert({ vaga_id, pergunta_id, resposta, sessao_id })
     .select("id, sessao_id")

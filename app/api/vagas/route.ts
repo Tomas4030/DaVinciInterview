@@ -7,7 +7,7 @@ import { createServerClient } from "@/lib/supabase-server";
 
 export async function GET() {
   const supabase = createServerClient();
-  const { data, error } = await supabase
+  const { data, error } = await (supabase as any)
     .from("vagas")
     .select("*")
     .eq("ativa", true)
@@ -16,7 +16,7 @@ export async function GET() {
   if (error)
     return NextResponse.json({ error: error.message }, { status: 500 });
 
-  const vagas = (data ?? []).map((v) => ({
+  const vagas = (data ?? []).map((v: any) => ({
     ...v,
     total_perguntas: Array.isArray(v.perguntas) ? v.perguntas.length : 0,
   }));
@@ -28,12 +28,12 @@ export async function POST(req: NextRequest) {
   const supabase = createServerClient();
   const {
     data: { session },
-  } = await supabase.auth.getSession();
+  } = await (supabase as any).auth.getSession();
   if (!session)
     return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
 
   const body = await req.json();
-  const { data, error } = await supabase
+  const { data, error } = await (supabase as any)
     .from("vagas")
     .insert(body)
     .select()

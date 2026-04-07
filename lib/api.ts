@@ -50,7 +50,7 @@ export interface SessaoComRespostas {
 
 /** Lista todas as vagas ativas (usado no homepage e admin) */
 export async function listarVagas(): Promise<VagaResumo[]> {
-  const supabase = createServerClient();
+  const supabase = createServerClient() as any;
   const { data, error } = await supabase
     .from("vagas")
     .select(
@@ -60,7 +60,7 @@ export async function listarVagas(): Promise<VagaResumo[]> {
 
   if (error) throw new Error(error.message);
 
-  return (data ?? []).map((v) => ({
+  return (data ?? []).map((v: any) => ({
     id: v.id,
     titulo: v.titulo,
     descricao: v.descricao ?? "",
@@ -74,7 +74,7 @@ export async function listarVagas(): Promise<VagaResumo[]> {
 
 /** Lista apenas vagas ativas para os candidatos */
 export async function listarVagasAtivas(): Promise<VagaResumo[]> {
-  const supabase = createServerClient();
+  const supabase = createServerClient() as any;
   const { data, error } = await supabase
     .from("vagas")
     .select(
@@ -85,7 +85,7 @@ export async function listarVagasAtivas(): Promise<VagaResumo[]> {
 
   if (error) throw new Error(error.message);
 
-  return (data ?? []).map((v) => ({
+  return (data ?? []).map((v: any) => ({
     id: v.id,
     titulo: v.titulo,
     descricao: v.descricao ?? "",
@@ -99,7 +99,7 @@ export async function listarVagasAtivas(): Promise<VagaResumo[]> {
 
 /** Obtém uma vaga completa (com perguntas) por ID */
 export async function obterVaga(vagaId: string): Promise<Vaga> {
-  const supabase = createServerClient();
+  const supabase = createServerClient() as any;
   const { data, error } = await supabase
     .from("vagas")
     .select("*")
@@ -125,7 +125,7 @@ export async function obterVaga(vagaId: string): Promise<Vaga> {
 
 /** Conta o total de respostas guardadas (para o dashboard admin) */
 export async function contarRespostas(): Promise<number> {
-  const supabase = createServerClient();
+  const supabase = createServerClient() as any;
   const { count, error } = await supabase
     .from("respostas")
     .select("*", { count: "exact", head: true });
@@ -138,7 +138,7 @@ export async function contarRespostas(): Promise<number> {
 export async function listarSessoes(
   vagaId?: string,
 ): Promise<SessaoComRespostas[]> {
-  const supabase = createServerClient();
+  const supabase = createServerClient() as any;
 
   let query = supabase
     .from("respostas")

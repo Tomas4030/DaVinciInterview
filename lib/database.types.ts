@@ -23,10 +23,15 @@ export interface Database {
           criada_em: string;
           atualizada_em: string;
         };
-        Insert: Omit<
-          Database["public"]["Tables"]["vagas"]["Row"],
-          "criada_em" | "atualizada_em"
-        >;
+        Insert: {
+          id: string;
+          titulo: string;
+          descricao?: string;
+          modalidade?: string;
+          duracao_min?: number;
+          perguntas?: Pergunta[];
+          ativa?: boolean;
+        };
         Update: Partial<Database["public"]["Tables"]["vagas"]["Insert"]>;
       };
       respostas: {
@@ -38,11 +43,18 @@ export interface Database {
           resposta: string;
           criada_em: string;
         };
-        Insert: Omit<
-          Database["public"]["Tables"]["respostas"]["Row"],
-          "id" | "criada_em"
-        >;
-        Update: never;
+        Insert: {
+          sessao_id: string;
+          vaga_id: string;
+          pergunta_id: number;
+          resposta: string;
+        };
+        Update: {
+          sessao_id?: string;
+          vaga_id?: string;
+          pergunta_id?: number;
+          resposta?: string;
+        };
       };
     };
     Views: {
