@@ -3,6 +3,7 @@
 // Substitui o backend FastAPI — a app Next.js comunica diretamente com o Supabase.
 
 import { createServerClient } from "./supabase-server";
+import { createAdminClient } from "./supabase-admin";
 import type { Pergunta } from "./database.types";
 
 // ─── Tipos públicos ────────────────────────────────────────────────────────────
@@ -32,16 +33,19 @@ export interface Vaga {
 
 export interface Resposta {
   id: string;
-  sessao_id: string;
-  vaga_id: string;
   pergunta_id: number;
+  texto_pergunta?: string;
   resposta: string;
-  criada_em: string;
+  criada_em?: string;
 }
 
 export interface SessaoComRespostas {
+  id: string;
   sessao_id: string;
   vaga_id: string;
+  email?: string;
+  telefone?: string;
+  status?: string;
   respostas: Resposta[];
   criada_em: string;
 }
@@ -201,12 +205,17 @@ export async function obterVaga(vagaId: string): Promise<Vaga> {
 
 /** Conta o total de respostas guardadas (para o dashboard admin) */
 export async function contarRespostas(): Promise<number> {
-  const supabase = createServerClient() as any;
+  const supabase = createAdminClient() as any;
+
   const { count, error } = await supabase
-    .from("respostas")
+    .from("candidato_respostas")
     .select("*", { count: "exact", head: true });
 
-  if (error) return 0;
+  if (error) {
+    console.error("Erro ao contar candidaturas:", error);
+    return 0;
+  }
+
   return count ?? 0;
 }
 
@@ -214,31 +223,40 @@ export async function contarRespostas(): Promise<number> {
 export async function listarSessoes(
   vagaId?: string,
 ): Promise<SessaoComRespostas[]> {
-  const supabase = createServerClient() as any;
+  const supabase = createAdminClient() as any;
 
   let query = supabase
-    .from("respostas")
+    .from("candidato_respostas")
     .select("*")
     .order("criada_em", { ascending: false });
 
-  if (vagaId) query = query.eq("vaga_id", vagaId);
-
-  const { data, error } = await query;
-  if (error) throw new Error(error.message);
-
-  // Agrupa por sessao_id
-  const mapa = new Map<string, SessaoComRespostas>();
-  for (const r of data ?? []) {
-    if (!mapa.has(r.sessao_id)) {
-      mapa.set(r.sessao_id, {
-        sessao_id: r.sessao_id,
-        vaga_id: r.vaga_id,
-        respostas: [],
-        criada_em: r.criada_em,
-      });
-    }
-    mapa.get(r.sessao_id)!.respostas.push(r as Resposta);
+  if (vagaId) {
+    query = query.eq("vaga_id", vagaId);
   }
 
-  return Array.from(mapa.values());
+  const { data, error } = await query;
+
+  if (error) {
+    console.error("Erro Supabase ao listar sessões:", error);
+    throw new Error(error.message);
+  }
+
+  return (data ?? []).map((item: any) => ({
+    id: item.id,
+    sessao_id: item.sessao_id,
+    vaga_id: item.vaga_id,
+    email: item.email,
+    telefone: item.telefone,
+    status: item.status,
+    criada_em: item.criada_em,
+    respostas: Array.isArray(item.respostas)
+      ? item.respostas.map((r: any, index: number) => ({
+          id: `${item.id}-${r.pergunta_id ?? index}`,
+          pergunta_id: r.pergunta_id ?? index + 1,
+          texto_pergunta: r.texto_pergunta ?? "",
+          resposta: r.resposta_texto ?? "",
+          criada_em: r.timestamp ?? item.criada_em,
+        }))
+      : [],
+  }));
 }
