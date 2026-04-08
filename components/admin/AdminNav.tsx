@@ -2,66 +2,114 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useMemo, useRef, useState } from "react";
 
-export default function AdminNav({ userEmail }: { userEmail: string }) {
+type AdminNavProps = {
+  userEmail: string;
+};
+
+const NAV_LINKS = [
+  { href: "/admin", label: "Dashboard" },
+  { href: "/admin/respostas", label: "Respostas" },
+];
+
+export default function AdminNav({ userEmail }: AdminNavProps) {
   const router = useRouter();
   const pathname = usePathname();
 
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const initial = useMemo(() => {
+    return userEmail?.trim()?.charAt(0)?.toUpperCase() || "U";
+  }, [userEmail]);
+
+  useEffect(() => {
+    function handlePointerDown(event: MouseEvent) {
+      if (!dropdownRef.current) return;
+      if (!dropdownRef.current.contains(event.target as Node)) {
+        setDropdownOpen(false);
+      }
+    }
+
+    function handleEscape(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setDropdownOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handlePointerDown);
+    document.addEventListener("keydown", handleEscape);
+
+    return () => {
+      document.removeEventListener("mousedown", handlePointerDown);
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, []);
+
   async function logout() {
-    await fetch("/api/auth/logout-admin", { method: "POST" });
-    localStorage.removeItem("admin_token");
-    localStorage.removeItem("admin_email");
-    router.push("/admin/login");
-    router.refresh();
+    try {
+      await fetch("/api/auth/logout-admin", { method: "POST" });
+    } catch (error) {
+      console.error("Erro ao terminar sessão:", error);
+    } finally {
+      localStorage.removeItem("admin_token");
+      localStorage.removeItem("admin_email");
+      setDropdownOpen(false);
+      router.push("/admin/login");
+      router.refresh();
+    }
   }
 
-  const links = [
-    { href: "/admin", label: "Dashboard", icon: "dashboard" },
-    { href: "/admin/respostas", label: "Respostas", icon: "respostas" },
-  ];
+  function isActive(href: string) {
+    return (
+      pathname === href || (href !== "/admin" && pathname.startsWith(href))
+    );
+  }
 
   return (
-    <nav className="sticky top-0 z-20 border-b border-[var(--c-border)]/60 bg-[var(--c-surface)]/80 backdrop-blur-xl">
+    <nav className="sticky top-0 z-20 border-b border-[var(--c-border)]/60 bg-[var(--c-surface)]/90 backdrop-blur-xl">
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-6">
-        {/* left: brand + nav */}
         <div className="flex items-center gap-7">
           <Link
             href="/admin"
-            className="flex items-center gap-2.5 group"
-            aria-label="Admin"
+            aria-label="Painel de administração"
+            className="group flex items-center gap-2"
           >
-            <div className="flex h-8 w-8 items-center justify-center rounded-[7px] bg-[var(--c-brand)] text-white text-[11px] font-bold font-display shadow-[0_1px_3px_rgba(67,85,232,0.18)] transition-transform duration-200 group-hover:scale-[1.06]">
+            <div className="flex h-8 w-8 items-center justify-center rounded-[8px] bg-[var(--c-brand)] text-[11px] font-bold text-white shadow-[0_1px_3px_rgba(67,85,232,0.2)] transition-transform duration-200 group-hover:scale-[1.05]">
               D
             </div>
-            <div className="hidden sm:flex flex-col leading-tight">
-              <span className="text-[0.82rem] font-semibold text-[var(--c-text)] tracking-tight">
-                DaVinci
-              </span>
-              <span className="text-[9px] text-[var(--c-muted)] tracking-[0.04em] uppercase">
+
+            <div className="leading-tight">
+              <p className="text-[0.82rem] font-semibold leading-none tracking-tight text-[var(--c-text)]">
+                DaVinci Interviews
+              </p>
+              <p className="mt-0.5 text-[10px] leading-none text-[var(--c-muted)]">
                 Admin
-              </span>
+              </p>
             </div>
           </Link>
 
-          {/* tab nav */}
+          <span aria-hidden="true" className="h-4 w-px bg-[var(--c-border)]" />
+
           <div
-            className="flex items-center gap-1"
-            role="navigation"
-            aria-label="Navegação admin"
+            className="flex items-center gap-0.5"
+            aria-label="Navegação administrativa"
           >
-            {links.map((link) => {
-              const active =
-                pathname === link.href ||
-                (link.href !== "/admin" && pathname.startsWith(link.href));
+            {NAV_LINKS.map((link) => {
+              const active = isActive(link.href);
+
               return (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`relative rounded-lg px-3 py-1.5 text-[0.78rem] font-medium transition-colors duration-150 ${
+                  aria-current={active ? "page" : undefined}
+                  className={[
+                    "rounded-lg px-3 py-1.5 text-[0.8rem] font-medium transition-colors duration-150",
                     active
-                      ? "text-[var(--c-text)] bg-[var(--c-bg)]"
-                      : "text-[var(--c-muted)] hover:text-[var(--c-text)] hover:bg-[var(--c-bg)]/60"
-                  }`}
+                      ? "bg-[var(--c-bg)] text-[var(--c-text)]"
+                      : "text-[var(--c-muted)] hover:bg-[var(--c-bg)]/60 hover:text-[var(--c-text)]",
+                  ].join(" ")}
                 >
                   {link.label}
                 </Link>
@@ -70,60 +118,117 @@ export default function AdminNav({ userEmail }: { userEmail: string }) {
           </div>
         </div>
 
-        {/* right: quick action + user */}
         <div className="flex items-center gap-2">
-          <Link
-            href="/"
-            className="rounded-lg px-2.5 py-1.5 text-[11px] text-[var(--c-muted)] hover:text-[var(--c-text)] transition-colors duration-150 hidden sm:block"
-            aria-label="Ver site público"
-          >
-            Ver site
-            <span className="opacity-40 ml-0.5">↗</span>
-          </Link>
-
-          <Link
-            href="/admin/entrevistas/nova"
-            className="inline-flex items-center gap-1.5 rounded-lg bg-[var(--c-brand)] px-3 py-[7px] text-[11px] font-semibold text-white shadow-[0_1px_2px_rgba(67,85,232,0.1)] transition-[transform,box-shadow] duration-200 hover:-translate-y-[1px] hover:shadow-[0_2px_6px_rgba(67,85,232,0.2)] active:scale-[0.98]"
-          >
-            <svg
-              width="11"
-              height="11"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="3"
-              strokeLinecap="round"
-              aria-hidden="true"
+          <div ref={dropdownRef} className="relative">
+            <button
+              type="button"
+              onClick={() => setDropdownOpen((open) => !open)}
+              aria-label="Menu do utilizador"
+              aria-expanded={dropdownOpen}
+              aria-haspopup="menu"
+              className={[
+                "flex items-center gap-2 rounded-lg border px-2.5 py-1.5 transition-all duration-150",
+                dropdownOpen
+                  ? "border-[var(--c-brand)]/30 bg-[var(--c-bg)]"
+                  : "border-[var(--c-border)]/70 bg-transparent hover:border-[var(--c-border)] hover:bg-[var(--c-bg)]",
+              ].join(" ")}
             >
-              <path d="M12 5v14M5 12h14" />
-            </svg>
-            Nova entrevista
-          </Link>
+              <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[var(--c-brand)]/10 text-[10px] font-bold text-[var(--c-brand)]">
+                {initial}
+              </div>
 
-          <span
-            className="mx-1 h-4 w-px bg-[var(--c-border)] hidden sm:block"
-            aria-hidden="true"
-          />
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className={`text-[var(--c-muted)] transition-transform duration-200 ${
+                  dropdownOpen ? "rotate-180" : ""
+                }`}
+                aria-hidden="true"
+              >
+                <path d="M6 9l6 6 6-6" />
+              </svg>
+            </button>
 
-          <div className="hidden md:flex items-center gap-2 ml-1">
-            <div
-              className="flex h-7 w-7 items-center justify-center rounded-full bg-[var(--c-bg)] text-[10px] font-semibold text-[var(--c-muted)] ring-1 ring-[var(--c-border)]/60"
-              aria-hidden="true"
-            >
-              {userEmail?.charAt(0).toUpperCase() ?? "U"}
-            </div>
-            <span className="text-[11px] text-[var(--c-muted)] max-w-[100px] truncate">
-              {userEmail}
-            </span>
+            {dropdownOpen && (
+              <div
+                role="menu"
+                className="absolute right-0 top-[calc(100%+6px)] z-50 w-52 overflow-hidden rounded-xl border border-[var(--c-border)]/70 bg-[var(--c-surface)] shadow-[0_4px_20px_rgba(0,0,0,0.08)] animate-reveal"
+              >
+                <div className="flex items-center gap-2.5 border-b border-[var(--c-border)]/50 px-3.5 py-3">
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--c-brand)]/10 text-[11px] font-bold text-[var(--c-brand)]">
+                    {initial}
+                  </div>
+
+                  <div className="min-w-0">
+                    <p className="truncate text-[11px] font-medium text-[var(--c-text)]">
+                      {userEmail}
+                    </p>
+                    <p className="text-[10px] text-[var(--c-muted)]">
+                      Administrador
+                    </p>
+                  </div>
+                </div>
+
+                <div className="p-1">
+                  <Link
+                    href="/"
+                    role="menuitem"
+                    onClick={() => setDropdownOpen(false)}
+                    className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[0.78rem] text-[var(--c-muted)] transition-colors duration-150 hover:bg-[var(--c-bg)] hover:text-[var(--c-text)]"
+                  >
+                    <svg
+                      width="13"
+                      height="13"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                      <polyline points="15 3 21 3 21 9" />
+                      <line x1="10" y1="14" x2="21" y2="3" />
+                    </svg>
+                    Ver site público
+                  </Link>
+
+                  <div className="my-1 border-t border-[var(--c-border)]/40" />
+
+                  <button
+                    type="button"
+                    role="menuitem"
+                    onClick={logout}
+                    className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-[0.78rem] text-red-500 transition-colors duration-150 hover:bg-red-50 hover:text-red-600"
+                  >
+                    <svg
+                      width="13"
+                      height="13"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                      <polyline points="16 17 21 12 16 7" />
+                      <line x1="21" y1="12" x2="9" y2="12" />
+                    </svg>
+                    Terminar sessão
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
-
-          <button
-            onClick={logout}
-            className="rounded-lg border border-[var(--c-border)]/80 px-2.5 py-1.5 text-[11px] text-[var(--c-muted)] hover:text-[var(--c-text)] hover:border-[var(--c-border)] transition-[color,border-color] duration-150"
-            aria-label="Terminar sessão"
-          >
-            Sair
-          </button>
         </div>
       </div>
     </nav>

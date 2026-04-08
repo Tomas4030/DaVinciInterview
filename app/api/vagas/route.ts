@@ -3,36 +3,9 @@
 // POST /api/vagas    → cria nova vaga (requer auth admin)
 
 import { NextRequest, NextResponse } from "next/server";
+import { ADMIN_SESSION_COOKIE, parseAdminToken } from "@/lib/admin-auth";
 
 const MOCKAPI_ENDPOINT = process.env.MOCKAPI_ENDPOINT;
-
-/**
- * Extrai token do header Authorization
- * Formato: "Bearer <token>"
- */
-function extractAuthToken(authHeader: string | null): string | null {
-  if (!authHeader) return null;
-  const parts = authHeader.split(" ");
-  return parts.length === 2 && parts[0] === "Bearer" ? parts[1] : null;
-}
-
-/**
- * Valida token admin
- * Token = base64("email:password")
- */
-function validateAdminToken(token: string): boolean {
-  try {
-    const decoded = Buffer.from(token, "base64").toString("utf-8");
-    const [email, password] = decoded.split(":");
-
-    const adminEmail = process.env.ADMIN_EMAIL;
-    const adminPassword = process.env.ADMIN_PASSWORD;
-
-    return email === adminEmail && password === adminPassword;
-  } catch {
-    return false;
-  }
-}
 
 export async function GET(request: NextRequest) {
   try {
@@ -78,10 +51,10 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     // Verificar autenticação admin
-    const authHeader = request.headers.get("authorization");
-    const token = extractAuthToken(authHeader);
+    const token = request.cookies.get(ADMIN_SESSION_COOKIE)?.value;
+    const admin = parseAdminToken(token);
 
-    if (!token || !validateAdminToken(token)) {
+    if (!admin) {
       return NextResponse.json({ error: "Não autorizado" }, { status: 403 });
     }
 

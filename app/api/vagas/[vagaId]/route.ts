@@ -4,39 +4,12 @@
 // DELETE /api/vagas/[vagaId] → apaga vaga (MockAPI, requer auth)
 
 import { NextRequest, NextResponse } from "next/server";
+import { ADMIN_SESSION_COOKIE, parseAdminToken } from "@/lib/admin-auth";
 
 const MOCKAPI_ENDPOINT = process.env.MOCKAPI_ENDPOINT;
 
 interface Params {
   params: { vagaId: string };
-}
-
-/**
- * Extrai token do header Authorization
- * Formato: "Bearer <token>"
- */
-function extractAuthToken(authHeader: string | null): string | null {
-  if (!authHeader) return null;
-  const parts = authHeader.split(" ");
-  return parts.length === 2 && parts[0] === "Bearer" ? parts[1] : null;
-}
-
-/**
- * Valida token admin
- * Token = base64("email:password")
- */
-function validateAdminToken(token: string): boolean {
-  try {
-    const decoded = Buffer.from(token, "base64").toString("utf-8");
-    const [email, password] = decoded.split(":");
-
-    const adminEmail = process.env.ADMIN_EMAIL;
-    const adminPassword = process.env.ADMIN_PASSWORD;
-
-    return email === adminEmail && password === adminPassword;
-  } catch {
-    return false;
-  }
 }
 
 export async function GET(_req: NextRequest, { params }: Params) {
@@ -78,10 +51,10 @@ export async function GET(_req: NextRequest, { params }: Params) {
 export async function PUT(req: NextRequest, { params }: Params) {
   try {
     // Verificar autenticação admin
-    const authHeader = req.headers.get("authorization");
-    const token = extractAuthToken(authHeader);
+    const token = req.cookies.get(ADMIN_SESSION_COOKIE)?.value;
+    const admin = parseAdminToken(token);
 
-    if (!token || !validateAdminToken(token)) {
+    if (!admin) {
       return NextResponse.json({ error: "Não autorizado" }, { status: 403 });
     }
 
@@ -121,10 +94,10 @@ export async function PUT(req: NextRequest, { params }: Params) {
 export async function DELETE(_req: NextRequest, { params }: Params) {
   try {
     // Verificar autenticação admin
-    const authHeader = _req.headers.get("authorization");
-    const token = extractAuthToken(authHeader);
+    const token = _req.cookies.get(ADMIN_SESSION_COOKIE)?.value;
+    const admin = parseAdminToken(token);
 
-    if (!token || !validateAdminToken(token)) {
+    if (!admin) {
       return NextResponse.json({ error: "Não autorizado" }, { status: 403 });
     }
 

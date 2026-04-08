@@ -6,21 +6,21 @@ import { IconGlobe, IconLayers, IconBuilding } from "./Icons";
 const stepStyles = [
   {
     border: "border-blue-100",
-    number: "text-blue-600",
+
     iconWrap: "bg-blue-600 text-white",
     badge: "bg-blue-50 text-blue-700 border-blue-100",
     highlight: "Sem registo obrigatório",
   },
   {
     border: "border-slate-200",
-    number: "text-slate-900",
+
     iconWrap: "bg-slate-900 text-white",
     badge: "bg-slate-50 text-slate-700 border-slate-200",
     highlight: "Completa ao teu ritmo",
   },
   {
     border: "border-blue-100",
-    number: "text-blue-600",
+
     iconWrap: "bg-blue-600 text-white",
     badge: "bg-blue-50 text-blue-700 border-blue-100",
     highlight: "Envia em segundos",
@@ -101,12 +101,6 @@ export default function HowItWorksSection() {
                   >
                     Passo {String(item.num).padStart(2, "0")}
                   </span>
-                </div>
-
-                <div
-                  className={`mb-3 text-4xl font-semibold tabular-nums ${style.number}`}
-                >
-                  {String(item.num).padStart(2, "0")}
                 </div>
 
                 <h3 className="mb-3 text-xl font-semibold text-slate-900">
