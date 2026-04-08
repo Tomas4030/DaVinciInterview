@@ -114,6 +114,16 @@ export default function ChatEntrevista({
   const [mostrarTyping, setMostrarTyping] = useState(false);
   const [sessaoId] = useState<string>(uuid);
 
+  const [respostas, setRespostas] = useState<
+    {
+      pergunta_id: number;
+      texto_pergunta: string;
+      resposta_texto: string;
+      duracao_segundos: number;
+      timestamp: string;
+    }[]
+  >([]);
+
   const bottomRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -153,23 +163,6 @@ export default function ChatEntrevista({
     await botResponde(vaga.perguntas[0].texto, 500);
   }
 
-  async function guardarResposta(perguntaId: number, resposta: string) {
-    try {
-      await fetch("/api/respostas", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          vaga_id: vaga.id,
-          pergunta_id: perguntaId,
-          resposta,
-          sessao_id: sessaoId,
-        }),
-      });
-    } catch (err) {
-      console.error("Erro ao guardar resposta:", err);
-    }
-  }
-
   async function enviarResposta() {
     const texto = input.trim();
     if (!texto || enviando || concluida) return;
@@ -178,8 +171,16 @@ export default function ChatEntrevista({
     adicionarMensagem(msgUser(texto));
     setInput("");
 
-    // Guarda no Supabase via API route
-    await guardarResposta(vaga.perguntas[indiceAtual].id, texto);
+    const respostaAtual = {
+      pergunta_id: vaga.perguntas[indiceAtual].id,
+      texto_pergunta: vaga.perguntas[indiceAtual].texto,
+      resposta_texto: texto,
+      duracao_segundos: 0,
+      timestamp: new Date().toISOString(),
+    };
+
+    const respostasAtualizadas = [...respostas, respostaAtual];
+    setRespostas(respostasAtualizadas);
 
     const proximoIndice = indiceAtual + 1;
 
@@ -187,7 +188,6 @@ export default function ChatEntrevista({
       await botResponde(vaga.perguntas[proximoIndice].texto);
       setIndiceAtual(proximoIndice);
     } else {
-      // Guardar candidacy quando a entrevista termina
       if (candidateEmail && candidatePhone) {
         await fetch("/api/candidatos/create", {
           method: "POST",
@@ -197,6 +197,7 @@ export default function ChatEntrevista({
             telefone: candidatePhone,
             vaga_id: vaga.id,
             sessao_id: sessaoId,
+            respostas: respostasAtualizadas,
           }),
         }).catch((err) => console.error("Erro ao criar candidatura:", err));
       }

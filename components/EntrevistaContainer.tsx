@@ -15,9 +15,10 @@ export default function EntrevistaContainer({
   const [candidateInfo, setCandidateInfo] = useState<{
     email: string;
     phone: string;
+    verified: boolean;
   } | null>(null);
 
-  if (!candidateInfo) {
+  if (!candidateInfo || !candidateInfo.verified) {
     return (
       <div className="min-h-screen bg-[var(--c-bg)] flex flex-col items-center justify-center px-6 py-12">
         <div className="w-full max-w-md">
@@ -26,14 +27,18 @@ export default function EntrevistaContainer({
               {vaga.titulo}
             </h1>
             <p className="text-sm text-[var(--c-text)]/60">
-              Antes de começar, precisa mos de validar o teu contacto
+              Antes de começar, precisamos de validar o teu contacto
             </p>
           </div>
 
           <CandidateInfoForm
             vagaId={vaga.id}
             onSuccess={(email, phone) => {
-              setCandidateInfo({ email, phone });
+              setCandidateInfo({
+                email,
+                phone,
+                verified: true,
+              });
             }}
           />
         </div>
