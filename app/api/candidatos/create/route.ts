@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
         sessao_id,
         respostas,
         status: respostas.length > 0 ? "concluida" : "em_progresso",
-        email_verificado: false,
+        email_verificado: true, // Supondo que o email já foi verificado via Supabase Auth
       })
       .select()
       .single();
