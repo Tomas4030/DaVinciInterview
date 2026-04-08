@@ -63,62 +63,28 @@ function getAppBaseUrl(): string {
 // ─── Vagas ────────────────────────────────────────────────────────────────────
 
 /** Lista todas as vagas ativas (usado no homepage e admin) */
+/** Lista todas as vagas (admin) via MockAPI */
 export async function listarVagas(): Promise<VagaResumo[]> {
-  const supabase = createServerClient() as any;
-  const { data, error } = await supabase
-    .from("vagas")
-    .select(
-      "id, titulo, descricao, modalidade, duracao_min, ativa, criada_em, perguntas",
-    )
-    .order("criada_em", { ascending: false });
-
-  if (error) throw new Error(error.message);
-
-  return (data ?? []).map((v: any) => ({
-    id: v.id,
-    titulo: v.titulo,
-    descricao: v.descricao ?? "",
-    modalidade: v.modalidade,
-    duracao_min: v.duracao_min,
-    total_perguntas: Array.isArray(v.perguntas) ? v.perguntas.length : 0,
-    ativa: v.ativa,
-    criada_em: v.criada_em,
-  }));
-}
-
-/** Lista apenas vagas ativas para os candidatos (Mock API) */
-export async function listarVagasAtivas(): Promise<VagaResumo[]> {
   try {
-    // Tentar fetch via API route primeiro (para cliente)
-    // Se falhar (SSR), usar mock-api diretamente
+    let vagas: any[] = [];
+
     if (typeof window === "undefined") {
-      // Server-side: usar mock-api diretamente
+      // Server-side
       const { getAllVagas } = await import("./mock-api");
-      const vagas = await getAllVagas();
+      vagas = await getAllVagas();
+    } else {
+      // Client-side
+      const response = await fetch(`${getAppBaseUrl()}/api/vagas`, {
+        cache: "no-store",
+      });
 
-      return vagas.map((v: any) => ({
-        id: v.id,
-        titulo: v.titulo,
-        descricao: v.descricao ?? "",
-        modalidade: v.modalidade,
-        duracao_min: v.duracao_min,
-        total_perguntas: v.perguntas?.length || 0,
-        ativa: v.ativa,
-        criada_em: v.criada_em,
-      }));
+      if (!response.ok) {
+        throw new Error("Erro ao listar vagas");
+      }
+
+      const json = await response.json();
+      vagas = json.data || json;
     }
-
-    // Client-side: usar API route
-    const response = await fetch(`${getAppBaseUrl()}/api/vagas`, {
-      next: { revalidate: 60 }, // Cache por 60 segundos
-    });
-
-    if (!response.ok) {
-      throw new Error("Erro ao listar vagas");
-    }
-
-    const json = await response.json();
-    const vagas = json.data || json;
 
     return (Array.isArray(vagas) ? vagas : []).map((v: any) => ({
       id: v.id,
@@ -126,10 +92,49 @@ export async function listarVagasAtivas(): Promise<VagaResumo[]> {
       descricao: v.descricao ?? "",
       modalidade: v.modalidade,
       duracao_min: v.duracao_min,
-      total_perguntas: v.total_perguntas,
+      total_perguntas: Array.isArray(v.perguntas) ? v.perguntas.length : 0,
       ativa: v.ativa,
-      criada_em: v.criada_em,
+      criada_em: v.criada_em ?? v.createdAt ?? new Date().toISOString(),
     }));
+  } catch (error) {
+    console.error("Erro ao listar vagas da Mock API:", error);
+    return [];
+  }
+}
+
+/** Lista apenas vagas ativas para os candidatos (Mock API) */
+export async function listarVagasAtivas(): Promise<VagaResumo[]> {
+  try {
+    let vagas: any[] = [];
+
+    if (typeof window === "undefined") {
+      const { getAllVagas } = await import("./mock-api");
+      vagas = await getAllVagas();
+    } else {
+      const response = await fetch(`${getAppBaseUrl()}/api/vagas`, {
+        cache: "no-store",
+      });
+
+      if (!response.ok) {
+        throw new Error("Erro ao listar vagas");
+      }
+
+      const json = await response.json();
+      vagas = json.data || json;
+    }
+
+    return (Array.isArray(vagas) ? vagas : [])
+      .filter((v: any) => v.ativa)
+      .map((v: any) => ({
+        id: v.id,
+        titulo: v.titulo,
+        descricao: v.descricao ?? "",
+        modalidade: v.modalidade,
+        duracao_min: v.duracao_min,
+        total_perguntas: Array.isArray(v.perguntas) ? v.perguntas.length : 0,
+        ativa: v.ativa,
+        criada_em: v.criada_em ?? v.createdAt ?? new Date().toISOString(),
+      }));
   } catch (error) {
     console.error("Erro ao listar vagas da Mock API:", error);
     return [];

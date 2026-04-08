@@ -6,6 +6,8 @@ import type { Metadata } from "next";
 export const metadata: Metadata = { title: "Admin — Dashboard" };
 export const dynamic = "force-dynamic";
 
+listarVagas();
+
 /* ── helpers ─────────────────────────────────────────────────── */
 function statusBadge(ativa: boolean) {
   if (ativa) {
