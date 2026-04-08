@@ -96,7 +96,7 @@ export async function POST(request: NextRequest) {
       console.error("Brevo error:", errorText);
 
       return NextResponse.json(
-        { error: "Erro ao enviar email com código" },
+        { error: `Brevo error: ${errorText}` },
         { status: 500 },
       );
     }
