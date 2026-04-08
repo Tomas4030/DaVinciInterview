@@ -4,7 +4,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
 import type { Vaga } from "@/lib/api";
 
-// ─── Types ──────────────────────────────────────────────────────────────────
+// ─── Types ────────────────────────────────────────────────────────────────────
 
 interface Mensagem {
   id: string;
@@ -13,14 +13,11 @@ interface Mensagem {
   timestamp: Date;
 }
 
-// ─── Utils ───────────────────────────────────────────────────────────────────
-
 function uuid() {
   return typeof crypto !== "undefined"
     ? crypto.randomUUID()
     : Math.random().toString(36).slice(2);
 }
-
 function msgBot(texto: string): Mensagem {
   return { id: uuid(), tipo: "bot", texto, timestamp: new Date() };
 }
@@ -28,70 +25,116 @@ function msgUser(texto: string): Mensagem {
   return { id: uuid(), tipo: "user", texto, timestamp: new Date() };
 }
 
-// ─── Sub-components ──────────────────────────────────────────────────────────
+// ─── Markdown renderer ────────────────────────────────────────────────────────
+
+function renderMarkdown(text: string) {
+  const parts = text.split(/(\*\*[^*]+\*\*|\*[^*]+\*|\n)/g);
+  return parts.map((part, i) => {
+    if (part.startsWith("**") && part.endsWith("**"))
+      return (
+        <strong key={i} className="font-semibold">
+          {part.slice(2, -2)}
+        </strong>
+      );
+    if (part.startsWith("*") && part.endsWith("*") && part.length > 2)
+      return <em key={i}>{part.slice(1, -1)}</em>;
+    if (part === "\n") return <br key={i} />;
+    return <span key={i}>{part}</span>;
+  });
+}
+
+// ─── Typing indicator ─────────────────────────────────────────────────────────
 
 function TypingDots() {
   return (
-    <div className="flex items-center gap-1.5 px-4 py-3">
-      <span className="typing-dot" />
-      <span className="typing-dot" />
-      <span className="typing-dot" />
+    <div className="flex items-center gap-1 px-1 py-0.5">
+      {[0, 160, 320].map((delay) => (
+        <span
+          key={delay}
+          className="block w-1.5 h-1.5 rounded-full bg-gray-400 animate-bounce"
+          style={{ animationDelay: `${delay}ms`, animationDuration: "1.4s" }}
+        />
+      ))}
     </div>
   );
 }
 
-function BotAvatar() {
-  return (
-    <div className="w-8 h-8 rounded-xl bg-brand-600 flex items-center justify-center flex-shrink-0 shadow-sm">
-      <span className="text-white text-xs font-bold font-display">D</span>
-    </div>
-  );
-}
+// ─── Message bubble ───────────────────────────────────────────────────────────
 
-function MensagemItem({ msg }: { msg: Mensagem }) {
+function MensagemItem({ msg, isLast }: { msg: Mensagem; isLast: boolean }) {
   const isBot = msg.tipo === "bot";
 
   return (
     <div
-      className={`flex items-end gap-2 animate-slide-up ${isBot ? "justify-start" : "justify-end"}`}
+      className={`flex gap-3 ${isBot ? "justify-start" : "justify-end"} ${
+        isLast ? "animate-slide-up" : ""
+      }`}
     >
-      {isBot && <BotAvatar />}
+      {isBot && (
+        <div className="flex-shrink-0 mt-0.5">
+          <div className="w-7 h-7 rounded-lg bg-[var(--c-brand)]s flex items-center justify-center">
+            <span className="text-white text-[11px] font-semibold tracking-tight font-display">
+              D
+            </span>
+          </div>
+        </div>
+      )}
 
       <div
-        className={`max-w-[78%] ${isBot ? "bubble-bot" : "bubble-user"} px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap`}
+        className={`
+          max-w-[72%] text-sm leading-relaxed
+          ${
+            isBot
+              ? "bg-white border border-gray-200/80 text-gray-800 rounded-2xl rounded-tl-md px-4 py-3 shadow-[0_1px_4px_rgba(0,0,0,0.06)]"
+              : "bg-[var(--c-brand)] text-gray-100 rounded-2xl rounded-tr-md px-4 py-3"
+          }
+        `}
       >
-        {msg.texto}
+        {renderMarkdown(msg.texto)}
       </div>
 
       {!isBot && (
-        <div className="w-8 h-8 rounded-xl bg-gray-200 flex items-center justify-center flex-shrink-0">
-          <span className="text-gray-500 text-xs font-medium">Tu</span>
+        <div className="flex-shrink-0 mt-0.5">
+          <div className="w-7 h-7 rounded-lg bg-gray-200 flex items-center justify-center">
+            <svg
+              className="w-3.5 h-3.5 text-gray-500"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+            >
+              <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+            </svg>
+          </div>
         </div>
       )}
     </div>
   );
 }
 
-// ─── Progress bar ─────────────────────────────────────────────────────────────
+// ─── Step dots progress ───────────────────────────────────────────────────────
 
-function ProgressBar({ current, total }: { current: number; total: number }) {
-  const pct = total === 0 ? 0 : Math.round((current / total) * 100);
+function StepDots({ current, total }: { current: number; total: number }) {
   return (
-    <div className="flex items-center gap-3">
-      <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+    <div className="flex items-center gap-1.5">
+      {Array.from({ length: total }).map((_, i) => (
         <div
-          className="h-full bg-brand-600 rounded-full transition-all duration-700 ease-out"
-          style={{ width: `${pct}%` }}
+          key={i}
+          className={`
+            h-1 rounded-full transition-all duration-500 ease-out
+            ${
+              i < current
+                ? "bg-[var(--c-brand)] w-5"
+                : i === current
+                  ? "bg-gray-400 w-3"
+                  : "bg-gray-200 w-1.5"
+            }
+          `}
         />
-      </div>
-      <span className="text-xs text-gray-400 tabular-nums w-8 text-right">
-        {pct}%
-      </span>
+      ))}
     </div>
   );
 }
 
-// ─── Main component ───────────────────────────────────────────────────────────
+// ─── Main ─────────────────────────────────────────────────────────────────────
 
 export default function ChatEntrevista({
   vaga,
@@ -108,12 +151,11 @@ export default function ChatEntrevista({
     ),
   ]);
   const [input, setInput] = useState("");
-  const [indiceAtual, setIndiceAtual] = useState(-1); // -1 = intro
+  const [indiceAtual, setIndiceAtual] = useState(-1);
   const [concluida, setConcluida] = useState(false);
   const [enviando, setEnviando] = useState(false);
   const [mostrarTyping, setMostrarTyping] = useState(false);
   const [sessaoId] = useState<string>(uuid);
-
   const [respostas, setRespostas] = useState<
     {
       pergunta_id: number;
@@ -127,12 +169,10 @@ export default function ChatEntrevista({
   const bottomRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  // Auto-scroll
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [mensagens, mostrarTyping]);
 
-  // Auto-focus no textarea após cada pergunta do bot
   useEffect(() => {
     if (indiceAtual >= 0 && !concluida && !mostrarTyping) {
       textareaRef.current?.focus();
@@ -143,9 +183,8 @@ export default function ChatEntrevista({
     setMensagens((prev) => [...prev, msg]);
   }, []);
 
-  // Simula o bot a "escrever" antes de mostrar a mensagem
   const botResponde = useCallback(
-    (texto: string, delay = 700) => {
+    (texto: string, delay = 800) => {
       setMostrarTyping(true);
       return new Promise<void>((resolve) => {
         setTimeout(() => {
@@ -178,7 +217,6 @@ export default function ChatEntrevista({
       duracao_segundos: 0,
       timestamp: new Date().toISOString(),
     };
-
     const respostasAtualizadas = [...respostas, respostaAtual];
     setRespostas(respostasAtualizadas);
 
@@ -218,7 +256,6 @@ export default function ChatEntrevista({
     }
   }
 
-  // Ajusta altura do textarea ao conteúdo
   function handleInputChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
     setInput(e.target.value);
     e.target.style.height = "auto";
@@ -226,58 +263,96 @@ export default function ChatEntrevista({
   }
 
   const perguntasRespondidas = indiceAtual < 0 ? 0 : indiceAtual;
-  const statusLabel =
-    indiceAtual < 0
-      ? "Pronto para começar"
-      : concluida
-        ? "Concluída ✓"
-        : `Pergunta ${indiceAtual + 1} de ${vaga.perguntas.length}`;
 
   return (
-    <div className="flex flex-col h-screen bg-[var(--c-bg)]">
-      {/* ── Header ── */}
-      <header className="bg-white border-b border-[var(--c-border)] px-4 py-3 flex-shrink-0">
-        <div className="max-w-2xl mx-auto">
-          <div className="flex items-center gap-3 mb-2.5">
+    <div className="flex flex-col h-screen bg-gray-50/60">
+      {/* ── Header ─────────────────────────────────────────────────────────── */}
+      <header className="flex-shrink-0 bg-white border-b border-gray-100 px-5 py-3.5">
+        <div className="max-w-2xl mx-auto flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3 min-w-0">
             <Link
               href="/"
-              className="text-gray-400 hover:text-gray-700 text-sm transition-colors flex items-center gap-1"
+              className="flex-shrink-0 w-7 h-7 rounded-lg border border-gray-200 flex items-center justify-center text-gray-400 hover:text-gray-700 hover:border-gray-300 transition-all"
             >
-              ← Vagas
+              <svg
+                className="w-3.5 h-3.5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M15 19l-7-7 7-7"
+                />
+              </svg>
             </Link>
-            <span className="text-gray-200">·</span>
+
+            <div className="w-px h-4 bg-gray-200 flex-shrink-0" />
+
             <div className="flex items-center gap-2 min-w-0">
-              <div className="w-6 h-6 rounded-lg bg-brand-600 flex items-center justify-center flex-shrink-0">
-                <span className="text-white text-[10px] font-bold font-display">
+              <div className="w-7 h-7 rounded-lg bg-[var(--c-brand)] flex items-center justify-center flex-shrink-0">
+                <span className="text-white text-[11px] font-semibold font-display">
                   D
                 </span>
               </div>
-              <p className="text-sm font-semibold text-gray-900 truncate">
+              <span className="text-sm font-medium text-gray-900 truncate">
                 {vaga.titulo}
-              </p>
+              </span>
             </div>
-            <span className="ml-auto text-xs text-gray-400 flex-shrink-0">
-              {statusLabel}
+          </div>
+
+          <div className="flex items-center gap-4 flex-shrink-0">
+            {!concluida && indiceAtual >= 0 && (
+              <StepDots
+                current={perguntasRespondidas}
+                total={vaga.perguntas.length}
+              />
+            )}
+            <span
+              className={`
+                text-xs font-medium px-2.5 py-1 rounded-md
+                ${
+                  concluida
+                    ? "bg-emerald-50 text-emerald-700"
+                    : indiceAtual < 0
+                      ? "bg-gray-100 text-gray-500"
+                      : "bg-gray-100 text-gray-600"
+                }
+              `}
+            >
+              {concluida
+                ? "Concluída"
+                : indiceAtual < 0
+                  ? "A iniciar"
+                  : `${indiceAtual + 1} / ${vaga.perguntas.length}`}
             </span>
           </div>
-          <ProgressBar
-            current={perguntasRespondidas}
-            total={vaga.perguntas.length}
-          />
         </div>
       </header>
 
-      {/* ── Mensagens ── */}
+      {/* ── Messages ───────────────────────────────────────────────────────── */}
       <div className="flex-1 overflow-y-auto">
-        <div className="max-w-2xl mx-auto px-4 py-6 space-y-4">
-          {mensagens.map((msg) => (
-            <MensagemItem key={msg.id} msg={msg} />
+        <div className="max-w-2xl mx-auto px-5 py-8 space-y-4">
+          {mensagens.map((msg, i) => (
+            <MensagemItem
+              key={msg.id}
+              msg={msg}
+              isLast={i === mensagens.length - 1}
+            />
           ))}
 
           {mostrarTyping && (
-            <div className="flex items-end gap-2 animate-fade-in">
-              <BotAvatar />
-              <div className="bubble-bot">
+            <div className="flex gap-3 items-end animate-fade-in">
+              <div className="flex-shrink-0">
+                <div className="w-7 h-7 rounded-lg bg-[var(--c-brand)] flex items-center justify-center">
+                  <span className="text-white text-[11px] font-semibold font-display">
+                    D
+                  </span>
+                </div>
+              </div>
+              <div className="bg-white border border-gray-200/80 rounded-2xl rounded-tl-md px-4 py-3 shadow-[0_1px_4px_rgba(0,0,0,0.06)]">
                 <TypingDots />
               </div>
             </div>
@@ -287,68 +362,88 @@ export default function ChatEntrevista({
         </div>
       </div>
 
-      {/* ── Input area ── */}
-      <div className="flex-shrink-0 bg-white border-t border-[var(--c-border)]">
-        <div className="max-w-2xl mx-auto px-4 py-3">
+      {/* ── Input ──────────────────────────────────────────────────────────── */}
+      <div className="flex-shrink-0 bg-white border-t border-gray-100 px-5 py-4">
+        <div className="max-w-2xl mx-auto">
           {indiceAtual === -1 && !concluida ? (
-            /* Botão inicial */
             <button
               onClick={comecar}
-              className="btn-primary w-full py-3 text-sm"
+              className="w-full h-11 bg-[var(--c-brand)] hover:bg-gray-800 active:scale-[0.99] text-white text-sm font-medium rounded-xl flex items-center justify-center gap-2 transition-all duration-150"
             >
-              Começar entrevista →
+              Começar entrevista
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M13 7l5 5m0 0l-5 5m5-5H6"
+                />
+              </svg>
             </button>
           ) : concluida ? (
-            /* Botão de fim */
-            <div className="flex gap-3">
-              <Link
-                href="/"
-                className="btn-ghost flex-1 py-3 text-sm text-center"
+            <Link
+              href="/"
+              className="w-full h-11 border border-gray-200 hover:bg-gray-50 active:scale-[0.99] text-gray-700 text-sm font-medium rounded-xl flex items-center justify-center gap-2 transition-all duration-150"
+            >
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
               >
-                ← Ver outras vagas
-              </Link>
-            </div>
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M11 17l-5-5m0 0l5-5m-5 5h12"
+                />
+              </svg>
+              Ver outras vagas
+            </Link>
           ) : (
-            /* Textarea de resposta */
-            <div className="flex gap-2 items-end">
-              <textarea
-                ref={textareaRef}
-                rows={1}
-                value={input}
-                onChange={handleInputChange}
-                onKeyDown={handleKeyDown}
-                placeholder="Escreve a tua resposta… (Enter para enviar, Shift+Enter para nova linha)"
-                disabled={enviando || mostrarTyping}
-                className="input-base flex-1 resize-none min-h-[44px] max-h-[120px] py-3 leading-snug disabled:opacity-50"
-                style={{ height: "44px" }}
-              />
-              <button
-                onClick={enviarResposta}
-                disabled={!input.trim() || enviando || mostrarTyping}
-                className="btn-primary h-11 px-4 flex-shrink-0"
-                aria-label="Enviar resposta"
-              >
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2.5}
+            <>
+              <div className="flex items-end gap-2 bg-white border border-gray-200 rounded-xl px-3 py-2 focus-within:border-gray-400 focus-within:ring-2 focus-within:ring-gray-100 transition-all duration-150">
+                <textarea
+                  ref={textareaRef}
+                  rows={1}
+                  value={input}
+                  onChange={handleInputChange}
+                  onKeyDown={handleKeyDown}
+                  placeholder="Escreve a tua resposta…"
+                  disabled={enviando || mostrarTyping}
+                  className="flex-1 resize-none bg-transparent border-none outline-none text-sm text-gray-800 placeholder:text-gray-400 min-h-[28px] max-h-[120px] py-1 leading-snug disabled:opacity-50"
+                  style={{ height: "28px" }}
+                />
+                <button
+                  onClick={enviarResposta}
+                  disabled={!input.trim() || enviando || mostrarTyping}
+                  className="flex-shrink-0 w-8 h-8 rounded-lg bg-[var(--c-brand)] hover:bg-gray-700 active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-[var(--c-brand)] disabled:active:scale-100 text-white flex items-center justify-center transition-all duration-150"
+                  aria-label="Enviar"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M4.5 10.5 12 3m0 0 7.5 7.5M12 3v18"
-                  />
-                </svg>
-              </button>
-            </div>
-          )}
-
-          {indiceAtual >= 0 && !concluida && (
-            <p className="text-center text-xs text-gray-300 mt-2">
-              Enter para enviar · Shift+Enter para nova linha
-            </p>
+                  <svg
+                    className="w-3.5 h-3.5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2.5}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M4.5 10.5L12 3m0 0l7.5 7.5M12 3v18"
+                    />
+                  </svg>
+                </button>
+              </div>
+              <p className="text-center text-[11px] text-gray-300 mt-2.5 tracking-wide">
+                Enter para enviar · Shift+Enter para nova linha
+              </p>
+            </>
           )}
         </div>
       </div>
