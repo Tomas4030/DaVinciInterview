@@ -4,6 +4,7 @@
 // DELETE /api/vagas/[vagaId] → apaga vaga (MockAPI, requer auth)
 
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { ADMIN_SESSION_COOKIE, parseAdminToken } from "@/lib/admin-auth";
 
 const MOCKAPI_ENDPOINT = process.env.MOCKAPI_ENDPOINT;
@@ -78,6 +79,10 @@ export async function PUT(req: NextRequest, { params }: Params) {
 
     const data = await response.json();
 
+    // Limpar cache da homepage e admin dashboard
+    revalidatePath("/");
+    revalidatePath("/admin");
+
     return NextResponse.json({
       success: true,
       data,
@@ -115,6 +120,10 @@ export async function DELETE(_req: NextRequest, { params }: Params) {
     if (!response.ok) {
       throw new Error(`MockAPI error: ${response.statusText}`);
     }
+
+    // Limpar cache da homepage e admin dashboard
+    revalidatePath("/");
+    revalidatePath("/admin");
 
     return new NextResponse(null, { status: 204 });
   } catch (error) {

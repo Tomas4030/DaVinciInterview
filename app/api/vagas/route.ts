@@ -3,6 +3,7 @@
 // POST /api/vagas    → cria nova vaga (requer auth admin)
 
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { ADMIN_SESSION_COOKIE, parseAdminToken } from "@/lib/admin-auth";
 
 const MOCKAPI_ENDPOINT = process.env.MOCKAPI_ENDPOINT;
@@ -89,6 +90,10 @@ export async function POST(request: NextRequest) {
     }
 
     const data = await response.json();
+
+    // Limpar cache da homepage e admin dashboard
+    revalidatePath("/");
+    revalidatePath("/admin");
 
     return NextResponse.json(
       {

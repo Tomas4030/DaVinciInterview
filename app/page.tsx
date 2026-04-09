@@ -8,6 +8,8 @@ import {
   Footer,
 } from "@/components/home";
 
+export const revalidate = 0; // Sem cache — recarrega sempre para mostrar vagas atualizadas
+
 export default async function HomePage() {
   let vagas: VagaResumo[] = [];
 

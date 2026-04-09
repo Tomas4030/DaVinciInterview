@@ -3,6 +3,7 @@
 // Esta é a versão melhorada usando o novo schema
 
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { createClient } from "@supabase/supabase-js";
 
 const supabase = createClient(
@@ -103,6 +104,9 @@ export async function POST(request: NextRequest) {
         { status: 500 },
       );
     }
+
+    // Limpar cache da página de respostas
+    revalidatePath("/admin/respostas");
 
     return NextResponse.json(
       {

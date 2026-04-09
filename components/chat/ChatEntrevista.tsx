@@ -72,7 +72,7 @@ function MensagemItem({ msg, isLast }: { msg: Mensagem; isLast: boolean }) {
     >
       {isBot && (
         <div className="flex-shrink-0 mt-0.5">
-          <div className="w-7 h-7 rounded-lg bg-[var(--c-brand)]s flex items-center justify-center">
+          <div className="w-7 h-7 rounded-lg bg-[var(--c-brand)] flex items-center justify-center">
             <span className="text-white text-[11px] font-semibold tracking-tight font-display">
               D
             </span>
@@ -223,9 +223,41 @@ export default function ChatEntrevista({
     const proximoIndice = indiceAtual + 1;
 
     if (proximoIndice < vaga.perguntas.length) {
-      await botResponde(vaga.perguntas[proximoIndice].texto);
+      // Obter próxima pergunta reformulada via OpenAI
+      try {
+        const response = await fetch("/api/entrevista/next-question", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            vagaTitulo: vaga.titulo,
+            perguntaAtual: vaga.perguntas[indiceAtual].texto,
+            respostaUser: texto,
+            proximaPerguntaBase: vaga.perguntas[proximoIndice].texto,
+          }),
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+          // Mostrar acknowledment
+          await botResponde(data.ack, 800);
+          // Mostrar próxima pergunta reformulada
+          await botResponde(data.nextQuestion, 400);
+        } else {
+          // Fallback: mostrar pergunta base original
+          await botResponde("Obrigado. Vamos continuar.", 800);
+          await botResponde(vaga.perguntas[proximoIndice].texto, 400);
+        }
+      } catch (error) {
+        console.error("Erro ao obter próxima pergunta:", error);
+        // Fallback: mostrar pergunta base original
+        await botResponde("Obrigado. Vamos continuar.", 800);
+        await botResponde(vaga.perguntas[proximoIndice].texto, 400);
+      }
+
       setIndiceAtual(proximoIndice);
     } else {
+      // Entrevista concluída
       if (candidateEmail && candidatePhone) {
         await fetch("/api/candidatos/create", {
           method: "POST",
