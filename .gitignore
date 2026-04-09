@@ -40,5 +40,5 @@ OpenClaude
 
 #filheiros criticos + md
 *.md
-*.supabase
+.supabase/*
 *.claude
