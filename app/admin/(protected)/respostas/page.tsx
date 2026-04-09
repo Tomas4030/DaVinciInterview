@@ -2,6 +2,8 @@
 import { listarSessoes, obterVaga, listarVagas } from "@/lib/api";
 import Link from "next/link";
 import type { Metadata } from "next";
+import DeleteSessionButton from "@/components/admin/DeleteSessionButton";
+import { ContactLinks } from "@/components/admin/ContactLinks";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Admin — Respostas" };
@@ -316,82 +318,68 @@ export default async function RespostasPage({ searchParams }: Props) {
             const telefone = getSessionPhone(sessao);
 
             return (
+              // Substitui a secção do <details> no map de sessões
+
               <details
                 key={sessao.sessao_id}
                 className="group/card overflow-hidden rounded-2xl border border-[var(--c-border)]/70 bg-[var(--c-surface)] shadow-sm transition hover:border-[var(--c-border)]"
                 open={i === 0}
               >
-                <summary className="list-none cursor-pointer">
-                  <div className="flex flex-col gap-4 px-5 py-4 sm:px-6">
-                    <div className="flex items-start gap-3">
-                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--c-bg)] text-sm font-semibold text-[var(--c-brand)] ring-1 ring-[var(--c-border)]/60">
-                        {i + 1}
-                      </span>
+                <summary className="list-none cursor-pointer select-none">
+                  <div className="flex items-center gap-4 px-5 py-4 sm:px-6">
+                    {/* número */}
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--c-bg)] text-sm font-semibold text-[var(--c-brand)] ring-1 ring-[var(--c-border)]/60">
+                      {i + 1}
+                    </span>
 
-                      <div className="min-w-0 flex-1">
-                        <div className="flex flex-col gap-2 lg:flex-row lg:items-start lg:justify-between">
-                          <div className="min-w-0">
-                            <p className="truncate text-base font-semibold text-[var(--c-text)]">
-                              {vagaSessao?.titulo ?? "Vaga removida"}
-                            </p>
+                    {/* info central */}
+                    <div className="min-w-0 flex-1">
+                      {/* linha 1 — título + badges de contacto */}
+                      <div className="flex flex-wrap items-center gap-2">
+                        <p className="text-sm font-semibold text-[var(--c-text)] truncate">
+                          {vagaSessao?.titulo ?? "Vaga removida"}
+                        </p>
 
-                            <div className="mt-2 flex flex-wrap gap-2">
-                              {email && (
-                                <ContactBadge
-                                  icon={<MailIcon />}
-                                  value={email}
-                                  href={`mailto:${email}`}
-                                />
-                              )}
-
-                              {telefone && (
-                                <ContactBadge
-                                  icon={<PhoneIcon />}
-                                  value={telefone}
-                                  href={`tel:${telefone}`}
-                                />
-                              )}
-
-                              {!email && !telefone && (
-                                <span className="inline-flex items-center rounded-full border border-[var(--c-border)]/70 bg-[var(--c-bg)] px-3 py-1.5 text-xs text-[var(--c-muted)]">
-                                  Sem contacto identificado
-                                </span>
-                              )}
-                            </div>
-                          </div>
-
-                          <div className="flex shrink-0 items-start gap-3">
-                            <div className="text-right">
-                              <p className="text-sm font-medium text-[var(--c-text)]">
-                                {formatDate(sessao.criada_em)}
-                              </p>
-                              <p className="mt-1 text-xs text-[var(--c-muted)]">
-                                {sessao.respostas.length}{" "}
-                                {sessao.respostas.length === 1
-                                  ? "resposta"
-                                  : "respostas"}
-                              </p>
-                            </div>
-
-                            <div className="mt-1">
-                              <ChevronIcon />
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="mt-3">
-                          <p className="text-xs text-[var(--c-muted)]">
-                            Sessão:
-                            <span className="ml-1 font-mono text-[var(--c-muted)]/80">
-                              {sessao.sessao_id}
-                            </span>
-                          </p>
-                        </div>
+                        <ContactLinks email={email} telefone={telefone} />
                       </div>
+
+                      {/* linha 2 — sessão ID + data + nº respostas */}
+                      <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-0.5">
+                        <span className="font-mono text-[10px] text-[var(--c-muted)]/60 truncate max-w-[220px]">
+                          {sessao.sessao_id}
+                        </span>
+                        <span className="text-[10px] text-[var(--c-muted)]/50">
+                          ·
+                        </span>
+                        <span className="text-[11px] text-[var(--c-muted)]">
+                          {formatDate(sessao.criada_em)}
+                        </span>
+                        <span className="text-[10px] text-[var(--c-muted)]/50">
+                          ·
+                        </span>
+                        <span className="text-[11px] text-[var(--c-muted)]">
+                          {sessao.respostas.length}{" "}
+                          {sessao.respostas.length === 1
+                            ? "resposta"
+                            : "respostas"}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* ações à direita */}
+                    <div className="flex shrink-0 items-center gap-1.5">
+                      {email && (
+                        <DeleteSessionButton
+                          email={email}
+                          vagaId={sessao.vaga_id}
+                        />
+                      )}
+                      <ChevronIcon />
                     </div>
                   </div>
                 </summary>
 
+                {/* respostas expandidas — igual ao original */}
                 <div className="border-t border-[var(--c-border)]/60 bg-[var(--c-bg)]/25">
                   {sessao.respostas
                     .sort((a, b) => a.pergunta_id - b.pergunta_id)
@@ -404,14 +392,12 @@ export default async function RespostasPage({ searchParams }: Props) {
                           <span className="rounded-full bg-[var(--c-surface)] px-2.5 py-1 text-[11px] font-semibold text-[var(--c-brand)] ring-1 ring-[var(--c-border)]/60">
                             Q{resp.pergunta_id}
                           </span>
-
                           {resp.texto_pergunta && (
                             <p className="text-sm font-medium text-[var(--c-text)]">
                               {resp.texto_pergunta}
                             </p>
                           )}
                         </div>
-
                         <div className="rounded-xl border border-[var(--c-border)]/50 bg-[var(--c-surface)] px-4 py-3">
                           <p className="whitespace-pre-wrap text-sm leading-7 text-[var(--c-text)]/88">
                             {resp.resposta || "—"}

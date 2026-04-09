@@ -1,14 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { randomUUID } from "crypto";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!,
 );
 
+// TTL para a sessão de entrevista (em minutos)
+const INTERVIEW_SESSION_TTL_MINUTES = 15;
+
 export async function POST(request: NextRequest) {
   try {
-    const { email, vaga_id, code } = await request.json();
+    const { email, vaga_id, code, telefone } = await request.json();
 
     if (!email || !vaga_id || !code) {
       return NextResponse.json(
@@ -60,9 +64,36 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Gerar sessão de entrevista com TTL
+    const sessionToken = randomUUID();
+    const expiresAt = new Date(
+      Date.now() + INTERVIEW_SESSION_TTL_MINUTES * 60 * 1000,
+    ).toISOString();
+
+    const { error: sessionError } = await supabase
+      .from("candidato_entrevista_sessions")
+      .insert({
+        session_token: sessionToken,
+        email: normalizedEmail,
+        telefone: telefone || "",
+        vaga_id,
+        expires_at: expiresAt,
+      });
+
+    if (sessionError) {
+      console.error("Erro ao criar sessão:", sessionError);
+      // Não falhar — a verificação foi bem-sucedida, apenas sem persistência de sessão
+      return NextResponse.json({
+        success: true,
+        message: "Email verificado com sucesso",
+      });
+    }
+
     return NextResponse.json({
       success: true,
       message: "Email verificado com sucesso",
+      sessionToken,
+      expiresAt,
     });
   } catch (error) {
     console.error(error);

@@ -149,6 +149,7 @@ export default function CandidateInfoForm({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: normalizedEmail,
+          telefone: normalizedPhone,
           vaga_id: vagaId,
           code: code.trim(),
         }),
@@ -162,6 +163,17 @@ export default function CandidateInfoForm({
           code: data?.error || "Código inválido ou expirado",
         }));
         return;
+      }
+
+      // Guardar sessionToken em localStorage para reutilização dentro do TTL
+      if (data.sessionToken) {
+        localStorage.setItem(
+          `interview_session_${vagaId}`,
+          JSON.stringify({
+            token: data.sessionToken,
+            expiresAt: data.expiresAt,
+          }),
+        );
       }
 
       onSuccess(normalizedEmail, normalizedPhone);
