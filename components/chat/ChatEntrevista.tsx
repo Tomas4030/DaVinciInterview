@@ -3,6 +3,12 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
 import type { Vaga } from "@/lib/api";
+import {
+  validarQualidadeResposta,
+  deveAutoPreencherResposta,
+  obterRespostaAutoPreenchida,
+  type ValidationStatus,
+} from "@/lib/response-validator";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -18,17 +24,51 @@ function uuid() {
     ? crypto.randomUUID()
     : Math.random().toString(36).slice(2);
 }
-function msgBot(texto: string): Mensagem {
-  return { id: uuid(), tipo: "bot", texto, timestamp: new Date() };
+function msgBot(texto: string | null | undefined): Mensagem {
+  return {
+    id: uuid(),
+    tipo: "bot",
+    texto: texto || "Mensagem indisponível",
+    timestamp: new Date(),
+  };
 }
-function msgUser(texto: string): Mensagem {
-  return { id: uuid(), tipo: "user", texto, timestamp: new Date() };
+function msgUser(texto: string | null | undefined): Mensagem {
+  return {
+    id: uuid(),
+    tipo: "user",
+    texto: texto || "",
+    timestamp: new Date(),
+  };
 }
 
 // ─── Markdown renderer ────────────────────────────────────────────────────────
 
-function renderMarkdown(text: string) {
-  const parts = text.split(/(\*\*[^*]+\*\*|\*[^*]+\*|\n)/g);
+function renderMarkdown(text: string | null | undefined) {
+  // Defensively handle undefined/null values
+  if (!text || typeof text !== "string") {
+    console.warn(
+      "[ChatEntrevista] renderMarkdown recebeu valor inválido:",
+      text,
+    );
+    return (
+      <span className="text-gray-500 italic">
+        Desculpa, houve um erro ao processar a mensagem.
+      </span>
+    );
+  }
+
+  // Se texto está vazio
+  const trimmed = text.trim();
+  if (trimmed.length === 0) {
+    console.warn("[ChatEntrevista] renderMarkdown recebeu texto vazio");
+    return (
+      <span className="text-gray-500 italic">
+        Desculpa, a mensagem chegou vazia.
+      </span>
+    );
+  }
+
+  const parts = trimmed.split(/(\*\*[^*]+\*\*|\*[^*]+\*|\n)/g);
   return parts.map((part, i) => {
     if (part.startsWith("**") && part.endsWith("**"))
       return (
@@ -152,11 +192,18 @@ export default function ChatEntrevista({
   ]);
   const [input, setInput] = useState("");
   const [indiceAtual, setIndiceAtual] = useState(-1);
+  const [iteracaoPerguntaAtual, setIteracaoPerguntaAtual] = useState(1);
+  const [tentativasRespostaInvalidaAtual, setTentativasRespostaInvalidaAtual] =
+    useState(0); // ← Rastreia tentativas falhadas consecutivas
   const [concluida, setConcluida] = useState(false);
   const [enviando, setEnviando] = useState(false);
   const [mostrarTyping, setMostrarTyping] = useState(false);
   const [sessaoId] = useState<string>(uuid);
-  const [respostas, setRespostas] = useState<
+
+  // ─── MUDANÇA CRÍTICA: Separar respostas finais de temporárias ───
+  // respostasFinalizadas = apenas respostas validadas (prontas para guardar)
+  // respostaTemporaria = resposta atual em processamento (pode ter múltiplos follow-ups)
+  const [respostasFinalizadas, setRespostasFinalizadas] = useState<
     {
       pergunta_id: number;
       texto_pergunta: string;
@@ -165,6 +212,13 @@ export default function ChatEntrevista({
       timestamp: string;
     }[]
   >([]);
+
+  const [respostaTemporaria, setRespostaTemporaria] = useState<{
+    pergunta_id: number;
+    texto_pergunta: string;
+    resposta_texto: string;
+    timestamp: string;
+  } | null>(null);
 
   const bottomRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -199,6 +253,8 @@ export default function ChatEntrevista({
 
   async function comecar() {
     setIndiceAtual(0);
+    setIteracaoPerguntaAtual(1);
+    setTentativasRespostaInvalidaAtual(0); // Reset contador
     await botResponde(vaga.perguntas[0].texto, 500);
   }
 
@@ -210,54 +266,177 @@ export default function ChatEntrevista({
     adicionarMensagem(msgUser(texto));
     setInput("");
 
-    const respostaAtual = {
+    // ──── NOVO: VALIDAR QUALIDADE DA RESPOSTA ────
+    const perguntaAtual = vaga.perguntas[indiceAtual].texto;
+    const validacao = validarQualidadeResposta(perguntaAtual, texto);
+
+    if (!validacao.valid) {
+      // ❌ RESPOSTA INVÁLIDA → Rejeitar e pedir clarificação
+      const novasTentativas = tentativasRespostaInvalidaAtual + 1;
+      setTentativasRespostaInvalidaAtual(novasTentativas);
+
+      // Se após 4 tentativas ainda não consegue → Auto-preencher
+      if (deveAutoPreencherResposta(novasTentativas)) {
+        console.log(
+          "[ChatEntrevista] Auto-preenchendo após 4 tentativas falhadas",
+        );
+        const respostaAutoPreenchida =
+          obterRespostaAutoPreenchida(perguntaAtual);
+        const respostaFinal = {
+          pergunta_id: vaga.perguntas[indiceAtual].id,
+          texto_pergunta: perguntaAtual,
+          resposta_texto: respostaAutoPreenchida,
+          duracao_segundos: 0,
+          timestamp: new Date().toISOString(),
+        };
+        setRespostasFinalizadas([...respostasFinalizadas, respostaFinal]);
+        setRespostaTemporaria(null);
+        setTentativasRespostaInvalidaAtual(0);
+
+        const proximoIndice = indiceAtual + 1;
+        if (proximoIndice < vaga.perguntas.length) {
+          await botResponde(
+            "Como não conseguiu responder, passamos para a próxima pergunta.",
+            800,
+          );
+          await botResponde(vaga.perguntas[proximoIndice].texto, 400);
+          setIndiceAtual(proximoIndice);
+          setIteracaoPerguntaAtual(1);
+        } else {
+          // Última pergunta
+          if (candidateEmail && candidatePhone) {
+            await fetch("/api/candidatos/create", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                email: candidateEmail,
+                telefone: candidatePhone,
+                vaga_id: vaga.id,
+                sessao_id: sessaoId,
+                respostas: respostasFinalizadas,
+              }),
+            }).catch((err) => console.error("Erro ao criar candidatura:", err));
+          }
+
+          await botResponde(
+            `Entrevista concluída! 🎉\n\nObrigado pela tua participação. As tuas respostas foram guardadas e serão analisadas pela nossa equipa em breve.\n\nBoa sorte! 🍀`,
+          );
+          setConcluida(true);
+        }
+      } else {
+        // Mostrar feedback e pedir nova resposta
+        await botResponde(
+          validacao.feedback || "Consegues responder novamente?",
+          800,
+        );
+      }
+
+      setEnviando(false);
+      return; // ← NÃO continuar com a entrevista
+    }
+
+    // ✅ RESPOSTA VÁLIDA → Reset contador e processar
+    setTentativasRespostaInvalidaAtual(0);
+
+    const respostaTemporaria_nova = {
       pergunta_id: vaga.perguntas[indiceAtual].id,
-      texto_pergunta: vaga.perguntas[indiceAtual].texto,
+      texto_pergunta: perguntaAtual,
       resposta_texto: texto,
-      duracao_segundos: 0,
       timestamp: new Date().toISOString(),
     };
-    const respostasAtualizadas = [...respostas, respostaAtual];
-    setRespostas(respostasAtualizadas);
+    setRespostaTemporaria(respostaTemporaria_nova);
 
     const proximoIndice = indiceAtual + 1;
 
     if (proximoIndice < vaga.perguntas.length) {
-      // Obter próxima pergunta reformulada via OpenAI
+      // ──── LÓGICA DE FOLLOW-UP E AVANÇO ────
       try {
         const response = await fetch("/api/entrevista/next-question", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             vagaTitulo: vaga.titulo,
-            perguntaAtual: vaga.perguntas[indiceAtual].texto,
+            perguntaAtual: perguntaAtual,
             respostaUser: texto,
             proximaPerguntaBase: vaga.perguntas[proximoIndice].texto,
+            iteracaoAtual: iteracaoPerguntaAtual,
+            validacaoStatus: validacao.status, // ← Passa info de validação
           }),
         });
 
         const data = await response.json();
 
-        if (response.ok && data.success) {
-          // Mostrar acknowledment
+        const temAck =
+          data.ack &&
+          typeof data.ack === "string" &&
+          data.ack.trim().length > 0;
+        const temPergunta =
+          data.nextQuestion &&
+          typeof data.nextQuestion === "string" &&
+          data.nextQuestion.trim().length > 0;
+
+        if (response.ok && data.success && temAck && temPergunta) {
           await botResponde(data.ack, 800);
-          // Mostrar próxima pergunta reformulada
-          await botResponde(data.nextQuestion, 400);
+
+          const deveAvancar =
+            iteracaoPerguntaAtual >= 2 || data.action === "next_question";
+
+          if (deveAvancar) {
+            // ✅ Guardar resposta final
+            const respostaFinal = {
+              ...respostaTemporaria_nova,
+              duracao_segundos: 0,
+            };
+            setRespostasFinalizadas([...respostasFinalizadas, respostaFinal]);
+            setRespostaTemporaria(null);
+
+            await botResponde(data.nextQuestion, 400);
+            setIndiceAtual(proximoIndice);
+            setIteracaoPerguntaAtual(1);
+          } else if (data.action === "follow_up") {
+            // Follow-up na mesma pergunta
+            await botResponde(data.nextQuestion, 400);
+            setIteracaoPerguntaAtual(iteracaoPerguntaAtual + 1);
+            setEnviando(false);
+            return;
+          }
         } else {
-          // Fallback: mostrar pergunta base original
+          // Fallback
+          const respostaFinal = {
+            ...respostaTemporaria_nova,
+            duracao_segundos: 0,
+          };
+          setRespostasFinalizadas([...respostasFinalizadas, respostaFinal]);
+          setRespostaTemporaria(null);
+
           await botResponde("Obrigado. Vamos continuar.", 800);
           await botResponde(vaga.perguntas[proximoIndice].texto, 400);
+          setIndiceAtual(proximoIndice);
+          setIteracaoPerguntaAtual(1);
         }
       } catch (error) {
         console.error("Erro ao obter próxima pergunta:", error);
-        // Fallback: mostrar pergunta base original
+        const respostaFinal = {
+          ...respostaTemporaria_nova,
+          duracao_segundos: 0,
+        };
+        setRespostasFinalizadas([...respostasFinalizadas, respostaFinal]);
+        setRespostaTemporaria(null);
+
         await botResponde("Obrigado. Vamos continuar.", 800);
         await botResponde(vaga.perguntas[proximoIndice].texto, 400);
+        setIndiceAtual(proximoIndice);
+        setIteracaoPerguntaAtual(1);
       }
-
-      setIndiceAtual(proximoIndice);
     } else {
-      // Entrevista concluída
+      // ✅ Última pergunta
+      const respostaFinal = {
+        ...respostaTemporaria_nova,
+        duracao_segundos: 0,
+      };
+      setRespostasFinalizadas([...respostasFinalizadas, respostaFinal]);
+      setRespostaTemporaria(null);
+
       if (candidateEmail && candidatePhone) {
         await fetch("/api/candidatos/create", {
           method: "POST",
@@ -267,7 +446,7 @@ export default function ChatEntrevista({
             telefone: candidatePhone,
             vaga_id: vaga.id,
             sessao_id: sessaoId,
-            respostas: respostasAtualizadas,
+            respostas: respostasFinalizadas,
           }),
         }).catch((err) => console.error("Erro ao criar candidatura:", err));
       }

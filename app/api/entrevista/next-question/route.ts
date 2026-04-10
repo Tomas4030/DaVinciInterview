@@ -11,13 +11,19 @@ interface RequestBody {
   perguntaAtual?: string;
   respostaUser: string;
   proximaPerguntaBase: string;
+  iteracaoAtual?: number;
 }
 
 export async function POST(request: NextRequest) {
   try {
     const body: RequestBody = await request.json();
-    const { vagaTitulo, perguntaAtual, respostaUser, proximaPerguntaBase } =
-      body;
+    const {
+      vagaTitulo,
+      perguntaAtual,
+      respostaUser,
+      proximaPerguntaBase,
+      iteracaoAtual = 1,
+    } = body;
 
     // Validar campos obrigatórios
     if (!vagaTitulo || !respostaUser || !proximaPerguntaBase) {
@@ -35,13 +41,15 @@ export async function POST(request: NextRequest) {
       perguntaAtual,
       respostaUser,
       proximaPerguntaBase,
+      iteracaoAtual,
     });
 
     return NextResponse.json(
       {
         success: true,
         ack: resultado.ack,
-        nextQuestion: resultado.nextQuestion,
+        nextQuestion: resultado.followUpOrQuestion,
+        action: resultado.action,
       },
       { status: 200 },
     );
@@ -52,7 +60,8 @@ export async function POST(request: NextRequest) {
         error: "Failed to generate next question",
         success: false,
         ack: "Obrigado. Vamos continuar.",
-        nextQuestion: "",
+        nextQuestion: "Desculpa, houve um erro. Vamos para a próxima pergunta.",
+        action: "next_question",
       },
       { status: 500 },
     );

@@ -13,3 +13,6 @@ export const createServerClient = () =>
       supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     },
   );
+
+// Alias em português
+export const criarClienteSupabase = createServerClient;
