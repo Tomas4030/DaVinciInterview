@@ -3,6 +3,7 @@ const nextConfig = {
   onDemandEntries: {
     maxInactiveAge: 15 * 60 * 1000,
     pagesBufferLength: 5,
+    output: 'export'
   },
   headers: async () => {
     return [
