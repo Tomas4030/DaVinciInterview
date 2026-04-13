@@ -261,6 +261,7 @@ export default function ChatEntrevista({
 
     const perguntaAtual = vaga.perguntas[indiceAtual].texto;
     const proximoIndice = indiceAtual + 1;
+    const isUltimaPergunta = proximoIndice >= vaga.perguntas.length;
 
     const respostaAtual = {
       pergunta_id: vaga.perguntas[indiceAtual].id,
@@ -269,16 +270,6 @@ export default function ChatEntrevista({
       duracao_segundos: 0,
       timestamp: new Date().toISOString(),
     };
-
-    // ── Última pergunta ──────────────────────────────────────────────────────
-    if (proximoIndice >= vaga.perguntas.length) {
-      const respostasFinal = [...respostasFinalizadas, respostaAtual];
-      setRespostasFinalizadas(respostasFinal);
-      await concluirEntrevista(respostasFinal);
-      setEnviando(false);
-      return;
-    }
-
     // ── Chamar a IA para decidir: follow-up ou próxima pergunta ─────────────
     try {
       const response = await fetch("/api/entrevista/next-question", {
@@ -288,7 +279,9 @@ export default function ChatEntrevista({
           vagaTitulo: vaga.titulo,
           perguntaAtual: perguntaAtual,
           respostaUser: texto,
-          proximaPerguntaBase: vaga.perguntas[proximoIndice].texto,
+          proximaPerguntaBase: isUltimaPergunta
+            ? ""
+            : vaga.perguntas[proximoIndice].texto,
           iteracaoAtual: iteracaoPerguntaAtual,
         }),
       });
@@ -296,24 +289,31 @@ export default function ChatEntrevista({
       const data = await response.json();
       const action: string = data.action || "next_question";
 
-      // A IA devolve agora uma única mensagem pronta a mostrar
       const message =
         data.message && typeof data.message === "string" && data.message.trim()
           ? data.message
           : null;
 
-      if (action === "follow_up" && iteracaoPerguntaAtual < 2 && message) {
-        // IA quer aprofundar — mostrar a mensagem única de follow-up
+      if (action === "follow_up" && message) {
         await botResponde(message, 800);
         setIteracaoPerguntaAtual(iteracaoPerguntaAtual + 1);
-      } else {
-        // Avançar para próxima pergunta
+      } else if (action === "end_interview") {
         const respostasFinal = [...respostasFinalizadas, respostaAtual];
         setRespostasFinalizadas(respostasFinal);
 
         if (message) {
           await botResponde(message, 800);
         }
+
+        await concluirEntrevista(respostasFinal);
+      } else {
+        const respostasFinal = [...respostasFinalizadas, respostaAtual];
+        setRespostasFinalizadas(respostasFinal);
+
+        if (message) {
+          await botResponde(message, 800);
+        }
+
         setIndiceAtual(proximoIndice);
         setIteracaoPerguntaAtual(1);
       }
