@@ -4,6 +4,8 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
+const MAX_ITERACOES_PERGUNTA = 4;
+
 export interface InterviewerResponse {
   // Mensagem única a mostrar ao utilizador (ack + pergunta/follow-up já combinados)
   message: string;
@@ -43,7 +45,7 @@ Leres a pergunta da entrevista e a resposta do candidato, e gerares UMA ÚNICA M
 Classifica a resposta numa destas categorias:
 
 **"answered"** → A resposta tem relação com a pergunta. Inclui:
-- Respostas completas, respostas curtas mas pertinentes, admissões de falta de experiência ("não sei", "nunca usei"), respostas com erros ortográficos ou linguagem informal ✓
+- Respostas completas, respostas curtas mas pertinentes, admissões de falta de experiência ("não sei", "nunca usei"), respostas com erros ortográficos ou linguagem informal
 
 **"partial"** → Tenta responder mas é demasiado vaga para perceber algo.
 - Ex: "sim" para "descreve um projeto complexo" — percebe-se a intenção mas não há conteúdo
@@ -57,10 +59,10 @@ Classifica a resposta numa destas categorias:
 | Classificação | iteracaoAtual | Ação |
 |---|---|---|
 | answered | qualquer | next_question |
-| partial | 1 | follow_up |
-| partial | >= 2 | next_question |
-| off_topic | 1 | follow_up |
-| off_topic | >= 2 | next_question |
+| partial | < ${MAX_ITERACOES_PERGUNTA} | follow_up |
+| partial | >= ${MAX_ITERACOES_PERGUNTA} | next_question |
+| off_topic | < ${MAX_ITERACOES_PERGUNTA} | follow_up |
+| off_topic | >= ${MAX_ITERACOES_PERGUNTA} | next_question |
 
 Se não há próxima pergunta disponível → end_interview sempre.
 
@@ -74,29 +76,34 @@ A mensagem deve:
 - Fluir naturalmente para a próxima pergunta, reformulada com as tuas próprias palavras (nunca copiar literalmente o "próxima pergunta base")
 - Tom: profissional, direto, como um entrevistador real — não robótico
 
-Exemplos de transições neutras (varia sempre, nunca uses a mesma):
-- "Entendido." / "Certo, anotado."
-- "Obrigado por partilhares isso." / "Faz sentido."
-- "Boa, seguimos." / "Ok, vamos continuar."
-- "Percebido." / "Claro."
-- Uma frase mais contextual que espelha algo da resposta: "Interessante que mencionas X — seguindo nessa linha..." (mas SEM avaliar positiva ou negativamente)
-
 ### Quando action = "follow_up" (partial ou off_topic)
 A mensagem deve ser UMA ÚNICA frase natural que:
-- Para "partial": pede mais detalhe de forma direta ("Podes elaborar um pouco mais sobre isso?", "Que tipo de projeto foi, concretamente?")
-- Para "off_topic": redireciona sem ser abrupto ("Não percebi bem a ligação à pergunta — consegues falar-me sobre [tema da pergunta original]?")
+- Para "partial": pede mais detalhe de forma direta sobre a MESMA pergunta
+- Para "off_topic": redireciona sem ser abrupto para a MESMA pergunta original
+- NUNCA faz a próxima pergunta
+- NUNCA menciona o tema da próxima pergunta
 - NUNCA começa com ack separado — é tudo uma frase só
 
 ### Quando action = "end_interview"
-Uma mensagem de encerramento natural: "Isso conclui as perguntas desta entrevista. Obrigado pela tua participação." (variações são bem-vindas)
+Uma mensagem de encerramento natural: "Isso conclui as perguntas desta entrevista. Obrigado pela tua participação."
 
 ## REGRAS IMPORTANTES
 
-- Nunca elogiar: ❌ "Boa resposta!", "Excelente!", "Muito bem!", "Que interessante!"
-- Nunca criticar: ❌ "Infelizmente...", "Isso não é suficiente", "A tua resposta foi fraca"
+- Nunca elogiar: "Boa resposta!", "Excelente!", "Muito bem!", "Que interessante!"
+- Nunca criticar: "Infelizmente...", "Isso não é suficiente", "A tua resposta foi fraca"
 - Reformular sempre a pergunta base com as tuas palavras — nunca copiar literalmente
 - A pergunta reformulada deve manter o mesmo tema/objetivo mas soar natural e conversacional
-- Varia o estilo entre perguntas (às vezes mais direta, às vezes com contexto, às vezes mais curta)
+- Varia o estilo entre perguntas
+- Faz perguntas dinamicamente com base nas respostas
+- Não sigas um script fixo
+- Não repitas perguntas quando action = "next_question"
+- Mantém um tom profissional e neutro
+- Evita elogios como "ótimo" ou "boa resposta"
+- Evita frases repetitivas como "Tudo bem, seguimos em frente"
+- Quando a resposta não for relevante:
+  - pede clarificação de forma natural
+  - varia a forma como o fazes
+  - não uses sempre a mesma frase
 
 ## FORMATO DE RESPOSTA
 
@@ -137,10 +144,10 @@ export async function obterProximaPergunta(
     };
   }
 
-  // Limite de iterações → avançar sempre
-  if (iteracaoAtual >= 2) {
+  // Só forçar avanço após várias tentativas
+  if (iteracaoAtual >= MAX_ITERACOES_PERGUNTA) {
     return {
-      message: `Tudo bem, seguimos em frente. ${proximaPerguntaBase}`,
+      message: `Vamos avançar para a próxima questão. ${proximaPerguntaBase}`,
       action: "next_question",
       reasoning: "Limite de iterações atingido",
     };
@@ -149,7 +156,7 @@ export async function obterProximaPergunta(
   // Ruído puro local
   if (ehRuidoPuro(respostaUser)) {
     return {
-      message: `Não percebi bem a tua resposta — consegues responder à pergunta sobre ${perguntaAtual?.toLowerCase().slice(0, 50)}?`,
+      message: `Não percebi bem a tua resposta — consegues responder novamente à pergunta: "${perguntaAtual}"?`,
       action: "follow_up",
       reasoning: "Ruído puro detetado localmente",
       isOffTopic: true,
@@ -163,7 +170,7 @@ export async function obterProximaPergunta(
   try {
     const response = await openai.chat.completions.create({
       model: "gpt-4o-mini",
-      temperature: 0.4, // Ligeiramente mais alto para variedade natural
+      temperature: 0.4,
       max_tokens: 400,
       response_format: { type: "json_object" },
       messages: [
@@ -190,10 +197,13 @@ Iteração atual nesta pergunta: ${iteracaoAtual}`,
       return fallbackResponse(proximaPerguntaBase);
     }
 
-    // Segurança: limite de iterações
-    if (parsed.action === "follow_up" && iteracaoAtual >= 2) {
+    // Segurança: só força avanço quando atingir o máximo real
+    if (
+      parsed.action === "follow_up" &&
+      iteracaoAtual >= MAX_ITERACOES_PERGUNTA
+    ) {
       return {
-        message: `Tudo bem, seguimos. ${proximaPerguntaBase}`,
+        message: `Vamos avançar para a próxima questão. ${proximaPerguntaBase}`,
         action: "next_question",
         reasoning: "Forçado a avançar — limite de iterações",
       };
