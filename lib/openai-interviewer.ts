@@ -211,12 +211,16 @@ Iteração atual nesta pergunta: ${iteracaoAtual}`,
       | "next_question"
       | "end_interview";
 
+    let finalMessage = parsed.message?.trim() || proximaPerguntaBase;
+
     if (isUltimaPergunta && finalAction === "next_question") {
       finalAction = "end_interview";
+      finalMessage =
+        "Isso conclui as perguntas desta entrevista. Obrigado pela tua participação.";
     }
 
     return {
-      message: parsed.message?.trim() || proximaPerguntaBase,
+      message: finalMessage,
       action: finalAction,
       reasoning: parsed.reasoning?.trim() || "",
       isOffTopic: parsed.classification === "off_topic",
