@@ -1,37 +1,22 @@
 // app/api/entrevista/next-question/route.ts
-// POST /api/entrevista/next-question
-// Recebe a resposta do candidato e a próxima pergunta base
-// Retorna a resposta reformulada pelo entrevistador (OpenAI)
-
 import { NextRequest, NextResponse } from "next/server";
 import { obterProximaPergunta } from "@/lib/openai-interviewer";
 
-interface RequestBody {
-  vagaTitulo: string;
-  perguntaAtual?: string;
-  respostaUser: string;
-  proximaPerguntaBase: string;
-  iteracaoAtual?: number;
-}
-
-export async function POST(request: NextRequest) {
+export async function POST(req: NextRequest) {
   try {
-    const body: RequestBody = await request.json();
+    const body = await req.json();
+
     const {
       vagaTitulo,
       perguntaAtual,
       respostaUser,
       proximaPerguntaBase,
-      iteracaoAtual = 1,
+      iteracaoAtual,
     } = body;
 
-    // Validar campos obrigatórios
-    if (!vagaTitulo || !respostaUser || !proximaPerguntaBase) {
+    if (!vagaTitulo || !respostaUser) {
       return NextResponse.json(
-        {
-          error:
-            "Missing required fields: vagaTitulo, respostaUser, proximaPerguntaBase",
-        },
+        { error: "Parâmetros em falta" },
         { status: 400 },
       );
     }
@@ -44,25 +29,15 @@ export async function POST(request: NextRequest) {
       iteracaoAtual,
     });
 
-    return NextResponse.json(
-      {
-        success: true,
-        ack: resultado.ack,
-        nextQuestion: resultado.followUpOrQuestion,
-        action: resultado.action,
-      },
-      { status: 200 },
-    );
+    return NextResponse.json({
+      message: resultado.message,
+      action: resultado.action,
+      isOffTopic: resultado.isOffTopic ?? false,
+    });
   } catch (error) {
-    console.error("[POST /api/entrevista/next-question]", error);
+    console.error("Erro na API next-question:", error);
     return NextResponse.json(
-      {
-        error: "Failed to generate next question",
-        success: false,
-        ack: "Obrigado. Vamos continuar.",
-        nextQuestion: "Desculpa, houve um erro. Vamos para a próxima pergunta.",
-        action: "next_question",
-      },
+      { error: "Erro interno do servidor" },
       { status: 500 },
     );
   }

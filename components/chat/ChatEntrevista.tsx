@@ -224,6 +224,7 @@ export default function ChatEntrevista({
   async function comecar() {
     setIndiceAtual(0);
     setIteracaoPerguntaAtual(1);
+    // Na primeira pergunta, a IA ainda não reformulou nada — mostra diretamente
     await botResponde(vaga.perguntas[0].texto, 500);
   }
 
@@ -252,9 +253,6 @@ export default function ChatEntrevista({
   async function enviarResposta() {
     const texto = input.trim();
     if (!texto || enviando || concluida) return;
-
-    // Ignorar respostas demasiado curtas (menos de 2 caracteres)
-    // Este é o ÚNICO filtro do lado do cliente — tudo o resto é decisão da IA
     if (texto.length < 2) return;
 
     setEnviando(true);
@@ -296,54 +294,38 @@ export default function ChatEntrevista({
       });
 
       const data = await response.json();
-
-      const nextQuestion =
-        data.nextQuestion &&
-        typeof data.nextQuestion === "string" &&
-        data.nextQuestion.trim()
-          ? data.nextQuestion
-          : null;
-
       const action: string = data.action || "next_question";
 
-      // Suprimir ack quando é follow_up por off_topic — evita "Certo." antes de "Não percebi..."
-      const isOffTopicFollowUp =
-        data.isOffTopic === true && action === "follow_up";
-      const ack =
-        !isOffTopicFollowUp &&
-        data.ack &&
-        typeof data.ack === "string" &&
-        data.ack.trim()
-          ? data.ack
+      // A IA devolve agora uma única mensagem pronta a mostrar
+      const message =
+        data.message && typeof data.message === "string" && data.message.trim()
+          ? data.message
           : null;
 
-      if (ack) {
-        await botResponde(ack, 800);
-      }
-
-      if (action === "follow_up" && iteracaoPerguntaAtual < 2 && nextQuestion) {
-        // IA quer aprofundar — fazer follow-up na mesma pergunta
-        await botResponde(nextQuestion, 400);
+      if (action === "follow_up" && iteracaoPerguntaAtual < 2 && message) {
+        // IA quer aprofundar — mostrar a mensagem única de follow-up
+        await botResponde(message, 800);
         setIteracaoPerguntaAtual(iteracaoPerguntaAtual + 1);
       } else {
-        // Avançar para próxima pergunta (next_question, end_interview, ou limite atingido)
+        // Avançar para próxima pergunta
         const respostasFinal = [...respostasFinalizadas, respostaAtual];
         setRespostasFinalizadas(respostasFinal);
 
-        const proximaPergunta =
-          nextQuestion || vaga.perguntas[proximoIndice].texto;
-        await botResponde(proximaPergunta, 400);
+        if (message) {
+          await botResponde(message, 800);
+        }
         setIndiceAtual(proximoIndice);
         setIteracaoPerguntaAtual(1);
       }
     } catch (error) {
-      // Fallback se a API falhar: avançar sempre
       console.error("Erro ao obter próxima pergunta:", error);
       const respostasFinal = [...respostasFinalizadas, respostaAtual];
       setRespostasFinalizadas(respostasFinal);
 
-      await botResponde("Obrigado. Vamos continuar.", 800);
-      await botResponde(vaga.perguntas[proximoIndice].texto, 400);
+      await botResponde(
+        `Obrigado. ${vaga.perguntas[proximoIndice].texto}`,
+        800,
+      );
       setIndiceAtual(proximoIndice);
       setIteracaoPerguntaAtual(1);
     }

@@ -5,9 +5,9 @@ const openai = new OpenAI({
 });
 
 export interface InterviewerResponse {
-  ack: string;
+  // Mensagem única a mostrar ao utilizador (ack + pergunta/follow-up já combinados)
+  message: string;
   action: "follow_up" | "next_question" | "end_interview";
-  followUpOrQuestion: string;
   reasoning: string;
 }
 
@@ -20,20 +20,12 @@ interface NextQuestionParams {
   iteracaoAtual?: number;
 }
 
-// ─── Guarda local simples (só para os casos mais óbvios) ──────────────────────
-// NÃO tenta validar conteúdo técnico — apenas descarta ruído puro
+// ─── Guarda local simples ─────────────────────────────────────────────────────
 function ehRuidoPuro(resposta: string): boolean {
   const r = resposta.trim().toLowerCase();
-
-  // Menos de 2 caracteres
   if (r.length < 2) return true;
-
-  // Sequências sem sentido: "asdfgh", "aaaaa", "zzz"
   if (/^([a-z])\1{3,}$/.test(r)) return true;
-
-  // Só números aleatórios longos sem contexto
   if (/^\d{6,}$/.test(r)) return true;
-
   return false;
 }
 
@@ -44,30 +36,20 @@ Comunicas SEMPRE em Português Europeu (pt-PT).
 
 ## A TUA ÚNICA TAREFA
 
-Ler a pergunta da entrevista e a resposta do candidato, e decidir o que fazer a seguir.
+Leres a pergunta da entrevista e a resposta do candidato, e gerares UMA ÚNICA MENSAGEM de resposta — que inclui, de forma natural, o reconhecimento da resposta e a próxima pergunta (ou follow-up).
 
 ## PASSO 1 — CLASSIFICAR A RESPOSTA
 
 Classifica a resposta numa destas categorias:
 
-**"answered"** → A resposta tem relação com a pergunta. Exemplos:
-- "ja trabalho com bases de dados há 3 anos" para pergunta sobre SQL ✓
-- "uso com bastante frequência" para pergunta sobre tecnologia ✓
-- "não sei muito bem" para pergunta técnica ✓
-- "nunca usei" para pergunta sobre experiência ✓
-- Erros de ortografia, gírias e linguagem informal NÃO invalidam a resposta ✓
+**"answered"** → A resposta tem relação com a pergunta. Inclui:
+- Respostas completas, respostas curtas mas pertinentes, admissões de falta de experiência ("não sei", "nunca usei"), respostas com erros ortográficos ou linguagem informal ✓
 
-**"partial"** → Tenta responder mas é demasiado vaga para perceber algo. Exemplos:
-- "sim" para "descreve um projeto complexo"
-- "é bom" para "como garantis qualidade de código"
+**"partial"** → Tenta responder mas é demasiado vaga para perceber algo.
+- Ex: "sim" para "descreve um projeto complexo" — percebe-se a intenção mas não há conteúdo
 
-**"negative"** → Resposta negativa honesta sobre falta de experiência. Exemplos:
-- "não sei", "nunca usei", "não tenho experiência com isso", "não"
-
-**"off_topic"** → A resposta NÃO tem NENHUMA relação com a pergunta. Exemplos:
-- Pergunta sobre testes automatizados → "hj ta som sabias?" (gíria sem sentido)
-- Pergunta sobre bases de dados → "agua azul dias perto e sol vermelho" (poesia/texto aleatório)
-- Pergunta sobre React → "o meu cão chama-se Bobi" (tópico completamente diferente)
+**"off_topic"** → Não tem NENHUMA relação com a pergunta.
+- Ex: pergunta sobre React → "o meu cão chama-se Bobi"
 - REGRA: só é off_topic se for IMPOSSÍVEL relacionar com a pergunta
 
 ## PASSO 2 — DECIDIR A AÇÃO
@@ -75,42 +57,61 @@ Classifica a resposta numa destas categorias:
 | Classificação | iteracaoAtual | Ação |
 |---|---|---|
 | answered | qualquer | next_question |
-| negative | qualquer | next_question |
-| partial | 1 | follow_up (pedir mais detalhe) |
+| partial | 1 | follow_up |
 | partial | >= 2 | next_question |
-| off_topic | 1 | follow_up (pedir resposta à pergunta) |
+| off_topic | 1 | follow_up |
 | off_topic | >= 2 | next_question |
 
 Se não há próxima pergunta disponível → end_interview sempre.
 
-## PASSO 3 — FORMATO DE RESPOSTA
+## PASSO 3 — GERAR A MENSAGEM ÚNICA
+
+Gera UMA ÚNICA mensagem que flui naturalmente. Não separes o reconhecimento da pergunta.
+
+### Quando action = "next_question"
+A mensagem deve:
+- Começar com 1-2 frases de transição NEUTRAS e VARIADAS que reconhecem o que foi dito, sem elogiar nem criticar
+- Fluir naturalmente para a próxima pergunta, reformulada com as tuas próprias palavras (nunca copiar literalmente o "próxima pergunta base")
+- Tom: profissional, direto, como um entrevistador real — não robótico
+
+Exemplos de transições neutras (varia sempre, nunca uses a mesma):
+- "Entendido." / "Certo, anotado."
+- "Obrigado por partilhares isso." / "Faz sentido."
+- "Boa, seguimos." / "Ok, vamos continuar."
+- "Percebido." / "Claro."
+- Uma frase mais contextual que espelha algo da resposta: "Interessante que mencionas X — seguindo nessa linha..." (mas SEM avaliar positiva ou negativamente)
+
+### Quando action = "follow_up" (partial ou off_topic)
+A mensagem deve ser UMA ÚNICA frase natural que:
+- Para "partial": pede mais detalhe de forma direta ("Podes elaborar um pouco mais sobre isso?", "Que tipo de projeto foi, concretamente?")
+- Para "off_topic": redireciona sem ser abrupto ("Não percebi bem a ligação à pergunta — consegues falar-me sobre [tema da pergunta original]?")
+- NUNCA começa com ack separado — é tudo uma frase só
+
+### Quando action = "end_interview"
+Uma mensagem de encerramento natural: "Isso conclui as perguntas desta entrevista. Obrigado pela tua participação." (variações são bem-vindas)
+
+## REGRAS IMPORTANTES
+
+- Nunca elogiar: ❌ "Boa resposta!", "Excelente!", "Muito bem!", "Que interessante!"
+- Nunca criticar: ❌ "Infelizmente...", "Isso não é suficiente", "A tua resposta foi fraca"
+- Reformular sempre a pergunta base com as tuas palavras — nunca copiar literalmente
+- A pergunta reformulada deve manter o mesmo tema/objetivo mas soar natural e conversacional
+- Varia o estilo entre perguntas (às vezes mais direta, às vezes com contexto, às vezes mais curta)
+
+## FORMATO DE RESPOSTA
 
 Responde SEMPRE em JSON válido com exatamente estes campos:
 {
-  "classification": "answered" | "partial" | "negative" | "off_topic",
-  "ack": "frase neutra, máx 6 palavras",
+  "classification": "answered" | "partial" | "off_topic",
   "action": "follow_up" | "next_question" | "end_interview",
-  "followUpOrQuestion": "texto da pergunta seguinte ou follow-up",
+  "message": "mensagem única, completa, pronta a mostrar ao utilizador",
   "reasoning": "motivo em 1 frase curta"
-}
-
-## REGRAS PARA O CAMPO "ack"
-
-- Nunca elogiar: ❌ "Boa resposta!", "Excelente!", "Muito bem!"
-- Nunca criticar: ❌ "Infelizmente...", "Isso não é correto"
-- Sempre neutro: ✓ "Obrigado.", "Certo.", "Entendo.", "Tudo bem.", "Vamos continuar."
-- Máximo 6 palavras
-
-## REGRA PARA follow_up quando off_topic
-
-Quando a resposta é off_topic E iteracaoAtual === 1, o followUpOrQuestion deve ser:
-"Não percebi a ligação com a pergunta. Consegues responder sobre [tema da pergunta]?"`;
+}`;
 
 function fallbackResponse(nextQuestion: string): InterviewerResponse {
   return {
-    ack: "Vamos continuar.",
+    message: `Vamos continuar. ${nextQuestion}`,
     action: nextQuestion ? "next_question" : "end_interview",
-    followUpOrQuestion: nextQuestion,
     reasoning: "Fallback por erro na API",
   };
 }
@@ -129,29 +130,27 @@ export async function obterProximaPergunta(
   // Sem próxima pergunta → terminar
   if (!proximaPerguntaBase?.trim()) {
     return {
-      ack: "Obrigado pela tua participação.",
+      message:
+        "Isso conclui as perguntas desta entrevista. Obrigado pela tua participação.",
       action: "end_interview",
-      followUpOrQuestion: "",
       reasoning: "Todas as perguntas respondidas",
     };
   }
 
-  // Limite de iterações → avançar sempre, independentemente da resposta
+  // Limite de iterações → avançar sempre
   if (iteracaoAtual >= 2) {
     return {
-      ack: "Tudo bem.",
+      message: `Tudo bem, seguimos em frente. ${proximaPerguntaBase}`,
       action: "next_question",
-      followUpOrQuestion: proximaPerguntaBase,
       reasoning: "Limite de iterações atingido",
     };
   }
 
-  // Ruído puro local (casos óbvios sem gastar API)
+  // Ruído puro local
   if (ehRuidoPuro(respostaUser)) {
     return {
-      ack: "Não percebi.",
+      message: `Não percebi bem a tua resposta — consegues responder à pergunta sobre ${perguntaAtual?.toLowerCase().slice(0, 50)}?`,
       action: "follow_up",
-      followUpOrQuestion: `Consegues responder à pergunta sobre ${perguntaAtual?.toLowerCase().slice(0, 40)}...?`,
       reasoning: "Ruído puro detetado localmente",
       isOffTopic: true,
     };
@@ -164,8 +163,8 @@ export async function obterProximaPergunta(
   try {
     const response = await openai.chat.completions.create({
       model: "gpt-4o-mini",
-      temperature: 0,
-      max_tokens: 300,
+      temperature: 0.4, // Ligeiramente mais alto para variedade natural
+      max_tokens: 400,
       response_format: { type: "json_object" },
       messages: [
         { role: "system", content: SYSTEM_PROMPT },
@@ -174,7 +173,7 @@ export async function obterProximaPergunta(
           content: `Vaga: ${vagaTitulo}
 Pergunta da entrevista: "${perguntaAtual}"
 Resposta do candidato: "${respostaUser}"
-Próxima pergunta disponível: "${proximaPerguntaBase}"
+Próxima pergunta base (reformula com as tuas palavras): "${proximaPerguntaBase}"
 Iteração atual nesta pergunta: ${iteracaoAtual}`,
         },
       ],
@@ -184,28 +183,25 @@ Iteração atual nesta pergunta: ${iteracaoAtual}`,
     const parsed = JSON.parse(content);
 
     if (
-      !parsed.ack ||
+      !parsed.message ||
       !parsed.action ||
       !["follow_up", "next_question", "end_interview"].includes(parsed.action)
     ) {
       return fallbackResponse(proximaPerguntaBase);
     }
 
-    // Segurança: se a IA quer fazer follow_up mas já estamos na iteração 2 → forçar avanço
+    // Segurança: limite de iterações
     if (parsed.action === "follow_up" && iteracaoAtual >= 2) {
       return {
-        ack: "Tudo bem.",
+        message: `Tudo bem, seguimos. ${proximaPerguntaBase}`,
         action: "next_question",
-        followUpOrQuestion: proximaPerguntaBase,
         reasoning: "Forçado a avançar — limite de iterações",
       };
     }
 
     return {
-      ack: parsed.ack?.trim() || "Obrigado.",
+      message: parsed.message?.trim() || proximaPerguntaBase,
       action: parsed.action,
-      followUpOrQuestion:
-        parsed.followUpOrQuestion?.trim() || proximaPerguntaBase,
       reasoning: parsed.reasoning?.trim() || "",
       isOffTopic: parsed.classification === "off_topic",
     };
