@@ -1,14 +1,21 @@
+/**
+ * ⚠️ DEPRECATED: Este ficheiro foi removido após migração Supabase → MySQL
+ *
+ * Utilizar em vez disso:
+ * - lib/db.ts (MySQL connection pool)
+ * - lib/queries/* (Type-safe MySQL queries)
+ *
+ * A aplicação foi completamente migrada para MySQL.
+ * Não utilize este ficheiro.
+ */
+
 import "server-only";
-import { createClient } from "@supabase/supabase-js";
 
+/**
+ * @deprecated Use lib/db.ts em seu lugar
+ */
 export function createAdminClient() {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-
-  return createClient(supabaseUrl, serviceRoleKey, {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false,
-    },
-  });
+  throw new Error(
+    "❌ createAdminClient foi deprecado. Use lib/db.ts e lib/queries/* em seu lugar.",
+  );
 }

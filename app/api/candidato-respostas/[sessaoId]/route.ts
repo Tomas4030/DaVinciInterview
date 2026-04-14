@@ -3,12 +3,11 @@
 // POST /api/candidato-respostas/[sessaoId] → adicionar resposta
 
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-);
+import {
+  buscarCandidaturaPorSessao,
+  atualizarRespostas as atualizarRespostasBD,
+} from "@/lib/queries/candidato-respostas";
+import { jsonParse } from "@/lib/db";
 
 interface Resposta {
   pergunta_id: number;
@@ -35,13 +34,9 @@ export async function GET(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { data, error } = await supabase
-      .from("candidato_respostas")
-      .select("*")
-      .eq("sessao_id", sessaoId)
-      .single();
+    const candidatura = await buscarCandidaturaPorSessao(sessaoId);
 
-    if (error || !data) {
+    if (!candidatura) {
       return NextResponse.json(
         { error: "Candidatura não encontrada" },
         { status: 404 },
@@ -50,7 +45,7 @@ export async function GET(
 
     return NextResponse.json({
       success: true,
-      data,
+      data: candidatura,
     });
   } catch (err) {
     console.error("[GET /api/candidato-respostas/[sessaoId]]", err);
@@ -78,13 +73,9 @@ export async function POST(
     }
 
     // Obter candidatura
-    const { data: candidatura, error: fetchError } = await supabase
-      .from("candidato_respostas")
-      .select("respostas")
-      .eq("sessao_id", sessaoId)
-      .single();
+    const candidatura = await buscarCandidaturaPorSessao(sessaoId);
 
-    if (fetchError || !candidatura) {
+    if (!candidatura) {
       return NextResponse.json(
         { error: "Candidatura não encontrada" },
         { status: 404 },
@@ -107,27 +98,13 @@ export async function POST(
     }
 
     // Atualizar
-    const { data, error } = await supabase
-      .from("candidato_respostas")
-      .update({
-        respostas: respostasUpdated,
-        atualizada_em: new Date().toISOString(),
-      })
-      .eq("sessao_id", sessaoId)
-      .select()
-      .single();
+    await atualizarRespostasBD(sessaoId, respostasUpdated);
 
-    if (error) {
-      console.error("[Supabase error]", error);
-      return NextResponse.json(
-        { error: "Failed to update resposta" },
-        { status: 500 },
-      );
-    }
+    const candidaturaUpdated = await buscarCandidaturaPorSessao(sessaoId);
 
     return NextResponse.json({
       success: true,
-      data,
+      data: candidaturaUpdated,
       message: "Resposta guardada com sucesso!",
     });
   } catch (err) {

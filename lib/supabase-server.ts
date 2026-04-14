@@ -1,18 +1,26 @@
+/**
+ * ⚠️ DEPRECATED: Este ficheiro foi removido após migração Supabase → MySQL
+ *
+ * Utilizar em vez disso:
+ * - lib/db.ts (MySQL connection pool)
+ * - lib/queries/* (Type-safe MySQL queries)
+ *
+ * A aplicação foi completamente migrada para MySQL.
+ * Não utilize este ficheiro.
+ */
+
 import "server-only";
 
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
-import { cookies } from "next/headers";
-import type { Database } from "./database.types";
-
-/** Usar em Server Components / Route Handlers / layouts server-side */
-export const createServerClient = () =>
-  createServerComponentClient<Database>(
-    { cookies },
-    {
-      supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    },
+/**
+ * @deprecated Use lib/db.ts em seu lugar
+ */
+export const createServerClient = () => {
+  throw new Error(
+    "❌ createServerClient foi deprecado. Use lib/db.ts e lib/queries/* em seu lugar.",
   );
+};
 
-// Alias em português
+/**
+ * @deprecated Use lib/db.ts em seu lugar
+ */
 export const criarClienteSupabase = createServerClient;

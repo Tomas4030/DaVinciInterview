@@ -3,12 +3,7 @@
 // Valida se uma sessão de entrevista ainda é válida
 
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-);
+import { validarSessao } from "@/lib/queries/candidatos";
 
 export async function POST(request: NextRequest) {
   try {
@@ -21,44 +16,31 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Buscar a sessão no banco
-    const { data, error } = await supabase
-      .from("candidato_entrevista_sessions")
-      .select("email, telefone, vaga_id, expires_at")
-      .eq("session_token", sessionToken)
-      .eq("vaga_id", vagaId)
-      .maybeSingle();
+    // Validar sessão
+    const sessao = await validarSessao(sessionToken);
 
-    if (error) {
-      console.error("Erro ao verificar sessão:", error);
+    if (!sessao) {
       return NextResponse.json(
-        { error: "Erro ao verificar sessão" },
-        { status: 500 },
-      );
-    }
-
-    if (!data) {
-      return NextResponse.json(
-        { error: "Sessão não encontrada" },
+        { error: "Sessão não encontrada ou expirada" },
         { status: 404 },
       );
     }
 
-    // Verificar se a sessão expirou
-    const now = new Date();
-    const expiresAt = new Date(data.expires_at);
-
-    if (expiresAt.getTime() <= now.getTime()) {
-      return NextResponse.json({ error: "Sessão expirada" }, { status: 401 });
+    // Verificar se vaga_id coincide
+    if (sessao.vaga_id !== vagaId) {
+      return NextResponse.json(
+        { error: "Sessão inválida para esta vaga" },
+        { status: 401 },
+      );
     }
 
     // Sessão válida — retornar dados do candidato
     return NextResponse.json({
       success: true,
-      email: data.email,
-      telefone: data.telefone,
-      vagaId: data.vaga_id,
-      expiresAt: data.expires_at,
+      email: sessao.email,
+      telefone: sessao.telefone,
+      vagaId: sessao.vaga_id,
+      expiresAt: sessao.expires_at,
     });
   } catch (error) {
     console.error("[POST /api/candidatos/verify-session]", error);

@@ -1,6 +1,6 @@
 // app/api/candidatos/check/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { buscarCandidaturaPorEmail } from "@/lib/queries/candidato-respostas";
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,44 +14,24 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-    if (!supabaseUrl || !supabaseAnonKey) {
-      return NextResponse.json(
-        { error: "Supabase não configurado no servidor" },
-        { status: 500 },
-      );
-    }
-
-    const supabase = createClient(supabaseUrl, supabaseAnonKey);
     const normalizedEmail = String(email).trim().toLowerCase();
     const normalizedPhone = String(telefone).trim();
 
     // Verificar se já existe candidatura com estes dados
-    const { data: existing, error } = await supabase
-      .from("candidato_respostas")
-      .select("id, status, criada_em")
-      .eq("email", normalizedEmail)
-      .eq("telefone", normalizedPhone)
-      .eq("vaga_id", vaga_id)
-      .order("criada_em", { ascending: false })
-      .limit(1)
-      .maybeSingle();
+    const candidatura = await buscarCandidaturaPorEmail(
+      normalizedEmail,
+      vaga_id,
+    );
 
-    if (error) {
-      console.error("Erro ao verificar candidatura:", error);
-      return NextResponse.json(
-        { error: "Erro ao verificar candidatura" },
-        { status: 500 },
-      );
-    }
-
-    if (existing) {
+    if (candidatura) {
       return NextResponse.json({
         exists: true,
         message: "Estamos a analisar a sua candidatura.",
-        candidacy: existing,
+        candidacy: {
+          id: candidatura.id,
+          status: candidatura.status,
+          criada_em: candidatura.criada_em,
+        },
       });
     }
 

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { verificarCodigoVerificacao } from "@/lib/queries/verification-codes";
 
 export async function POST(request: NextRequest) {
   try {
@@ -12,31 +12,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-    if (!supabaseUrl || !supabaseAnonKey) {
-      return NextResponse.json(
-        { error: "Supabase não configurado no servidor" },
-        { status: 500 },
-      );
-    }
-
-    const supabase = createClient(supabaseUrl, supabaseAnonKey);
-
     const normalizedEmail = String(email).trim().toLowerCase();
     const normalizedCode = String(code).trim();
 
-    const { data, error } = await supabase.auth.verifyOtp({
-      email: normalizedEmail,
-      token: normalizedCode,
-      type: "email",
-    });
+    const isValid = await verificarCodigoVerificacao(
+      normalizedEmail,
+      normalizedCode,
+    );
 
-    if (error) {
-      console.error("Erro ao verificar código:", error);
+    if (!isValid) {
       return NextResponse.json(
-        { error: error.message || "Código inválido ou expirado" },
+        { error: "Código inválido ou expirado" },
         { status: 400 },
       );
     }
@@ -44,8 +30,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       message: "Email verificado com sucesso.",
-      session: data.session,
-      user: data.user,
     });
   } catch (error) {
     console.error("Erro ao verificar código:", error);

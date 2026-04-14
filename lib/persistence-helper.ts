@@ -2,15 +2,11 @@
  * Helper para persistência segura de respostas
  * Garante que apenas respostas finais (no estado "completed") são guardadas
  * Implementa idempotência para evitar duplicatas
+ * Migrado de Supabase para MySQL
  */
 
-import { createClient } from "@supabase/supabase-js";
 import { FollowUpRecord } from "./database.types";
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-);
+import { salvarRespostaV2, buscarRespostasV2 } from "./queries/analises";
 
 export interface RespostaPersistencia {
   sessao_id: string;
@@ -86,82 +82,29 @@ export async function guardarRespostaPersistencia(
   }
 
   try {
-    // Verificar se já existe resposta para essa pergunta nesta sessão
-    const { data: existente } = await supabase
-      .from("candidato_respostas_v2")
-      .select("id")
-      .eq("sessao_id", resposta.sessao_id)
-      .eq("pergunta_id", resposta.pergunta_id)
-      .single();
+    // Usar a query function do MySQL
+    await salvarRespostaV2(
+      resposta.sessao_id,
+      resposta.vaga_id,
+      resposta.pergunta_id,
+      resposta.resposta_final,
+      "aceitavel", // qualidade padrão
+      {
+        tamanho_resposta: resposta.resposta_final.length,
+        tempo_resposta_segundos: 0, // não temos esse dado aqui
+      },
+    );
 
-    if (existente) {
-      // Atualizar resposta existente (idempotência)
-      const { data, error } = await supabase
-        .from("candidato_respostas_v2")
-        .update({
-          resposta_final: resposta.resposta_final,
-          iteration_count: resposta.iteration_count,
-          follow_ups: resposta.follow_ups,
-          estado: "saved",
-          atualizada_em: new Date().toISOString(),
-          guardada_em: new Date().toISOString(),
-        })
-        .eq("sessao_id", resposta.sessao_id)
-        .eq("pergunta_id", resposta.pergunta_id)
-        .select()
-        .single();
-
-      if (error) {
-        return {
-          sucesso: false,
-          erro: error.message,
-          mensagem: "Erro ao atualizar resposta",
-        };
-      }
-
-      return {
-        sucesso: true,
-        mensagem: "Resposta atualizada com sucesso",
-        dados: data,
-      };
-    } else {
-      // Inserir nova resposta
-      const { data, error } = await supabase
-        .from("candidato_respostas_v2")
-        .insert({
-          sessao_id: resposta.sessao_id,
-          vaga_id: resposta.vaga_id,
-          pergunta_id: resposta.pergunta_id,
-          resposta_final: resposta.resposta_final,
-          iteration_count: resposta.iteration_count,
-          follow_ups: resposta.follow_ups,
-          estado: "saved",
-          criada_em: new Date().toISOString(),
-          atualizada_em: new Date().toISOString(),
-          guardada_em: new Date().toISOString(),
-        })
-        .select()
-        .single();
-
-      if (error) {
-        return {
-          sucesso: false,
-          erro: error.message,
-          mensagem: "Erro ao criar resposta",
-        };
-      }
-
-      return {
-        sucesso: true,
-        mensagem: "Resposta criada com sucesso",
-        dados: data,
-      };
-    }
-  } catch (err) {
-    const mensagem = err instanceof Error ? err.message : "Erro desconhecido";
+    return {
+      sucesso: true,
+      mensagem: "Resposta guardada com sucesso",
+      dados: resposta,
+    };
+  } catch (error) {
+    console.error("[guardarRespostaPersistencia]", error);
     return {
       sucesso: false,
-      erro: mensagem,
+      erro: error instanceof Error ? error.message : "Erro desconhecido",
       mensagem: "Erro ao guardar resposta",
     };
   }
@@ -177,29 +120,16 @@ export async function obterRespostasGuardadas(sessaoId: string): Promise<{
   erro?: string;
 }> {
   try {
-    const { data, error } = await supabase
-      .from("candidato_respostas_v2")
-      .select("*")
-      .eq("sessao_id", sessaoId)
-      .eq("estado", "saved")
-      .order("pergunta_id", { ascending: true });
-
-    if (error) {
-      return {
-        sucesso: false,
-        erro: error.message,
-      };
-    }
-
+    const respostas = await buscarRespostasV2(sessaoId);
     return {
       sucesso: true,
-      dados: data || [],
+      dados: respostas,
     };
-  } catch (err) {
-    const mensagem = err instanceof Error ? err.message : "Erro desconhecido";
+  } catch (error) {
+    console.error("[obterRespostasGuardadas]", error);
     return {
       sucesso: false,
-      erro: mensagem,
+      erro: error instanceof Error ? error.message : "Erro desconhecido",
     };
   }
 }
@@ -216,13 +146,8 @@ export async function verificarSessaoCompleta(
   perguntasFaltantes: number[];
 }> {
   try {
-    const { data } = await supabase
-      .from("candidato_respostas_v2")
-      .select("pergunta_id")
-      .eq("sessao_id", sessaoId)
-      .eq("estado", "saved");
-
-    const perguntasGuardadas = new Set(data?.map((r) => r.pergunta_id) || []);
+    const respostas = await buscarRespostasV2(sessaoId);
+    const perguntasGuardadas = new Set(respostas.map((r) => r.pergunta_id));
     const perguntasFaltantes = [];
 
     for (let i = 1; i <= totalPerguntas; i++) {

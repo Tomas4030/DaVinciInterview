@@ -7,14 +7,13 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
 import { gerarHTMLCandidato } from "@/lib/pdf-export";
 import { AnalisisResultado } from "@/lib/analysis-engine";
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-);
+import {
+  buscarAnalisePorSessao,
+  listarAnalisesVaga,
+} from "@/lib/queries/analises";
+import { jsonParse } from "@/lib/db";
 
 export interface ExportarPDFRequest {
   tipo: "candidato" | "comparacao";
@@ -48,13 +47,9 @@ export async function POST(request: NextRequest) {
       }
 
       // Obter análise guardada
-      const { data: analise, error: fetchError } = await supabase
-        .from("analises_entrevista")
-        .select("analisis_json")
-        .eq("sessao_id", sessao_id)
-        .single();
+      const analise = await buscarAnalisePorSessao(sessao_id);
 
-      if (fetchError || !analise) {
+      if (!analise) {
         return NextResponse.json(
           {
             sucesso: false,
@@ -85,10 +80,7 @@ export async function POST(request: NextRequest) {
       );
     } else if (tipo === "comparacao") {
       // Para comparação, retornar comparação formatada
-      const { data: analises } = await supabase
-        .from("analises_entrevista")
-        .select("*")
-        .eq("vaga_id", vaga_id);
+      const analises = await listarAnalisesVaga(vaga_id);
 
       if (!analises || analises.length === 0) {
         return NextResponse.json(
@@ -147,7 +139,7 @@ function gerarHTMLComparacao(
   const linhasTabela = analises
     .map((a, idx) => {
       const corRecomendacao =
-        a.recomendacao_geral === "excelente" ||
+        a?.recomendacao_geral === "excelente" ||
         a.recomendacao_geral === "aceitar"
           ? "#10b981"
           : a.recomendacao_geral === "talvez"

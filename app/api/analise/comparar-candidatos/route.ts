@@ -7,13 +7,9 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
 import { compararCandidatos } from "@/lib/analysis-engine";
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-);
+import { listarAnalisesVaga } from "@/lib/queries/analises";
+import { jsonParse } from "@/lib/db";
 
 export interface CompararCandidatosRequest {
   vaga_id: string;
@@ -32,21 +28,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Obter todas as análises para esta vaga
-    const { data: analises, error: fetchError } = await supabase
-      .from("analises_entrevista")
-      .select("*")
-      .eq("vaga_id", vaga_id)
-      .not("email_candidato", "is", null);
-
-    if (fetchError) {
-      return NextResponse.json(
-        {
-          sucesso: false,
-          erro: `Erro ao obter análises: ${fetchError.message}`,
-        },
-        { status: 500 },
-      );
-    }
+    const analises = await listarAnalisesVaga(vaga_id);
 
     if (!analises || analises.length === 0) {
       return NextResponse.json(

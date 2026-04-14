@@ -1,15 +1,12 @@
 // app/api/respostas/route.ts
-// DEPRECATED: Use /api/candidato-respostas instead
-// Este endpoint mantém-se por retrocompatibilidade, mas redireciona para o novo schema
+// POST /api/respostas → adicionar resposta a candidatura
+// Endpoint para adicionar respostas individuais
 
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
-
-const supabase = () =>
-  createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-  ) as any;
+import {
+  buscarCandidaturaPorSessao,
+  atualizarRespostas,
+} from "@/lib/queries/candidato-respostas";
 
 export async function POST(req: NextRequest) {
   try {
@@ -34,13 +31,9 @@ export async function POST(req: NextRequest) {
     }
 
     // Obter candidatura existente pela sessao_id
-    const { data: candidatura, error: fetchError } = await supabase()
-      .from("candidato_respostas")
-      .select("respostas")
-      .eq("sessao_id", sessao_id)
-      .single();
+    const candidatura = await buscarCandidaturaPorSessao(sessao_id);
 
-    if (fetchError || !candidatura) {
+    if (!candidatura) {
       return NextResponse.json(
         { error: "Candidatura não encontrada" },
         { status: 404 },
@@ -66,23 +59,16 @@ export async function POST(req: NextRequest) {
       respostasUpdated.push(novaResposta);
     }
 
-    // Guardar no Supabase
-    const { data, error } = await supabase()
-      .from("candidato_respostas")
-      .update({ respostas: respostasUpdated })
-      .eq("sessao_id", sessao_id)
-      .select()
-      .single();
+    // Guardar no MySQL
+    await atualizarRespostas(sessao_id, respostasUpdated);
 
-    if (error) {
-      console.error("[Supabase error]", error);
-      return NextResponse.json(
-        { error: "Falha ao guardar resposta" },
-        { status: 500 },
-      );
-    }
+    // Retornar candidatura atualizada
+    const candidaturaAtualizada = await buscarCandidaturaPorSessao(sessao_id);
 
-    return NextResponse.json({ success: true, data }, { status: 201 });
+    return NextResponse.json(
+      { success: true, data: candidaturaAtualizada },
+      { status: 201 },
+    );
   } catch (err) {
     console.error("[POST /api/respostas]", err);
     return NextResponse.json(

@@ -1,11 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
-import { randomUUID } from "crypto";
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-);
+import { verificarCodigoVerificacao } from "@/lib/queries/verification-codes";
+import { criarSessao } from "@/lib/queries/candidatos";
 
 // TTL para a sessão de entrevista (em minutos)
 const INTERVIEW_SESSION_TTL_MINUTES = 15;
@@ -24,76 +19,30 @@ export async function POST(request: NextRequest) {
     const normalizedEmail = String(email).trim().toLowerCase();
     const normalizedCode = String(code).trim();
 
-    const { data, error } = await supabase
-      .from("candidato_email_codes")
-      .select("*")
-      .eq("email", normalizedEmail)
-      .eq("vaga_id", vaga_id)
-      .eq("code", normalizedCode)
-      .eq("used", false)
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .maybeSingle();
+    // Verificar código
+    const isValid = await verificarCodigoVerificacao(
+      normalizedEmail,
+      normalizedCode,
+    );
 
-    if (error) {
-      console.error(error);
+    if (!isValid) {
       return NextResponse.json(
-        { error: "Erro ao verificar código" },
-        { status: 500 },
-      );
-    }
-
-    if (!data) {
-      return NextResponse.json({ error: "Código inválido" }, { status: 400 });
-    }
-
-    if (new Date(data.expires_at).getTime() < Date.now()) {
-      return NextResponse.json({ error: "Código expirado" }, { status: 400 });
-    }
-
-    const { error: updateError } = await supabase
-      .from("candidato_email_codes")
-      .update({ used: true })
-      .eq("id", data.id);
-
-    if (updateError) {
-      console.error(updateError);
-      return NextResponse.json(
-        { error: "Erro ao finalizar verificação" },
-        { status: 500 },
+        { error: "Código inválido ou expirado" },
+        { status: 400 },
       );
     }
 
     // Gerar sessão de entrevista com TTL
-    const sessionToken = randomUUID();
-    const expiresAt = new Date(
-      Date.now() + INTERVIEW_SESSION_TTL_MINUTES * 60 * 1000,
-    ).toISOString();
-
-    const { error: sessionError } = await supabase
-      .from("candidato_entrevista_sessions")
-      .insert({
-        session_token: sessionToken,
-        email: normalizedEmail,
-        telefone: telefone || "",
-        vaga_id,
-        expires_at: expiresAt,
-      });
-
-    if (sessionError) {
-      console.error("Erro ao criar sessão:", sessionError);
-      // Não falhar — a verificação foi bem-sucedida, apenas sem persistência de sessão
-      return NextResponse.json({
-        success: true,
-        message: "Email verificado com sucesso",
-      });
-    }
+    const sessionToken = await criarSessao(
+      normalizedEmail,
+      telefone || "",
+      vaga_id,
+    );
 
     return NextResponse.json({
       success: true,
       message: "Email verificado com sucesso",
       sessionToken,
-      expiresAt,
     });
   } catch (error) {
     console.error(error);

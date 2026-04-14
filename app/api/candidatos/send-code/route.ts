@@ -1,14 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-);
-
-function generateCode() {
-  return Math.floor(100000 + Math.random() * 900000).toString();
-}
+import { criarCodigoVerificacao } from "@/lib/queries/verification-codes";
+import { verificarDuplicata } from "@/lib/queries/candidatos";
 
 export async function POST(request: NextRequest) {
   try {
@@ -24,49 +16,24 @@ export async function POST(request: NextRequest) {
     const normalizedEmail = String(email).trim().toLowerCase();
     const normalizedPhone = String(telefone).trim();
 
-    const { data: existing, error: checkError } = await supabase
-      .from("candidato_respostas")
-      .select("id")
-      .eq("email", normalizedEmail)
-      .eq("telefone", normalizedPhone)
-      .eq("vaga_id", vaga_id)
-      .limit(1);
+    // Verificar se já existe candidatura
+    const temDuplicata = await verificarDuplicata(
+      normalizedEmail,
+      normalizedPhone,
+      vaga_id,
+    );
 
-    if (checkError) {
-      return NextResponse.json(
-        { error: "Erro ao verificar candidatura" },
-        { status: 500 },
-      );
-    }
-
-    if (existing && existing.length > 0) {
+    if (temDuplicata) {
       return NextResponse.json(
         { error: "Já existe uma candidatura para esta vaga com estes dados" },
         { status: 409 },
       );
     }
 
-    const code = generateCode();
-    const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString();
+    // Criar código verification
+    const codigo = await criarCodigoVerificacao(normalizedEmail);
 
-    const { error: insertError } = await supabase
-      .from("candidato_email_codes")
-      .insert({
-        email: normalizedEmail,
-        vaga_id,
-        code,
-        expires_at: expiresAt,
-        used: false,
-      });
-
-    if (insertError) {
-      console.error(insertError);
-      return NextResponse.json(
-        { error: "Erro ao guardar código" },
-        { status: 500 },
-      );
-    }
-
+    // Enviar via Brevo
     const brevoResponse = await fetch("https://api.brevo.com/v3/smtp/email", {
       method: "POST",
       headers: {
@@ -84,8 +51,8 @@ export async function POST(request: NextRequest) {
           <div style="font-family:Arial,sans-serif">
             <h2>Verificação de email</h2>
             <p>O teu código é:</p>
-            <p style="font-size:32px;font-weight:bold;letter-spacing:4px">${code}</p>
-            <p>Este código expira em 10 minutos.</p>
+            <p style="font-size:32px;font-weight:bold;letter-spacing:4px">${codigo}</p>
+            <p>Este código expira em 15 minutos.</p>
           </div>
         `,
       }),

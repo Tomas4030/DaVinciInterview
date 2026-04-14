@@ -6,19 +6,14 @@
 
 import { redirect } from "next/navigation";
 import LeaderboardSection from "@/components/admin/LeaderboardSection";
-import { criarClienteSupabase } from "@/lib/supabase-server";
+import { obterVaga } from "@/lib/api";
 
 async function obterVagaTitulo(vagaId: string): Promise<string> {
   try {
-    const supabase = await criarClienteSupabase();
-    const { data } = await supabase
-      .from("vagas")
-      .select("titulo")
-      .eq("id", vagaId)
-      .single();
-
-    return (data as any)?.titulo || vagaId;
-  } catch {
+    const vaga = await obterVaga(vagaId);
+    return vaga.titulo || vagaId;
+  } catch (error) {
+    console.error("[obterVagaTitulo]", error);
     return vagaId;
   }
 }

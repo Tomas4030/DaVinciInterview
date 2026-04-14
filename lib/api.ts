@@ -1,9 +1,6 @@
 // lib/api.ts
-// Toda a lógica de acesso a dados via Supabase.
-// Substitui o backend FastAPI — a app Next.js comunica diretamente com o Supabase.
-
-import { createServerClient } from "./supabase-server";
-import { createAdminClient } from "./supabase-admin";
+// Toda a lógica de acesso a dados via MySQL.
+// Comunica via queries layer (lib/queries/)
 import type { Pergunta } from "./database.types";
 
 // ─── Tipos públicos ────────────────────────────────────────────────────────────
@@ -205,58 +202,58 @@ export async function obterVaga(vagaId: string): Promise<Vaga> {
 
 /** Conta o total de respostas guardadas (para o dashboard admin) */
 export async function contarRespostas(): Promise<number> {
-  const supabase = createAdminClient() as any;
-
-  const { count, error } = await supabase
-    .from("candidato_respostas")
-    .select("*", { count: "exact", head: true });
-
-  if (error) {
+  try {
+    const { query: dbQuery } = await import("./db");
+    const [rows] = await dbQuery(
+      `SELECT COUNT(*) as total FROM candidato_respostas`,
+    );
+    return rows[0]?.total || 0;
+  } catch (error) {
     console.error("Erro ao contar candidaturas:", error);
     return 0;
   }
-
-  return count ?? 0;
 }
 
 /** Lista sessões únicas com as suas respostas (para admin) */
 export async function listarSessoes(
   vagaId?: string,
 ): Promise<SessaoComRespostas[]> {
-  const supabase = createAdminClient() as any;
+  try {
+    const { listarCandidaturasVaga } =
+      await import("./queries/candidato-respostas");
+    const { query } = await import("./db");
 
-  let query = supabase
-    .from("candidato_respostas")
-    .select("*")
-    .order("criada_em", { ascending: false });
+    let candidaturas;
+    if (vagaId) {
+      candidaturas = await listarCandidaturasVaga(vagaId);
+    } else {
+      // Listar todas as candidaturas
+      const [rows] = await query(
+        `SELECT * FROM candidato_respostas ORDER BY criada_em DESC`,
+      );
+      candidaturas = rows;
+    }
 
-  if (vagaId) {
-    query = query.eq("vaga_id", vagaId);
+    return candidaturas.map((item: any) => ({
+      id: item.id,
+      sessao_id: item.sessao_id,
+      vaga_id: item.vaga_id,
+      email: item.email,
+      telefone: item.telefone,
+      status: item.status,
+      criada_em: item.criada_em,
+      respostas: Array.isArray(item.respostas)
+        ? item.respostas.map((r: any, index: number) => ({
+            id: `${item.id}-${r.pergunta_id ?? index}`,
+            pergunta_id: r.pergunta_id ?? index + 1,
+            texto_pergunta: r.texto_pergunta ?? "",
+            resposta: r.resposta_texto ?? "",
+            criada_em: r.timestamp ?? item.criada_em,
+          }))
+        : [],
+    }));
+  } catch (error) {
+    console.error("Erro ao listar sessões:", error);
+    throw new Error("Erro ao listar sessões");
   }
-
-  const { data, error } = await query;
-
-  if (error) {
-    console.error("Erro Supabase ao listar sessões:", error);
-    throw new Error(error.message);
-  }
-
-  return (data ?? []).map((item: any) => ({
-    id: item.id,
-    sessao_id: item.sessao_id,
-    vaga_id: item.vaga_id,
-    email: item.email,
-    telefone: item.telefone,
-    status: item.status,
-    criada_em: item.criada_em,
-    respostas: Array.isArray(item.respostas)
-      ? item.respostas.map((r: any, index: number) => ({
-          id: `${item.id}-${r.pergunta_id ?? index}`,
-          pergunta_id: r.pergunta_id ?? index + 1,
-          texto_pergunta: r.texto_pergunta ?? "",
-          resposta: r.resposta_texto ?? "",
-          criada_em: r.timestamp ?? item.criada_em,
-        }))
-      : [],
-  }));
 }

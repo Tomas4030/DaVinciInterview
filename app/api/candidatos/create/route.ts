@@ -2,12 +2,8 @@
 // POST /api/candidatos/create → cria uma candidatura completa
 
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-);
+import { criarCandidatura } from "@/lib/queries/candidato-respostas";
+import { verificarDuplicata, criarSessao } from "@/lib/queries/candidatos";
 
 export async function POST(request: NextRequest) {
   try {
@@ -30,26 +26,9 @@ export async function POST(request: NextRequest) {
     }
 
     // Verificar duplicatas (últimos 90 dias)
-    const { data: existing, error: checkError } = await supabase
-      .from("candidato_respostas")
-      .select("id")
-      .eq("email", email)
-      .eq("telefone", telefone)
-      .eq("vaga_id", vaga_id)
-      .gte(
-        "criada_em",
-        new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString(),
-      );
+    const temDuplicata = await verificarDuplicata(email, telefone, vaga_id);
 
-    if (checkError) {
-      console.error("[Check duplicata error]", checkError);
-      return NextResponse.json(
-        { error: "Erro ao verificar candidatura" },
-        { status: 500 },
-      );
-    }
-
-    if (existing && existing.length > 0) {
+    if (temDuplicata) {
       return NextResponse.json(
         {
           error: "Você já se candidatou a esta vaga nos últimos 90 dias",
@@ -60,41 +39,18 @@ export async function POST(request: NextRequest) {
     }
 
     // Criar candidatura
-    const { data, error } = await supabase
-      .from("candidato_respostas")
-      .insert({
-        email,
-        telefone,
-        vaga_id,
-        sessao_id,
-        respostas,
-        status: respostas.length > 0 ? "concluida" : "em_progresso",
-        email_verificado: true, // Supondo que o email já foi verificado via Supabase Auth
-      })
-      .select()
-      .single();
-
-    if (error) {
-      console.error("[Supabase error]", error);
-
-      // Se erro for de unicidade de sessao_id, a candidatura já existe
-      if (error.code === "23505") {
-        return NextResponse.json(
-          { error: "Sessão já existe" },
-          { status: 409 },
-        );
-      }
-
-      return NextResponse.json(
-        { error: "Erro ao criar candidatura" },
-        { status: 500 },
-      );
-    }
+    const candidatura = await criarCandidatura(
+      email,
+      telefone,
+      vaga_id,
+      sessao_id,
+      respostas,
+    );
 
     return NextResponse.json(
       {
         success: true,
-        data,
+        data: candidatura,
         message: "Candidatura criada com sucesso!",
       },
       { status: 201 },

@@ -3,20 +3,19 @@
  * Endpoints v2 para gerência de respostas com state machine
  *
  * POST /api/candidato-respostas-v2 - Criar sessão de respostas
- * GET /api/candidato-respostas-v2/[sessaoId] - Obter respostas
+ * GET /api/candidato-respostas-v2?sessionId=... - Obter respostas
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
-import { FollowUpRecord } from "@/lib/database.types";
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-);
+import {
+  criarSessaoEntrevista,
+  atualizarCandidatoSessao,
+  buscarSessao,
+} from "@/lib/queries/sessoes";
+import { buscarRespostasV2 } from "@/lib/queries/analises";
 
 export interface CriarSessaoRespostasRequest {
-  sessao_id: string;
+  sessao_id?: string;
   vaga_id: string;
   email_candidato?: string;
   telefone_candidato?: string;
@@ -25,44 +24,24 @@ export interface CriarSessaoRespostasRequest {
 export async function POST(request: NextRequest) {
   try {
     const body: CriarSessaoRespostasRequest = await request.json();
-    const { sessao_id, vaga_id, email_candidato, telefone_candidato } = body;
+    const { vaga_id, email_candidato, telefone_candidato } = body;
 
-    if (!sessao_id || !vaga_id) {
+    if (!vaga_id) {
       return NextResponse.json(
-        { error: "sessao_id e vaga_id são obrigatórios" },
+        { error: "vaga_id é obrigatório" },
         { status: 400 },
       );
     }
 
-    // Verificar se sessão já existe
-    const { data: existente } = await supabase
-      .from("sessoes_entrevista")
-      .select("id")
-      .eq("id", sessao_id)
-      .single();
-
-    if (existente) {
-      return NextResponse.json({ error: "Sessão já existe" }, { status: 409 });
-    }
-
     // Criar nova sessão
-    const { data, error } = await supabase
-      .from("sessoes_entrevista")
-      .insert({
-        id: sessao_id,
-        vaga_id,
+    const sessao_id = await criarSessaoEntrevista(vaga_id);
+
+    // Atualizar com dados do candidato se fornecidos
+    if (email_candidato && telefone_candidato) {
+      await atualizarCandidatoSessao(
+        sessao_id,
         email_candidato,
         telefone_candidato,
-        criada_em: new Date().toISOString(),
-        estado: "em_progresso",
-      })
-      .select()
-      .single();
-
-    if (error) {
-      return NextResponse.json(
-        { error: `Erro ao criar sessão: ${error.message}` },
-        { status: 500 },
       );
     }
 
@@ -70,7 +49,7 @@ export async function POST(request: NextRequest) {
       {
         sucesso: true,
         mensagem: "Sessão criada com sucesso",
-        sessao_id: data.id,
+        sessao_id: sessao_id,
       },
       { status: 201 },
     );
@@ -83,9 +62,9 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   try {
-    const sessaoId = request.nextUrl.searchParams.get("sessionId");
+    const sessionId = request.nextUrl.searchParams.get("sessionId");
 
-    if (!sessaoId) {
+    if (!sessionId) {
       return NextResponse.json(
         { error: "sessionId é obrigatório" },
         { status: 400 },
@@ -93,21 +72,15 @@ export async function GET(request: NextRequest) {
     }
 
     // Obter todas as respostas desta sessão que foram guardadas
-    const { data, error } = await supabase
-      .from("candidato_respostas_v2")
-      .select("*")
-      .eq("sessao_id", sessaoId)
-      .eq("estado", "saved")
-      .order("pergunta_id", { ascending: true });
+    const respostas = await buscarRespostasV2(sessionId);
 
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
-    }
+    // Filtrar apenas estado "saved"
+    const respostasSaved = respostas.filter((r) => r.estado === "saved");
 
     return NextResponse.json({
       sucesso: true,
-      total: data?.length || 0,
-      respostas: data || [],
+      total: respostasSaved.length,
+      respostas: respostasSaved,
     });
   } catch (err) {
     const mensagem = err instanceof Error ? err.message : "Erro desconhecido";

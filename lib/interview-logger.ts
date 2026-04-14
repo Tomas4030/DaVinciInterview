@@ -1,14 +1,10 @@
 /**
  * Interview Logger
  * Registra eventos, erros e performance da entrevista para debug e análise
+ * Migrado de Supabase para MySQL
  */
 
-import { createClient } from "@supabase/supabase-js";
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-);
+import { criarLog } from "./queries/interview-logs";
 
 export type LogSeveridade = "debug" | "info" | "warning" | "error" | "critical";
 
@@ -215,24 +211,18 @@ class InterviewLogger {
 
     try {
       const logsParaGuardar = this.buffer.splice(0, this.buffer.length);
+      const { criarLog } = await import("./queries/interview-logs");
 
-      // Tentar guardar na BD (pode falhar se tabela não existe)
-      const { error } = await supabase.from("interview_logs").insert(
-        logsParaGuardar.map((log) => ({
-          sessao_id: log.sessao_id,
-          tipo: log.tipo,
-          severity: log.severity,
-          mensagem: log.mensagem,
-          dados_json: log.dados_extras || {},
-          duracao_ms: log.duracao_ms,
-          timestamp: log.timestamp,
-        })),
-      );
-
-      if (error && error.code !== "PGRST116") {
-        // Ignorar "não encontrado"
-        console.warn("Erro ao guardar logs:", error.message);
-        // Não lançar erro - deixar continuar
+      // Guardar cada log via query function
+      for (const log of logsParaGuardar) {
+        await criarLog(
+          log.tipo,
+          log.severity,
+          log.mensagem,
+          log.sessao_id,
+          log.dados_extras,
+          log.duracao_ms,
+        );
       }
 
       return true;
@@ -272,18 +262,21 @@ class InterviewLogger {
     tempo_total_ia: number;
   } | null> {
     try {
-      const { data } = await supabase
-        .from("interview_logs")
-        .select("severity, duracao_ms")
-        .eq("sessao_id", this.sessaoId);
-
-      if (!data) return null;
+      // Retornar resumo baseado no buffer (não há logs salvos ainda)
+      const errors = this.buffer.filter((l) => l.severity === "error").length;
+      const warnings = this.buffer.filter(
+        (l) => l.severity === "warning",
+      ).length;
+      const tempo_total_ia = this.buffer.reduce(
+        (acc, l) => acc + (l.duracao_ms || 0),
+        0,
+      );
 
       return {
-        total_logs: data.length,
-        errors: data.filter((l) => l.severity === "error").length,
-        warnings: data.filter((l) => l.severity === "warning").length,
-        tempo_total_ia: data.reduce((acc, l) => acc + (l.duracao_ms || 0), 0),
+        total_logs: this.buffer.length,
+        errors,
+        warnings,
+        tempo_total_ia,
       };
     } catch {
       return null;

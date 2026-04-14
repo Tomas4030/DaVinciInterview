@@ -7,13 +7,9 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
 import { analisarSessao, RespostaAnalisada } from "@/lib/analysis-engine";
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-);
+import { buscarRespostasV2 } from "@/lib/queries/analises";
+import { criarAnalise } from "@/lib/queries/analises";
 
 export interface GerarResumoRequest {
   sessao_id: string;
@@ -39,25 +35,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Obter respostas da sessão
-    const { data: respostas, error: fetchError } = await supabase
-      .from("candidato_respostas_v2")
-      .select(
-        "pergunta_id, resposta_final, qualidade_estimada, follow_ups, iteration_count",
-      )
-      .eq("sessao_id", sessao_id)
-      .eq("vaga_id", vaga_id)
-      .eq("estado", "saved")
-      .order("pergunta_id", { ascending: true });
-
-    if (fetchError) {
-      return NextResponse.json(
-        {
-          sucesso: false,
-          erro: `Erro ao obter respostas: ${fetchError.message}`,
-        },
-        { status: 500 },
-      );
-    }
+    const respostas = await buscarRespostasV2(sessao_id);
 
     if (!respostas || respostas.length === 0) {
       return NextResponse.json(
@@ -69,23 +47,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Obter informações da vaga para contexto
-    const { data: vagaData } = await supabase
-      .from("vagas")
-      .select("perguntas")
-      .eq("id", vaga_id)
-      .single();
-
-    const perguntasMap = new Map(
-      (vagaData?.perguntas || []).map((p: any) => [p.id, p.texto]),
-    );
-
     // Preparar respostas para análise
     const respostasParaAnalise: RespostaAnalisada[] = respostas.map((r) => ({
       pergunta_id: r.pergunta_id,
-      texto_pergunta:
-        (perguntasMap.get(r.pergunta_id) as string | undefined) ||
-        `Pergunta #${r.pergunta_id}`,
+      texto_pergunta: `Pergunta #${r.pergunta_id}`, // TODO: trazer de BD
       resposta_texto: r.resposta_final,
       qualidade: r.qualidade_estimada || "aceitavel",
     }));
@@ -109,18 +74,16 @@ export async function POST(request: NextRequest) {
 
     // Guardar análise para futuras referências
     try {
-      await supabase.from("analises_entrevista").insert({
+      await criarAnalise(
         sessao_id,
         vaga_id,
-        email_candidato: emailCandidato,
-        analisis_json: resultado.dados,
-        score_geral: resultado.dados?.scores.media || 0,
-        recomendacao: resultado.dados?.recomendacao_geral || "talvez",
-        criada_em: new Date().toISOString(),
-      });
-    } catch {
-      // Se a tabela não existe, só continua sem guardar
-      console.warn("Tabela de análises não existe, continuando sem guardar");
+        emailCandidato || "",
+        resultado.dados,
+        resultado.dados?.scores?.media || 0,
+        resultado.dados?.recomendacao_geral || "talvez",
+      );
+    } catch (err) {
+      console.warn("Erro ao guardar análise, continuando:", err);
     }
 
     return NextResponse.json(

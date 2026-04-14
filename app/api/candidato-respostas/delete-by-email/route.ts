@@ -1,20 +1,15 @@
 // app/api/candidato-respostas/delete-by-email/route.ts
 // DELETE /api/candidato-respostas/delete-by-email
-// Apaga todas as respostas de um utilizador para uma vaga específica
+// Apaga todas as respostas de um utilizador
 
 import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
-import { createClient } from "@supabase/supabase-js";
+import { deletarCandidaturasPorEmail } from "@/lib/queries/candidato-respostas";
 import { ADMIN_SESSION_COOKIE, parseAdminToken } from "@/lib/admin-auth";
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-);
 
 interface RequestBody {
   email: string;
-  vagaId: string;
+  vagaId?: string;
 }
 
 export async function DELETE(request: NextRequest) {
@@ -28,38 +23,27 @@ export async function DELETE(request: NextRequest) {
     }
 
     const body: RequestBody = await request.json();
-    const { email, vagaId } = body;
+    const { email } = body;
 
-    if (!email || !vagaId) {
+    if (!email) {
       return NextResponse.json(
-        { error: "Email e vagaId são obrigatórios" },
+        { error: "Email é obrigatório" },
         { status: 400 },
       );
     }
 
     const normalizedEmail = String(email).trim().toLowerCase();
 
-    // Apagar todas as respostas this utilizador para esta vaga
-    const { data, error } = await supabase
-      .from("candidato_respostas")
-      .delete()
-      .eq("email", normalizedEmail)
-      .eq("vaga_id", vagaId);
-
-    if (error) {
-      console.error("[DELETE respostas error]", error);
-      return NextResponse.json(
-        { error: "Erro ao apagar respostas" },
-        { status: 500 },
-      );
-    }
+    // Apagar todas as respostas deste utilizador
+    const count = await deletarCandidaturasPorEmail(normalizedEmail);
 
     // Limpar cache
     revalidatePath("/admin/respostas");
 
     return NextResponse.json({
       success: true,
-      message: `Respostas de ${email} apagadas com sucesso`,
+      message: `${count} candidatura(s) de ${email} apagada(s) com sucesso`,
+      deleted: count,
     });
   } catch (error) {
     console.error("[DELETE /api/candidato-respostas/delete-by-email]", error);

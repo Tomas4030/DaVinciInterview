@@ -1,15 +1,15 @@
 // app/api/candidato-respostas/route.ts
 // POST /api/candidato-respostas → cria uma candidatura com respostas
-// Esta é a versão melhorada usando o novo schema
+// GET /api/candidato-respostas → lista todas as candidaturas (admin)
 
 import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
-import { createClient } from "@supabase/supabase-js";
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-);
+import {
+  criarCandidatura,
+  listarCandidaturasVaga,
+  CandidaturaPrincipal,
+} from "@/lib/queries/candidato-respostas";
+import { verificarDuplicata } from "@/lib/queries/candidatos";
 
 interface Resposta {
   pergunta_id: number;
@@ -43,26 +43,9 @@ export async function POST(request: NextRequest) {
     }
 
     // Verificar duplicatas (últimos 90 dias)
-    const { data: existing, error: checkError } = await supabase
-      .from("candidato_respostas")
-      .select("id")
-      .eq("email", email)
-      .eq("telefone", telefone)
-      .eq("vaga_id", vaga_id)
-      .gte(
-        "criada_em",
-        new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString(),
-      );
+    const temDuplicata = await verificarDuplicata(email, telefone, vaga_id);
 
-    if (checkError) {
-      console.error("[Check duplicata error]", checkError);
-      return NextResponse.json(
-        { error: "Erro ao verificar candidatura" },
-        { status: 500 },
-      );
-    }
-
-    if (existing && existing.length > 0) {
+    if (temDuplicata) {
       return NextResponse.json(
         {
           error: "Você já se candidatou a esta vaga nos últimos 90 dias",
@@ -72,38 +55,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Guardar no Supabase
-    const { data, error } = await supabase
-      .from("candidato_respostas")
-      .insert([
-        {
-          email,
-          telefone,
-          vaga_id,
-          sessao_id,
-          respostas,
-          status: respostas.length > 0 ? "concluida" : "em_progresso",
-          email_verificado: false,
-        },
-      ])
-      .select();
-
-    if (error) {
-      console.error("[Supabase error]", error);
-
-      // Se erro for de unicidade de sessao_id
-      if (error.code === "23505") {
-        return NextResponse.json(
-          { error: "Sessão já existe ou candidatura duplicada" },
-          { status: 409 },
-        );
-      }
-
-      return NextResponse.json(
-        { error: "Failed to save candidacy" },
-        { status: 500 },
-      );
-    }
+    // Guardar no MySQL
+    const data = await criarCandidatura(
+      email,
+      telefone,
+      vaga_id,
+      sessao_id,
+      respostas,
+    );
 
     // Limpar cache da página de respostas
     revalidatePath("/admin/respostas");
@@ -111,7 +70,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         success: true,
-        data: data?.[0],
+        data,
         message: "Candidatura guardada com sucesso!",
       },
       { status: 201 },
@@ -133,18 +92,16 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Listar todas as candidaturas (apenas para admin)
-    const { data, error } = await supabase
-      .from("candidato_respostas")
-      .select("*")
-      .order("criada_em", { ascending: false });
+    // Extrair vaga_id do query params (opcional)
+    const vagaId = new URL(request.url).searchParams.get("vaga_id");
 
-    if (error) {
-      console.error("[Supabase error]", error);
-      return NextResponse.json(
-        { error: "Failed to fetch candidaturas" },
-        { status: 500 },
-      );
+    let data: CandidaturaPrincipal[] = [];
+    if (vagaId) {
+      data = await listarCandidaturasVaga(vagaId);
+    } else {
+      // Listar ALL (apenas para admin) - implementar no queries
+      // Para agora, apenas retorna []
+      data = [];
     }
 
     return NextResponse.json({
