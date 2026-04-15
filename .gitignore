@@ -38,7 +38,8 @@ out/
 settings.local.json
 OpenClaude
 
-#filheiros criticos + md
+#filheiros criticos + md  
 *.md
 .supabase/*
 *.claude
+tomas.txt
