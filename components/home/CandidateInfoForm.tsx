@@ -6,11 +6,36 @@ import {
   isValidPhoneNumber,
   formatPhoneNumber,
 } from "@/lib/validation";
+import { IconMail, IconPhone, IconShield } from "@/components/home/Icons";
 
 interface CandidateInfoFormProps {
   vagaId: string;
   onSuccess: (email: string, phone: string) => void;
   isLoading?: boolean;
+}
+
+function LoadingSpinner({ size = 16 }: { size?: number }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      className="animate-spin"
+      aria-hidden="true"
+    >
+      <circle
+        cx="12"
+        cy="12"
+        r="10"
+        stroke="currentColor"
+        strokeWidth="3"
+        strokeLinecap="round"
+        strokeDasharray="31.4 31.4"
+        strokeDashoffset="0"
+      />
+    </svg>
+  );
 }
 
 export default function CandidateInfoForm({
@@ -39,6 +64,8 @@ export default function CandidateInfoForm({
   const normalizedEmail = email.trim().toLowerCase();
   const normalizedPhone = formatPhoneNumber(phone);
 
+  const inputDisabled = isLoading || isChecking || isSendingCode;
+
   async function handleSendCode(e: React.FormEvent) {
     e.preventDefault();
 
@@ -46,10 +73,7 @@ export default function CandidateInfoForm({
     setDuplicateWarning(null);
     setSuccessMessage(null);
 
-    const newErrors: {
-      email?: string;
-      phone?: string;
-    } = {};
+    const newErrors: { email?: string; phone?: string } = {};
 
     if (!isValidEmail(email)) {
       newErrors.email = "Email inválido";
@@ -165,7 +189,6 @@ export default function CandidateInfoForm({
         return;
       }
 
-      // Guardar sessionToken em localStorage para reutilização dentro do TTL
       if (data.sessionToken) {
         localStorage.setItem(
           `interview_session_${vagaId}`,
@@ -230,187 +253,250 @@ export default function CandidateInfoForm({
   if (step === "code") {
     return (
       <div className="w-full max-w-md mx-auto">
-        <form onSubmit={handleVerifyCode} className="space-y-5">
-          <div>
-            <label
-              htmlFor="code"
-              className="block text-sm font-medium text-[var(--c-text)] mb-2"
-            >
-              Código de verificação *
-            </label>
-            <input
-              id="code"
-              type="text"
-              inputMode="numeric"
-              value={code}
-              onChange={(e) => {
-                setCode(e.target.value);
-                setErrors((prev) => ({ ...prev, code: undefined }));
-              }}
-              placeholder="Ex: 123456"
-              className="w-full px-3 py-2 rounded-lg border border-[var(--c-border)]/80 bg-[var(--c-surface)] text-[var(--c-text)] placeholder-[var(--c-text)]/50 transition-colors duration-200 focus:outline-none focus:border-[var(--c-brand)]/60 focus:ring-1 focus:ring-[var(--c-brand)]/30"
-              disabled={isLoading || isVerifyingCode}
-            />
-
-            {errors.code && (
-              <p className="mt-1 text-xs text-red-500">{errors.code}</p>
-            )}
-          </div>
-
-          <div className="rounded-lg border border-[var(--c-border)]/70 bg-[var(--c-surface)] px-3 py-3">
-            <p className="text-sm text-[var(--c-text)]/80">
-              Enviámos um código para:
+        <div className="bg-white rounded-2xl border border-[var(--c-border)] p-8 shadow-sm">
+          <div className="text-center mb-8">
+            <div className="w-16 h-16 rounded-2xl bg-[var(--c-brand-soft)] flex items-center justify-center mx-auto mb-4">
+              <IconMail />
+            </div>
+            <h2 className="text-xl font-semibold text-[var(--c-text)]">
+              Verificação por email
+            </h2>
+            <p className="text-sm text-[var(--c-text)]/60 mt-2">
+              Enviámos um código para
             </p>
-            <p className="text-sm font-medium text-[var(--c-text)] mt-1">
+            <p className="text-base font-medium text-[var(--c-text)] mt-0.5">
               {normalizedEmail}
             </p>
           </div>
 
-          {successMessage && (
-            <div className="p-3 rounded-lg bg-green-50 border border-green-200">
-              <p className="text-sm text-green-700">{successMessage}</p>
+          <form onSubmit={handleVerifyCode} className="space-y-5">
+            <div>
+              <label htmlFor="code" className="sr-only">
+                Código de verificação
+              </label>
+              <input
+                id="code"
+                type="text"
+                inputMode="numeric"
+                value={code}
+                onChange={(e) => {
+                  const val = e.target.value.replace(/\D/g, "").slice(0, 6);
+                  setCode(val);
+                  setErrors((prev) => ({ ...prev, code: undefined }));
+                }}
+                placeholder="123456"
+                className="w-full px-6 py-4 rounded-xl border border-[var(--c-border)] bg-[var(--c-bg)] text-[var(--c-text)] text-center text-2xl tracking-[0.35em] font-mono placeholder:text-[var(--c-text)]/25 transition-all duration-200 focus:outline-none focus:border-[var(--c-brand)] focus:ring-2 focus:ring-[var(--c-brand)]/20 disabled:opacity-50"
+                disabled={isLoading || isVerifyingCode}
+                autoFocus
+              />
+              {errors.code && (
+                <p className="mt-2 text-sm text-red-500 text-center">
+                  {errors.code}
+                </p>
+              )}
             </div>
-          )}
+
+            <button
+              type="submit"
+              disabled={isLoading || isVerifyingCode || code.length < 6}
+              className="w-full px-6 py-4 rounded-xl bg-[var(--c-brand)] text-white font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:not-disabled:bg-[var(--c-brand-dark)] active:scale-[0.98] flex items-center justify-center gap-2.5 text-base"
+            >
+              {isVerifyingCode ? (
+                <>
+                  <LoadingSpinner size={18} />
+                  A verificar...
+                </>
+              ) : (
+                "Verificar código"
+              )}
+            </button>
+
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={handleResendCode}
+                disabled={isSendingCode}
+                className="flex-1 px-5 py-3 rounded-xl border border-[var(--c-border)] text-[var(--c-text)]/70 font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[var(--c-bg)] active:scale-[0.98] flex items-center justify-center gap-2"
+              >
+                {isSendingCode ? (
+                  <>
+                    <LoadingSpinner size={14} />
+                    A reenviar
+                  </>
+                ) : (
+                  "Reenviar código"
+                )}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setStep("form");
+                  setCode("");
+                  setErrors({});
+                  setSuccessMessage(null);
+                }}
+                className="flex-1 px-5 py-3 rounded-xl border border-[var(--c-border)] text-[var(--c-text)]/70 font-medium transition-all duration-200 hover:bg-[var(--c-bg)] active:scale-[0.98]"
+              >
+                Alterar dados
+              </button>
+            </div>
+          </form>
 
           {errors.general && (
-            <div className="p-3 rounded-lg bg-red-50 border border-red-200">
-              <p className="text-sm text-red-700">{errors.general}</p>
+            <div className="mt-5 p-4 rounded-xl bg-red-50 border border-red-100">
+              <p className="text-sm text-red-600 text-center">
+                {errors.general}
+              </p>
             </div>
           )}
 
-          <button
-            type="submit"
-            disabled={isLoading || isVerifyingCode}
-            className="w-full px-4 py-2.5 rounded-lg bg-[var(--c-brand)] text-white font-medium text-sm transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:not-disabled:shadow-lg"
-          >
-            {isVerifyingCode ? "A verificar..." : "Verificar código"}
-          </button>
-
-          <button
-            type="button"
-            onClick={handleResendCode}
-            disabled={isSendingCode}
-            className="w-full px-4 py-2.5 rounded-lg border border-[var(--c-border)] text-[var(--c-text)] font-medium text-sm transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isSendingCode ? "A reenviar..." : "Reenviar código"}
-          </button>
-
-          <button
-            type="button"
-            onClick={() => {
-              setStep("form");
-              setCode("");
-              setErrors({});
-              setSuccessMessage(null);
-            }}
-            className="w-full text-xs text-[var(--c-text)]/60 underline"
-          >
-            Voltar atrás
-          </button>
-        </form>
+          {successMessage && (
+            <div className="mt-5 p-4 rounded-xl bg-green-50 border border-green-100">
+              <p className="text-sm text-green-600 text-center">
+                {successMessage}
+              </p>
+            </div>
+          )}
+        </div>
       </div>
     );
   }
 
   return (
     <div className="w-full max-w-md mx-auto">
-      <form onSubmit={handleSendCode} className="space-y-5">
-        <div>
-          <label
-            htmlFor="email"
-            className="block text-sm font-medium text-[var(--c-text)] mb-2"
-          >
-            Email *
-          </label>
-          <input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => {
-              setEmail(e.target.value);
-              setErrors((prev) => ({
-                ...prev,
-                email: undefined,
-                general: undefined,
-              }));
-            }}
-            placeholder="teu@email.com"
-            className="w-full px-3 py-2 rounded-lg border border-[var(--c-border)]/80 bg-[var(--c-surface)] text-[var(--c-text)] placeholder-[var(--c-text)]/50 transition-colors duration-200 focus:outline-none focus:border-[var(--c-brand)]/60 focus:ring-1 focus:ring-[var(--c-brand)]/30"
-            required
-            disabled={isLoading || isChecking || isSendingCode}
-          />
-          {errors.email && (
-            <p className="mt-1 text-xs text-red-500">{errors.email}</p>
-          )}
+      <div className="bg-white rounded-2xl border border-[var(--c-border)] p-8 shadow-sm">
+        <div className="text-center mb-8">
+          <h2 className="text-xl font-semibold text-[var(--c-text)]">
+            Validar contacto
+          </h2>
+          <p className="text-sm text-[var(--c-text)]/60 mt-2">
+            Preenche os teus dados para continuares
+          </p>
         </div>
 
-        <div>
-          <label
-            htmlFor="phone"
-            className="block text-sm font-medium text-[var(--c-text)] mb-2"
-          >
-            Telemóvel *
-          </label>
-          <input
-            id="phone"
-            type="tel"
-            value={phone}
-            onChange={(e) => {
-              setPhone(e.target.value);
-              setErrors((prev) => ({
-                ...prev,
-                phone: undefined,
-                general: undefined,
-              }));
-            }}
-            placeholder="91 234 5678"
-            className="w-full px-3 py-2 rounded-lg border border-[var(--c-border)]/80 bg-[var(--c-surface)] text-[var(--c-text)] placeholder-[var(--c-text)]/50 transition-colors duration-200 focus:outline-none focus:border-[var(--c-brand)]/60 focus:ring-1 focus:ring-[var(--c-brand)]/30"
-            required
-            disabled={isLoading || isChecking || isSendingCode}
-          />
-          {errors.phone && (
-            <p className="mt-1 text-xs text-red-500">{errors.phone}</p>
+        <form onSubmit={handleSendCode} className="space-y-5">
+          <div className="space-y-2">
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-[var(--c-text)]/70 pl-1"
+            >
+              Email
+            </label>
+            <div className="relative">
+              <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--c-text)]/40">
+                <IconMail />
+              </div>
+              <input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  setErrors((prev) => ({
+                    ...prev,
+                    email: undefined,
+                    general: undefined,
+                  }));
+                  setDuplicateWarning(null);
+                }}
+                placeholder="teu@email.com"
+                className="w-full pl-11 pr-4 py-3.5 rounded-xl border border-[var(--c-border)] bg-[var(--c-bg)] text-[var(--c-text)] placeholder:text-[var(--c-text)]/30 transition-all duration-200 focus:outline-none focus:border-[var(--c-brand)] focus:ring-2 focus:ring-[var(--c-brand)]/20 disabled:opacity-50 text-base"
+                required
+                disabled={inputDisabled}
+                autoComplete="email"
+              />
+            </div>
+            {errors.email && (
+              <p className="text-sm text-red-500 pl-1">{errors.email}</p>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <label
+              htmlFor="phone"
+              className="block text-sm font-medium text-[var(--c-text)]/70 pl-1"
+            >
+              Telemóvel
+            </label>
+            <div className="relative">
+              <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--c-text)]/40">
+                <IconPhone />
+              </div>
+              <input
+                id="phone"
+                type="tel"
+                value={phone}
+                onChange={(e) => {
+                  const val = e.target.value.replace(/[^\d\s]/g, "");
+                  setPhone(val);
+                  setErrors((prev) => ({
+                    ...prev,
+                    phone: undefined,
+                    general: undefined,
+                  }));
+                  setDuplicateWarning(null);
+                }}
+                placeholder="91 234 5678"
+                className="w-full pl-11 pr-4 py-3.5 rounded-xl border border-[var(--c-border)] bg-[var(--c-bg)] text-[var(--c-text)] placeholder:text-[var(--c-text)]/30 transition-all duration-200 focus:outline-none focus:border-[var(--c-brand)] focus:ring-2 focus:ring-[var(--c-brand)]/20 disabled:opacity-50 text-base"
+                required
+                disabled={inputDisabled}
+                autoComplete="tel"
+              />
+            </div>
+            {errors.phone && (
+              <p className="text-sm text-red-500 pl-1">{errors.phone}</p>
+            )}
+          </div>
+
+          {duplicateWarning && (
+            <div className="p-4 rounded-xl bg-amber-50 border border-amber-100">
+              <p className="text-sm text-amber-800 font-medium">
+                {duplicateWarning}
+              </p>
+              <p className="text-xs text-amber-700 mt-1">
+                Podes candidatar-te a outras vagas ou aguarda feedback.
+              </p>
+            </div>
           )}
-        </div>
 
-        {duplicateWarning && (
-          <div className="p-3 rounded-lg bg-amber-50 border border-amber-200">
-            <p className="text-sm text-amber-800 font-medium">
-              {duplicateWarning}
+          {errors.general && (
+            <div className="p-4 rounded-xl bg-red-50 border border-red-100">
+              <p className="text-sm text-red-600">{errors.general}</p>
+            </div>
+          )}
+
+          <button
+            type="submit"
+            disabled={inputDisabled || !!duplicateWarning}
+            className="w-full px-6 py-4 rounded-xl bg-[var(--c-brand)] text-white font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:not-disabled:bg-[var(--c-brand-dark)] active:scale-[0.98] flex items-center justify-center gap-2.5 text-base"
+          >
+            {isChecking ? (
+              <>
+                <LoadingSpinner size={18} />
+                A verificar...
+              </>
+            ) : isSendingCode ? (
+              <>
+                <LoadingSpinner size={18} />
+                A enviar código...
+              </>
+            ) : (
+              "Continuar"
+            )}
+          </button>
+
+          <div className="flex items-start gap-3 text-[var(--c-text)]/50 pt-2">
+            <div className="mt-0.5">
+              <IconShield />
+            </div>
+            <p className="text-sm leading-relaxed">
+              Os teus dados estão protegidos e nunca serão partilhados com
+              terceiros.
             </p>
-            <p className="text-xs text-amber-700 mt-1">
-              Podes candidatar-te a outras vagas ou aguardar feedback da nossa
-              equipa.
-            </p>
           </div>
-        )}
-
-        {successMessage && (
-          <div className="p-3 rounded-lg bg-green-50 border border-green-200">
-            <p className="text-sm text-green-700">{successMessage}</p>
-          </div>
-        )}
-
-        {errors.general && (
-          <div className="p-3 rounded-lg bg-red-50 border border-red-200">
-            <p className="text-sm text-red-700">{errors.general}</p>
-          </div>
-        )}
-
-        <button
-          type="submit"
-          disabled={
-            isLoading || isChecking || isSendingCode || !!duplicateWarning
-          }
-          className="w-full px-4 py-2.5 rounded-lg bg-[var(--c-brand)] text-white font-medium text-sm transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:not-disabled:shadow-lg"
-        >
-          {isChecking || isSendingCode ? "A processar..." : "Enviar código"}
-        </button>
-
-        <p className="text-xs text-[var(--c-text)]/50 text-center">
-          Vamos enviar um código por email para desbloquear a entrevista.
-        </p>
-      </form>
+        </form>
+      </div>
     </div>
   );
 }
