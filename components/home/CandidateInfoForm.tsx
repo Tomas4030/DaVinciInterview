@@ -7,6 +7,7 @@ import {
   formatPhoneNumber,
 } from "@/lib/validation";
 import { IconMail, IconPhone, IconShield } from "@/components/home/Icons";
+import { BASE_PATH } from "@/lib/base-path";
 
 interface CandidateInfoFormProps {
   vagaId: string;
@@ -91,7 +92,7 @@ export default function CandidateInfoForm({
     try {
       setIsChecking(true);
 
-      const checkResponse = await fetch("/api/candidatos/check", {
+      const checkResponse = await fetch(`${BASE_PATH}/api/candidatos/check`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -119,7 +120,7 @@ export default function CandidateInfoForm({
 
       setIsSendingCode(true);
 
-      const sendCodeResponse = await fetch("/api/candidatos/send-code", {
+      const sendCodeResponse = await fetch(`${BASE_PATH}/api/candidatos/send-code`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -168,7 +169,7 @@ export default function CandidateInfoForm({
     try {
       setIsVerifyingCode(true);
 
-      const response = await fetch("/api/candidatos/verify-code", {
+      const response = await fetch(`${BASE_PATH}/api/candidatos/verify-code`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -218,7 +219,7 @@ export default function CandidateInfoForm({
     try {
       setIsSendingCode(true);
 
-      const response = await fetch("/api/candidatos/send-code", {
+      const response = await fetch(`${BASE_PATH}/api/candidatos/send-code`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

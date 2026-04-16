@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Vaga } from "@/lib/api";
+import { BASE_PATH } from "@/lib/base-path";
 
 interface Props {
   vagaInicial?: Vaga;
@@ -125,7 +126,7 @@ export default function EntrevistaForm({ vagaInicial }: Props) {
     try {
       const res = await fetch(`/api/vagas/${vaga.id}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Erro ao apagar");
-      router.push("/admin");
+      router.push(`${BASE_PATH}/admin`)
       router.refresh();
     } catch (err: unknown) {
       setErro(err instanceof Error ? err.message : "Erro ao apagar");

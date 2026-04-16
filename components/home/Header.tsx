@@ -7,13 +7,13 @@ export default function Header() {
         <Link
           href="/"
           className="group flex items-center gap-2.5"
-          aria-label="Página inicial — DaVinci Interviews"
+          aria-label="Página inicial — Chat2Work"
         >
           <div className="flex h-8 w-8 items-center justify-center rounded-[7px] bg-[var(--c-brand)] font-display text-[11px] font-bold text-white shadow-[0_1px_3px_rgba(67,85,232,0.18)] transition-transform duration-200 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] group-hover:scale-[1.06] group-active:scale-[0.98]">
-            D
+            C
           </div>
-          <span className="text-[0.82rem] font-semibold tracking-tight text-[var(--c-text)]">
-            DaVinci Interviews
+          <span className="text-[1.1rem] font-semibold tracking-tight text-[var(--c-text)]">
+            Chat2Work
           </span>
         </Link>
       </div>

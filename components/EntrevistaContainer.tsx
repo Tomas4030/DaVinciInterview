@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import ChatEntrevista from "@/components/chat/ChatEntrevista";
 import CandidateInfoForm from "@/components/home/CandidateInfoForm";
 import type { Vaga } from "@/lib/api";
+import { BASE_PATH } from "@/lib/base-path";
 
 interface EntrevistaContainerProps {
   vaga: Vaga;
@@ -61,7 +62,7 @@ export default function EntrevistaContainer({
           return;
         }
 
-        const response = await fetch("/api/candidatos/verify-session", {
+        const response = await fetch(`${BASE_PATH}/api/candidatos/verify-session`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({

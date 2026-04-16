@@ -4,7 +4,7 @@ import "./globals.css";
 import ClearLegacyServiceWorker from "../components/ClearLegacyServiceWorker";
 
 export const metadata: Metadata = {
-  title: { default: "DaVinci Interviews", template: "%s · DaVinci" },
+  title: { default: "Chat2Work", template: "%s · DaVinci" },
   description: "Plataforma de entrevistas em formato chatbot",
 };
 

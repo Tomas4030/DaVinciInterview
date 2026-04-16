@@ -11,7 +11,7 @@ export default function Footer() {
                 D
               </div>
               <span className="text-[0.82rem] font-semibold tracking-tight text-[var(--c-text)]">
-                DaVinci Interviews
+                Chat2Work
               </span>
             </div>
             <p className="mt-3 text-[0.78rem] leading-relaxed text-[var(--c-text)]/55">
@@ -44,7 +44,7 @@ export default function Footer() {
               Info
             </span>
             <p className="text-[0.82rem] text-[var(--c-text)]/65">
-              © {new Date().getFullYear()} DaVinci Interviews. <br /> Todos os direitos reservados.
+              © {new Date().getFullYear()} Chat2Work. <br /> Todos os direitos reservados.
             </p>
           </div>
         </div>

@@ -82,7 +82,7 @@ export default function AdminNav({ userEmail }: AdminNavProps) {
 
             <div className="leading-tight">
               <p className="text-[0.82rem] font-semibold leading-none tracking-tight text-[var(--c-text)]">
-                DaVinci Interviews
+                Chat2Work
               </p>
               <p className="mt-0.5 text-[10px] leading-none text-[var(--c-muted)]">
                 Admin

@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
 import type { Vaga } from "@/lib/api";
+import { BASE_PATH } from "@/lib/base-path";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -232,7 +233,7 @@ export default function ChatEntrevista({
     respostasFinal: typeof respostasFinalizadas,
   ) {
     if (candidateEmail && candidatePhone) {
-      await fetch("/api/candidatos/create", {
+      await fetch(`${BASE_PATH}/api/candidatos/create`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

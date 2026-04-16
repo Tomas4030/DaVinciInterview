@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: "standalone",
   basePath: "/tomas",
   assetPrefix: "/tomas",
   headers: async () => {
