@@ -23,7 +23,7 @@ export async function DELETE(request: NextRequest) {
     }
 
     const body: RequestBody = await request.json();
-    const { email } = body;
+    const { email, vagaId } = body;
 
     if (!email) {
       return NextResponse.json(
@@ -33,9 +33,13 @@ export async function DELETE(request: NextRequest) {
     }
 
     const normalizedEmail = String(email).trim().toLowerCase();
+    const normalizedVagaId = vagaId ? String(vagaId).trim() : undefined;
 
-    // Apagar todas as respostas deste utilizador
-    const count = await deletarCandidaturasPorEmail(normalizedEmail);
+    // Apagar apenas as respostas desta candidatura
+    const count = await deletarCandidaturasPorEmail(
+      normalizedEmail,
+      normalizedVagaId,
+    );
 
     // Limpar cache
     revalidatePath("/admin/respostas");

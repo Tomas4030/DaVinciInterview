@@ -1,5 +1,3 @@
-"use client";
-
 import { HOW_IT_WORKS } from "./config";
 import { IconGlobe, IconLayers, IconBuilding } from "./Icons";
 

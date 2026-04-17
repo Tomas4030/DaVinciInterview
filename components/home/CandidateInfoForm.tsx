@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   isValidEmail,
   isValidPhoneNumber,
@@ -59,6 +59,7 @@ export default function CandidateInfoForm({
   const [isChecking, setIsChecking] = useState(false);
   const [isSendingCode, setIsSendingCode] = useState(false);
   const [isVerifyingCode, setIsVerifyingCode] = useState(false);
+  const [resendCooldown, setResendCooldown] = useState(0);
   const [duplicateWarning, setDuplicateWarning] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
@@ -66,6 +67,16 @@ export default function CandidateInfoForm({
   const normalizedPhone = formatPhoneNumber(phone);
 
   const inputDisabled = isLoading || isChecking || isSendingCode;
+
+  useEffect(() => {
+    if (resendCooldown <= 0) return;
+
+    const interval = setInterval(() => {
+      setResendCooldown((prev) => (prev > 0 ? prev - 1 : 0));
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [resendCooldown]);
 
   async function handleSendCode(e: React.FormEvent) {
     e.preventDefault();
@@ -142,7 +153,12 @@ export default function CandidateInfoForm({
         return;
       }
 
-      setSuccessMessage("Enviámos um código para o teu email.");
+      if (sendCodeData?.devCode) {
+        setSuccessMessage(`SMTP local indisponível. Código de teste: ${sendCodeData.devCode}`);
+      } else {
+        setSuccessMessage("Enviámos um código para o teu email.");
+      }
+      setResendCooldown(30);
       setStep("code");
     } catch (error) {
       console.error("Erro ao enviar código:", error);
@@ -216,6 +232,8 @@ export default function CandidateInfoForm({
   }
 
   async function handleResendCode() {
+    if (resendCooldown > 0 || isSendingCode) return;
+
     setErrors((prev) => ({ ...prev, code: undefined, general: undefined }));
     setSuccessMessage(null);
 
@@ -242,7 +260,12 @@ export default function CandidateInfoForm({
         return;
       }
 
-      setSuccessMessage("Código reenviado com sucesso.");
+      if (data?.devCode) {
+        setSuccessMessage(`SMTP local indisponível. Código de teste: ${data.devCode}`);
+      } else {
+        setSuccessMessage("Código reenviado com sucesso.");
+      }
+      setResendCooldown(30);
     } catch (error) {
       console.error("Erro ao reenviar código:", error);
       setErrors((prev) => ({
@@ -319,7 +342,7 @@ export default function CandidateInfoForm({
               <button
                 type="button"
                 onClick={handleResendCode}
-                disabled={isSendingCode}
+                disabled={isSendingCode || resendCooldown > 0}
                 className="flex-1 px-5 py-3 rounded-xl border border-[var(--c-border)] text-[var(--c-text)]/70 font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[var(--c-bg)] active:scale-[0.98] flex items-center justify-center gap-2"
               >
                 {isSendingCode ? (
@@ -327,6 +350,8 @@ export default function CandidateInfoForm({
                     <LoadingSpinner size={14} />
                     A reenviar
                   </>
+                ) : resendCooldown > 0 ? (
+                  `Reenviar em ${resendCooldown}s`
                 ) : (
                   "Reenviar código"
                 )}
@@ -337,6 +362,7 @@ export default function CandidateInfoForm({
                 onClick={() => {
                   setStep("form");
                   setCode("");
+                  setResendCooldown(0);
                   setErrors({});
                   setSuccessMessage(null);
                 }}

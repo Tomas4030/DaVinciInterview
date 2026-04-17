@@ -1,10 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
 import { criarCodigoVerificacao } from "@/lib/queries/verification-codes";
+import { gerarCodigoVerificacao } from "@/lib/queries/verification-codes";
 import { verificarDuplicata } from "@/lib/queries/candidatos";
+import { saveLocalVerificationCode } from "@/lib/in-memory-verification";
 import { sendVerificationCodeEmail } from "@/lib/email";
+import { withTimeout } from "@/lib/timeout";
+
+const DB_OP_TIMEOUT_MS = Number(process.env.DB_OP_TIMEOUT_MS || 3000);
 
 export async function POST(request: NextRequest) {
   try {
+    const isLocalHost = ["localhost", "127.0.0.1"].includes(
+      request.nextUrl.hostname,
+    );
+    const allowInsecureCodeFallback =
+      process.env.ALLOW_INSECURE_CODE_FALLBACK === "true";
+
     const { email, telefone, vaga_id } = await request.json();
 
     if (!email || !telefone || !vaga_id) {
@@ -17,11 +28,17 @@ export async function POST(request: NextRequest) {
     const normalizedEmail = String(email).trim().toLowerCase();
     const normalizedPhone = String(telefone).trim();
 
-    const temDuplicata = await verificarDuplicata(
-      normalizedEmail,
-      normalizedPhone,
-      vaga_id,
-    );
+    let temDuplicata = false;
+
+    try {
+      temDuplicata = await withTimeout(
+        verificarDuplicata(normalizedEmail, normalizedPhone, vaga_id),
+        DB_OP_TIMEOUT_MS,
+        "send-code:verificarDuplicata",
+      );
+    } catch (error) {
+      console.warn("[send-code] DB indisponível ao verificar duplicata, a continuar sem bloqueio.", error);
+    }
 
     if (temDuplicata) {
       return NextResponse.json(
@@ -30,9 +47,49 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const codigo = await criarCodigoVerificacao(normalizedEmail);
+    let codigo = "";
+    try {
+      codigo = await withTimeout(
+        criarCodigoVerificacao(normalizedEmail),
+        DB_OP_TIMEOUT_MS,
+        "send-code:criarCodigoVerificacao",
+      );
+    } catch (error) {
+      codigo = gerarCodigoVerificacao();
+      saveLocalVerificationCode(normalizedEmail, codigo, 15);
+      console.warn("[send-code] DB indisponível, código guardado em memória temporária.", error);
+    }
 
-    await sendVerificationCodeEmail(normalizedEmail, codigo);
+    try {
+      await sendVerificationCodeEmail(normalizedEmail, codigo);
+    } catch (error) {
+      console.error("[send-code] Falha no envio SMTP:", error);
+
+      if (isLocalHost || process.env.NODE_ENV !== "production") {
+        return NextResponse.json({
+          success: true,
+          message: "SMTP indisponível em ambiente local",
+          devCode: codigo,
+        });
+      }
+
+      if (allowInsecureCodeFallback) {
+        return NextResponse.json({
+          success: true,
+          message:
+            "SMTP indisponível. Fallback de emergência ativo para validação manual.",
+          devCode: codigo,
+        });
+      }
+
+      return NextResponse.json(
+        {
+          error:
+            "Serviço de email indisponível. Confirma a configuração SMTP no servidor.",
+        },
+        { status: 503 },
+      );
+    }
 
     return NextResponse.json({
       success: true,

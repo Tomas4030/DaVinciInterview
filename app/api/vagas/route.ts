@@ -1,39 +1,24 @@
 // app/api/vagas/route.ts
-// GET  /api/vagas    → lista vagas ativas (proxy MockAPI)
+// GET  /api/vagas    → lista vagas (DB MySQL)
 // POST /api/vagas    → cria nova vaga (requer auth admin)
 
 import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import { ADMIN_SESSION_COOKIE, parseAdminToken } from "@/lib/admin-auth";
-
-const MOCKAPI_ENDPOINT = process.env.MOCKAPI_ENDPOINT;
+import {
+  criarVagaRegistro,
+  listarVagasRegistro,
+} from "@/lib/queries/vagas";
 
 export async function GET(request: NextRequest) {
   try {
-    if (!MOCKAPI_ENDPOINT) {
-      return NextResponse.json(
-        { error: "API endpoint not configured" },
-        { status: 500 },
-      );
-    }
-
-    const response = await fetch(`${MOCKAPI_ENDPOINT}/vagas`, {
-      next: { revalidate: 60 }, // ISR: revalidate every 60s
-    });
-
-    if (!response.ok) {
-      throw new Error(`MockAPI error: ${response.statusText}`);
-    }
-
-    const vagas = await response.json();
+    const vagas = await listarVagasRegistro();
 
     // Adicionar contagem de perguntas
-    const vagasFormatadas = Array.isArray(vagas)
-      ? vagas.map((v) => ({
-          ...v,
-          total_perguntas: v.perguntas?.length || 0,
-        }))
-      : [];
+    const vagasFormatadas = vagas.map((v) => ({
+      ...v,
+      total_perguntas: v.perguntas?.length || 0,
+    }));
 
     return NextResponse.json({
       success: true,
@@ -59,13 +44,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Não autorizado" }, { status: 403 });
     }
 
-    if (!MOCKAPI_ENDPOINT) {
-      return NextResponse.json(
-        { error: "API endpoint not configured" },
-        { status: 500 },
-      );
-    }
-
     const body = await request.json();
 
     // Validar campos obrigatórios
@@ -78,18 +56,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Chamar MockAPI
-    const response = await fetch(`${MOCKAPI_ENDPOINT}/vagas`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
+    const data = await criarVagaRegistro({
+      id: body.id,
+      titulo: body.titulo,
+      descricao: body.descricao ?? "",
+      modalidade: body.modalidade,
+      duracao_min: Number(body.duracao_min) || 10,
+      perguntas: body.perguntas,
+      ativa: Boolean(body.ativa ?? true),
     });
-
-    if (!response.ok) {
-      throw new Error(`MockAPI error: ${response.statusText}`);
-    }
-
-    const data = await response.json();
 
     // Limpar cache da homepage e admin dashboard
     revalidatePath("/");

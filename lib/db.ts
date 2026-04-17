@@ -1,6 +1,8 @@
 import "server-only";
 import mysql from "mysql2/promise";
 
+const dbConnectTimeout = Number(process.env.DB_CONNECT_TIMEOUT_MS || 3000);
+
 /**
  * Global instance for development hot-reloading
  * Evita criar novas conexões a cada hot-reload
@@ -23,6 +25,7 @@ export const db =
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
+    connectTimeout: dbConnectTimeout,
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0,

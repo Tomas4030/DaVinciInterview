@@ -1,9 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verificarCodigoVerificacao } from "@/lib/queries/verification-codes";
 import { criarSessao } from "@/lib/queries/candidatos";
+import { withTimeout } from "@/lib/timeout";
+import {
+  createLocalSession,
+  verifyLocalVerificationCode,
+} from "@/lib/in-memory-verification";
 
 // TTL para a sessão de entrevista (em minutos)
 const INTERVIEW_SESSION_TTL_MINUTES = 15;
+const DB_OP_TIMEOUT_MS = Number(process.env.DB_OP_TIMEOUT_MS || 3000);
 
 export async function POST(request: NextRequest) {
   try {
@@ -20,10 +26,17 @@ export async function POST(request: NextRequest) {
     const normalizedCode = String(code).trim();
 
     // Verificar código
-    const isValid = await verificarCodigoVerificacao(
-      normalizedEmail,
-      normalizedCode,
-    );
+    let isValid = false;
+    try {
+      isValid = await withTimeout(
+        verificarCodigoVerificacao(normalizedEmail, normalizedCode),
+        DB_OP_TIMEOUT_MS,
+        "verify-code:verificarCodigoVerificacao",
+      );
+    } catch (error) {
+      isValid = verifyLocalVerificationCode(normalizedEmail, normalizedCode);
+      console.warn("[verify-code] DB indisponível, a validar código em memória.", error);
+    }
 
     if (!isValid) {
       return NextResponse.json(
@@ -33,16 +46,34 @@ export async function POST(request: NextRequest) {
     }
 
     // Gerar sessão de entrevista com TTL
-    const sessionToken = await criarSessao(
-      normalizedEmail,
-      telefone || "",
-      vaga_id,
-    );
+    let sessionToken = "";
+    let expiresAt = new Date(
+      Date.now() + INTERVIEW_SESSION_TTL_MINUTES * 60 * 1000,
+    ).toISOString();
+
+    try {
+      sessionToken = await withTimeout(
+        criarSessao(normalizedEmail, telefone || "", vaga_id),
+        DB_OP_TIMEOUT_MS,
+        "verify-code:criarSessao",
+      );
+    } catch (error) {
+      const localSession = createLocalSession(
+        normalizedEmail,
+        telefone || "",
+        vaga_id,
+        INTERVIEW_SESSION_TTL_MINUTES,
+      );
+      sessionToken = localSession.sessionToken;
+      expiresAt = localSession.expiresAt;
+      console.warn("[verify-code] DB indisponível, sessão criada em memória.", error);
+    }
 
     return NextResponse.json({
       success: true,
       message: "Email verificado com sucesso",
       sessionToken,
+      expiresAt,
     });
   } catch (error) {
     console.error(error);

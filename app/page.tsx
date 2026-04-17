@@ -8,7 +8,7 @@ import {
   Footer,
 } from "@/components/home";
 
-export const revalidate = 0; // Sem cache — recarrega sempre para mostrar vagas atualizadas
+export const revalidate = 60; // Cache curto para reduzir TTFB sem perder atualizações recentes
 
 export default async function HomePage() {
   let vagas: VagaResumo[] = [];

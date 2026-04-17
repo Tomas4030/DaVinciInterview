@@ -11,6 +11,10 @@ DROP TABLE IF EXISTS sessoes_entrevista;
 DROP TABLE IF EXISTS candidato_entrevista_sessions;
 DROP TABLE IF EXISTS verification_codes;
 DROP TABLE IF EXISTS candidato_respostas;
+DROP TABLE IF EXISTS vagas;
+DROP VIEW IF EXISTS view_interview_logs_resumo;
+DROP VIEW IF EXISTS view_sessoes_resumo;
+DROP PROCEDURE IF EXISTS cleanup_expired_sessions;
 
 -- ========================================
 -- 0. CÓDIGOS DE VERIFICAÇÃO
@@ -28,7 +32,25 @@ CREATE TABLE verification_codes (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ========================================
--- 1. CANDIDATURA PRINCIPAL
+-- 1. VAGAS
+-- ========================================
+CREATE TABLE vagas (
+  id VARCHAR(255) NOT NULL PRIMARY KEY COMMENT 'Slug único da vaga',
+  titulo VARCHAR(255) NOT NULL,
+  descricao TEXT,
+  modalidade ENUM('Remoto', 'Híbrido', 'Presencial') NOT NULL DEFAULT 'Remoto',
+  duracao_min INT NOT NULL DEFAULT 10,
+  perguntas JSON NOT NULL COMMENT 'Array de perguntas [{id, texto, tipo}]',
+  ativa BOOLEAN NOT NULL DEFAULT true,
+  criada_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  atualizada_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+  INDEX idx_vagas_ativa (ativa),
+  INDEX idx_vagas_modalidade (modalidade)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ========================================
+-- 2. CANDIDATURA PRINCIPAL
 -- ========================================
 CREATE TABLE candidato_respostas (
   id CHAR(36) NOT NULL PRIMARY KEY COMMENT 'UUID v4',
@@ -50,7 +72,31 @@ CREATE TABLE candidato_respostas (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ========================================
--- 2. SESSÕES TEMPORÁRIAS (15 min TTL)
+-- Seed de exemplo para garantir que a app inicializa sem MockAPI
+INSERT INTO vagas (id, titulo, descricao, modalidade, duracao_min, perguntas, ativa)
+VALUES
+(
+  'senior-fullstack-developer',
+  'Senior Fullstack Developer',
+  'Vaga de referência para entrevistas técnicas.',
+  'Remoto',
+  30,
+  JSON_ARRAY(
+    JSON_OBJECT('id', 1, 'texto', 'Fala-nos sobre a tua experiência mais relevante.', 'tipo', 'aberta'),
+    JSON_OBJECT('id', 2, 'texto', 'Como desenhaste uma API escalável?', 'tipo', 'aberta')
+  ),
+  true
+)
+ON DUPLICATE KEY UPDATE
+  titulo = VALUES(titulo),
+  descricao = VALUES(descricao),
+  modalidade = VALUES(modalidade),
+  duracao_min = VALUES(duracao_min),
+  perguntas = VALUES(perguntas),
+  ativa = VALUES(ativa);
+
+-- ========================================
+-- 3. SESSÕES TEMPORÁRIAS (15 min TTL)
 -- ========================================
 CREATE TABLE candidato_entrevista_sessions (
   id INT AUTO_INCREMENT PRIMARY KEY,
@@ -67,7 +113,7 @@ CREATE TABLE candidato_entrevista_sessions (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ========================================
--- 3. SESSÕES DE ENTREVISTA (Rastreamento)
+-- 4. SESSÕES DE ENTREVISTA (Rastreamento)
 -- ========================================
 CREATE TABLE sessoes_entrevista (
   id CHAR(36) NOT NULL PRIMARY KEY COMMENT 'UUID v4',
@@ -85,7 +131,7 @@ CREATE TABLE sessoes_entrevista (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ========================================
--- 4. RESPOSTAS COM FOLLOW-UPS (V2)
+-- 5. RESPOSTAS COM FOLLOW-UPS (V2)
 -- ========================================
 CREATE TABLE candidato_respostas_v2 (
   id CHAR(36) NOT NULL PRIMARY KEY COMMENT 'UUID v4',
@@ -115,7 +161,7 @@ CREATE TABLE candidato_respostas_v2 (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ========================================
--- 5. INTERVIEW LOGS (Auditoria)
+-- 6. INTERVIEW LOGS (Auditoria)
 -- ========================================
 CREATE TABLE interview_logs (
   id CHAR(36) NOT NULL PRIMARY KEY COMMENT 'UUID v4',
@@ -136,7 +182,7 @@ CREATE TABLE interview_logs (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ========================================
--- 6. ANÁLISES DE CANDIDATO
+-- 7. ANÁLISES DE CANDIDATO
 -- ========================================
 CREATE TABLE analises_entrevista (
   id CHAR(36) NOT NULL PRIMARY KEY COMMENT 'UUID v4',
@@ -161,16 +207,11 @@ CREATE TABLE analises_entrevista (
 -- ========================================
 
 -- Procedure: Limpar sessões expiradas (executar periodicamente)
-DELIMITER $$
 CREATE PROCEDURE cleanup_expired_sessions()
-BEGIN
-  DELETE FROM candidato_entrevista_sessions 
-  WHERE expires_at <= NOW();
-END$$
-DELIMITER ;
+DELETE FROM candidato_entrevista_sessions
+WHERE expires_at <= NOW();
 
 -- View: Resumo de sessões
-DELIMITER $$
 CREATE VIEW view_sessoes_resumo AS
 SELECT
   s.id,
@@ -185,11 +226,9 @@ SELECT
 FROM sessoes_entrevista s
 LEFT JOIN candidato_respostas_v2 rv2 ON s.id = rv2.sessao_id
 GROUP BY s.id
-$$
-DELIMITER ;
+;
 
 -- View: Resumo de logs
-DELIMITER $$
 CREATE VIEW view_interview_logs_resumo AS
 SELECT
   sessao_id,
@@ -199,8 +238,7 @@ SELECT
   ROUND(AVG(duracao_ms), 0) as duracao_media_ms
 FROM interview_logs
 GROUP BY sessao_id
-$$
-DELIMITER ;
+;
 
 -- ========================================
 -- INDICES FULL-TEXT (Análises)

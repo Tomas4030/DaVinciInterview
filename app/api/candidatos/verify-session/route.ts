@@ -4,6 +4,10 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { validarSessao } from "@/lib/queries/candidatos";
+import { validateLocalSession } from "@/lib/in-memory-verification";
+import { withTimeout } from "@/lib/timeout";
+
+const DB_OP_TIMEOUT_MS = Number(process.env.DB_OP_TIMEOUT_MS || 3000);
 
 export async function POST(request: NextRequest) {
   try {
@@ -17,7 +21,18 @@ export async function POST(request: NextRequest) {
     }
 
     // Validar sessão
-    const sessao = await validarSessao(sessionToken);
+    let sessao = null;
+
+    try {
+      sessao = await withTimeout(
+        validarSessao(sessionToken),
+        DB_OP_TIMEOUT_MS,
+        "verify-session:validarSessao",
+      );
+    } catch (error) {
+      sessao = validateLocalSession(sessionToken);
+      console.warn("[verify-session] DB indisponível, a validar sessão em memória.", error);
+    }
 
     if (!sessao) {
       return NextResponse.json(

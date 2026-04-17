@@ -57,7 +57,7 @@ export default function AdminNav({ userEmail }: AdminNavProps) {
       localStorage.removeItem("admin_token");
       localStorage.removeItem("admin_email");
       setDropdownOpen(false);
-      router.push(withBasePath("/admin/login"));
+      router.push("/admin/login");
       router.refresh();
     }
   }

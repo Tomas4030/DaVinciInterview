@@ -159,15 +159,18 @@ export async function atualizarStatusCandidatura(
 }
 
 /**
- * Deleta todas as candidaturas de um email
+ * Deleta candidaturas por email e, opcionalmente, por vaga
  */
 export async function deletarCandidaturasPorEmail(
   email: string,
+  vagaId?: string,
 ): Promise<number> {
-  const result = await query(
-    `DELETE FROM candidato_respostas WHERE email = ?`,
-    [email],
-  );
+  const sql = vagaId
+    ? `DELETE FROM candidato_respostas WHERE email = ? AND vaga_id = ?`
+    : `DELETE FROM candidato_respostas WHERE email = ?`;
+  const params = vagaId ? [email, vagaId] : [email];
+
+  const result = await query(sql, params);
 
   return (result[1] as any).affectedRows || 0;
 }

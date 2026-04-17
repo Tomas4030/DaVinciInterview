@@ -50,16 +50,14 @@ export interface SessaoComRespostas {
 
 // ─── Vagas ────────────────────────────────────────────────────────────────────
 
-/** Lista todas as vagas ativas (usado no homepage e admin) */
-/** Lista todas as vagas (admin) via MockAPI */
+/** Lista todas as vagas (admin) */
 export async function listarVagas(): Promise<VagaResumo[]> {
   try {
     let vagas: any[] = [];
 
     if (typeof window === "undefined") {
-      // Server-side
-      const { getAllVagas } = await import("./mock-api");
-      vagas = await getAllVagas();
+      const { listarVagasRegistro } = await import("./queries/vagas");
+      vagas = await listarVagasRegistro();
     } else {
       // Client-side
       const response = await fetch(withBasePath("/api/vagas"), {
@@ -85,19 +83,19 @@ export async function listarVagas(): Promise<VagaResumo[]> {
       criada_em: v.criada_em ?? v.createdAt ?? new Date().toISOString(),
     }));
   } catch (error) {
-    console.error("Erro ao listar vagas da Mock API:", error);
+    console.error("Erro ao listar vagas:", error);
     return [];
   }
 }
 
-/** Lista apenas vagas ativas para os candidatos (Mock API) */
+/** Lista apenas vagas ativas para os candidatos */
 export async function listarVagasAtivas(): Promise<VagaResumo[]> {
   try {
     let vagas: any[] = [];
 
     if (typeof window === "undefined") {
-      const { getAllVagas } = await import("./mock-api");
-      vagas = await getAllVagas();
+      const { listarVagasAtivasRegistro } = await import("./queries/vagas");
+      vagas = await listarVagasAtivasRegistro();
     } else {
       const response = await fetch(withBasePath("/api/vagas"), {
         cache: "no-store",
@@ -124,17 +122,17 @@ export async function listarVagasAtivas(): Promise<VagaResumo[]> {
         criada_em: v.criada_em ?? v.createdAt ?? new Date().toISOString(),
       }));
   } catch (error) {
-    console.error("Erro ao listar vagas da Mock API:", error);
+    console.error("Erro ao listar vagas:", error);
     return [];
   }
 }
 
-/** Obtém uma vaga completa (com perguntas) por ID (Mock API) */
+/** Obtém uma vaga completa (com perguntas) por ID */
 export async function obterVaga(vagaId: string): Promise<Vaga> {
   try {
     if (typeof window === "undefined") {
-      const { getVagaById } = await import("./mock-api");
-      const vaga = await getVagaById(vagaId);
+      const { obterVagaRegistro } = await import("./queries/vagas");
+      const vaga = await obterVagaRegistro(vagaId);
 
       if (!vaga) {
         throw new Error("Vaga não encontrada");
@@ -180,7 +178,7 @@ export async function obterVaga(vagaId: string): Promise<Vaga> {
       ativa: vaga.ativa,
     };
   } catch (error) {
-    console.error("Erro ao obter vaga da Mock API:", error);
+    console.error("Erro ao obter vaga:", error);
     throw new Error("Vaga não encontrada");
   }
 }

@@ -1,13 +1,16 @@
 // app/api/vagas/[vagaId]/route.ts
-// GET    /api/vagas/[vagaId] → obtém vaga por ID (MockAPI)
-// PUT    /api/vagas/[vagaId] → actualiza vaga (MockAPI, requer auth)
-// DELETE /api/vagas/[vagaId] → apaga vaga (MockAPI, requer auth)
+// GET    /api/vagas/[vagaId] → obtém vaga por ID (DB MySQL)
+// PUT    /api/vagas/[vagaId] → actualiza vaga (DB MySQL, requer auth)
+// DELETE /api/vagas/[vagaId] → apaga vaga (DB MySQL, requer auth)
 
 import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import { ADMIN_SESSION_COOKIE, parseAdminToken } from "@/lib/admin-auth";
-
-const MOCKAPI_ENDPOINT = process.env.MOCKAPI_ENDPOINT;
+import {
+  apagarVagaRegistro,
+  obterVagaRegistro,
+  atualizarVagaRegistro,
+} from "@/lib/queries/vagas";
 
 interface Params {
   params: { vagaId: string };
@@ -15,29 +18,14 @@ interface Params {
 
 export async function GET(_req: NextRequest, { params }: Params) {
   try {
-    if (!MOCKAPI_ENDPOINT) {
-      return NextResponse.json(
-        { error: "API endpoint not configured" },
-        { status: 500 },
-      );
-    }
+    const vaga = await obterVagaRegistro(params.vagaId);
 
-    const response = await fetch(`${MOCKAPI_ENDPOINT}/vagas/${params.vagaId}`, {
-      next: { revalidate: 60 }, // ISR: revalidate every 60s
-    });
-
-    if (response.status === 404) {
+    if (!vaga) {
       return NextResponse.json(
         { error: "Vaga não encontrada" },
         { status: 404 },
       );
     }
-
-    if (!response.ok) {
-      throw new Error(`MockAPI error: ${response.statusText}`);
-    }
-
-    const vaga = await response.json();
 
     return NextResponse.json({
       success: true,
@@ -59,25 +47,22 @@ export async function PUT(req: NextRequest, { params }: Params) {
       return NextResponse.json({ error: "Não autorizado" }, { status: 403 });
     }
 
-    if (!MOCKAPI_ENDPOINT) {
-      return NextResponse.json(
-        { error: "API endpoint not configured" },
-        { status: 500 },
-      );
-    }
-
     const body = await req.json();
-    const response = await fetch(`${MOCKAPI_ENDPOINT}/vagas/${params.vagaId}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
+    const data = await atualizarVagaRegistro(params.vagaId, {
+      titulo: body.titulo,
+      descricao: body.descricao,
+      modalidade: body.modalidade,
+      duracao_min: Number(body.duracao_min) || undefined,
+      perguntas: body.perguntas,
+      ativa: typeof body.ativa === "boolean" ? body.ativa : undefined,
     });
 
-    if (!response.ok) {
-      throw new Error(`MockAPI error: ${response.statusText}`);
+    if (!data) {
+      return NextResponse.json(
+        { error: "Vaga não encontrada" },
+        { status: 404 },
+      );
     }
-
-    const data = await response.json();
 
     // Limpar cache da homepage e admin dashboard
     revalidatePath("/");
@@ -106,19 +91,13 @@ export async function DELETE(_req: NextRequest, { params }: Params) {
       return NextResponse.json({ error: "Não autorizado" }, { status: 403 });
     }
 
-    if (!MOCKAPI_ENDPOINT) {
+    const deleted = await apagarVagaRegistro(params.vagaId);
+
+    if (!deleted) {
       return NextResponse.json(
-        { error: "API endpoint not configured" },
-        { status: 500 },
+        { error: "Vaga não encontrada" },
+        { status: 404 },
       );
-    }
-
-    const response = await fetch(`${MOCKAPI_ENDPOINT}/vagas/${params.vagaId}`, {
-      method: "DELETE",
-    });
-
-    if (!response.ok) {
-      throw new Error(`MockAPI error: ${response.statusText}`);
     }
 
     // Limpar cache da homepage e admin dashboard

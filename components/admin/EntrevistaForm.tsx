@@ -110,7 +110,7 @@ export default function EntrevistaForm({ vagaInicial }: Props) {
       }
 
       setSaved(true);
-      setTimeout(() => router.push(withBasePath("/admin")), 800);
+      setTimeout(() => router.push("/admin"), 800);
       router.refresh();
     } catch (err: unknown) {
       setErro(err instanceof Error ? err.message : "Erro desconhecido");
@@ -130,7 +130,7 @@ export default function EntrevistaForm({ vagaInicial }: Props) {
         method: "DELETE",
       });
       if (!res.ok) throw new Error("Erro ao apagar");
-      router.push(withBasePath("/admin"));
+      router.push("/admin");
       router.refresh();
     } catch (err: unknown) {
       setErro(err instanceof Error ? err.message : "Erro ao apagar");
@@ -438,7 +438,7 @@ export default function EntrevistaForm({ vagaInicial }: Props) {
 
           <button
             type="button"
-            onClick={() => router.push(withBasePath("/admin"))}
+            onClick={() => router.push("/admin")}
             className="rounded-xl border border-[var(--c-border)]/80 px-4 py-[9px] text-[0.78rem] font-medium text-[var(--c-muted)] hover:text-[var(--c-text)] hover:border-[var(--c-border)] transition-colors duration-150"
           >
             Cancelar

@@ -38,7 +38,7 @@ export default function LoginForm() {
       localStorage.setItem("admin_token", data.token);
       localStorage.setItem("admin_email", data.admin.email);
 
-      router.push(withBasePath("/admin"));
+      router.push("/admin");
       router.refresh();
     } catch (err) {
       setErro("Erro ao fazer login. Tenta novamente.");

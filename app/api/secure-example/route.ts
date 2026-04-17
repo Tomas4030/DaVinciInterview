@@ -6,25 +6,24 @@
  * Este arquivo demonstra:
  * - Como acessar variáveis de ambiente de forma segura
  * - Como validar autenticação
- * - Como fazer chamadas ao MockAPI
+ * - Como fazer chamadas à base de dados
  * - Como tratar erros
  * - Como retornar dados seguros ao cliente
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import {
+  apagarVagaRegistro,
+  criarVagaRegistro,
+  listarVagasRegistro,
+} from "@/lib/queries/vagas";
 
 // ============================================
 // 1. VARIÁVEIS DE AMBIENTE (Servidor Apenas)
 // ============================================
 
-const MOCKAPI_ENDPOINT = process.env.MOCKAPI_ENDPOINT;
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
-
-// Validações na inicialização
-if (!MOCKAPI_ENDPOINT) {
-  console.warn("[SECURITY] MOCKAPI_ENDPOINT not configured");
-}
 
 // ============================================
 // 2. TIPOS
@@ -34,13 +33,6 @@ interface AuthenticatedRequest {
   isAuthenticated: boolean;
   email?: string;
   error?: string;
-}
-
-interface MockApiResponse<T = unknown> {
-  success: boolean;
-  data?: T;
-  error?: string;
-  status?: number;
 }
 
 // ============================================
@@ -85,48 +77,6 @@ function validateAdminToken(token: string): AuthenticatedRequest {
   }
 }
 
-/**
- * Faz chamada segura ao MockAPI
- */
-async function callMockApi<T = unknown>(
-  endpoint: string,
-  options?: RequestInit,
-): Promise<MockApiResponse<T>> {
-  try {
-    if (!MOCKAPI_ENDPOINT) {
-      return {
-        success: false,
-        error: "API endpoint not configured",
-        status: 500,
-      };
-    }
-
-    const url = `${MOCKAPI_ENDPOINT}${endpoint}`;
-    const response = await fetch(url, options);
-
-    if (!response.ok) {
-      return {
-        success: false,
-        error: `API error: ${response.statusText}`,
-        status: response.status,
-      };
-    }
-
-    const data = await response.json();
-    return {
-      success: true,
-      data,
-    };
-  } catch (error) {
-    console.error("[callMockApi]", error);
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : "Unknown error",
-      status: 500,
-    };
-  }
-}
-
 // ============================================
 // 4. HANDLERS PÚBLICOS
 // ============================================
@@ -134,7 +84,7 @@ async function callMockApi<T = unknown>(
 /**
  * GET /api/secure-example/vagas
  *
- * Descrição: Lista vagas do MockAPI
+ * Descrição: Lista vagas da base de dados
  * Autenticação: Não requerida (público)
  *
  * @example
@@ -143,20 +93,12 @@ async function callMockApi<T = unknown>(
  */
 export async function GET(request: NextRequest) {
   try {
-    // Chamada segura ao MockAPI
-    const result = await callMockApi("/vagas");
-
-    if (!result.success) {
-      return NextResponse.json(
-        { error: result.error },
-        { status: result.status || 500 },
-      );
-    }
+    const result = await listarVagasRegistro();
 
     // Retorna dados públicos ao cliente
     return NextResponse.json({
       success: true,
-      data: result.data,
+      data: result,
     });
   } catch (error) {
     console.error("[GET /api/secure-example]", error);
@@ -174,7 +116,7 @@ export async function GET(request: NextRequest) {
 /**
  * POST /api/secure-example/vagas
  *
- * Descrição: Cria nova vaga no MockAPI
+ * Descrição: Cria nova vaga na base de dados
  * Autenticação: REQUERIDA (admin only)
  *
  * @header Authorization: "Bearer <base64(email:password)>"
@@ -243,27 +185,21 @@ export async function POST(request: NextRequest) {
     // 5. ✅ Log de auditoria (opcional mas recomendado)
     console.log(`[AUDIT] Admin ${auth.email} criou vaga: ${body.id}`);
 
-    // 6. ✅ Chamada segura ao MockAPI
-    const result = await callMockApi("/vagas", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(body),
+    const result = await criarVagaRegistro({
+      id: body.id,
+      titulo: body.titulo,
+      descricao: body.descricao ?? "",
+      modalidade: body.modalidade ?? "Remoto",
+      duracao_min: Number(body.duracao_min) || 10,
+      perguntas: body.perguntas,
+      ativa: Boolean(body.ativa ?? true),
     });
-
-    if (!result.success) {
-      return NextResponse.json(
-        { error: result.error },
-        { status: result.status || 500 },
-      );
-    }
 
     // 7. ✅ Retorna resposta ao cliente
     return NextResponse.json(
       {
         success: true,
-        data: result.data,
+        data: result,
         message: "Vaga criada com sucesso",
       },
       { status: 201 },
@@ -280,7 +216,7 @@ export async function POST(request: NextRequest) {
 /**
  * DELETE /api/secure-example/vagas/[id]
  *
- * Descrição: Remove vaga do MockAPI
+ * Descrição: Remove vaga da base de dados
  * Autenticação: REQUERIDA (admin only)
  *
  * @example
@@ -321,16 +257,10 @@ export async function DELETE(request: NextRequest) {
     // 3. ✅ Log de auditoria
     console.log(`[AUDIT] Admin ${auth.email} deletou vaga: ${vagaId}`);
 
-    // 4. ✅ Chamada segura ao MockAPI
-    const result = await callMockApi(`/vagas/${vagaId}`, {
-      method: "DELETE",
-    });
+    const deleted = await apagarVagaRegistro(vagaId);
 
-    if (!result.success) {
-      return NextResponse.json(
-        { error: result.error },
-        { status: result.status || 500 },
-      );
+    if (!deleted) {
+      return NextResponse.json({ error: "Vaga não encontrada" }, { status: 404 });
     }
 
     return NextResponse.json({
