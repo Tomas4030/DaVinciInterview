@@ -2,7 +2,6 @@
 const nextConfig = {
   output: "standalone",
   basePath: "/tomas",
-  assetPrefix: "/tomas",
   headers: async () => {
     return [
       {

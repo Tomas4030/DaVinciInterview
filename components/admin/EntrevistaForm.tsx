@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Vaga } from "@/lib/api";
-import { BASE_PATH } from "@/lib/base-path";
+import { withBasePath } from "@/lib/base-path";
 
 interface Props {
   vagaInicial?: Vaga;
@@ -93,7 +93,9 @@ export default function EntrevistaForm({ vagaInicial }: Props) {
 
     setLoading(true);
     try {
-      const url = isEdicao ? `/api/vagas/${vaga.id}` : "/api/vagas";
+      const url = isEdicao
+        ? withBasePath(`/api/vagas/${vaga.id}`)
+        : withBasePath("/api/vagas");
       const method = isEdicao ? "PUT" : "POST";
 
       const res = await fetch(url, {
@@ -108,7 +110,7 @@ export default function EntrevistaForm({ vagaInicial }: Props) {
       }
 
       setSaved(true);
-      setTimeout(() => router.push("/admin"), 800);
+      setTimeout(() => router.push(withBasePath("/admin")), 800);
       router.refresh();
     } catch (err: unknown) {
       setErro(err instanceof Error ? err.message : "Erro desconhecido");
@@ -124,9 +126,11 @@ export default function EntrevistaForm({ vagaInicial }: Props) {
     }
     setLoading(true);
     try {
-      const res = await fetch(`/api/vagas/${vaga.id}`, { method: "DELETE" });
+      const res = await fetch(withBasePath(`/api/vagas/${vaga.id}`), {
+        method: "DELETE",
+      });
       if (!res.ok) throw new Error("Erro ao apagar");
-      router.push(`${BASE_PATH}/admin`)
+      router.push(withBasePath("/admin"));
       router.refresh();
     } catch (err: unknown) {
       setErro(err instanceof Error ? err.message : "Erro ao apagar");
@@ -434,7 +438,7 @@ export default function EntrevistaForm({ vagaInicial }: Props) {
 
           <button
             type="button"
-            onClick={() => router.push("/admin")}
+            onClick={() => router.push(withBasePath("/admin"))}
             className="rounded-xl border border-[var(--c-border)]/80 px-4 py-[9px] text-[0.78rem] font-medium text-[var(--c-muted)] hover:text-[var(--c-text)] hover:border-[var(--c-border)] transition-colors duration-150"
           >
             Cancelar

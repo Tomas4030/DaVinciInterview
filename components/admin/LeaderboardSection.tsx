@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { withBasePath } from "@/lib/base-path";
 
 interface CandidatoRanking {
   posicao: number;
@@ -53,7 +54,7 @@ export default function LeaderboardSection({
     setErro(null);
 
     try {
-      const response = await fetch("/api/analise/comparar-candidatos", {
+      const response = await fetch(withBasePath("/api/analise/comparar-candidatos"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ vaga_id: vagaId }),

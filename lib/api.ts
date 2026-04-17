@@ -2,6 +2,7 @@
 // Toda a lógica de acesso a dados via MySQL.
 // Comunica via queries layer (lib/queries/)
 import type { Pergunta } from "./database.types";
+import { withBasePath } from "./base-path";
 
 // ─── Tipos públicos ────────────────────────────────────────────────────────────
 
@@ -47,20 +48,6 @@ export interface SessaoComRespostas {
   criada_em: string;
 }
 
-function getAppBaseUrl(): string {
-  if (typeof window !== "undefined") return "";
-
-  if (process.env.NEXT_PUBLIC_APP_URL) {
-    return process.env.NEXT_PUBLIC_APP_URL;
-  }
-
-  if (process.env.VERCEL_URL) {
-    return `https://${process.env.VERCEL_URL}`;
-  }
-
-  return "http://localhost:3000";
-}
-
 // ─── Vagas ────────────────────────────────────────────────────────────────────
 
 /** Lista todas as vagas ativas (usado no homepage e admin) */
@@ -75,7 +62,7 @@ export async function listarVagas(): Promise<VagaResumo[]> {
       vagas = await getAllVagas();
     } else {
       // Client-side
-      const response = await fetch(`${getAppBaseUrl()}/api/vagas`, {
+      const response = await fetch(withBasePath("/api/vagas"), {
         cache: "no-store",
       });
 
@@ -112,7 +99,7 @@ export async function listarVagasAtivas(): Promise<VagaResumo[]> {
       const { getAllVagas } = await import("./mock-api");
       vagas = await getAllVagas();
     } else {
-      const response = await fetch(`${getAppBaseUrl()}/api/vagas`, {
+      const response = await fetch(withBasePath("/api/vagas"), {
         cache: "no-store",
       });
 
@@ -166,7 +153,7 @@ export async function obterVaga(vagaId: string): Promise<Vaga> {
       };
     }
 
-    const response = await fetch(`${getAppBaseUrl()}/api/vagas/${vagaId}`, {
+    const response = await fetch(withBasePath(`/api/vagas/${vagaId}`), {
       next: { revalidate: 60 },
     });
 

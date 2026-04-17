@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
 import type { Vaga } from "@/lib/api";
-import { BASE_PATH } from "@/lib/base-path";
+import { withBasePath } from "@/lib/base-path";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -233,7 +233,7 @@ export default function ChatEntrevista({
     respostasFinal: typeof respostasFinalizadas,
   ) {
     if (candidateEmail && candidatePhone) {
-      await fetch(`${BASE_PATH}/api/candidatos/create`, {
+      await fetch(withBasePath("/api/candidatos/create"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -273,7 +273,7 @@ export default function ChatEntrevista({
     };
     // ── Chamar a IA para decidir: follow-up ou próxima pergunta ─────────────
     try {
-      const response = await fetch("/api/entrevista/next-question", {
+      const response = await fetch(withBasePath("/api/entrevista/next-question"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

@@ -2,6 +2,7 @@
 "use client";
 
 import { useState } from "react";
+import { withBasePath } from "@/lib/base-path";
 
 interface DeleteSessionButtonProps {
   email: string;
@@ -19,14 +20,17 @@ export default function DeleteSessionButton({
     setIsDeleting(true);
 
     try {
-      const response = await fetch("/api/candidato-respostas/delete-by-email", {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email,
-          vagaId,
-        }),
-      });
+      const response = await fetch(
+        withBasePath("/api/candidato-respostas/delete-by-email"),
+        {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email,
+            vagaId,
+          }),
+        },
+      );
 
       if (!response.ok) {
         const data = await response.json();

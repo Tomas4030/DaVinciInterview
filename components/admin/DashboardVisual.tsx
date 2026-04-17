@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { AnalisisResultado } from "@/lib/analysis-engine";
+import { withBasePath } from "@/lib/base-path";
 
 interface DashboardProps {
   vagaId: string;
@@ -120,7 +121,7 @@ export default function DashboardVisual({
     setErro(null);
 
     try {
-      const response = await fetch("/api/analise/gerar-resumo", {
+      const response = await fetch(withBasePath("/api/analise/gerar-resumo"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -151,7 +152,7 @@ export default function DashboardVisual({
     setExportando(true);
 
     try {
-      const response = await fetch("/api/exportar/pdf", {
+      const response = await fetch(withBasePath("/api/exportar/pdf"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

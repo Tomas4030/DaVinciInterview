@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import ClearLegacyServiceWorker from "../components/ClearLegacyServiceWorker";
 
@@ -18,7 +17,6 @@ export default function RootLayout({
       <body className="min-h-screen bg-[var(--c-bg)]">
         <ClearLegacyServiceWorker />
         {children}
-        <Analytics /> 
       </body>
     </html>
   );

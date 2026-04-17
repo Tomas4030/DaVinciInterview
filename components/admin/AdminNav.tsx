@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { withBasePath } from "@/lib/base-path";
 
 type AdminNavProps = {
   userEmail: string;
@@ -49,14 +50,14 @@ export default function AdminNav({ userEmail }: AdminNavProps) {
 
   async function logout() {
     try {
-      await fetch("/api/auth/logout-admin", { method: "POST" });
+      await fetch(withBasePath("/api/auth/logout-admin"), { method: "POST" });
     } catch (error) {
       console.error("Erro ao terminar sessão:", error);
     } finally {
       localStorage.removeItem("admin_token");
       localStorage.removeItem("admin_email");
       setDropdownOpen(false);
-      router.push("/admin/login");
+      router.push(withBasePath("/admin/login"));
       router.refresh();
     }
   }

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { BASE_PATH } from "@/lib/base-path";
+import { withBasePath } from "@/lib/base-path";
 
 
 export default function LoginForm() {
@@ -19,7 +19,7 @@ export default function LoginForm() {
     setLoading(true);
 
     try {
-      const response = await fetch(`${BASE_PATH}/api/auth/login-admin`, {
+      const response = await fetch(withBasePath("/api/auth/login-admin"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -38,7 +38,7 @@ export default function LoginForm() {
       localStorage.setItem("admin_token", data.token);
       localStorage.setItem("admin_email", data.admin.email);
 
-      router.push(`${BASE_PATH}/admin`);
+      router.push(withBasePath("/admin"));
       router.refresh();
     } catch (err) {
       setErro("Erro ao fazer login. Tenta novamente.");
