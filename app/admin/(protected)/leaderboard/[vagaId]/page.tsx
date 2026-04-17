@@ -24,7 +24,7 @@ export default async function LeaderboardPage({
   params: { vagaId: string };
 }) {
   if (!vagaId) {
-    redirect("/admin/(protected)/vagas");
+    redirect("/admin");
   }
 
   const vagaTitulo = await obterVagaTitulo(vagaId);
@@ -44,7 +44,7 @@ export default async function LeaderboardPage({
               </p>
             </div>
             <a
-              href="/admin/(protected)/vagas"
+              href="/admin"
               className="px-4 py-2 text-gray-700 hover:text-gray-900 font-medium"
             >
               ← Voltar às Vagas

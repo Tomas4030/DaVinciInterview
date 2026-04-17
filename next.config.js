@@ -1,6 +1,8 @@
 /** @type {import('next').NextConfig} */
 
-const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+const { normalizeBasePath } = require("./lib/base-path-utils");
+
+const basePath = normalizeBasePath(process.env.NEXT_PUBLIC_BASE_PATH || "");
 
 const nextConfig = {
   output: "standalone",

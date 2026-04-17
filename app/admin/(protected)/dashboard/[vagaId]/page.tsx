@@ -25,7 +25,7 @@ export default async function DashboardPage({
   searchParams: { sessaoId?: string; email?: string };
 }) {
   if (!vagaId) {
-    redirect("/admin/(protected)/vagas");
+    redirect("/admin");
   }
 
   const vagaTitulo = await obterVagaTitulo(vagaId);
@@ -52,7 +52,7 @@ export default async function DashboardPage({
               )}
             </div>
             <a
-              href={`/admin/(protected)/leaderboard/${vagaId}`}
+              href={`/admin/leaderboard/${vagaId}`}
               className="px-4 py-2 text-gray-700 hover:text-gray-900 font-medium"
             >
               Ver Leaderboard →
@@ -75,7 +75,7 @@ export default async function DashboardPage({
             <p className="text-sm mt-1">
               Acesse esta página através do leaderboard ou com URL como:
               <code className="block mt-2 bg-yellow-100 p-2 rounded text-xs">
-                /admin/(protected)/dashboard/[vagaId]?sessaoId=...&email=...
+                /admin/dashboard/[vagaId]?sessaoId=...&email=...
               </code>
             </p>
           </div>

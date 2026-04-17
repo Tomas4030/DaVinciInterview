@@ -246,6 +246,7 @@ export async function compararCandidatos(
   candidatos: Array<{
     nome: string;
     email: string;
+    sessao_id?: string;
     analisis: AnalisisResultado;
   }>,
 ): Promise<{
@@ -255,6 +256,7 @@ export async function compararCandidatos(
       posicao: number;
       nome: string;
       email: string;
+      sessao_id?: string;
       score_geral: number;
       scores_detalhes: Record<string, number>;
       reco: string;
@@ -276,6 +278,7 @@ export async function compararCandidatos(
     .map((c) => ({
       nome: c.nome,
       email: c.email,
+      sessao_id: c.sessao_id,
       score_geral: c.analisis.scores.media,
       scores_detalhes: {
         comunicacao: c.analisis.scores.comunicacao,

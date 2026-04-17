@@ -8,6 +8,7 @@ interface CandidatoRanking {
   posicao: number;
   nome: string;
   email: string;
+  sessao_id?: string;
   score_geral: number;
   scores_detalhes: {
     [key: string]: number;
@@ -272,12 +273,21 @@ export default function LeaderboardSection({
                   </span>
                 </td>
                 <td className="px-4 py-3 text-center">
+                  {candidato.sessao_id ? (
                   <Link
-                    href={`/admin/(protected)/analise/${vagaId}/${candidato.email}`}
+                    href={`/admin/dashboard/${vagaId}?sessaoId=${encodeURIComponent(candidato.sessao_id)}&email=${encodeURIComponent(candidato.email)}`}
                     className="text-blue-600 hover:text-blue-700 font-medium text-sm"
                   >
                     Ver Detalhes →
                   </Link>
+                  ) : (
+                    <Link
+                      href={`/admin/respostas?vaga=${encodeURIComponent(vagaId)}`}
+                      className="text-blue-600 hover:text-blue-700 font-medium text-sm"
+                    >
+                      Ver Respostas →
+                    </Link>
+                  )}
                 </td>
               </tr>
             ))}

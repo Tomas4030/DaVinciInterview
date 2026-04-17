@@ -46,6 +46,7 @@ export async function POST(request: NextRequest) {
       .map((a) => ({
         nome: a.email_candidato?.split("@")[0] || "Candidato",
         email: a.email_candidato || "N/A",
+        sessao_id: a.sessao_id,
         analisis: a.analisis_json,
       }));
 

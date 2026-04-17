@@ -1,5 +1,7 @@
+import { normalizeBasePath } from "./base-path-utils";
+
 const rawBasePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
-export const BASE_PATH = rawBasePath.replace(/\/+$/, "");
+export const BASE_PATH = normalizeBasePath(rawBasePath);
 
 export function withBasePath(path: string) {
   if (!path) return BASE_PATH || "/";

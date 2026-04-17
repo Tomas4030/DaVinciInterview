@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { normalizeBasePath } from "@/lib/base-path-utils";
 
 export function middleware(request: NextRequest) {
   // Only apply to HTML pages — never to _next/static, _next/image, api, or public files
   const { pathname } = request.nextUrl;
-  const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+  const basePath = normalizeBasePath(process.env.NEXT_PUBLIC_BASE_PATH || "");
   const pathnameWithoutBasePath =
     basePath && pathname.startsWith(basePath)
       ? pathname.slice(basePath.length) || "/"
