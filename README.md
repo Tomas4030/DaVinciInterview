@@ -1,162 +1,106 @@
-# DaVinci Interviews
+# DaVinci Interview 🤖
 
-Plataforma de entrevistas em formato chatbot, construída com **Next.js 14**, **Tailwind CSS** e **Supabase**.
-
----
-
-## Stack
-
-| Camada        | Tecnologia                              |
-|---------------|-----------------------------------------|
-| Frontend      | Next.js 14 (App Router) + TypeScript    |
-| Estilos       | Tailwind CSS + CSS custom properties    |
-| Base de dados | Supabase (PostgreSQL)                   |
-| Autenticação  | Supabase Auth (apenas área admin)       |
-| API interna   | Next.js Route Handlers (`/app/api/`)    |
-
-> **Nota:** a versão anterior dependia de um backend FastAPI separado.  
-> Esta versão é **full-stack no Next.js** — sem servidor Python necessário.
+**DaVinci Interview** é uma plataforma moderna de recrutamento que utiliza uma interface de chatbot para conduzir entrevistas preliminares. Construída com **Next.js 14**, **Tailwind CSS** e **Supabase**, a aplicação automatiza a recolha de respostas de candidatos de forma conversacional e eficiente.
 
 ---
 
-## Estrutura do projeto
+## 🚀 Funcionalidades
 
-```
-davinci-interviews/
-├── supabase/
-│   └── schema.sql              ← Script SQL completo (tabelas + RLS + seed)
-└── frontend/
-    ├── app/
-    │   ├── page.tsx            ← Homepage: lista de vagas
-    │   ├── entrevista/
-    │   │   └── [vagaId]/
-    │   │       └── page.tsx    ← Página da entrevista
-    │   ├── admin/
-    │   │   ├── layout.tsx      ← Guard de autenticação
-    │   │   ├── page.tsx        ← Dashboard admin
-    │   │   ├── login/page.tsx
-    │   │   ├── entrevistas/
-    │   │   │   ├── nova/page.tsx
-    │   │   │   └── [vagaId]/page.tsx
-    │   │   └── respostas/page.tsx  ← Visualizador de candidaturas
-    │   └── api/
-    │       ├── vagas/route.ts          ← GET (lista) + POST (criar)
-    │       ├── vagas/[vagaId]/route.ts ← GET + PUT + DELETE
-    │       └── respostas/route.ts      ← POST (guardar resposta)
-    ├── components/
-    │   ├── chat/
-    │   │   └── ChatEntrevista.tsx  ← Interface conversacional
-    │   └── admin/
-    │       ├── AdminNav.tsx
-    │       ├── LoginForm.tsx
-    │       └── EntrevistaForm.tsx
-    └── lib/
-        ├── supabase.ts         ← Clientes Supabase (server + client)
-        ├── api.ts              ← Funções de acesso a dados
-        └── database.types.ts  ← Tipos TypeScript do schema
+### 👥 Para Candidatos
+- **Interface Conversacional**: Entrevistas em formato de chat amigável e intuitivo.
+- **Progresso em Tempo Real**: Barra de progresso visual durante a entrevista.
+- **Sem Atrito**: Não requer criação de conta para responder às vagas.
+- **Persistência**: Respostas guardadas automaticamente a cada passo.
+
+### 🔐 Para Administradores (`/admin`)
+- **Gestão de Vagas**: Criar, editar e desativar vagas com facilidade.
+- **Construtor de Questionários**: Configuração de perguntas personalizadas para cada vaga.
+- **Dashboard de Candidaturas**: Visualização centralizada de todas as respostas recebidas.
+- **Exportação de Dados**: Suporte para exportação de respostas (PDF/CSV).
+- **Segurança**: Área administrativa protegida por autenticação Supabase.
+
+---
+
+## 🛠️ Stack Tecnológica
+
+| Camada | Tecnologia |
+| --- | --- |
+| **Frontend** | [Next.js 14](https://nextjs.org/) (App Router) + TypeScript |
+| **Estilização** | [Tailwind CSS](https://tailwindcss.com/) |
+| **Backend & BD** | [Supabase](https://supabase.com/) (PostgreSQL) |
+| **Autenticação** | Supabase Auth |
+| **IA & Integrações** | OpenAI API (Análise de respostas) |
+| **E-mail** | Nodemailer |
+
+---
+
+## 📂 Estrutura do Projeto
+
+```text
+DaVinciInterview/
+├── app/                # Rotas do Next.js (App Router)
+│   ├── admin/          # Dashboard e gestão administrativa
+│   ├── api/            # Endpoints da API (Vagas, Respostas, Análise)
+│   └── entrevista/     # Interface pública de entrevista
+├── components/         # Componentes React reutilizáveis
+├── lib/                # Configurações (Supabase client, utils)
+├── public/             # Assets estáticos
+└── supabase/           # Scripts SQL e migrações da base de dados
 ```
 
 ---
 
-## Configuração rápida
+## ⚙️ Configuração Local
 
-### 1. Supabase
+### 1. Requisitos
+- Node.js 18+
+- Conta no Supabase
 
-1. Cria um projeto em [supabase.com](https://supabase.com)
-2. Vai ao **SQL Editor** e corre o conteúdo de `supabase/schema.sql`
-3. Copia o **Project URL** e a **anon key** (em *Settings → API*)
-4. Para o login de admin, cria um utilizador em *Authentication → Users*
-
-### 2. Frontend
-
+### 2. Instalação
 ```bash
-cd frontend
-cp .env.example .env.local
-```
+# Clonar o repositório
+git clone https://github.com/Tomas4030/DaVinciInterview.git
+cd DaVinciInterview
 
-Edita `.env.local`:
-
-```env
-NEXT_PUBLIC_SUPABASE_URL=https://xxxx.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...
-```
-
-```bash
+# Instalar dependências
 npm install
+```
+
+### 3. Variáveis de Ambiente
+Crie um ficheiro `.env.local` na raiz do projeto:
+```env
+NEXT_PUBLIC_SUPABASE_URL=seu_url_supabase
+NEXT_PUBLIC_SUPABASE_ANON_KEY=sua_chave_anon_supabase
+OPENAI_API_KEY=sua_chave_openai
+```
+
+### 4. Base de Dados
+Execute o script em `supabase/schema.sql` no **SQL Editor** do seu projeto Supabase para criar as tabelas e políticas de segurança (RLS).
+
+### 5. Execução
+```bash
 npm run dev
 ```
-
-A aplicação fica disponível em `http://localhost:3000`.
-
----
-
-## Funcionalidades
-
-### Área pública (candidatos)
-- **`/`** — Lista de vagas ativas com modalidade, duração e número de perguntas
-- **`/entrevista/[vagaId]`** — Entrevista conversacional com barra de progresso
-- Respostas guardadas automaticamente no Supabase após cada resposta
-- Sem necessidade de conta ou autenticação
-
-### Área admin (`/admin`)
-- Protegida por Supabase Auth (email + password)
-- **Dashboard** com estatísticas: entrevistas, perguntas, respostas
-- **Criar/editar/apagar** entrevistas com perguntas reordenáveis
-- **Visualizador de respostas** por vaga, agrupado por sessão
-- Toggle para activar/desactivar vagas sem as apagar
+Aceda a `http://localhost:3000`.
 
 ---
 
-## Modelo de dados (Supabase)
+## 💡 Ideias Futuras (Roadmap)
 
-### Tabela `vagas`
+Aqui estão algumas sugestões para elevar o projeto ao próximo nível:
 
-| Campo         | Tipo        | Descrição                             |
-|---------------|-------------|---------------------------------------|
-| `id`          | `text` (PK) | Slug único, ex: `fullstack-senior`    |
-| `titulo`      | `text`      | Nome da vaga                          |
-| `descricao`   | `text`      | Descrição curta (opcional)            |
-| `modalidade`  | `text`      | `Remoto` · `Híbrido` · `Presencial`  |
-| `duracao_min` | `integer`   | Duração estimada em minutos           |
-| `perguntas`   | `jsonb`     | Array de `{id, texto, tipo}`          |
-| `ativa`       | `boolean`   | Visível para candidatos?              |
-| `criada_em`   | `timestamptz` | Timestamp automático               |
-
-### Tabela `respostas`
-
-| Campo         | Tipo        | Descrição                             |
-|---------------|-------------|---------------------------------------|
-| `id`          | `uuid` (PK) | Auto-gerado                           |
-| `sessao_id`   | `uuid`      | Agrupa respostas do mesmo candidato   |
-| `vaga_id`     | `text` (FK) | Referência à vaga                     |
-| `pergunta_id` | `integer`   | ID da pergunta no JSONB               |
-| `resposta`    | `text`      | Resposta do candidato                 |
-| `criada_em`   | `timestamptz` | Timestamp automático               |
-
-### Row Level Security (RLS)
-
-- **Vagas**: leitura pública, escrita apenas autenticados
-- **Respostas**: inserção pública, leitura apenas autenticados
+1.  **🧠 Análise de Sentimento com IA**: Integrar a API da OpenAI para classificar automaticamente a qualidade e o tom das respostas dos candidatos.
+2.  **📊 Dashboard de Analytics**: Gráficos avançados com taxas de conclusão de entrevistas e tempos médios de resposta.
+3.  **📧 Notificações em Tempo Real**: Envio automático de e-mails para o administrador (via Resend/Nodemailer) sempre que um novo candidato concluir uma entrevista.
+4.  **📑 Exportação Avançada**: Gerar relatórios em PDF formatados profissionalmente com o resumo da entrevista do candidato.
+5.  **💬 Perguntas Dinâmicas**: Implementar lógica de ramificação (branching), onde a próxima pergunta depende da resposta anterior do candidato.
+6.  **🌍 Suporte Multi-idioma (i18n)**: Permitir que as entrevistas sejam criadas e realizadas em diferentes línguas.
 
 ---
 
-## Expandir o projeto
+## 📄 Licença
 
-### Adicionar uma nova vaga
-No dashboard admin → "Nova entrevista" → preenche o formulário.  
-Ou directamente via SQL / Supabase Studio.
+Este projeto está sob a licença MIT. Consulte o ficheiro [LICENSE](LICENSE) para mais detalhes.
 
-### Adicionar campos às perguntas
-Edita o tipo `Pergunta` em `lib/database.types.ts` e o formulário em `EntrevistaForm.tsx`.
-
-### Exportar respostas para CSV
-Adiciona uma route em `/app/api/admin/export/route.ts` que faz `supabase.from('respostas').select(...)` e retorna CSV.
-
-### Notificações por email
-Usa [Supabase Edge Functions](https://supabase.com/docs/guides/functions) com Resend ou SendGrid para notificar o admin quando chegar uma nova candidatura.
-
-### Deploy
-Recomendado: **Vercel** (integração nativa com Next.js).  
-1. Conecta o repositório ao Vercel
-2. Define as variáveis de ambiente (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`)
-3. Deploy automático a cada push
+---
+⭐ Desenvolvido por [Tomás Miguel](https://github.com/Tomas4030)
