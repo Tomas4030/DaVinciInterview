@@ -43,3 +43,5 @@ OpenClaude
 .supabase/*
 *.claude
 tomas.txt
+deploy.sh
+deploy/
