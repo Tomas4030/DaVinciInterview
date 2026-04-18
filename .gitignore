@@ -44,4 +44,4 @@ OpenClaude
 *.claude
 tomas.txt
 deploy.sh
-deploy/
+.deploy/*
