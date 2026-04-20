@@ -41,6 +41,6 @@ OpenClaude
 *.md
 .supabase/*
 *.claude
-tomas.txt
+.ex/*
 deploy.sh
 .deploy/*
