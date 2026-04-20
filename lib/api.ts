@@ -3,6 +3,7 @@
 // Comunica via queries layer (lib/queries/)
 import type { Pergunta } from "./database.types";
 import { withBasePath } from "./base-path";
+import { getAdminCompanyContextFromServerCookies } from "@/lib/admin-context";
 
 // ─── Tipos públicos ────────────────────────────────────────────────────────────
 
@@ -56,8 +57,11 @@ export async function listarVagas(): Promise<VagaResumo[]> {
     let vagas: any[] = [];
 
     if (typeof window === "undefined") {
-      const { listarVagasRegistro } = await import("./queries/vagas");
-      vagas = await listarVagasRegistro();
+      const context = await getAdminCompanyContextFromServerCookies();
+      if (!context) return [];
+
+      const { listarVagasPorCompanyRegistro } = await import("./queries/vagas");
+      vagas = await listarVagasPorCompanyRegistro(context.company.id);
     } else {
       // Client-side
       const response = await fetch(withBasePath("/api/vagas"), {
@@ -131,8 +135,13 @@ export async function listarVagasAtivas(): Promise<VagaResumo[]> {
 export async function obterVaga(vagaId: string): Promise<Vaga> {
   try {
     if (typeof window === "undefined") {
-      const { obterVagaRegistro } = await import("./queries/vagas");
-      const vaga = await obterVagaRegistro(vagaId);
+      const context = await getAdminCompanyContextFromServerCookies();
+      if (!context) {
+        throw new Error("Não autorizado");
+      }
+
+      const { obterVagaPorCompanyRegistro } = await import("./queries/vagas");
+      const vaga = await obterVagaPorCompanyRegistro(vagaId, context.company.id);
 
       if (!vaga) {
         throw new Error("Vaga não encontrada");
@@ -189,8 +198,12 @@ export async function obterVaga(vagaId: string): Promise<Vaga> {
 export async function contarRespostas(): Promise<number> {
   try {
     const { query: dbQuery } = await import("./db");
+    const context = await getAdminCompanyContextFromServerCookies();
+    if (!context) return 0;
+
     const [rows] = await dbQuery(
-      `SELECT COUNT(*) as total FROM candidato_respostas`,
+      `SELECT COUNT(*) as total FROM candidato_respostas WHERE company_id = ?`,
+      [context.company.id],
     );
     return rows[0]?.total || 0;
   } catch (error) {
@@ -207,14 +220,21 @@ export async function listarSessoes(
     const { listarCandidaturasVaga } =
       await import("./queries/candidato-respostas");
     const { query } = await import("./db");
+    const context = await getAdminCompanyContextFromServerCookies();
+    if (!context) return [];
 
     let candidaturas;
     if (vagaId) {
-      candidaturas = await listarCandidaturasVaga(vagaId);
+      candidaturas = await listarCandidaturasVaga(vagaId, context.company.id);
     } else {
       // Listar todas as candidaturas
       const [rows] = await query(
-        `SELECT * FROM candidato_respostas ORDER BY criada_em DESC`,
+        `
+        SELECT * FROM candidato_respostas
+        WHERE company_id = ?
+        ORDER BY criada_em DESC
+        `,
+        [context.company.id],
       );
       candidaturas = rows;
     }

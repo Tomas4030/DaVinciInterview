@@ -10,6 +10,7 @@ import {
   isSupportedPhoneCountry,
   validatePhoneNumberForCountry,
 } from "@/lib/validation";
+import { resolveCompanyAndInterviewFromLegacyVaga } from "@/lib/queries/interviews";
 
 const DB_OP_TIMEOUT_MS = Number(process.env.DB_OP_TIMEOUT_MS || 3000);
 
@@ -58,11 +59,25 @@ export async function POST(request: NextRequest) {
       formatPhoneNumberE164(String(telefone), normalizedCountry) ||
       phoneValidation.e164;
 
+    const scope = await resolveCompanyAndInterviewFromLegacyVaga(vaga_id);
+    if (!scope) {
+      return NextResponse.json(
+        { error: "Entrevista inválida para este identificador de vaga" },
+        { status: 400 },
+      );
+    }
+
     let temDuplicata = false;
 
     try {
       temDuplicata = await withTimeout(
-        verificarDuplicata(normalizedEmail, normalizedPhone, vaga_id),
+        verificarDuplicata(
+          normalizedEmail,
+          normalizedPhone,
+          vaga_id,
+          scope.companyId,
+          scope.interviewId,
+        ),
         DB_OP_TIMEOUT_MS,
         "send-code:verificarDuplicata",
       );

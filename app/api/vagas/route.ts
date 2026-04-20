@@ -4,15 +4,20 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
-import { ADMIN_SESSION_COOKIE, parseAdminToken } from "@/lib/admin-auth";
+import { getAdminCompanyContextFromRequest } from "@/lib/admin-context";
 import {
   criarVagaRegistro,
-  listarVagasRegistro,
+  listarVagasPorCompanyRegistro,
 } from "@/lib/queries/vagas";
 
 export async function GET(request: NextRequest) {
   try {
-    const vagas = await listarVagasRegistro();
+    const context = await getAdminCompanyContextFromRequest(request);
+    if (!context) {
+      return NextResponse.json({ error: "Não autorizado" }, { status: 403 });
+    }
+
+    const vagas = await listarVagasPorCompanyRegistro(context.company.id);
 
     // Adicionar contagem de perguntas
     const vagasFormatadas = vagas.map((v) => ({
@@ -36,11 +41,8 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    // Verificar autenticação admin
-    const token = request.cookies.get(ADMIN_SESSION_COOKIE)?.value;
-    const admin = parseAdminToken(token);
-
-    if (!admin) {
+    const context = await getAdminCompanyContextFromRequest(request);
+    if (!context) {
       return NextResponse.json({ error: "Não autorizado" }, { status: 403 });
     }
 
@@ -58,6 +60,7 @@ export async function POST(request: NextRequest) {
 
     const data = await criarVagaRegistro({
       id: body.id,
+      company_id: context.company.id,
       titulo: body.titulo,
       descricao: body.descricao ?? "",
       modalidade: body.modalidade,

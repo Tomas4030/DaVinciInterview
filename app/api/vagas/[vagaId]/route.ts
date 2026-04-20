@@ -5,11 +5,11 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
-import { ADMIN_SESSION_COOKIE, parseAdminToken } from "@/lib/admin-auth";
+import { getAdminCompanyContextFromRequest } from "@/lib/admin-context";
 import {
-  apagarVagaRegistro,
-  obterVagaRegistro,
-  atualizarVagaRegistro,
+  apagarVagaPorCompanyRegistro,
+  obterVagaPorCompanyRegistro,
+  atualizarVagaPorCompanyRegistro,
 } from "@/lib/queries/vagas";
 
 interface Params {
@@ -18,7 +18,15 @@ interface Params {
 
 export async function GET(_req: NextRequest, { params }: Params) {
   try {
-    const vaga = await obterVagaRegistro(params.vagaId);
+    const context = await getAdminCompanyContextFromRequest(_req);
+    if (!context) {
+      return NextResponse.json({ error: "Não autorizado" }, { status: 403 });
+    }
+
+    const vaga = await obterVagaPorCompanyRegistro(
+      params.vagaId,
+      context.company.id,
+    );
 
     if (!vaga) {
       return NextResponse.json(
@@ -39,23 +47,24 @@ export async function GET(_req: NextRequest, { params }: Params) {
 
 export async function PUT(req: NextRequest, { params }: Params) {
   try {
-    // Verificar autenticação admin
-    const token = req.cookies.get(ADMIN_SESSION_COOKIE)?.value;
-    const admin = parseAdminToken(token);
-
-    if (!admin) {
+    const context = await getAdminCompanyContextFromRequest(req);
+    if (!context) {
       return NextResponse.json({ error: "Não autorizado" }, { status: 403 });
     }
 
     const body = await req.json();
-    const data = await atualizarVagaRegistro(params.vagaId, {
+    const data = await atualizarVagaPorCompanyRegistro(
+      params.vagaId,
+      context.company.id,
+      {
       titulo: body.titulo,
       descricao: body.descricao,
       modalidade: body.modalidade,
       duracao_min: Number(body.duracao_min) || undefined,
       perguntas: body.perguntas,
       ativa: typeof body.ativa === "boolean" ? body.ativa : undefined,
-    });
+      },
+    );
 
     if (!data) {
       return NextResponse.json(
@@ -83,15 +92,15 @@ export async function PUT(req: NextRequest, { params }: Params) {
 
 export async function DELETE(_req: NextRequest, { params }: Params) {
   try {
-    // Verificar autenticação admin
-    const token = _req.cookies.get(ADMIN_SESSION_COOKIE)?.value;
-    const admin = parseAdminToken(token);
-
-    if (!admin) {
+    const context = await getAdminCompanyContextFromRequest(_req);
+    if (!context) {
       return NextResponse.json({ error: "Não autorizado" }, { status: 403 });
     }
 
-    const deleted = await apagarVagaRegistro(params.vagaId);
+    const deleted = await apagarVagaPorCompanyRegistro(
+      params.vagaId,
+      context.company.id,
+    );
 
     if (!deleted) {
       return NextResponse.json(

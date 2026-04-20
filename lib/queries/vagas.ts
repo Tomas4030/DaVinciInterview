@@ -8,6 +8,7 @@ import type { Pergunta } from "@/lib/database.types";
 
 export interface VagaRegistro {
   id: string;
+  company_id?: string | null;
   titulo: string;
   descricao: string;
   modalidade: string;
@@ -21,6 +22,7 @@ export interface VagaRegistro {
 function mapVaga(row: any): VagaRegistro {
   return {
     id: row.id,
+    company_id: row.company_id ?? null,
     titulo: row.titulo,
     descricao: row.descricao ?? "",
     modalidade: row.modalidade,
@@ -42,12 +44,38 @@ export async function listarVagasRegistro(): Promise<VagaRegistro[]> {
   return (rows as any[]).map(mapVaga);
 }
 
+export async function listarVagasPorCompanyRegistro(
+  companyId: string,
+): Promise<VagaRegistro[]> {
+  const [rows] = await query(
+    `SELECT * FROM vagas WHERE company_id = ? ORDER BY criada_em DESC`,
+    [companyId],
+  );
+
+  return (rows as any[]).map(mapVaga);
+}
+
 export async function obterVagaRegistro(
   vagaId: string,
 ): Promise<VagaRegistro | null> {
   const [rows] = await query(
     `SELECT * FROM vagas WHERE id = ? LIMIT 1`,
     [vagaId],
+  );
+
+  const vagas = rows as any[];
+  if (vagas.length === 0) return null;
+
+  return mapVaga(vagas[0]);
+}
+
+export async function obterVagaPorCompanyRegistro(
+  vagaId: string,
+  companyId: string,
+): Promise<VagaRegistro | null> {
+  const [rows] = await query(
+    `SELECT * FROM vagas WHERE id = ? AND company_id = ? LIMIT 1`,
+    [vagaId, companyId],
   );
 
   const vagas = rows as any[];
@@ -64,16 +92,32 @@ export async function listarVagasAtivasRegistro(): Promise<VagaRegistro[]> {
   return (rows as any[]).map(mapVaga);
 }
 
+export async function listarVagasAtivasPorCompanyRegistro(
+  companyId: string,
+): Promise<VagaRegistro[]> {
+  const [rows] = await query(
+    `
+    SELECT * FROM vagas
+    WHERE ativa = 1 AND company_id = ?
+    ORDER BY criada_em DESC
+    `,
+    [companyId],
+  );
+
+  return (rows as any[]).map(mapVaga);
+}
+
 export async function criarVagaRegistro(vaga: Omit<VagaRegistro, "criada_em" | "atualizada_em">): Promise<VagaRegistro> {
   const agora = new Date();
 
   await query(
     `
-    INSERT INTO vagas (id, titulo, descricao, modalidade, duracao_min, perguntas, ativa, criada_em, atualizada_em)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO vagas (id, company_id, titulo, descricao, modalidade, duracao_min, perguntas, ativa, criada_em, atualizada_em)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `,
     [
       vaga.id,
+      vaga.company_id ?? null,
       vaga.titulo,
       vaga.descricao ?? "",
       vaga.modalidade,
@@ -125,7 +169,53 @@ export async function atualizarVagaRegistro(
   return await obterVagaRegistro(vagaId);
 }
 
+export async function atualizarVagaPorCompanyRegistro(
+  vagaId: string,
+  companyId: string,
+  vaga: Partial<Omit<VagaRegistro, "id" | "criada_em" | "atualizada_em">>,
+): Promise<VagaRegistro | null> {
+  const existente = await obterVagaPorCompanyRegistro(vagaId, companyId);
+  if (!existente) return null;
+
+  const atualizado = {
+    ...existente,
+    ...vaga,
+    perguntas: vaga.perguntas ?? existente.perguntas,
+  };
+
+  await query(
+    `
+    UPDATE vagas
+    SET titulo = ?, descricao = ?, modalidade = ?, duracao_min = ?, perguntas = ?, ativa = ?
+    WHERE id = ? AND company_id = ?
+    `,
+    [
+      atualizado.titulo,
+      atualizado.descricao ?? "",
+      atualizado.modalidade,
+      atualizado.duracao_min,
+      jsonStringify(atualizado.perguntas ?? []),
+      atualizado.ativa ? 1 : 0,
+      vagaId,
+      companyId,
+    ],
+  );
+
+  return await obterVagaPorCompanyRegistro(vagaId, companyId);
+}
+
 export async function apagarVagaRegistro(vagaId: string): Promise<boolean> {
   const result = await query(`DELETE FROM vagas WHERE id = ?`, [vagaId]);
+  return (result[1] as any).affectedRows > 0;
+}
+
+export async function apagarVagaPorCompanyRegistro(
+  vagaId: string,
+  companyId: string,
+): Promise<boolean> {
+  const result = await query(
+    `DELETE FROM vagas WHERE id = ? AND company_id = ?`,
+    [vagaId, companyId],
+  );
   return (result[1] as any).affectedRows > 0;
 }

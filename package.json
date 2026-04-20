@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "node .next/standalone/server.js",
-    "lint": "next lint"
+    "lint": "next lint",
+    "phase1:check": "node scripts/phase1-isolation-check.js"
   },
   "dependencies": {
     "libphonenumber-js": "^1.12.41",

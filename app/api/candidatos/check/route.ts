@@ -5,6 +5,7 @@ import {
   isSupportedPhoneCountry,
   validatePhoneNumberForCountry,
 } from "@/lib/validation";
+import { resolveCompanyAndInterviewFromLegacyVaga } from "@/lib/queries/interviews";
 
 export async function POST(request: NextRequest) {
   try {
@@ -42,10 +43,20 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: errorMessage }, { status: 400 });
     }
 
+    const scope = await resolveCompanyAndInterviewFromLegacyVaga(vaga_id);
+    if (!scope) {
+      return NextResponse.json(
+        { error: "Entrevista inválida para este identificador de vaga" },
+        { status: 400 },
+      );
+    }
+
     // Verificar se já existe candidatura com estes dados
     const candidatura = await buscarCandidaturaPorEmail(
       normalizedEmail,
       vaga_id,
+      scope.companyId,
+      scope.interviewId,
     );
 
     if (candidatura) {

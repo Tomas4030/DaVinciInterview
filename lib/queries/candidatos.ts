@@ -20,6 +20,8 @@ export interface CandidaturaInfo {
   email: string;
   telefone: string;
   vaga_id: string;
+  company_id?: string;
+  interview_id?: string;
 }
 
 /**
@@ -29,16 +31,30 @@ export async function verificarDuplicata(
   email: string,
   telefone: string,
   vaga_id: string,
+  company_id?: string,
+  interview_id?: string,
 ): Promise<boolean> {
-  const [rows] = await query(
-    `
-    SELECT id FROM candidato_respostas
-    WHERE email = ? AND telefone = ? AND vaga_id = ?
-    AND criada_em >= DATE_SUB(NOW(), INTERVAL 90 DAY)
-    LIMIT 1
-    `,
-    [email, telefone, vaga_id],
-  );
+  const hasMultiTenantScope = Boolean(company_id && interview_id);
+
+  const [rows] = hasMultiTenantScope
+    ? await query(
+        `
+        SELECT id FROM candidato_respostas
+        WHERE email = ? AND telefone = ? AND company_id = ? AND interview_id = ?
+        AND criada_em >= DATE_SUB(NOW(), INTERVAL 90 DAY)
+        LIMIT 1
+        `,
+        [email, telefone, company_id as string, interview_id as string],
+      )
+    : await query(
+        `
+        SELECT id FROM candidato_respostas
+        WHERE email = ? AND telefone = ? AND vaga_id = ?
+        AND criada_em >= DATE_SUB(NOW(), INTERVAL 90 DAY)
+        LIMIT 1
+        `,
+        [email, telefone, vaga_id],
+      );
 
   return (rows as any[]).length > 0;
 }

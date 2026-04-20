@@ -1,6 +1,11 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { normalizeBasePath } from "@/lib/base-path-utils";
+import {
+  ADMIN_COMPANY_COOKIE,
+  ADMIN_SESSION_COOKIE,
+  parseAdminToken,
+} from "@/lib/admin-auth";
 
 export function middleware(request: NextRequest) {
   // Only apply to HTML pages — never to _next/static, _next/image, api, or public files
@@ -21,6 +26,19 @@ export function middleware(request: NextRequest) {
   }
 
   const response = NextResponse.next();
+
+  // Inject company context for admin routes
+  if (pathnameWithoutBasePath.startsWith("/admin") || pathnameWithoutBasePath.startsWith("/api")) {
+    const adminToken = request.cookies.get(ADMIN_SESSION_COOKIE)?.value;
+    const session = parseAdminToken(adminToken);
+
+    if (session) {
+      const existingCompanyId = request.cookies.get(ADMIN_COMPANY_COOKIE)?.value;
+      if (existingCompanyId) {
+        response.headers.set("x-admin-company-id", existingCompanyId);
+      }
+    }
+  }
 
   response.headers.set(
     "Cache-Control",

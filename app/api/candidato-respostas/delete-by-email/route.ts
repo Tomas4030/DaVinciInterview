@@ -5,7 +5,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import { deletarCandidaturasPorEmail } from "@/lib/queries/candidato-respostas";
-import { ADMIN_SESSION_COOKIE, parseAdminToken } from "@/lib/admin-auth";
+import { getAdminCompanyContextFromRequest } from "@/lib/admin-context";
 
 interface RequestBody {
   email: string;
@@ -14,11 +14,8 @@ interface RequestBody {
 
 export async function DELETE(request: NextRequest) {
   try {
-    // Verificar autenticação admin
-    const token = request.cookies.get(ADMIN_SESSION_COOKIE)?.value;
-    const admin = parseAdminToken(token);
-
-    if (!admin) {
+    const context = await getAdminCompanyContextFromRequest(request);
+    if (!context) {
       return NextResponse.json({ error: "Não autorizado" }, { status: 403 });
     }
 
@@ -38,6 +35,7 @@ export async function DELETE(request: NextRequest) {
     // Apagar apenas as respostas desta candidatura
     const count = await deletarCandidaturasPorEmail(
       normalizedEmail,
+      context.company.id,
       normalizedVagaId,
     );
 

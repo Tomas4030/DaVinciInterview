@@ -5,6 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { criarCandidatura } from "@/lib/queries/candidato-respostas";
 import { verificarDuplicata } from "@/lib/queries/candidatos";
 import { formatAnyValidPhoneToE164 } from "@/lib/validation";
+import { resolveCompanyAndInterviewFromLegacyVaga } from "@/lib/queries/interviews";
 
 export async function POST(request: NextRequest) {
   try {
@@ -36,11 +37,21 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const scope = await resolveCompanyAndInterviewFromLegacyVaga(vaga_id);
+    if (!scope) {
+      return NextResponse.json(
+        { error: "Entrevista inválida para este identificador de vaga" },
+        { status: 400 },
+      );
+    }
+
     // Verificar duplicatas (últimos 90 dias)
     const temDuplicata = await verificarDuplicata(
       normalizedEmail,
       normalizedPhone,
       vaga_id,
+      scope.companyId,
+      scope.interviewId,
     );
 
     if (temDuplicata) {
@@ -57,6 +68,8 @@ export async function POST(request: NextRequest) {
     const candidatura = await criarCandidatura(
       normalizedEmail,
       normalizedPhone,
+      scope.companyId,
+      scope.interviewId,
       vaga_id,
       sessao_id,
       respostas,

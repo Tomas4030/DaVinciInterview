@@ -10,6 +10,8 @@ import {
   CandidaturaPrincipal,
 } from "@/lib/queries/candidato-respostas";
 import { verificarDuplicata } from "@/lib/queries/candidatos";
+import { resolveCompanyAndInterviewFromLegacyVaga } from "@/lib/queries/interviews";
+import { getAdminCompanyContextFromRequest } from "@/lib/admin-context";
 
 interface Resposta {
   pergunta_id: number;
@@ -43,7 +45,21 @@ export async function POST(request: NextRequest) {
     }
 
     // Verificar duplicatas (últimos 90 dias)
-    const temDuplicata = await verificarDuplicata(email, telefone, vaga_id);
+    const scope = await resolveCompanyAndInterviewFromLegacyVaga(vaga_id);
+    if (!scope) {
+      return NextResponse.json(
+        { error: "Entrevista inválida para este identificador de vaga" },
+        { status: 400 },
+      );
+    }
+
+    const temDuplicata = await verificarDuplicata(
+      email,
+      telefone,
+      vaga_id,
+      scope.companyId,
+      scope.interviewId,
+    );
 
     if (temDuplicata) {
       return NextResponse.json(
@@ -59,6 +75,8 @@ export async function POST(request: NextRequest) {
     const data = await criarCandidatura(
       email,
       telefone,
+      scope.companyId,
+      scope.interviewId,
       vaga_id,
       sessao_id,
       respostas,
@@ -96,12 +114,25 @@ export async function GET(request: NextRequest) {
     const vagaId = new URL(request.url).searchParams.get("vaga_id");
 
     let data: CandidaturaPrincipal[] = [];
+    const context = await getAdminCompanyContextFromRequest(request);
+    if (!context) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     if (vagaId) {
-      data = await listarCandidaturasVaga(vagaId);
+      data = await listarCandidaturasVaga(vagaId, context.company.id);
     } else {
-      // Listar ALL (apenas para admin) - implementar no queries
-      // Para agora, apenas retorna []
-      data = [];
+      const { query } = await import("@/lib/db");
+      const [rows] = await query(
+        `
+        SELECT * FROM candidato_respostas
+        WHERE company_id = ?
+        ORDER BY criada_em DESC
+        `,
+        [context.company.id],
+      );
+
+      data = rows as CandidaturaPrincipal[];
     }
 
     return NextResponse.json({
