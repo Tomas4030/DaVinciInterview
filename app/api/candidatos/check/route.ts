@@ -1,10 +1,14 @@
 // app/api/candidatos/check/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { buscarCandidaturaPorEmail } from "@/lib/queries/candidato-respostas";
+import {
+  isSupportedPhoneCountry,
+  validatePhoneNumberForCountry,
+} from "@/lib/validation";
 
 export async function POST(request: NextRequest) {
   try {
-    const { email, telefone, vaga_id } = await request.json();
+    const { email, telefone, vaga_id, telefone_pais } = await request.json();
 
     // Validação básica
     if (!email || !telefone || !vaga_id) {
@@ -15,7 +19,28 @@ export async function POST(request: NextRequest) {
     }
 
     const normalizedEmail = String(email).trim().toLowerCase();
-    const normalizedPhone = String(telefone).trim();
+    const normalizedCountry = String(telefone_pais || "PT").trim().toUpperCase();
+
+    if (!isSupportedPhoneCountry(normalizedCountry)) {
+      return NextResponse.json(
+        { error: "País de telemóvel inválido" },
+        { status: 400 },
+      );
+    }
+
+    const phoneValidation = validatePhoneNumberForCountry(
+      String(telefone),
+      normalizedCountry,
+    );
+
+    if (!phoneValidation.isValid) {
+      const errorMessage =
+        phoneValidation.reason === "format"
+          ? "Formato de telemóvel incorreto para o país selecionado"
+          : "Número de telemóvel inválido";
+
+      return NextResponse.json({ error: errorMessage }, { status: 400 });
+    }
 
     // Verificar se já existe candidatura com estes dados
     const candidatura = await buscarCandidaturaPorEmail(

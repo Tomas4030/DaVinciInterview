@@ -6,6 +6,11 @@ import {
   createLocalSession,
   verifyLocalVerificationCode,
 } from "@/lib/in-memory-verification";
+import {
+  formatPhoneNumberE164,
+  isSupportedPhoneCountry,
+  validatePhoneNumberForCountry,
+} from "@/lib/validation";
 
 // TTL para a sessão de entrevista (em minutos)
 const INTERVIEW_SESSION_TTL_MINUTES = 15;
@@ -13,7 +18,7 @@ const DB_OP_TIMEOUT_MS = Number(process.env.DB_OP_TIMEOUT_MS || 3000);
 
 export async function POST(request: NextRequest) {
   try {
-    const { email, vaga_id, code, telefone } = await request.json();
+    const { email, vaga_id, code, telefone, telefone_pais } = await request.json();
 
     if (!email || !vaga_id || !code) {
       return NextResponse.json(
@@ -24,6 +29,37 @@ export async function POST(request: NextRequest) {
 
     const normalizedEmail = String(email).trim().toLowerCase();
     const normalizedCode = String(code).trim();
+    const normalizedCountry = String(telefone_pais || "PT").trim().toUpperCase();
+
+    if (!isSupportedPhoneCountry(normalizedCountry)) {
+      return NextResponse.json(
+        { error: "País de telemóvel inválido" },
+        { status: 400 },
+      );
+    }
+
+    const normalizedPhoneInput = String(telefone || "").trim();
+    let normalizedPhone = "";
+
+    if (normalizedPhoneInput) {
+      const phoneValidation = validatePhoneNumberForCountry(
+        normalizedPhoneInput,
+        normalizedCountry,
+      );
+
+      if (!phoneValidation.isValid) {
+        const errorMessage =
+          phoneValidation.reason === "format"
+            ? "Formato de telemóvel incorreto para o país selecionado"
+            : "Número de telemóvel inválido";
+
+        return NextResponse.json({ error: errorMessage }, { status: 400 });
+      }
+
+      normalizedPhone =
+        formatPhoneNumberE164(normalizedPhoneInput, normalizedCountry) ||
+        phoneValidation.e164;
+    }
 
     // Verificar código
     let isValid = false;
@@ -53,14 +89,14 @@ export async function POST(request: NextRequest) {
 
     try {
       sessionToken = await withTimeout(
-        criarSessao(normalizedEmail, telefone || "", vaga_id),
+        criarSessao(normalizedEmail, normalizedPhone, vaga_id),
         DB_OP_TIMEOUT_MS,
         "verify-code:criarSessao",
       );
     } catch (error) {
       const localSession = createLocalSession(
         normalizedEmail,
-        telefone || "",
+        normalizedPhone,
         vaga_id,
         INTERVIEW_SESSION_TTL_MINUTES,
       );

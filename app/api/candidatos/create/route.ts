@@ -3,7 +3,8 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { criarCandidatura } from "@/lib/queries/candidato-respostas";
-import { verificarDuplicata, criarSessao } from "@/lib/queries/candidatos";
+import { verificarDuplicata } from "@/lib/queries/candidatos";
+import { formatAnyValidPhoneToE164 } from "@/lib/validation";
 
 export async function POST(request: NextRequest) {
   try {
@@ -25,8 +26,22 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const normalizedEmail = String(email).trim().toLowerCase();
+    const normalizedPhone = formatAnyValidPhoneToE164(String(telefone));
+
+    if (!normalizedPhone) {
+      return NextResponse.json(
+        { error: "Número de telemóvel inválido" },
+        { status: 400 },
+      );
+    }
+
     // Verificar duplicatas (últimos 90 dias)
-    const temDuplicata = await verificarDuplicata(email, telefone, vaga_id);
+    const temDuplicata = await verificarDuplicata(
+      normalizedEmail,
+      normalizedPhone,
+      vaga_id,
+    );
 
     if (temDuplicata) {
       return NextResponse.json(
@@ -40,8 +55,8 @@ export async function POST(request: NextRequest) {
 
     // Criar candidatura
     const candidatura = await criarCandidatura(
-      email,
-      telefone,
+      normalizedEmail,
+      normalizedPhone,
       vaga_id,
       sessao_id,
       respostas,

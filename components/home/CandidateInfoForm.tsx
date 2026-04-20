@@ -3,17 +3,40 @@
 import { useEffect, useState } from "react";
 import {
   isValidEmail,
-  isValidPhoneNumber,
   formatPhoneNumber,
+  SUPPORTED_PHONE_COUNTRIES,
+  SupportedPhoneCountry,
+  isSupportedPhoneCountry,
+  validatePhoneNumberForCountry,
 } from "@/lib/validation";
 import { IconMail, IconPhone, IconShield } from "@/components/home/Icons";
 import { withBasePath } from "@/lib/base-path";
+import { getCountryCallingCode } from "libphonenumber-js";
 
 interface CandidateInfoFormProps {
   vagaId: string;
   onSuccess: (email: string, phone: string) => void;
   isLoading?: boolean;
 }
+
+const countryToFlag = (countryCode: string): string => {
+  if (!/^[A-Z]{2}$/.test(countryCode)) return "🌐";
+  return String.fromCodePoint(
+    ...countryCode
+      .split("")
+      .map((char) => 127397 + char.charCodeAt(0)),
+  );
+};
+
+const getCountryLabel = (countryCode: SupportedPhoneCountry): string => {
+  const callingCode = getCountryCallingCode(countryCode);
+  return `${countryToFlag(countryCode)} +${callingCode}`;
+};
+
+const DEFAULT_COUNTRY =
+  (SUPPORTED_PHONE_COUNTRIES.find((country) => country === "PT") ||
+    SUPPORTED_PHONE_COUNTRIES[0] ||
+    "US") as SupportedPhoneCountry;
 
 function LoadingSpinner({ size = 16 }: { size?: number }) {
   return (
@@ -46,6 +69,8 @@ export default function CandidateInfoForm({
 }: CandidateInfoFormProps) {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [phoneCountry, setPhoneCountry] =
+    useState<SupportedPhoneCountry>(DEFAULT_COUNTRY);
   const [code, setCode] = useState("");
   const [step, setStep] = useState<"form" | "code">("form");
 
@@ -64,7 +89,7 @@ export default function CandidateInfoForm({
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const normalizedEmail = email.trim().toLowerCase();
-  const normalizedPhone = formatPhoneNumber(phone);
+  const normalizedPhone = formatPhoneNumber(phone, phoneCountry);
 
   const inputDisabled = isLoading || isChecking || isSendingCode;
 
@@ -91,8 +116,12 @@ export default function CandidateInfoForm({
       newErrors.email = "Email inválido";
     }
 
-    if (!isValidPhoneNumber(phone)) {
-      newErrors.phone = "Número de telemóvel inválido (ex: 91 234 5678)";
+    const phoneValidation = validatePhoneNumberForCountry(phone, phoneCountry);
+    if (!phoneValidation.isValid) {
+      newErrors.phone =
+        phoneValidation.reason === "format"
+          ? "Formato incorreto para o país selecionado"
+          : "Número de telemóvel inválido";
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -109,6 +138,7 @@ export default function CandidateInfoForm({
         body: JSON.stringify({
           email: normalizedEmail,
           telefone: normalizedPhone,
+          telefone_pais: phoneCountry,
           vaga_id: vagaId,
         }),
       });
@@ -139,6 +169,7 @@ export default function CandidateInfoForm({
           body: JSON.stringify({
             email: normalizedEmail,
             telefone: normalizedPhone,
+            telefone_pais: phoneCountry,
             vaga_id: vagaId,
           }),
         },
@@ -194,6 +225,7 @@ export default function CandidateInfoForm({
         body: JSON.stringify({
           email: normalizedEmail,
           telefone: normalizedPhone,
+          telefone_pais: phoneCountry,
           vaga_id: vagaId,
           code: code.trim(),
         }),
@@ -246,6 +278,7 @@ export default function CandidateInfoForm({
         body: JSON.stringify({
           email: normalizedEmail,
           telefone: normalizedPhone,
+          telefone_pais: phoneCountry,
           vaga_id: vagaId,
         }),
       });
@@ -444,36 +477,72 @@ export default function CandidateInfoForm({
 
           <div className="space-y-2">
             <label
-              htmlFor="phone"
+              htmlFor="phone-number"
               className="block text-sm font-medium text-[var(--c-text)]/70 pl-1"
             >
               Telemóvel
             </label>
-            <div className="relative">
-              <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--c-text)]/40">
-                <IconPhone />
+            <div className="grid grid-cols-[130px_1fr] gap-2">
+              <div className="relative">
+                <select
+                  id="phone-country"
+                  value={phoneCountry}
+                  onChange={(e) => {
+                    const selectedCountry = e.target.value.toUpperCase();
+                    if (!isSupportedPhoneCountry(selectedCountry)) {
+                      return;
+                    }
+
+                    setPhoneCountry(selectedCountry);
+                    setErrors((prev) => ({
+                      ...prev,
+                      phone: undefined,
+                      general: undefined,
+                    }));
+                    setDuplicateWarning(null);
+                  }}
+                  className="w-full appearance-none pl-3 pr-8 py-3.5 rounded-xl border border-[var(--c-border)] bg-[var(--c-bg)] text-[var(--c-text)] transition-all duration-200 focus:outline-none focus:border-[var(--c-brand)] focus:ring-2 focus:ring-[var(--c-brand)]/20 disabled:opacity-50 text-sm"
+                  disabled={inputDisabled}
+                  aria-label="País do telemóvel"
+                >
+                  {SUPPORTED_PHONE_COUNTRIES.map((countryCode) => (
+                    <option key={countryCode} value={countryCode}>
+                      {getCountryLabel(countryCode)}
+                    </option>
+                  ))}
+                </select>
+                <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[var(--c-text)]/40 text-xs">
+                  ▼
+                </span>
               </div>
-              <input
-                id="phone"
-                type="tel"
-                value={phone}
-                onChange={(e) => {
-                  const val = e.target.value.replace(/[^\d\s]/g, "");
-                  setPhone(val);
-                  setErrors((prev) => ({
-                    ...prev,
-                    phone: undefined,
-                    general: undefined,
-                  }));
-                  setDuplicateWarning(null);
-                }}
-                placeholder="91 234 5678"
-                className="w-full pl-11 pr-4 py-3.5 rounded-xl border border-[var(--c-border)] bg-[var(--c-bg)] text-[var(--c-text)] placeholder:text-[var(--c-text)]/30 transition-all duration-200 focus:outline-none focus:border-[var(--c-brand)] focus:ring-2 focus:ring-[var(--c-brand)]/20 disabled:opacity-50 text-base"
-                required
-                disabled={inputDisabled}
-                autoComplete="tel"
-              />
+
+              <div className="relative">
+                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--c-text)]/40">
+                  <IconPhone />
+                </div>
+                <input
+                  id="phone-number"
+                  type="tel"
+                  value={phone}
+                  onChange={(e) => {
+                    const val = e.target.value.replace(/[^\d\s()+-]/g, "");
+                    setPhone(val);
+                    setErrors((prev) => ({
+                      ...prev,
+                      phone: undefined,
+                      general: undefined,
+                    }));
+                    setDuplicateWarning(null);
+                  }}
+                  placeholder="Número de telemóvel"
+                  className="w-full pl-11 pr-4 py-3.5 rounded-xl border border-[var(--c-border)] bg-[var(--c-bg)] text-[var(--c-text)] placeholder:text-[var(--c-text)]/30 transition-all duration-200 focus:outline-none focus:border-[var(--c-brand)] focus:ring-2 focus:ring-[var(--c-brand)]/20 disabled:opacity-50 text-base"
+                  required
+                  disabled={inputDisabled}
+                  autoComplete="tel-national"
+                />
+              </div>
             </div>
+          
             {errors.phone && (
               <p className="text-sm text-red-500 pl-1">{errors.phone}</p>
             )}

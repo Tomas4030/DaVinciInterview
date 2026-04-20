@@ -5,6 +5,11 @@ import { verificarDuplicata } from "@/lib/queries/candidatos";
 import { saveLocalVerificationCode } from "@/lib/in-memory-verification";
 import { sendVerificationCodeEmail } from "@/lib/email";
 import { withTimeout } from "@/lib/timeout";
+import {
+  formatPhoneNumberE164,
+  isSupportedPhoneCountry,
+  validatePhoneNumberForCountry,
+} from "@/lib/validation";
 
 const DB_OP_TIMEOUT_MS = Number(process.env.DB_OP_TIMEOUT_MS || 3000);
 
@@ -16,7 +21,7 @@ export async function POST(request: NextRequest) {
     const allowInsecureCodeFallback =
       process.env.ALLOW_INSECURE_CODE_FALLBACK === "true";
 
-    const { email, telefone, vaga_id } = await request.json();
+    const { email, telefone, vaga_id, telefone_pais } = await request.json();
 
     if (!email || !telefone || !vaga_id) {
       return NextResponse.json(
@@ -26,7 +31,32 @@ export async function POST(request: NextRequest) {
     }
 
     const normalizedEmail = String(email).trim().toLowerCase();
-    const normalizedPhone = String(telefone).trim();
+    const normalizedCountry = String(telefone_pais || "PT").trim().toUpperCase();
+
+    if (!isSupportedPhoneCountry(normalizedCountry)) {
+      return NextResponse.json(
+        { error: "País de telemóvel inválido" },
+        { status: 400 },
+      );
+    }
+
+    const phoneValidation = validatePhoneNumberForCountry(
+      String(telefone),
+      normalizedCountry,
+    );
+
+    if (!phoneValidation.isValid) {
+      const errorMessage =
+        phoneValidation.reason === "format"
+          ? "Formato de telemóvel incorreto para o país selecionado"
+          : "Número de telemóvel inválido";
+
+      return NextResponse.json({ error: errorMessage }, { status: 400 });
+    }
+
+    const normalizedPhone =
+      formatPhoneNumberE164(String(telefone), normalizedCountry) ||
+      phoneValidation.e164;
 
     let temDuplicata = false;
 

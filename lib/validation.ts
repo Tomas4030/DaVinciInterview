@@ -1,32 +1,99 @@
 // lib/validation.ts
+import {
+  CountryCode,
+  getCountries,
+  parsePhoneNumberFromString,
+} from "libphonenumber-js";
+
+export type SupportedPhoneCountry = CountryCode;
+
+export const SUPPORTED_PHONE_COUNTRIES: SupportedPhoneCountry[] = getCountries();
+
+type PhoneValidationResult =
+  | {
+      isValid: true;
+      e164: string;
+    }
+  | {
+      isValid: false;
+      reason: "invalid" | "format";
+    };
+
 export const isValidEmail = (email: string): boolean => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
 };
 
-export const isValidPhoneNumber = (phone: string): boolean => {
-  // Portugal: +351XXXXXXXXX or +351 XXX XXX XXX or 9XXXXXXXX
-  const phoneRegex =
-    /^(?:\+351\s?)?(?:91|92|93|96|9[0-9]|2[0-9]{7})[\s-]?[\d\s-]{7,8}$/;
-  return phoneRegex.test(phone.replace(/\s+/g, ""));
+export const isSupportedPhoneCountry = (
+  country: string,
+): country is SupportedPhoneCountry => {
+  return getCountries().includes(country as SupportedPhoneCountry);
 };
 
-export const formatPhoneNumber = (phone: string): string => {
-  // Remove caracteres não numéricos
-  const cleaned = phone.replace(/\D/g, "");
+export const validatePhoneNumberForCountry = (
+  phone: string,
+  country: SupportedPhoneCountry,
+): PhoneValidationResult => {
+  const trimmedPhone = String(phone || "").trim();
 
-  // Se não começa com 351, adiciona
-  if (!cleaned.startsWith("351")) {
-    // Se tem 9 dígitos (começando com 9), adiciona código de país
-    if (cleaned.length === 9 && cleaned.startsWith("9")) {
-      return "+351" + cleaned;
-    }
+  if (!trimmedPhone) {
+    return { isValid: false, reason: "format" };
   }
 
-  // Se tem 12 dígitos (351 + 9), formata como +351XXXXXXXXX
-  if (cleaned.length === 12) {
-    return "+" + cleaned.substring(0, 3) + cleaned.substring(3);
+  const parsedPhone = parsePhoneNumberFromString(trimmedPhone, country);
+
+  if (!parsedPhone) {
+    return { isValid: false, reason: "format" };
   }
 
-  return phone;
+  if (parsedPhone.country && parsedPhone.country !== country) {
+    return { isValid: false, reason: "format" };
+  }
+
+  if (!parsedPhone.isValid()) {
+    return { isValid: false, reason: "invalid" };
+  }
+
+  return { isValid: true, e164: parsedPhone.number };
+};
+
+export const isValidPhoneNumber = (
+  phone: string,
+  country: SupportedPhoneCountry = "PT",
+): boolean => {
+  return validatePhoneNumberForCountry(phone, country).isValid;
+};
+
+export const formatPhoneNumber = (
+  phone: string,
+  country: SupportedPhoneCountry = "PT",
+): string => {
+  const result = validatePhoneNumberForCountry(phone, country);
+  return result.isValid ? result.e164 : String(phone || "").trim();
+};
+
+export const formatPhoneNumberE164 = (
+  phone: string,
+  country: SupportedPhoneCountry,
+): string | null => {
+  const result = validatePhoneNumberForCountry(phone, country);
+  if (!result.isValid) {
+    return null;
+  }
+
+  return result.e164;
+};
+
+export const formatAnyValidPhoneToE164 = (phone: string): string | null => {
+  const trimmedPhone = String(phone || "").trim();
+  if (!trimmedPhone) {
+    return null;
+  }
+
+  const parsedPhone = parsePhoneNumberFromString(trimmedPhone);
+  if (!parsedPhone || !parsedPhone.isValid()) {
+    return null;
+  }
+
+  return parsedPhone.number;
 };
