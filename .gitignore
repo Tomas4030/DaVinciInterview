@@ -38,10 +38,9 @@ settings.local.json
 OpenClaude
 
 #filheiros criticos + md  
-*.md
+
 .supabase/*
 *.claude
-.ex/*
 deploy.sh
 .deploy/*
 
