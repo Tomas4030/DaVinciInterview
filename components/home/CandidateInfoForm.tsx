@@ -22,9 +22,7 @@ interface CandidateInfoFormProps {
 const countryToFlag = (countryCode: string): string => {
   if (!/^[A-Z]{2}$/.test(countryCode)) return "🌐";
   return String.fromCodePoint(
-    ...countryCode
-      .split("")
-      .map((char) => 127397 + char.charCodeAt(0)),
+    ...countryCode.split("").map((char) => 127397 + char.charCodeAt(0)),
   );
 };
 
@@ -33,10 +31,11 @@ const getCountryLabel = (countryCode: SupportedPhoneCountry): string => {
   return `${countryToFlag(countryCode)} +${callingCode}`;
 };
 
-const DEFAULT_COUNTRY =
-  (SUPPORTED_PHONE_COUNTRIES.find((country) => country === "PT") ||
-    SUPPORTED_PHONE_COUNTRIES[0] ||
-    "US") as SupportedPhoneCountry;
+const DEFAULT_COUNTRY = (SUPPORTED_PHONE_COUNTRIES.find(
+  (country) => country === "PT",
+) ||
+  SUPPORTED_PHONE_COUNTRIES[0] ||
+  "US") as SupportedPhoneCountry;
 
 function LoadingSpinner({ size = 16 }: { size?: number }) {
   return (
@@ -185,7 +184,9 @@ export default function CandidateInfoForm({
       }
 
       if (sendCodeData?.devCode) {
-        setSuccessMessage(`SMTP local indisponível. Código de teste: ${sendCodeData.devCode}`);
+        setSuccessMessage(
+          `SMTP local indisponível. Código de teste: ${sendCodeData.devCode}`,
+        );
       } else {
         setSuccessMessage("Enviámos um código para o teu email.");
       }
@@ -219,17 +220,20 @@ export default function CandidateInfoForm({
     try {
       setIsVerifyingCode(true);
 
-      const response = await fetch(withBasePath("/api/candidatos/verify-code"), {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: normalizedEmail,
-          telefone: normalizedPhone,
-          telefone_pais: phoneCountry,
-          vaga_id: vagaId,
-          code: code.trim(),
-        }),
-      });
+      const response = await fetch(
+        withBasePath("/api/candidatos/verify-code"),
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: normalizedEmail,
+            telefone: normalizedPhone,
+            telefone_pais: phoneCountry,
+            vaga_id: vagaId,
+            code: code.trim(),
+          }),
+        },
+      );
 
       const data = await response.json();
 
@@ -294,7 +298,9 @@ export default function CandidateInfoForm({
       }
 
       if (data?.devCode) {
-        setSuccessMessage(`SMTP local indisponível. Código de teste: ${data.devCode}`);
+        setSuccessMessage(
+          `SMTP local indisponível. Código de teste: ${data.devCode}`,
+        );
       } else {
         setSuccessMessage("Código reenviado com sucesso.");
       }
@@ -363,8 +369,7 @@ export default function CandidateInfoForm({
             >
               {isVerifyingCode ? (
                 <>
-                  <LoadingSpinner size={18} />
-                  A verificar...
+                  <LoadingSpinner size={18} />A verificar...
                 </>
               ) : (
                 "Verificar código"
@@ -380,8 +385,7 @@ export default function CandidateInfoForm({
               >
                 {isSendingCode ? (
                   <>
-                    <LoadingSpinner size={14} />
-                    A reenviar
+                    <LoadingSpinner size={14} />A reenviar
                   </>
                 ) : resendCooldown > 0 ? (
                   `Reenviar em ${resendCooldown}s`
@@ -542,7 +546,7 @@ export default function CandidateInfoForm({
                 />
               </div>
             </div>
-          
+
             {errors.phone && (
               <p className="text-sm text-red-500 pl-1">{errors.phone}</p>
             )}
@@ -572,13 +576,11 @@ export default function CandidateInfoForm({
           >
             {isChecking ? (
               <>
-                <LoadingSpinner size={18} />
-                A verificar...
+                <LoadingSpinner size={18} />A verificar...
               </>
             ) : isSendingCode ? (
               <>
-                <LoadingSpinner size={18} />
-                A enviar código...
+                <LoadingSpinner size={18} />A enviar código...
               </>
             ) : (
               "Continuar"
