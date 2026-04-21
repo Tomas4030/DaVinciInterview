@@ -50,26 +50,37 @@ export default async function AdminCompanyInterviewsPage({
     notFound();
   }
 
-  const membership = await getCompanyMembershipBySlug(session.userId, params.slug);
+  const membership = await getCompanyMembershipBySlug(
+    session.userId,
+    params.slug,
+  );
   if (!membership) {
     notFound();
   }
 
-  const searchTerm = String(searchParams?.q || "").trim().toLowerCase();
+  const searchTerm = String(searchParams?.q || "")
+    .trim()
+    .toLowerCase();
   const rawStatus = String(searchParams?.status || "all").toLowerCase();
-  const statusFilter = STATUS_OPTIONS.includes(rawStatus as (typeof STATUS_OPTIONS)[number])
+  const statusFilter = STATUS_OPTIONS.includes(
+    rawStatus as (typeof STATUS_OPTIONS)[number],
+  )
     ? rawStatus
     : "all";
 
   const interviews = await listInterviewsByCompany(membership.company.id);
+
   const filteredInterviews = interviews.filter((item) => {
-    const statusMatches = statusFilter === "all" || item.status === statusFilter;
+    const statusMatches =
+      statusFilter === "all" || item.status === statusFilter;
     if (!statusMatches) return false;
 
     if (!searchTerm) return true;
     return (
       item.title.toLowerCase().includes(searchTerm) ||
-      String(item.description || "").toLowerCase().includes(searchTerm)
+      String(item.description || "")
+        .toLowerCase()
+        .includes(searchTerm)
     );
   });
 
@@ -77,8 +88,14 @@ export default async function AdminCompanyInterviewsPage({
     <section className="space-y-6">
       <header className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <p className="text-xs uppercase tracking-[0.09em] text-[var(--c-muted)]">Entrevistas</p>
-          <h1 className="text-2xl font-semibold text-[var(--c-text)]">Gestao de entrevistas</h1>
+          <p className="text-xs uppercase tracking-[0.09em] text-[var(--c-muted)]">
+            Entrevistas
+          </p>
+
+          {/* ✅ ALTERAÇÃO AQUI */}
+          <h1 className="font-display font-semibold text-[var(--c-text)]">
+            Gestao de entrevistas
+          </h1>
         </div>
 
         <Link
@@ -120,7 +137,9 @@ export default async function AdminCompanyInterviewsPage({
       <div className="rounded-[12px] border border-[var(--c-border)] bg-[var(--c-surface)]">
         <div className="flex items-center justify-between border-b border-[var(--c-border)] px-5 py-3">
           <p className="text-sm font-medium text-[var(--c-text)]">Resultados</p>
-          <p className="text-xs text-[var(--c-muted)]">{filteredInterviews.length} entrevistas</p>
+          <p className="text-xs text-[var(--c-muted)]">
+            {filteredInterviews.length} entrevistas
+          </p>
         </div>
 
         {filteredInterviews.length === 0 ? (
@@ -132,7 +151,9 @@ export default async function AdminCompanyInterviewsPage({
             {filteredInterviews.map((item) => (
               <article key={item.id} className="space-y-4 px-5 py-4">
                 <div className="flex flex-wrap items-center justify-between gap-2">
-                  <h2 className="text-base font-semibold text-[var(--c-text)]">{item.title}</h2>
+                  <h2 className="text-base font-semibold text-[var(--c-text)]">
+                    {item.title}
+                  </h2>
                   <span
                     className={`rounded-full border px-2.5 py-1 text-[11px] font-medium uppercase tracking-[0.05em] ${getStatusBadgeClass(
                       item.status,
@@ -148,20 +169,21 @@ export default async function AdminCompanyInterviewsPage({
 
                 <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-[var(--c-muted)]">
                   <span>
-                    {item.questions.length} pergunta{item.questions.length === 1 ? "" : "s"}
+                    {item.questions.length} pergunta
+                    {item.questions.length === 1 ? "" : "s"}
                   </span>
 
                   <div className="flex flex-wrap items-center gap-2">
                     <Link
                       href={`/admin/${params.slug}/responses?interviewId=${item.id}`}
-                      className="rounded-md border border-sky-200 bg-sky-50 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.05em] text-sky-700 transition-colors hover:bg-sky-100"
+                      className="rounded-md border border-[--c-brand] bg-[--c-brand] px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.05em] text-[--c-surface] transition-colors hover:bg-sky-100"
                     >
                       Ver respostas
                     </Link>
 
                     <Link
                       href={`/admin/${params.slug}/interviews/${item.id}/edit`}
-                      className="rounded-md border border-violet-200 bg-violet-50 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.05em] text-violet-700 transition-colors hover:bg-violet-100"
+                      className="rounded-md border px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.05em] text-[--c-brand] transition-colors hover:bg-violet-100"
                     >
                       Editar
                     </Link>
