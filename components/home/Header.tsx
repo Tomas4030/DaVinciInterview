@@ -1,5 +1,5 @@
 import Link from "next/link";
-
+import Image from "next/image";
 export default function Header() {
   return (
     <header className="sticky top-0 z-20 border-b border-[var(--c-border)]/60 bg-[var(--c-surface)]/80 backdrop-blur-xl">
@@ -9,8 +9,14 @@ export default function Header() {
           className="group flex items-center gap-2.5"
           aria-label="Página inicial — MatchWorky"
         >
-          <div className="flex h-8 w-8 items-center justify-center rounded-[7px] bg-[var(--c-brand)] font-display text-[11px] font-bold text-white shadow-[0_1px_3px_rgba(67,85,232,0.25)] transition-transform duration-200 group-hover:scale-[1.06] group-active:scale-[0.98]">
-            C
+          <div className="flex h-18 w-18 items-center justify-center rounded-[7px] transition-transform duration-200 group-hover:scale-[1.06] group-active:scale-[0.98] overflow-hidden">
+            <Image
+              src="/logo.webp"
+              alt="Logo"
+              width={72}
+              height={72}
+              className="object-contain"
+            />
           </div>
           <span className="text-[1rem] font-semibold tracking-tight text-[var(--c-text)]">
             MatchWorky
