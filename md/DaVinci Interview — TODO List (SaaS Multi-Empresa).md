@@ -68,7 +68,7 @@ Criar tabela `interviews` (se ainda não existir ou adaptar a existente `vagas`)
 
 ### 1.5 — Implementar Isolamento de Dados a Nível da Aplicação (Essencial para Multi-Tenancy)
 
-- `[ ]` **Crítico:** Garantir que todas as queries à base de dados para tabelas sensíveis (`companies`, `company_members`, `interviews`, `candidato_respostas`) incluem explicitamente `WHERE company_id = \'...\'`. (Parcial no código novo; legado ainda por fechar)
+- `[ ]` **Crítico:** Garantir que todas as queries à base de dados para tabelas sensíveis (`companies`, `company_members`, `interviews`, `candidato_respostas`) incluem explicitamente `WHERE company_id = \'...\'` (Parcial no código novo; legado ainda por fechar).
 - `[x]` Implementar middleware ou lógica de serviço para validar permissões de acesso baseadas na `role` do utilizador e no `company_id` associado à sessão do utilizador.
 - `[ ]` **Crítico:** Testar exaustivamente a lógica de isolamento de dados para garantir que não há fuga de dados entre empresas.
 
@@ -289,6 +289,88 @@ Integrar o sistema de pagamentos para gerir subscrições e planos.
 - `[ ]` Configurar monitorização de erros (Sentry, LogRocket) e performance (Vercel Analytics, Google Analytics).
 - `[ ]` Configurar backups automáticos da base de dados.
 
+## FASE 10 — Dashboard de Superadmin (Visão Geral e Gestão Global)
+
+Desenvolver a interface e a lógica de backend para o dashboard de superadministrador, permitindo uma visão e gestão centralizada da plataforma.
+
+### 10.1 — Base de Dados para Métricas Globais (Se Necessário)
+
+- `[ ]` Avaliar a necessidade de tabelas ou views dedicadas para agregar métricas globais de forma eficiente (ex: `platform_metrics`, `token_usage_logs`).
+- `[ ]` Implementar triggers ou jobs para popular estas tabelas de métricas, se necessário.
+
+### 10.2 — Layout e Routing do Dashboard de Superadmin
+
+- `[ ]` Criar estrutura de rotas: `/superadmin/...` (ex: `/superadmin/dashboard`, `/superadmin/companies`).
+- `[ ]` Criar layout de superadmin com sidebar e navegação específica.
+- `[ ]` **Crítico:** Implementar middleware para proteger rotas `/superadmin/*`, garantindo que apenas utilizadores com `role: superadmin` (nova role) podem aceder.
+
+### 10.3 — Métricas Gerais
+
+- `[ ]` Desenvolver componentes para exibir:
+  - `[ ]` **Número total de empresas ativas**.
+  - `[ ]` **Empresas criadas neste mês**.
+  - `[ ]` **Planos em uso** (quantidade por tipo de plano).
+  - `[ ]` **Receita mensal** (baseada nos recebimentos via planos).
+
+### 10.4 — Consumo de Tokens
+
+- `[ ]` Desenvolver componentes para exibir:
+  - `[ ]` **Total de tokens consumidos** (geral).
+  - `[ ]` **Tokens consumidos por mês** (integrar com biblioteca de gráficos, ex: Chart.js ou Recharts).
+  - `[ ]` **Consumo médio de tokens por empresa**.
+  - `[ ]` **Empresas com maior consumo de tokens** (lista paginada).
+
+### 10.5 — Estatísticas de Entrevistas
+
+- `[ ]` Desenvolver componentes para exibir:
+  - `[ ]` **Total de entrevistas criadas** (geral e por mês).
+  - `[ ]` **Total de respostas registradas** (geral e por mês).
+  - `[ ]` **Média de respostas por entrevista**.
+  - `[ ]` **Crescimento das entrevistas criadas** (integrar com biblioteca de gráficos).
+
+### 10.6 — Gestão de Planos
+
+- `[ ]` Desenvolver componentes para exibir e gerir:
+  - `[ ]` **Lista de empresas por plano** (básico, premium, etc.) com filtros e pesquisa.
+  - `[ ]` **Empresas próximas de upgrade de plano** (baseado no uso de tokens/recursos).
+  - `[ ]` **Empresas inativas ou com pouca atividade**.
+
+### 10.7 — Gestão Financeira
+
+- `[ ]` Desenvolver componentes para exibir:
+  - `[ ]` **Relatório de faturamento** (mensal e anual).
+  - `[ ]` **Empresas inadimplentes ou com pagamentos pendentes**.
+  - `[ ]` **Receita por plano**.
+  - `[ ]` **Projeção de crescimento** (baseado no histórico).
+
+### 10.8 — Gestão de Contas
+
+- `[ ]` Desenvolver componentes para exibir e gerir:
+  - `[ ]` **Lista de empresas com detalhes de contato** (com opções de edição).
+  - `[ ]` Funcionalidade para **Adicionar/remover empresas** (com confirmação).
+  - `[ ]` Funcionalidade para **Gerenciar permissões de acesso para administradores de empresa** (ex: alterar `role` de `owner` para `admin`).
+
+### 10.9 — Alertas e Notificações
+
+- `[ ]` Desenvolver sistema de alertas para:
+  - `[ ]` **Empresas com atividade anormal** (alta ou baixa, baseada em thresholds configuráveis).
+  - `[ ]` **Alertas de uso excessivo de tokens**.
+  - `[ ]` **Avisos de expiração de plano**.
+
+## FASE 11 — Testes e Validação do Superadmin (Qualidade e Robustez)
+
+- `[ ]` Testar o acesso ao dashboard de superadmin (apenas para `role: superadmin`).
+- `[ ]` Validar a precisão de todas as métricas e gráficos exibidos.
+- `[ ]` Testar as funcionalidades de gestão (adicionar/remover empresas, gerir permissões).
+- `[ ]` Testar o sistema de alertas e notificações.
+- `[ ]` Testar a performance do dashboard com um grande volume de dados.
+
+## FASE 12 — Deploy do Superadmin (Produção e Monitorização)
+
+- `[ ]` Configurar variáveis de ambiente específicas para o superadmin (se houver).
+- `[ ]` Garantir que as rotas de superadmin estão protegidas em produção.
+- `[ ]` Monitorizar o desempenho e erros do dashboard de superadmin.
+
 ## Notas Técnicas e Críticas Adicionais
 
 ### Estrutura de URLs (Revisão)
@@ -301,6 +383,8 @@ Integrar o sistema de pagamentos para gerir subscrições e planos.
 - `/admin/[slug]/responses` → Ver respostas
 - `/admin/[slug]/settings` → Definições da Empresa
 - `/admin/[slug]/billing` → Faturação (novo)
+- `/superadmin/dashboard` → Dashboard de Superadmin (novo)
+- `/superadmin/companies` → Gestão de Empresas (novo)
 - `/[slug]` → Landing pública da empresa
 - `/[slug]/interview/[id]` → Verificação candidato
 - `/[slug]/interview/[id]/verify` → Validação de token (novo)
@@ -308,7 +392,7 @@ Integrar o sistema de pagamentos para gerir subscrições e planos.
 
 ### Isolamento de Dados (Crítico e Repetido)
 
-Cada query à DB deve sempre incluir o `company_id` correspondente. Nunca fazer queries globais sem filtro de empresa em rotas autenticadas de admin. Usar middleware de aplicação e validação no código como primeira e segunda linha de defesa e como garantia de segurança.
+Cada query à DB deve sempre incluir o `company_id` correspondente. Nunca fazer queries globais sem filtro de empresa em rotas autenticadas de admin. Usar middleware de aplicação e validação no código como primeira e segunda linha de defesa e como garantia de segurança. Para o dashboard de superadmin, as queries serão globais, mas devem ser executadas com as devidas permissões e otimizações.
 
 ### Variáveis de Ambiente Necessárias (Revisão)
 
@@ -321,6 +405,7 @@ Cada query à DB deve sempre incluir o `company_id` correspondente. Nunca fazer 
 - `NEXT_PUBLIC_APP_URL=`
 - `AUTH_SECRET=` (para Auth.js)
 - `NEXTAUTH_URL=` (para Auth.js)
+- `SUPERADMIN_SECRET_KEY=` (para proteger rotas de superadmin, ou gerir via DB)
 
 ### Considerações de Performance
 
@@ -328,6 +413,7 @@ Cada query à DB deve sempre incluir o `company_id` correspondente. Nunca fazer 
 - Caching de dados frequentemente acedidos.
 - Otimização de imagens e assets.
 - Utilização de CDN para assets estáticos.
+- Para o dashboard de superadmin, considerar agregação de dados em background para evitar queries pesadas em tempo real.
 
 ### Segurança
 
@@ -335,8 +421,7 @@ Cada query à DB deve sempre incluir o `company_id` correspondente. Nunca fazer 
 - Uso de HTTPS em todas as comunicações.
 - Proteção contra CSRF.
 - Gestão segura de segredos e variáveis de ambiente.
+- Implementar autenticação robusta para o superadmin, possivelmente com 2FA.
 
 ---
 
-**Autor:** Manus AI
-**Data:** 20 de Abril de 2026
