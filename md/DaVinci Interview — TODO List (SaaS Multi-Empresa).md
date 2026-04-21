@@ -77,26 +77,26 @@ Focar na autenticação de utilizadores e no fluxo de criação de empresa, sem 
 
 ### 2.1 — Autenticação (Auth.js / Custom)
 
-- `[ ]` Configurar **Auth.js (NextAuth.js)** ou uma solução de autenticação customizada para gerir login/signup/logout, integrada com a tabela `users` no MySQL.
-- `[ ]` Criar middleware Next.js para proteger rotas `/admin/*` e `/onboarding`.
-- `[ ]` **Crítico:** Criar middleware para validar `company_id` nas rotas de admin (`/admin/[slug]/*`). Este middleware deve verificar:
-  - `[ ]` Se o utilizador está autenticado.
-  - `[ ]` Se o utilizador é membro da empresa com o slug na URL.
-  - `[ ]` Se o utilizador tem a `role` adequada para aceder à rota específica.
+- `[x]` Configurar **Auth.js (NextAuth.js)** ou uma solução de autenticação customizada para gerir login/signup/logout, integrada com a tabela `users` no MySQL.
+- `[x]` Criar middleware Next.js para proteger rotas `/admin/*` e `/onboarding`.
+- `[x]` **Crítico:** Criar middleware para validar `company_id` nas rotas de admin (`/admin/[slug]/*`). Este middleware deve verificar:
+  - `[x]` Se o utilizador está autenticado.
+  - `[x]` Se o utilizador é membro da empresa com o slug na URL.
+  - `[x]` Se o utilizador tem a `role` adequada para aceder à rota específica.
 
 ### 2.2 — Onboarding (Criação de Empresa)
 
-- `[ ]` Criar página `/onboarding` — só acessível a utilizadores autenticados que não possuem uma empresa associada.
-- `[ ]` Formulário de criação de empresa:
-  - `[ ]` Campo: Nome da empresa (obrigatório).
-  - `[ ]` Campo: Slug (auto-gerado a partir do nome, mas editável pelo utilizador; **Crítico:** validar unicidade do slug).
-  - `[ ]` Campo: Descrição (opcional).
+- `[x]` Criar página `/onboarding` — só acessível a utilizadores autenticados que não possuem uma empresa associada.
+- `[x]` Formulário de criação de empresa:
+  - `[x]` Campo: Nome da empresa (obrigatório).
+  - `[x]` Campo: Slug (auto-gerado a partir do nome, mas editável pelo utilizador; **Crítico:** validar unicidade do slug).
+  - `[x]` Campo: Descrição (opcional).
   - `[ ]` Campo: Upload de logo (integrar com **AWS S3** ou serviço similar).
-  - `[ ]` Campo: Cor primária (color picker para branding).
-- `[ ]` Após submissão do formulário:
-  - `[ ]` Criar registo em `companies` com os dados fornecidos.
-  - `[ ]` Criar registo em `company_members` para o utilizador atual com `role: owner`.
-  - `[ ]` Redirecionar para `/admin/[slug]/dashboard` após criação bem-sucedida.
+  - `[x]` Campo: Cor primária (color picker para branding).
+- `[x]` Após submissão do formulário:
+  - `[x]` Criar registo em `companies` com os dados fornecidos.
+  - `[x]` Criar registo em `company_members` para o utilizador atual com `role: owner`.
+  - `[x]` Redirecionar para `/admin/[slug]/dashboard` após criação bem-sucedida.
 
 ## FASE 3 — Desenvolvimento de Layouts Públicos (Landing Pages)
 

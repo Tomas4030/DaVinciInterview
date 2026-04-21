@@ -276,3 +276,37 @@ export async function resolveDefaultCompanyForUser(
 
   return fallbackRows[0] || null;
 }
+
+export async function getCompanyMembershipBySlug(
+  userId: string,
+  slug: string,
+): Promise<{ company: CompanyRecord; role: CompanyRole } | null> {
+  const normalizedUserId = String(userId || "").trim();
+  const normalizedSlug = slugify(slug);
+  if (!normalizedUserId || !normalizedSlug) {
+    return null;
+  }
+
+  const [rows] = await query<(CompanyRecord & { role: CompanyRole })>(
+    `
+    SELECT c.*, cm.role
+    FROM company_members cm
+    JOIN companies c ON c.id = cm.company_id
+    WHERE cm.user_id = ? AND c.slug = ?
+    LIMIT 1
+    `,
+    [normalizedUserId, normalizedSlug],
+  );
+
+  const membership = rows[0] as (CompanyRecord & { role: CompanyRole }) | undefined;
+  if (!membership) {
+    return null;
+  }
+
+  const { role, ...company } = membership;
+
+  return {
+    company,
+    role,
+  };
+}

@@ -10,7 +10,10 @@ type AdminTokenPayload = {
   email: string;
   role: "admin";
   iat: number;
+  exp: number;
 };
+
+const SESSION_MAX_AGE_SECONDS = 60 * 60 * 12;
 
 export const verifyAdminCredentials = (
   email: string,
@@ -23,11 +26,13 @@ export const verifyAdminCredentials = (
 };
 
 export const createAdminToken = (email: string, userId: string): string => {
+  const iat = Date.now();
   const payload: AdminTokenPayload = {
     userId: String(userId).trim(),
     email: String(email).trim().toLowerCase(),
     role: "admin",
-    iat: Date.now(),
+    iat,
+    exp: iat + SESSION_MAX_AGE_SECONDS * 1000,
   };
 
   return Buffer.from(JSON.stringify(payload)).toString("base64");
@@ -46,12 +51,13 @@ export const parseAdminToken = (
       parsed.role !== "admin" ||
       !parsed.email ||
       !parsed.userId ||
-      !parsed.iat
+      !parsed.iat ||
+      !parsed.exp
     ) {
       return null;
     }
 
-    if (parsed.email.toLowerCase() !== ADMIN_EMAIL.toLowerCase()) {
+    if (Date.now() > parsed.exp) {
       return null;
     }
 
@@ -60,6 +66,7 @@ export const parseAdminToken = (
       email: parsed.email,
       role: "admin",
       iat: parsed.iat,
+      exp: parsed.exp,
     };
   } catch {
     return null;
@@ -70,3 +77,5 @@ export const getAdminCredentials = () => ({
   email: ADMIN_EMAIL,
   password: ADMIN_PASSWORD,
 });
+
+export const getSessionMaxAgeSeconds = () => SESSION_MAX_AGE_SECONDS;

@@ -7,16 +7,21 @@ import { withBasePath } from "@/lib/base-path";
 
 type AdminNavProps = {
   userEmail: string;
+  companySlug?: string;
 };
 
-const NAV_LINKS = [
-  { href: "/admin", label: "Dashboard" },
-  { href: "/admin/respostas", label: "Respostas" },
-];
-
-export default function AdminNav({ userEmail }: AdminNavProps) {
+export default function AdminNav({ userEmail, companySlug }: AdminNavProps) {
   const router = useRouter();
   const pathname = usePathname();
+
+  const adminBasePath = companySlug ? `/admin/${companySlug}` : "/admin";
+
+  const NAV_LINKS = companySlug
+    ? [{ href: `${adminBasePath}/dashboard`, label: "Dashboard" }]
+    : [
+        { href: adminBasePath, label: "Dashboard" },
+        { href: `${adminBasePath}/respostas`, label: "Respostas" },
+      ];
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -72,11 +77,11 @@ export default function AdminNav({ userEmail }: AdminNavProps) {
     <nav className="sticky top-0 z-20 border-b border-[var(--c-border)]/60 bg-[var(--c-surface)]/90 backdrop-blur-xl">
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-6">
         <div className="flex items-center gap-7">
-          <Link
-            href="/admin"
-            aria-label="Painel de administração"
-            className="group flex items-center gap-2"
-          >
+            <Link
+              href={companySlug ? `${adminBasePath}/dashboard` : "/admin"}
+              aria-label="Painel de administração"
+              className="group flex items-center gap-2"
+            >
             <div className="flex h-8 w-8 items-center justify-center rounded-[8px] bg-[var(--c-brand)] text-[11px] font-bold text-white shadow-[0_1px_3px_rgba(67,85,232,0.2)] transition-transform duration-200 group-hover:scale-[1.05]">
               D
             </div>

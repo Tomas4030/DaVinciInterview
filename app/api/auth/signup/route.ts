@@ -1,44 +1,53 @@
-// app/api/auth/login-admin/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import {
   ADMIN_COMPANY_COOKIE,
   ADMIN_SESSION_COOKIE,
   createAdminToken,
   getSessionMaxAgeSeconds,
-  verifyAdminCredentials,
 } from "@/lib/admin-auth";
-import { ensureUserByEmail, verifyUserCredentials } from "@/lib/queries/users";
+import {
+  createUserWithPassword,
+  getUserByEmail,
+} from "@/lib/queries/users";
 import { resolveDefaultCompanyForUser } from "@/lib/queries/companies";
 
 export async function POST(request: NextRequest) {
   try {
-    const { email, password } = await request.json();
+    const body = await request.json();
+    const email = String(body?.email || "").trim().toLowerCase();
+    const password = String(body?.password || "");
+    const name = String(body?.name || "").trim() || null;
 
     if (!email || !password) {
       return NextResponse.json(
-        { error: "Email e senha são obrigatórios" },
+        { error: "Email e password são obrigatórios" },
         { status: 400 },
       );
     }
 
-    const normalizedEmail = String(email).trim().toLowerCase();
-    const maxAge = getSessionMaxAgeSeconds();
-
-    let user = await verifyUserCredentials(normalizedEmail, password);
-
-    if (!user) {
-      const isLegacyAdmin = verifyAdminCredentials(normalizedEmail, password);
-      if (!isLegacyAdmin) {
-        return NextResponse.json(
-          { error: "Email ou senha inválidos" },
-          { status: 401 },
-        );
-      }
-
-      user = await ensureUserByEmail(normalizedEmail);
+    if (password.length < 8) {
+      return NextResponse.json(
+        { error: "A password deve ter pelo menos 8 caracteres" },
+        { status: 400 },
+      );
     }
 
+    const existing = await getUserByEmail(email);
+    if (existing?.password_hash) {
+      return NextResponse.json(
+        { error: "Já existe conta com este email" },
+        { status: 409 },
+      );
+    }
+
+    const user = await createUserWithPassword({
+      email,
+      password,
+      name,
+    });
+
     const token = createAdminToken(user.email, user.id);
+    const maxAge = getSessionMaxAgeSeconds();
     const company = await resolveDefaultCompanyForUser(user.id, user.email);
     const redirectTo = company
       ? `/admin/${company.slug}/dashboard`
@@ -46,11 +55,11 @@ export async function POST(request: NextRequest) {
 
     const response = NextResponse.json({
       success: true,
-      token,
       redirectTo,
-      admin: {
+      user: {
+        id: user.id,
         email: user.email,
-        role: "admin",
+        name: user.name,
       },
     });
 
@@ -74,7 +83,10 @@ export async function POST(request: NextRequest) {
 
     return response;
   } catch (error) {
-    console.error("Erro ao fazer login de admin:", error);
-    return NextResponse.json({ error: "Erro ao fazer login" }, { status: 500 });
+    console.error("Erro ao criar conta:", error);
+    return NextResponse.json(
+      { error: "Erro ao criar conta" },
+      { status: 500 },
+    );
   }
 }

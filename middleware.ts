@@ -7,7 +7,7 @@ import {
   parseAdminToken,
 } from "@/lib/admin-auth";
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   // Only apply to HTML pages — never to _next/static, _next/image, api, or public files
   const { pathname } = request.nextUrl;
   const basePath = normalizeBasePath(process.env.NEXT_PUBLIC_BASE_PATH || "");
@@ -27,16 +27,68 @@ export function middleware(request: NextRequest) {
 
   const response = NextResponse.next();
 
-  // Inject company context for admin routes
-  if (pathnameWithoutBasePath.startsWith("/admin") || pathnameWithoutBasePath.startsWith("/api")) {
-    const adminToken = request.cookies.get(ADMIN_SESSION_COOKIE)?.value;
-    const session = parseAdminToken(adminToken);
+  const adminToken = request.cookies.get(ADMIN_SESSION_COOKIE)?.value;
+  const session = parseAdminToken(adminToken);
 
-    if (session) {
-      const existingCompanyId = request.cookies.get(ADMIN_COMPANY_COOKIE)?.value;
-      if (existingCompanyId) {
-        response.headers.set("x-admin-company-id", existingCompanyId);
-      }
+  const isAdminLoginRoute = pathnameWithoutBasePath === "/admin/login";
+  const isSignupRoute = pathnameWithoutBasePath === "/signup";
+  const isOnboardingRoute = pathnameWithoutBasePath.startsWith("/onboarding");
+  const isAdminRoute = pathnameWithoutBasePath.startsWith("/admin");
+  const isProtectedAdminRoute = isAdminRoute && !isAdminLoginRoute;
+
+  if (session && (isAdminLoginRoute || isSignupRoute)) {
+    const url = request.nextUrl.clone();
+    url.pathname = `${basePath}/onboarding`;
+    url.search = "";
+    return NextResponse.redirect(url);
+  }
+
+  if (!session && (isProtectedAdminRoute || isOnboardingRoute)) {
+    const url = request.nextUrl.clone();
+    url.pathname = `${basePath}/admin/login`;
+    url.searchParams.set("next", pathnameWithoutBasePath);
+    return NextResponse.redirect(url);
+  }
+
+  if (session && (isAdminRoute || pathnameWithoutBasePath.startsWith("/api"))) {
+    const existingCompanyId = request.cookies.get(ADMIN_COMPANY_COOKIE)?.value;
+    if (existingCompanyId) {
+      response.headers.set("x-admin-company-id", existingCompanyId);
+    }
+  }
+
+  const companyAdminMatch = pathnameWithoutBasePath.match(/^\/admin\/([^/]+)(?:\/(.*))?$/);
+  if (session && companyAdminMatch) {
+    const [, companySlug, subPathRaw] = companyAdminMatch;
+    const subPath = String(subPathRaw || "").toLowerCase();
+
+    let requiredRole = "viewer";
+    if (
+      subPath.startsWith("settings") ||
+      subPath.startsWith("billing") ||
+      subPath.includes("/edit") ||
+      subPath.startsWith("interviews/new")
+    ) {
+      requiredRole = "admin";
+    }
+
+    const accessUrl = new URL(
+      `${basePath}/api/auth/company-access?slug=${encodeURIComponent(companySlug)}&requiredRole=${requiredRole}`,
+      request.nextUrl.origin,
+    );
+
+    const accessResponse = await fetch(accessUrl.toString(), {
+      headers: {
+        cookie: request.headers.get("cookie") || "",
+      },
+      cache: "no-store",
+    });
+
+    if (!accessResponse.ok) {
+      const deniedUrl = request.nextUrl.clone();
+      deniedUrl.pathname = `${basePath}/404`;
+      deniedUrl.search = "";
+      return NextResponse.redirect(deniedUrl);
     }
   }
 

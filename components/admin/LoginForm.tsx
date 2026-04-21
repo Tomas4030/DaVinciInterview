@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { withBasePath } from "@/lib/base-path";
 
@@ -33,12 +34,14 @@ export default function LoginForm() {
       }
 
       const data = await response.json();
+      if (data.token) {
+        localStorage.setItem("admin_token", data.token);
+      }
+      if (data?.admin?.email) {
+        localStorage.setItem("admin_email", data.admin.email);
+      }
 
-      // Guardar token no localStorage
-      localStorage.setItem("admin_token", data.token);
-      localStorage.setItem("admin_email", data.admin.email);
-
-      router.push("/admin");
+      router.push(data.redirectTo || "/onboarding");
       router.refresh();
     } catch (err) {
       setErro("Erro ao fazer login. Tenta novamente.");
@@ -126,6 +129,13 @@ export default function LoginForm() {
           "Entrar"
         )}
       </button>
+
+      <p className="text-xs text-gray-500 text-center">
+        Ainda não tens conta?{" "}
+        <Link href="/signup" className="text-[var(--c-brand)] font-medium">
+          Criar conta
+        </Link>
+      </p>
     </form>
   );
 }
