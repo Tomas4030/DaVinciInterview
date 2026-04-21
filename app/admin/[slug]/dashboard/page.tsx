@@ -61,13 +61,21 @@ export default async function AdminCompanyDashboardPage({ params }: Props) {
 
       <div className="rounded-xl border border-[var(--c-border)]/70 bg-[var(--c-surface)] p-5">
         <p className="text-sm text-[var(--c-muted)]">
-          A estrutura multi-empresa da área admin começou na Fase 2. Enquanto as páginas
-          específicas da Fase 4 não estão completas, podes continuar a gerir vagas pela área
-          atual.
+          A estrutura base da Fase 4 esta ativa. As paginas de entrevistas, respostas,
+          definicoes e faturacao ja estao acessiveis com placeholders para evolucao.
         </p>
-        <Link href="/admin" className="btn-primary inline-flex mt-4 px-4 py-2">
-          Abrir dashboard legado
-        </Link>
+
+        <div className="mt-4 flex flex-wrap gap-2">
+          <Link href={`/admin/${params.slug}/interviews`} className="btn-primary inline-flex px-4 py-2">
+            Gerir entrevistas
+          </Link>
+          <Link
+            href={`/admin/${params.slug}/responses`}
+            className="inline-flex rounded-lg border border-[var(--c-border)] px-4 py-2 text-sm text-[var(--c-text)]"
+          >
+            Ver respostas
+          </Link>
+        </div>
       </div>
     </section>
   );
