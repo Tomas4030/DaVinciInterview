@@ -11,6 +11,7 @@ Perceber o que já existe antes de tocar em código, com foco em segurança e es
 - `[x]` Listar todas as rotas Next.js existentes (App Router ou Pages) e identificar as que precisam de ser protegidas ou adaptadas para multi-empresa.
 - `[x]` Identificar hard-coded references à empresa atual (nomes, IDs, assets) e planear a sua parametrização.
 - `[x]` **Crítico:** Documentar o fluxo de autenticação atual e as permissões de acesso.
+- `[ ]` Criar tag de backup `v0-single-company` com worktree limpo (pendente da auditoria inicial).
 
 ## FASE 1 — Base de Dados Multi-Empresa (Fundação Sólida)
 
@@ -27,9 +28,9 @@ Criar tabela `companies` com os campos:
 - `[x]` `logo_url` (`VARCHAR(255)`, nullable) — URL para o logo da empresa.
 - `[x]` `primary_color` (`VARCHAR(7)`, nullable) — para branding por empresa (ex: `#RRGGBB`).
 - `[x]` `owner_id` (`CHAR(36)`, FK → `users(id)`, NOT NULL) — O utilizador que criou a empresa.
-- `[x]` `stripe_customer_id` (`VARCHAR(255)`, nullable, UNIQUE) — ID do cliente no Stripe para gestão de subscrições. (Movido para FASE 6)
-- `[x]` `subscription_status` (`ENUM(\'trialing\', \'active\', \'past_due\', \'canceled\')`, NOT NULL, DEFAULT `\'trialing\'`) (Movido para FASE 6)
-- `[x]` `plan` (`ENUM(\'basic\', \'pro\', \'enterprise\')`, NOT NULL, DEFAULT `\'basic\'`) (Movido para FASE 6)
+- `[ ]` `stripe_customer_id` (`VARCHAR(255)`, nullable, UNIQUE) — ID do cliente no Stripe para gestão de subscrições. (Movido para FASE 7)
+- `[ ]` `subscription_status` (`ENUM(\'trialing\', \'active\', \'past_due\', \'canceled\')`, NOT NULL, DEFAULT `\'trialing\'`) (Movido para FASE 7)
+- `[ ]` `plan` (`ENUM(\'basic\', \'pro\', \'enterprise\')`, NOT NULL, DEFAULT `\'basic\'`) (Movido para FASE 7)
 - `[x]` `created_at` (`DATETIME`, NOT NULL, DEFAULT `CURRENT_TIMESTAMP`)
 - `[x]` `updated_at` (`DATETIME`, DEFAULT `CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP`) — Adicionar trigger para atualizar automaticamente.
 
@@ -67,7 +68,7 @@ Criar tabela `interviews` (se ainda não existir ou adaptar a existente `vagas`)
 
 ### 1.5 — Implementar Isolamento de Dados a Nível da Aplicação (Essencial para Multi-Tenancy)
 
-- `[x]` **Crítico:** Garantir que todas as queries à base de dados para tabelas sensíveis (`companies`, `company_members`, `interviews`, `candidato_respostas`) incluem explicitamente `WHERE company_id = \'...\'`.
+- `[ ]` **Crítico:** Garantir que todas as queries à base de dados para tabelas sensíveis (`companies`, `company_members`, `interviews`, `candidato_respostas`) incluem explicitamente `WHERE company_id = \'...\'`. (Parcial no código novo; legado ainda por fechar)
 - `[x]` Implementar middleware ou lógica de serviço para validar permissões de acesso baseadas na `role` do utilizador e no `company_id` associado à sessão do utilizador.
 - `[ ]` **Crítico:** Testar exaustivamente a lógica de isolamento de dados para garantir que não há fuga de dados entre empresas.
 
@@ -131,25 +132,25 @@ Focar na criação das interfaces de utilizador para a área de administração 
 
 ### 4.1 — Layout e Routing da Área de Admin
 
-- `[ ]` Criar estrutura de rotas: `/admin/[slug]/...` para todas as páginas de administração.
-- `[ ]` Criar layout de admin com sidebar:
-  - `[ ]` Dashboard (`/admin/[slug]/dashboard`)
-  - `[ ]` Entrevistas (`/admin/[slug]/interviews`)
-  - `[ ]` Respostas (`/admin/[slug]/responses`)
-  - `[ ]` Definições da Empresa (`/admin/[slug]/settings`)
-  - `[ ]` Conta/Faturação (`/admin/[slug]/billing`) — **Placeholder para Stripe**
-- `[ ]` **Crítico:** Validar no layout que o slug na URL pertence ao utilizador autenticado e que este tem permissão para aceder à empresa. Redirecionar para 404 ou página de erro se não tiver. Esta validação deve ser feita a nível da aplicação, garantindo que todas as queries à base de dados incluem o `company_id` correto.
+- `[x]` Criar estrutura base de rotas: `/admin/[slug]/...` (index + dashboard inicial).
+- `[x]` Criar layout de admin com sidebar:
+  - `[x]` Dashboard (`/admin/[slug]/dashboard`)
+  - `[x]` Entrevistas (`/admin/[slug]/interviews`)
+  - `[x]` Respostas (`/admin/[slug]/responses`)
+  - `[x]` Definições da Empresa (`/admin/[slug]/settings`)
+  - `[x]` Conta/Faturação (`/admin/[slug]/billing`) — **Placeholder para Stripe**
+- `[x]` **Crítico:** Validar no layout que o slug na URL pertence ao utilizador autenticado e que este tem permissão para aceder à empresa. Redirecionar para 404 ou página de erro se não tiver. Esta validação deve ser feita a nível da aplicação, garantindo que todas as queries à base de dados incluem o `company_id` correto.
 
 ### 4.2 — Dashboard (`/admin/[slug]/dashboard`)
 
-- `[ ]` Criar `/admin/[slug]/dashboard`:
-  - `[ ]` Métricas chave: total entrevistas, total candidatos, entrevistas esta semana/mês, taxa de conclusão.
-  - `[ ]` Lista de entrevistas recentes com status e link para respostas.
-  - `[ ]` Visão geral do plano de subscrição atual da empresa (Placeholder).
+- `[x]` Criar `/admin/[slug]/dashboard`:
+  - `[x]` Métricas chave: total entrevistas, total candidatos, entrevistas esta semana/mês, taxa de conclusão.
+  - `[x]` Lista de entrevistas recentes com status e link para respostas.
+  - `[x]` Visão geral do plano de subscrição atual da empresa (Placeholder).
 
 ### 4.3 — Gestão de Entrevistas (`/admin/[slug]/interviews`)
 
-- `[ ]` Criar `/admin/[slug]/interviews` — lista de todas as entrevistas da empresa, com filtros e pesquisa.
+- `[x]` Criar `/admin/[slug]/interviews` — lista de todas as entrevistas da empresa, com filtros e pesquisa.
 - `[ ]` Criar `/admin/[slug]/interviews/new` — criar nova entrevista:
   - `[ ]` Campo: Título da vaga (obrigatório).
   - `[ ]` Campo: Descrição da vaga (texto livre).
@@ -164,7 +165,7 @@ Focar na criação das interfaces de utilizador para a área de administração 
 
 ### 4.4 — Respostas de Candidatos (`/admin/[slug]/responses`)
 
-- `[ ]` Criar `/admin/[slug]/responses` — lista todas as sessões de entrevista para a empresa, com filtros por vaga, candidato, status.
+- `[x]` Criar `/admin/[slug]/responses` — lista todas as sessões de entrevista para a empresa, com filtros por vaga, candidato, status.
 - `[ ]` Criar `/admin/[slug]/responses/[sessionId]` — página de detalhe de uma sessão:
   - `[ ]` Informações do candidato (nome, email, telemóvel).
   - `[ ]` Transcrição completa da conversa com a IA.
@@ -174,8 +175,8 @@ Focar na criação das interfaces de utilizador para a área de administração 
 
 ### 4.5 — Definições da Empresa (`/admin/[slug]/settings`)
 
-- `[ ]` Criar `/admin/[slug]/settings`:
-  - `[ ]` Formulário para editar nome, descrição, logo, cor primária da empresa.
+- `[x]` Criar `/admin/[slug]/settings`:
+  - `[x]` Formulário para editar nome, descrição, logo, cor primária da empresa.
 
 ## FASE 5 — Desenvolvimento do Fluxo do Candidato (UI/UX)
 
@@ -205,13 +206,13 @@ Conectar as interfaces de utilizador com o backend, implementar as funcionalidad
 
 ### 6.1 — Lógica de Autenticação e Onboarding
 
-- `[ ]` Conectar o formulário de criação de empresa (FASE 2.2) com a base de dados para criar registos em `companies` e `company_members`.
-- `[ ]` Implementar a lógica de validação de `company_id` e `role` nos middlewares (FASE 2.1).
+- `[x]` Conectar o formulário de criação de empresa (FASE 2.2) com a base de dados para criar registos em `companies` e `company_members`.
+- `[x]` Implementar a lógica de validação de `company_id` e `role` nos middlewares (FASE 2.1).
 
 ### 6.2 — Lógica das Landing Pages Públicas
 
-- `[ ]` Conectar a Landing Page Principal (FASE 3.1) com os dados de planos (placeholder por enquanto).
-- `[ ]` Conectar a Landing Page por Empresa (FASE 3.2) com os dados da tabela `companies` e `interviews`.
+- `[x]` Conectar a Landing Page Principal (FASE 3.1) com os dados de planos (placeholder por enquanto).
+- `[x]` Conectar a Landing Page por Empresa (FASE 3.2) com os dados da tabela `companies` e `interviews`.
 
 ### 6.3 — Lógica da Área de Admin
 
@@ -339,73 +340,3 @@ Cada query à DB deve sempre incluir o `company_id` correspondente. Nunca fazer 
 
 **Autor:** Manus AI
 **Data:** 20 de Abril de 2026
-
-## FASE 8 — Testes e Validação (Qualidade e Robustez)
-
-- `[ ]` Testar fluxo completo end-to-end: registo → pagamento → criação empresa → criar entrevista → candidato faz entrevista → admin vê respostas.
-- `[ ]` Testar isolamento de dados: Garantir que a empresa A não vê dados da empresa B em nenhuma circunstância.
-- `[ ]` Testar permissões de acesso: Com utilizadores com diferentes roles (`owner`, `admin`, `viewer`) e diferentes empresas, garantindo que a lógica de middleware e aplicação funciona corretamente.
-- `[ ]` Testar webhooks Stripe em modo teste (com cartões de teste e simulações de eventos).
-- `[ ]` Testar email de verificação (Brevo/NodeMailer) para garantir que os emails são enviados e os links funcionam.
-- `[ ]` Testar em mobile (responsividade e usabilidade).
-- `[ ]` Testes de performance (carregamento de páginas, queries à DB, tempo de resposta da IA).
-- `[ ]` Testes de segurança (injeção SQL, XSS, etc.).
-
-## FASE 9 — Deploy (Produção e Monitorização)
-
-- `[ ]` Configurar variáveis de ambiente em produção (Vercel ou cPanel) de forma segura.
-- `[ ]` Configurar domínio personalizado (se aplicável) e certificados SSL.
-- `[ ]` Ativar webhooks Stripe em modo produção e garantir que estão a receber eventos.
-- `[ ]` Verificar que a lógica de isolamento de dados e permissões está ativa em produção e que as políticas estão corretas.
-- `[ ]` Smoke test em produção após o deploy para garantir que tudo funciona como esperado.
-- `[ ]` Configurar monitorização de erros (Sentry, LogRocket) e performance (Vercel Analytics, Google Analytics).
-- `[ ]` Configurar backups automáticos da base de dados.
-
-## Notas Técnicas e Críticas Adicionais
-
-### Estrutura de URLs (Revisão)
-
-- `/` → Landing page marketing
-- `/pricing` → Página de planos
-- `/onboarding` → Criar empresa (pós-pagamento)
-- `/admin/[slug]/dashboard` → Painel da empresa
-- `/admin/[slug]/interviews` → Gerir entrevistas
-- `/admin/[slug]/responses` → Ver respostas
-- `/admin/[slug]/settings` → Definições da Empresa
-- `/admin/[slug]/billing` → Faturação (novo)
-- `/[slug]` → Landing pública da empresa
-- `/[slug]/interview/[id]` → Verificação candidato
-- `/[slug]/interview/[id]/verify` → Validação de token (novo)
-- `/[slug]/interview/[id]/chat` → Chat da entrevista
-
-### Isolamento de Dados (Crítico e Repetido)
-
-Cada query à DB deve sempre incluir o `company_id` correspondente. Nunca fazer queries globais sem filtro de empresa em rotas autenticadas de admin. Usar middleware de aplicação e validação no código como primeira e segunda linha de defesa e como garantia de segurança.
-
-### Variáveis de Ambiente Necessárias (Revisão)
-
-- `MYSQL_DATABASE_URL=` (ou variáveis separadas para host, user, password, database)
-- `OPENAI_API_KEY=`
-- `STRIPE_SECRET_KEY=`
-- `STRIPE_WEBHOOK_SECRET=`
-- `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=`
-- `BREVO_API_KEY=` (ou NODEMAILER config)
-- `NEXT_PUBLIC_APP_URL=`
-- `AUTH_SECRET=` (para Auth.js)
-- `NEXTAUTH_URL=` (para Auth.js)
-
-### Considerações de Performance
-
-- Otimizar queries SQL com índices adequados.
-- Caching de dados frequentemente acedidos.
-- Otimização de imagens e assets.
-- Utilização de CDN para assets estáticos.
-
-### Segurança
-
-- Sanitização e validação de todos os inputs do utilizador para prevenir injeção SQL, XSS, etc.
-- Uso de HTTPS em todas as comunicações.
-- Proteção contra CSRF.
-- Gestão segura de segredos e variáveis de ambiente.
-
----

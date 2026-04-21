@@ -125,11 +125,6 @@ Data: 2026-04-20
   - `D ideias.md`
   - `?? md/`
 
-### Ação recomendada
-- Depois de validar/organizar estas alterações locais, executar:
-  - `git add -A`
-  - `git commit -m "chore: preparar baseline single-company"`
-  - `git tag v0-single-company`
 
 ## 6) Conclusão da FASE 0
 

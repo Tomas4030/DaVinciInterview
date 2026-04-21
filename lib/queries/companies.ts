@@ -48,6 +48,13 @@ type CreateCompanyInput = {
   subscriptionStatus?: CompanySubscriptionStatus;
 };
 
+type UpdateCompanyProfileInput = {
+  name: string;
+  description?: string | null;
+  logoUrl?: string | null;
+  primaryColor?: string | null;
+};
+
 export async function isSlugAvailable(slug: string): Promise<boolean> {
   const normalizedSlug = slugify(slug);
   const [rows] = await query<{ id: string }>(
@@ -305,4 +312,35 @@ export async function getCompanyMembershipBySlug(
     company,
     role,
   };
+}
+
+export async function updateCompanyProfile(
+  companyId: string,
+  input: UpdateCompanyProfileInput,
+): Promise<CompanyRecord | null> {
+  const normalizedCompanyId = String(companyId || "").trim();
+  if (!normalizedCompanyId) {
+    return null;
+  }
+
+  await query(
+    `
+    UPDATE companies
+    SET
+      name = ?,
+      description = ?,
+      logo_url = ?,
+      primary_color = ?
+    WHERE id = ?
+    `,
+    [
+      String(input.name || "").trim(),
+      input.description ?? null,
+      input.logoUrl ?? null,
+      input.primaryColor ?? null,
+      normalizedCompanyId,
+    ],
+  );
+
+  return await getCompanyById(normalizedCompanyId);
 }

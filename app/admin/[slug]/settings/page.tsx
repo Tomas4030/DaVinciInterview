@@ -1,9 +1,21 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import AdminCompanySettingsForm from "@/components/admin/AdminCompanySettingsForm";
+import { getCompanyBySlug } from "@/lib/queries/companies";
 
 export const metadata: Metadata = { title: "Admin — Definicoes" };
 export const dynamic = "force-dynamic";
 
-export default function AdminCompanySettingsPage() {
+type Props = {
+  params: { slug: string };
+};
+
+export default async function AdminCompanySettingsPage({ params }: Props) {
+  const company = await getCompanyBySlug(params.slug);
+  if (!company) {
+    notFound();
+  }
+
   return (
     <section className="space-y-5">
       <header>
@@ -12,9 +24,13 @@ export default function AdminCompanySettingsPage() {
       </header>
 
       <div className="rounded-xl border border-[var(--c-border)]/70 bg-[var(--c-surface)] p-5">
-        <p className="text-sm text-[var(--c-muted)]">
-          Placeholder da Fase 4.5 para editar nome, descricao, logo e cor primaria.
-        </p>
+        <AdminCompanySettingsForm
+          slug={company.slug}
+          initialName={company.name}
+          initialDescription={company.description || ""}
+          initialLogoUrl={company.logo_url || ""}
+          initialPrimaryColor={company.primary_color || "#4355e8"}
+        />
       </div>
     </section>
   );
