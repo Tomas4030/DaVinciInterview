@@ -1,0 +1,114 @@
+import { NextRequest, NextResponse } from "next/server";
+import { ADMIN_SESSION_COOKIE, parseAdminToken } from "@/lib/admin-auth";
+import { getCompanyMembershipBySlug } from "@/lib/queries/companies";
+import {
+  getInterviewByIdAndCompany,
+  updateInterviewForCompany,
+} from "@/lib/queries/interviews";
+
+function normalizeQuestionsFromText(raw: string): Array<{ question: string }> {
+  return String(raw || "")
+    .split("\n")
+    .map((item) => item.trim())
+    .filter(Boolean)
+    .map((question) => ({ question }));
+}
+
+function normalizeQuestionsFromArray(raw: unknown): Array<{ question: string }> {
+  if (!Array.isArray(raw)) return [];
+
+  return raw
+    .map((item) => {
+      if (typeof item === "string") return item.trim();
+      if (typeof item?.question === "string") return item.question.trim();
+      return "";
+    })
+    .filter(Boolean)
+    .map((question) => ({ question }));
+}
+
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { slug: string; id: string } },
+) {
+  try {
+    const token = request.cookies.get(ADMIN_SESSION_COOKIE)?.value;
+    const session = parseAdminToken(token);
+    if (!session) {
+      return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
+    }
+
+    const membership = await getCompanyMembershipBySlug(session.userId, params.slug);
+    if (!membership) {
+      return NextResponse.json({ error: "Empresa não encontrada" }, { status: 404 });
+    }
+
+    const interview = await getInterviewByIdAndCompany(params.id, membership.company.id);
+    if (!interview) {
+      return NextResponse.json({ error: "Entrevista não encontrada" }, { status: 404 });
+    }
+
+    return NextResponse.json({ success: true, interview });
+  } catch (error) {
+    console.error("Erro ao obter entrevista:", error);
+    return NextResponse.json({ error: "Erro ao obter entrevista" }, { status: 500 });
+  }
+}
+
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: { slug: string; id: string } },
+) {
+  try {
+    const token = request.cookies.get(ADMIN_SESSION_COOKIE)?.value;
+    const session = parseAdminToken(token);
+    if (!session) {
+      return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
+    }
+
+    const membership = await getCompanyMembershipBySlug(session.userId, params.slug);
+    if (!membership) {
+      return NextResponse.json({ error: "Empresa não encontrada" }, { status: 404 });
+    }
+
+    if (membership.role !== "owner" && membership.role !== "admin") {
+      return NextResponse.json({ error: "Sem permissões" }, { status: 403 });
+    }
+
+    const body = await request.json();
+    const title = String(body?.title || "").trim();
+    const description = String(body?.description || "").trim() || null;
+    const statusRaw = String(body?.status || "draft").trim().toLowerCase();
+    const questionsText = String(body?.questionsText || "");
+    const questionsArray = normalizeQuestionsFromArray(body?.questions);
+
+    if (!title) {
+      return NextResponse.json({ error: "Título é obrigatório" }, { status: 400 });
+    }
+
+    const status =
+      statusRaw === "published" || statusRaw === "archived" ? statusRaw : "draft";
+
+    const interview = await updateInterviewForCompany(params.id, membership.company.id, {
+      title,
+      description,
+      status,
+      questions:
+        questionsArray.length > 0
+          ? questionsArray
+          : normalizeQuestionsFromText(questionsText),
+    });
+
+    if (!interview) {
+      return NextResponse.json({ error: "Entrevista não encontrada" }, { status: 404 });
+    }
+
+    return NextResponse.json({ success: true, interview });
+  } catch (error) {
+    console.error("Erro ao atualizar entrevista:", error);
+    return NextResponse.json(
+      { error: "Erro ao atualizar entrevista" },
+      { status: 500 },
+    );
+  }
+}

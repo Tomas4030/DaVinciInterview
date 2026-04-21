@@ -52,7 +52,6 @@ type UpdateCompanyProfileInput = {
   name: string;
   description?: string | null;
   logoUrl?: string | null;
-  primaryColor?: string | null;
 };
 
 export async function isSlugAvailable(slug: string): Promise<boolean> {
@@ -329,15 +328,13 @@ export async function updateCompanyProfile(
     SET
       name = ?,
       description = ?,
-      logo_url = ?,
-      primary_color = ?
+      logo_url = ?
     WHERE id = ?
     `,
     [
       String(input.name || "").trim(),
       input.description ?? null,
       input.logoUrl ?? null,
-      input.primaryColor ?? null,
       normalizedCompanyId,
     ],
   );

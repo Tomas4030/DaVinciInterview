@@ -9,7 +9,6 @@ type Props = {
   initialName: string;
   initialDescription: string;
   initialLogoUrl: string;
-  initialPrimaryColor: string;
 };
 
 export default function AdminCompanySettingsForm({
@@ -17,13 +16,11 @@ export default function AdminCompanySettingsForm({
   initialName,
   initialDescription,
   initialLogoUrl,
-  initialPrimaryColor,
 }: Props) {
   const router = useRouter();
   const [name, setName] = useState(initialName);
   const [description, setDescription] = useState(initialDescription);
   const [logoUrl, setLogoUrl] = useState(initialLogoUrl);
-  const [primaryColor, setPrimaryColor] = useState(initialPrimaryColor || "#4355e8");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
@@ -44,7 +41,6 @@ export default function AdminCompanySettingsForm({
           name,
           description,
           logoUrl,
-          primaryColor,
         }),
       });
 
@@ -116,19 +112,6 @@ export default function AdminCompanySettingsForm({
           onChange={(event) => setLogoUrl(event.target.value)}
           className="input-base"
           placeholder="https://..."
-        />
-      </div>
-
-      <div>
-        <label htmlFor="company-primary-color" className="mb-1.5 block text-xs font-medium text-[var(--c-muted)]">
-          Cor primária
-        </label>
-        <input
-          id="company-primary-color"
-          type="color"
-          value={primaryColor}
-          onChange={(event) => setPrimaryColor(event.target.value)}
-          className="h-10 w-full rounded-xl border border-[var(--c-border)] bg-transparent"
         />
       </div>
 

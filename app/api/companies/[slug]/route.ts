@@ -5,8 +5,6 @@ import {
   updateCompanyProfile,
 } from "@/lib/queries/companies";
 
-const HEX_COLOR_REGEX = /^#[0-9A-Fa-f]{6}$/;
-
 export async function PUT(
   request: NextRequest,
   { params }: { params: { slug: string } },
@@ -31,7 +29,6 @@ export async function PUT(
     const name = String(body?.name || "").trim();
     const description = String(body?.description || "").trim() || null;
     const logoUrl = String(body?.logoUrl || "").trim() || null;
-    const primaryColor = String(body?.primaryColor || "").trim() || null;
 
     if (!name) {
       return NextResponse.json(
@@ -47,18 +44,10 @@ export async function PUT(
       );
     }
 
-    if (primaryColor && !HEX_COLOR_REGEX.test(primaryColor)) {
-      return NextResponse.json(
-        { error: "Cor primária inválida. Usa formato #RRGGBB" },
-        { status: 400 },
-      );
-    }
-
     const updatedCompany = await updateCompanyProfile(membership.company.id, {
       name,
       description,
       logoUrl,
-      primaryColor,
     });
 
     if (!updatedCompany) {

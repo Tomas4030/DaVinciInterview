@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ADMIN_SESSION_COOKIE, parseAdminToken } from "@/lib/admin-auth";
 import { query } from "@/lib/db";
@@ -20,6 +21,7 @@ type Props = {
 
 type ResponseRow = {
   id: string;
+  sessao_id: string;
   email: string;
   telefone: string;
   status: string;
@@ -72,6 +74,7 @@ export default async function AdminCompanyResponsesPage({
     `
     SELECT
       cr.id,
+      cr.sessao_id,
       cr.email,
       cr.telefone,
       cr.status,
@@ -144,6 +147,7 @@ export default async function AdminCompanyResponsesPage({
                   <th className="px-5 py-3 font-medium">Entrevista</th>
                   <th className="px-5 py-3 font-medium">Estado</th>
                   <th className="px-5 py-3 font-medium">Data</th>
+                  <th className="px-5 py-3 font-medium">Ações</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[var(--c-border)]/35">
@@ -163,6 +167,14 @@ export default async function AdminCompanyResponsesPage({
                     </td>
                     <td className="px-5 py-3 text-[var(--c-muted)]">
                       {new Date(row.created_at).toLocaleString("pt-PT")}
+                    </td>
+                    <td className="px-5 py-3">
+                      <Link
+                        href={`/admin/${params.slug}/responses/${row.sessao_id}`}
+                        className="inline-flex rounded-lg border border-[var(--c-border)] px-3 py-1.5 text-xs text-[var(--c-text)] transition-colors hover:bg-[var(--c-bg)]"
+                      >
+                        Ver detalhe
+                      </Link>
                     </td>
                   </tr>
                 ))}

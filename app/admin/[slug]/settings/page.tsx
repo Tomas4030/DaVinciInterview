@@ -29,7 +29,6 @@ export default async function AdminCompanySettingsPage({ params }: Props) {
           initialName={company.name}
           initialDescription={company.description || ""}
           initialLogoUrl={company.logo_url || ""}
-          initialPrimaryColor={company.primary_color || "#4355e8"}
         />
       </div>
     </section>

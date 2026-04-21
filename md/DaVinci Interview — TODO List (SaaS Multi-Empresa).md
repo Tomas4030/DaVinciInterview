@@ -129,6 +129,7 @@ Focar na criação das interfaces de utilizador para as páginas públicas, gara
 ## FASE 4 — Desenvolvimento de Layouts da Área de Admin
 
 Focar na criação das interfaces de utilizador para a área de administração de cada empresa.
+Quero q uses os layouts antigos ver na pasta \old_site
 
 ### 4.1 — Layout e Routing da Área de Admin
 
@@ -151,38 +152,40 @@ Focar na criação das interfaces de utilizador para a área de administração 
 ### 4.3 — Gestão de Entrevistas (`/admin/[slug]/interviews`)
 
 - `[x]` Criar `/admin/[slug]/interviews` — lista de todas as entrevistas da empresa, com filtros e pesquisa.
-- `[ ]` Criar `/admin/[slug]/interviews/new` — criar nova entrevista:
-  - `[ ]` Campo: Título da vaga (obrigatório).
-  - `[ ]` Campo: Descrição da vaga (texto livre).
-  - `[ ]` Campo: Número de perguntas desejado (slider ou input numérico).
-  - `[ ]` Botão: "Gerar perguntas com IA" → **Placeholder para API OpenAI**.
-  - `[ ]` Lista de perguntas geradas (editáveis inline, com drag-and-drop para reordenar).
-  - `[ ]` Botão: Adicionar pergunta manualmente.
-  - `[ ]` Botão: Apagar pergunta.
-  - `[ ]` Botão: Guardar como rascunho.
-  - `[ ]` Botão: Guardar e Publicar (muda o status da entrevista para `published`).
-- `[ ]` Criar `/admin/[slug]/interviews/[id]/edit` — editar entrevista existente (funcionalidade similar à de criação).
+- `[x]` Criar `/admin/[slug]/interviews/new` — criar nova entrevista:
+  - `[x]` Campo: Título da vaga (obrigatório).
+  - `[x]` Campo: Descrição da vaga (texto livre).
+  - `[x]` Campo: Número de perguntas desejado (slider ou input numérico).
+  - `[x]` Botão: "Gerar perguntas com IA" → **Placeholder para API OpenAI**.
+  - `[x]` Lista de perguntas geradas (editáveis inline, com reordenação manual).
+  - `[x]` Botão: Adicionar pergunta manualmente.
+  - `[x]` Botão: Apagar pergunta.
+  - `[x]` Botão: Guardar como rascunho.
+  - `[x]` Botão: Guardar e Publicar (muda o status da entrevista para `published`).
+- `[x]` Criar `/admin/[slug]/interviews/[id]/edit` — editar entrevista existente (funcionalidade similar à de criação).
 
 ### 4.4 — Respostas de Candidatos (`/admin/[slug]/responses`)
 
 - `[x]` Criar `/admin/[slug]/responses` — lista todas as sessões de entrevista para a empresa, com filtros por vaga, candidato, status.
-- `[ ]` Criar `/admin/[slug]/responses/[sessionId]` — página de detalhe de uma sessão:
-  - `[ ]` Informações do candidato (nome, email, telemóvel).
-  - `[ ]` Transcrição completa da conversa com a IA.
-  - `[ ]` Data/hora da entrevista.
+- `[x]` Criar `/admin/[slug]/responses/[sessionId]` — página de detalhe de uma sessão:
+  - `[x]` Informações do candidato (nome, email, telemóvel).
+  - `[x]` Transcrição completa da conversa com a IA.
+  - `[x]` Data/hora da entrevista.
   - `[ ]` **Crítico:** Implementar análise de sentimento ou sumarização com IA para cada resposta (roadmap).
   - `[ ]` Opção de exportar a transcrição (PDF/CSV).
 
 ### 4.5 — Definições da Empresa (`/admin/[slug]/settings`)
 
 - `[x]` Criar `/admin/[slug]/settings`:
-  - `[x]` Formulário para editar nome, descrição, logo, cor primária da empresa.
+  - `[x]` Formulário para editar nome, descrição e logo da empresa.
 
 ## FASE 5 — Desenvolvimento do Fluxo do Candidato (UI/UX)
 
 Focar na criação das interfaces de utilizador para o fluxo de candidatura, desde a verificação até ao chat com a IA.
+Quero q uses os layouts antigos ver na pasta \old_site
 
 ### 5.1 — Fluxo de Verificação do Candidato
+
 
 - `[ ]` Criar `/[slug]/interview/[interviewId]` — página de verificação:
   - `[ ]` Formulário: Input para Nome, Email, Telemóvel.
@@ -424,4 +427,3 @@ Cada query à DB deve sempre incluir o `company_id` correspondente. Nunca fazer 
 - Implementar autenticação robusta para o superadmin, possivelmente com 2FA.
 
 ---
-
