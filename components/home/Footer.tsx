@@ -97,9 +97,6 @@ export default function Footer() {
             © {new Date().getFullYear()} Chat2Work. Todos os direitos
             reservados.
           </p>
-          <p className="text-[0.75rem] text-[var(--c-text)]/40">
-            Feito com ❤️ em Portugal
-          </p>
         </div>
       </div>
     </footer>

@@ -44,5 +44,5 @@ OpenClaude
 deploy.sh
 .deploy/*
 .next-dev/*
-.md/*
+md/*
 
