@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import ClearLegacyServiceWorker from "@/components/ClearLegacyServiceWorker";
 
 export const metadata: Metadata = {
   title: { default: "Chat2Work", template: "%s · DaVinci" },
@@ -14,6 +15,7 @@ export default function RootLayout({
   return (
     <html lang="pt">
       <body className="min-h-screen bg-[var(--c-bg)]">
+        <ClearLegacyServiceWorker />
         {children}
       </body>
     </html>

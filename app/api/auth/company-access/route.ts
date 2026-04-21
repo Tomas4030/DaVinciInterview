@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { ADMIN_SESSION_COOKIE, parseAdminToken } from "@/lib/admin-auth";
 import { CompanyRole, getCompanyMembershipBySlug } from "@/lib/queries/companies";
 
+export const dynamic = "force-dynamic";
+
 const ROLE_LEVEL: Record<CompanyRole, number> = {
   viewer: 1,
   admin: 2,

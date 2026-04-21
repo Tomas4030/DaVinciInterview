@@ -1,6 +1,12 @@
 // lib/admin-auth.ts
-export const ADMIN_SESSION_COOKIE = "davinci_admin_session";
-export const ADMIN_COMPANY_COOKIE = "davinci_admin_company";
+import { createHmac, timingSafeEqual } from "crypto";
+import {
+  ADMIN_COMPANY_COOKIE,
+  ADMIN_SESSION_COOKIE,
+  SESSION_MAX_AGE_SECONDS,
+} from "@/lib/admin-auth-shared";
+
+export { ADMIN_COMPANY_COOKIE, ADMIN_SESSION_COOKIE };
 
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "admin@davincinterviews.com";
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "";
@@ -13,7 +19,17 @@ type AdminTokenPayload = {
   exp: number;
 };
 
-const SESSION_MAX_AGE_SECONDS = 60 * 60 * 12;
+function getAuthSecret(): string {
+  const secret =
+    process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET || ADMIN_PASSWORD;
+  return secret || "dev-insecure-auth-secret-change-me";
+}
+
+function signPayload(payloadBase64: string): string {
+  return createHmac("sha256", getAuthSecret())
+    .update(payloadBase64)
+    .digest("base64url");
+}
 
 export const verifyAdminCredentials = (
   email: string,
@@ -35,7 +51,9 @@ export const createAdminToken = (email: string, userId: string): string => {
     exp: iat + SESSION_MAX_AGE_SECONDS * 1000,
   };
 
-  return Buffer.from(JSON.stringify(payload)).toString("base64");
+  const payloadBase64 = Buffer.from(JSON.stringify(payload)).toString("base64url");
+  const signature = signPayload(payloadBase64);
+  return `${payloadBase64}.${signature}`;
 };
 
 export const parseAdminToken = (
@@ -44,7 +62,24 @@ export const parseAdminToken = (
   if (!token) return null;
 
   try {
-    const decoded = Buffer.from(token, "base64").toString("utf-8");
+    const [payloadBase64, signature] = token.split(".");
+    if (!payloadBase64 || !signature) {
+      return null;
+    }
+
+    const expectedSignature = signPayload(payloadBase64);
+    const expectedBuffer = Buffer.from(expectedSignature);
+    const receivedBuffer = Buffer.from(signature);
+
+    if (expectedBuffer.length !== receivedBuffer.length) {
+      return null;
+    }
+
+    if (!timingSafeEqual(expectedBuffer, receivedBuffer)) {
+      return null;
+    }
+
+    const decoded = Buffer.from(payloadBase64, "base64url").toString("utf-8");
     const parsed = JSON.parse(decoded) as Partial<AdminTokenPayload>;
 
     if (

@@ -26,10 +26,10 @@ export default function Footer() {
             </span>
 
             <a
-              href="#vagas"
+              href="/pricing"
               className="text-[0.82rem] text-[var(--c-text)]/65 transition-colors duration-150 hover:text-[var(--c-text)]"
             >
-              Vagas abertas
+              Planos
             </a>
             <a
               href="#como-funciona"
@@ -43,6 +43,15 @@ export default function Footer() {
             <span className="text-[10px] font-semibold uppercase tracking-[0.08em] text-[var(--c-text)]/45">
               Info
             </span>
+            <Link href="/termos" className="text-[0.82rem] text-[var(--c-text)]/65 transition-colors duration-150 hover:text-[var(--c-text)]">
+              Termos de Servico
+            </Link>
+            <Link href="/privacidade" className="text-[0.82rem] text-[var(--c-text)]/65 transition-colors duration-150 hover:text-[var(--c-text)]">
+              Politica de Privacidade
+            </Link>
+            <a href="mailto:hello@chat2work.pt" className="text-[0.82rem] text-[var(--c-text)]/65 transition-colors duration-150 hover:text-[var(--c-text)]">
+              Contactos
+            </a>
             <p className="text-[0.82rem] text-[var(--c-text)]/65">
               © {new Date().getFullYear()} Chat2Work. <br /> Todos os direitos reservados.
             </p>

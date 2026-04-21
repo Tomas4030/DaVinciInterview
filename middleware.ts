@@ -4,8 +4,8 @@ import { normalizeBasePath } from "@/lib/base-path-utils";
 import {
   ADMIN_COMPANY_COOKIE,
   ADMIN_SESSION_COOKIE,
-  parseAdminToken,
-} from "@/lib/admin-auth";
+} from "@/lib/admin-auth-shared";
+import { parseAdminTokenForMiddleware } from "@/lib/admin-auth-middleware";
 
 export async function middleware(request: NextRequest) {
   // Only apply to HTML pages — never to _next/static, _next/image, api, or public files
@@ -28,7 +28,7 @@ export async function middleware(request: NextRequest) {
   const response = NextResponse.next();
 
   const adminToken = request.cookies.get(ADMIN_SESSION_COOKIE)?.value;
-  const session = parseAdminToken(adminToken);
+  const session = await parseAdminTokenForMiddleware(adminToken);
 
   const isAdminLoginRoute = pathnameWithoutBasePath === "/admin/login";
   const isSignupRoute = pathnameWithoutBasePath === "/signup";

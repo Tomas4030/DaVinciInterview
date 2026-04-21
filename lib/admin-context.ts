@@ -8,6 +8,7 @@ import {
 import {
   CompanyRecord,
   getCompanyById,
+  getUserCompanyRole,
   resolveDefaultCompanyForUser,
 } from "@/lib/queries/companies";
 
@@ -23,7 +24,10 @@ async function resolveCompanyForAdmin(
 ): Promise<CompanyRecord | null> {
   if (companyId) {
     const byId = await getCompanyById(companyId);
-    if (byId) return byId;
+    if (byId) {
+      const role = await getUserCompanyRole(adminUserId, byId.id);
+      if (role) return byId;
+    }
   }
 
   return await resolveDefaultCompanyForUser(adminUserId, adminEmail);

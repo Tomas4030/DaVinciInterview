@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { isSlugAvailable } from "@/lib/queries/companies";
 import { slugify } from "@/lib/slug";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(request: NextRequest) {
   try {
     const slugRaw = request.nextUrl.searchParams.get("slug") || "";

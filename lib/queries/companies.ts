@@ -270,11 +270,7 @@ export async function resolveDefaultCompanyForUser(
     if (memberByEmailRows[0]) return memberByEmailRows[0];
   }
 
-  const [fallbackRows] = await query<CompanyRecord>(
-    `SELECT * FROM companies ORDER BY created_at ASC LIMIT 1`,
-  );
-
-  return fallbackRows[0] || null;
+  return null;
 }
 
 export async function getCompanyMembershipBySlug(

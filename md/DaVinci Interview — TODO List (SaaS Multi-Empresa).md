@@ -104,26 +104,26 @@ Focar na criação das interfaces de utilizador para as páginas públicas, gara
 
 ### 3.1 — Landing Page Principal (`/`)
 
-- `[ ]` Criar página `/` (landing page principal):
-  - `[ ]` Hero section: headline, subheadline, CTA "Ver Planos" (link para `/pricing`).
-  - `[ ]` Secção "Como funciona" (3-4 passos ilustrados, claros e concisos).
-  - `[ ]` Secção de planos/preços (cards com botão "Começar" → **Placeholder para Stripe Checkout**).
-  - `[ ]` Footer com links essenciais (Termos de Serviço, Política de Privacidade, Contactos).
-- `[ ]` Criar página `/pricing` (planos detalhados) com comparações de funcionalidades.
-- `[ ]` Garantir que estas páginas são públicas (sem autenticação).
+- `[x]` Criar página `/` (landing page principal):
+  - `[x]` Hero section: headline, subheadline, CTA "Ver Planos" (link para `/pricing`).
+  - `[x]` Secção "Como funciona" (3-4 passos ilustrados, claros e concisos).
+  - `[x]` Secção de planos/preços (cards com botão "Começar" → **Placeholder para Stripe Checkout**).
+  - `[x]` Footer com links essenciais (Termos de Serviço, Política de Privacidade, Contactos).
+- `[x]` Criar página `/pricing` (planos detalhados) com comparações de funcionalidades.
+- `[x]` Garantir que estas páginas são públicas (sem autenticação).
 - `[ ]` **Crítico:** Otimizar para SEO e performance (Lighthouse score alto).
 
 ### 3.2 — Landing Page por Empresa (`/[slug]`)
 
-- `[ ]` Criar rota `/[slug]` — landing page pública da empresa.
-- `[ ]` Mostrar:
-  - `[ ]` Logo e nome da empresa (obtidos da tabela `companies` via `slug`).
-  - `[ ]` Descrição da empresa.
-  - `[ ]` Lista de entrevistas publicadas (vagas abertas) para essa empresa.
-- `[ ]` Cada vaga deve ter um botão "Candidatar-me" → leva para a página de verificação (`/[slug]/interview/[interviewId]`).
-- `[ ]` **Crítico:** Garantir que só aparecem entrevistas com `status = \'published\'` e que pertencem a esta empresa (filtrar por `company_id`).
-- `[ ]` Mostrar página 404 se o slug não existir ou se a empresa estiver inativa/cancelada.
-- `[ ]` **Crítico:** Otimizar para SEO e partilha social (Open Graph tags).
+- `[x]` Criar rota `/[slug]` — landing page pública da empresa.
+- `[x]` Mostrar:
+  - `[x]` Logo e nome da empresa (obtidos da tabela `companies` via `slug`).
+  - `[x]` Descrição da empresa.
+  - `[x]` Lista de entrevistas publicadas (vagas abertas) para essa empresa.
+- `[x]` Cada vaga deve ter um botão "Candidatar-me" → leva para a página de verificação (`/[slug]/interview/[interviewId]`).
+- `[x]` **Crítico:** Garantir que só aparecem entrevistas com `status = \'published\'` e que pertencem a esta empresa (filtrar por `company_id`).
+- `[x]` Mostrar página 404 se o slug não existir ou se a empresa estiver inativa/cancelada.
+- `[x]` **Crítico:** Otimizar para SEO e partilha social (Open Graph tags).
 
 ## FASE 4 — Desenvolvimento de Layouts da Área de Admin
 

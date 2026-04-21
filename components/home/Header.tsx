@@ -16,6 +16,21 @@ export default function Header() {
             Chat2Work
           </span>
         </Link>
+
+        <div className="flex items-center gap-4">
+          <Link
+            href="/pricing"
+            className="text-[0.8rem] font-medium text-[var(--c-text)]/70 transition-colors hover:text-[var(--c-text)]"
+          >
+            Precos
+          </Link>
+          <Link
+            href="/signup"
+            className="rounded-lg bg-[var(--c-brand)] px-3 py-1.5 text-[0.75rem] font-semibold text-white"
+          >
+            Comecar
+          </Link>
+        </div>
       </div>
     </header>
   );

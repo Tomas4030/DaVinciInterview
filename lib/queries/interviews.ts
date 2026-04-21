@@ -70,6 +70,22 @@ export async function listInterviewsByCompany(
   return (rows as any[]).map(mapInterview);
 }
 
+export async function listPublishedInterviewsByCompany(
+  companyId: string,
+): Promise<InterviewRecord[]> {
+  const [rows] = await query(
+    `
+    SELECT *
+    FROM interviews
+    WHERE company_id = ? AND status = 'published'
+    ORDER BY created_at DESC
+    `,
+    [companyId],
+  );
+
+  return (rows as any[]).map(mapInterview);
+}
+
 export async function resolveCompanyAndInterviewFromLegacyVaga(
   vagaId: string,
 ): Promise<{ companyId: string; interviewId: string } | null> {

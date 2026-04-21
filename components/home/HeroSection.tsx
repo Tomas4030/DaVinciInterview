@@ -49,15 +49,15 @@ export default function HeroSection() {
             style={{ animationDelay: "240ms" }}
           >
             <a
-              href="#vagas"
+              href="/pricing"
               className="inline-flex items-center gap-2 rounded-xl bg-[var(--c-brand)] px-5 py-[11px] text-[0.82rem] font-semibold text-white
                            shadow-[0_1px_2px_rgba(67,85,232,0.1),0_4px_16px_rgba(67,85,232,0.22)]
                            transition-[transform,box-shadow] duration-200 ease-[cubic-bezier(0.25,0.46,0.45,0.94)]
                            hover:-translate-y-[2px] hover:shadow-[0_2px_4px_rgba(67,85,232,0.1),0_8px_32px_rgba(67,85,232,0.28)]
                            active:scale-[0.985]"
-              aria-label="Ver vagas disponíveis"
+              aria-label="Ver planos"
             >
-              Ver vagas disponíveis
+              Ver planos
               <ChevronDown />
             </a>
 
