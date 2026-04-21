@@ -3,9 +3,11 @@
 const { normalizeBasePath } = require("./lib/base-path-utils");
 
 const basePath = normalizeBasePath(process.env.NEXT_PUBLIC_BASE_PATH || "");
+const isDev = process.env.NODE_ENV !== "production";
 
 const nextConfig = {
-  output: "standalone",
+  ...(isDev ? {} : { output: "standalone" }),
+  distDir: isDev ? ".next-dev" : ".next",
   basePath,
   assetPrefix: basePath || undefined,
 
