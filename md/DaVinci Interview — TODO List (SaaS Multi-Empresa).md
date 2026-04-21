@@ -1,4 +1,4 @@
-# DaVinci Interview — TODO List (SaaS Multi-Empresa) - Adaptado para MySQL (Reorganizado)
+# MatchWorky Interview — TODO List (SaaS Multi-Empresa) - Adaptado para MySQL (Reorganizado)
 
 **Regra:** Completa cada fase sequencialmente. Não passes à fase seguinte sem terminar a anterior. Assinala cada item com `[x]` quando terminares.
 
@@ -23,7 +23,7 @@ Criar tabela `companies` com os campos:
 
 - `[x]` `id` (`CHAR(36)`, PK, NOT NULL) – Usar `UUID()` do MySQL ou gerar UUIDs na aplicação (ex: `uuidv4` em Node.js).
 - `[x]` `name` (`VARCHAR(255)`, NOT NULL)
-- `[x]` `slug` (`VARCHAR(255)`, NOT NULL, UNIQUE) — usado na URL: `davinci.com/empresa-slug`. **Crítico:** Implementar lógica de geração de slug única e amigável.
+- `[x]` `slug` (`VARCHAR(255)`, NOT NULL, UNIQUE) — usado na URL: `MatchWorky.com/empresa-slug`. **Crítico:** Implementar lógica de geração de slug única e amigável.
 - `[x]` `description` (`TEXT`)
 - `[x]` `logo_url` (`VARCHAR(255)`, nullable) — URL para o logo da empresa.
 - `[x]` `primary_color` (`VARCHAR(7)`, nullable) — para branding por empresa (ex: `#RRGGBB`).

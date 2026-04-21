@@ -12,11 +12,11 @@ import {
 } from "@/components/home";
 
 export const metadata: Metadata = {
-  title: "Chat2Work — Entrevistas com IA para equipas de recrutamento",
+  title: "MatchWorky — Entrevistas com IA para equipas de recrutamento",
   description:
     "Automatiza a triagem de candidatos com entrevistas conversacionais. Define as perguntas, partilha o link e analisa as respostas — tudo numa plataforma.",
   openGraph: {
-    title: "Chat2Work — Entrevistas com IA para empresas",
+    title: "MatchWorky — Entrevistas com IA para empresas",
     description:
       "Automatiza a triagem inicial e melhora a experiência de candidatura com entrevistas conversacionais inteligentes.",
     type: "website",

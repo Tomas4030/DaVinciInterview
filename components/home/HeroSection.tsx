@@ -40,8 +40,8 @@ export default function HeroSection() {
             className="mt-6 max-w-[520px] animate-reveal text-[1rem] leading-relaxed text-[var(--c-text)]/60 md:text-[1.08rem]"
             style={{ animationDelay: "120ms" }}
           >
-            O Chat2Work conduz entrevistas conversacionais automatizadas em nome
-            da tua empresa. Define as perguntas, partilha o link com os
+            O MatchWorky conduz entrevistas conversacionais automatizadas em
+            nome da tua empresa. Define as perguntas, partilha o link com os
             candidatos e analisa as respostas — tudo numa plataforma.
           </p>
 
@@ -138,7 +138,7 @@ function ChatPreview() {
         </div>
         <div>
           <p className="text-[0.72rem] font-semibold text-[var(--c-text)]">
-            Chat2Work
+            MatchWorky
           </p>
           <p className="text-[0.65rem] text-[var(--c-text)]/50">
             Entrevista Automática

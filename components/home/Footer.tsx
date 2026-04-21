@@ -12,7 +12,7 @@ export default function Footer() {
                 C
               </div>
               <span className="text-[0.9rem] font-semibold tracking-tight text-[var(--c-text)]">
-                Chat2Work
+                MatchWorky
               </span>
             </div>
             <p className="mt-3 text-[0.78rem] leading-relaxed text-[var(--c-text)]/55">
@@ -64,7 +64,7 @@ export default function Footer() {
               Sobre nós
             </Link>
             <a
-              href="mailto:hello@chat2work.pt"
+              href="mailto:hello@MatchWorky.pt"
               className="text-[0.8rem] text-[var(--c-text)]/60 transition-colors hover:text-[var(--c-text)]"
             >
               Contacto
@@ -94,7 +94,7 @@ export default function Footer() {
         {/* Bottom bar */}
         <div className="flex flex-wrap items-center justify-between gap-3 border-t border-[var(--c-border)]/50 py-5">
           <p className="text-[0.75rem] text-[var(--c-text)]/40">
-            © {new Date().getFullYear()} Chat2Work. Todos os direitos
+            © {new Date().getFullYear()} MatchWorky. Todos os direitos
             reservados.
           </p>
         </div>

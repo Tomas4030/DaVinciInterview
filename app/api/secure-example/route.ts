@@ -123,7 +123,7 @@ export async function GET(request: NextRequest) {
  * @body { id, titulo, descricao, perguntas[] }
  *
  * @example
- * const token = btoa('admin@davincinterviews.com:DaVinci@2026Secure!');
+ * const token = btoa('admin@MatchWorkynterviews.com:MatchWorky@2026Secure!');
  * const res = await fetch('/api/secure-example/vagas', {
  *   method: 'POST',
  *   headers: {
@@ -220,7 +220,7 @@ export async function POST(request: NextRequest) {
  * Autenticação: REQUERIDA (admin only)
  *
  * @example
- * const token = btoa('admin@davincinterviews.com:DaVinci@2026Secure!');
+ * const token = btoa('admin@MatchWorkynterviews.com:MatchWorky@2026Secure!');
  * const res = await fetch('/api/secure-example/vagas/vaga-id', {
  *   method: 'DELETE',
  *   headers: {
@@ -260,7 +260,10 @@ export async function DELETE(request: NextRequest) {
     const deleted = await apagarVagaRegistro(vagaId);
 
     if (!deleted) {
-      return NextResponse.json({ error: "Vaga não encontrada" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Vaga não encontrada" },
+        { status: 404 },
+      );
     }
 
     return NextResponse.json({
@@ -285,8 +288,8 @@ export async function DELETE(request: NextRequest) {
  *
  * @example
  * const token = generateAdminToken(
- *   'admin@davincinterviews.com',
- *   'DaVinci@2026Secure!'
+ *   'admin@MatchWorkynterviews.com',
+ *   'MatchWorky@2026Secure!'
  * );
  *
  * // NO SERVIDOR:

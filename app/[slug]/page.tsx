@@ -103,7 +103,7 @@ export default async function CompanyPublicPage({ params }: Props) {
               href="/"
               className="text-[0.8rem] font-medium text-[var(--c-text)]/65 transition-colors hover:text-[var(--c-text)]"
             >
-              Chat2Work
+              MatchWorky
             </Link>
           </nav>
         </div>

@@ -3,7 +3,7 @@ import "./globals.css";
 import ClearLegacyServiceWorker from "@/components/ClearLegacyServiceWorker";
 
 export const metadata: Metadata = {
-  title: { default: "Chat2Work", template: "%s · DaVinci" },
+  title: { default: "MatchWorky", template: "%s · MatchWorky" },
   description: "Plataforma de entrevistas em formato chatbot",
 };
 

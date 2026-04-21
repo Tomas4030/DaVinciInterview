@@ -7,13 +7,13 @@ export default function Header() {
         <Link
           href="/"
           className="group flex items-center gap-2.5"
-          aria-label="Página inicial — Chat2Work"
+          aria-label="Página inicial — MatchWorky"
         >
           <div className="flex h-8 w-8 items-center justify-center rounded-[7px] bg-[var(--c-brand)] font-display text-[11px] font-bold text-white shadow-[0_1px_3px_rgba(67,85,232,0.25)] transition-transform duration-200 group-hover:scale-[1.06] group-active:scale-[0.98]">
             C
           </div>
           <span className="text-[1rem] font-semibold tracking-tight text-[var(--c-text)]">
-            Chat2Work
+            MatchWorky
           </span>
         </Link>
 

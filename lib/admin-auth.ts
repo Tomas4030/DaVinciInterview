@@ -8,7 +8,7 @@ import {
 
 export { ADMIN_COMPANY_COOKIE, ADMIN_SESSION_COOKIE };
 
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "admin@davincinterviews.com";
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "admin@MatchWorkynterviews.com";
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "";
 
 type AdminTokenPayload = {
@@ -51,7 +51,9 @@ export const createAdminToken = (email: string, userId: string): string => {
     exp: iat + SESSION_MAX_AGE_SECONDS * 1000,
   };
 
-  const payloadBase64 = Buffer.from(JSON.stringify(payload)).toString("base64url");
+  const payloadBase64 = Buffer.from(JSON.stringify(payload)).toString(
+    "base64url",
+  );
   const signature = signPayload(payloadBase64);
   return `${payloadBase64}.${signature}`;
 };

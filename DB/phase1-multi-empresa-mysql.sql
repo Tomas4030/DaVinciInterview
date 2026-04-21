@@ -118,7 +118,7 @@ SET @legacy_owner_id = '00000000-0000-0000-0000-000000000000';
 INSERT INTO users (id, email, name)
 VALUES (
   @legacy_owner_id,
-  'legacy-owner@davinci.local',
+  'legacy-owner@MatchWorky.local',
   'Legacy Owner'
 )
 ON DUPLICATE KEY UPDATE

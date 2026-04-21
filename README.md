@@ -1,18 +1,20 @@
-# DaVinci Interview 🤖
+# MatchWorky Interview 🤖
 
-**DaVinci Interview** é uma plataforma moderna de recrutamento que utiliza uma interface de chatbot para conduzir entrevistas preliminares. Construída com **Next.js 14**, **Tailwind CSS** e **Supabase**, a aplicação automatiza a recolha de respostas de candidatos de forma conversacional e eficiente.
+**MatchWorky Interview** é uma plataforma moderna de recrutamento que utiliza uma interface de chatbot para conduzir entrevistas preliminares. Construída com **Next.js 14**, **Tailwind CSS** e **Supabase**, a aplicação automatiza a recolha de respostas de candidatos de forma conversacional e eficiente.
 
 ---
 
 ## 🚀 Funcionalidades
 
 ### 👥 Para Candidatos
+
 - **Interface Conversacional**: Entrevistas em formato de chat amigável e intuitivo.
 - **Progresso em Tempo Real**: Barra de progresso visual durante a entrevista.
 - **Sem Atrito**: Não requer criação de conta para responder às vagas.
 - **Persistência**: Respostas guardadas automaticamente a cada passo.
 
 ### 🔐 Para Administradores (`/admin`)
+
 - **Gestão de Vagas**: Criar, editar e desativar vagas com facilidade.
 - **Construtor de Questionários**: Configuração de perguntas personalizadas para cada vaga.
 - **Dashboard de Candidaturas**: Visualização centralizada de todas as respostas recebidas.
@@ -23,21 +25,21 @@
 
 ## 🛠️ Stack Tecnológica
 
-| Camada | Tecnologia |
-| --- | --- |
-| **Frontend** | [Next.js 14](https://nextjs.org/) (App Router) + TypeScript |
-| **Estilização** | [Tailwind CSS](https://tailwindcss.com/) |
-| **Backend & BD** | [Supabase](https://supabase.com/) (PostgreSQL) |
-| **Autenticação** | Supabase Auth |
-| **IA & Integrações** | OpenAI API (Análise de respostas) |
-| **E-mail** | Nodemailer |
+| Camada               | Tecnologia                                                  |
+| -------------------- | ----------------------------------------------------------- |
+| **Frontend**         | [Next.js 14](https://nextjs.org/) (App Router) + TypeScript |
+| **Estilização**      | [Tailwind CSS](https://tailwindcss.com/)                    |
+| **Backend & BD**     | [Supabase](https://supabase.com/) (PostgreSQL)              |
+| **Autenticação**     | Supabase Auth                                               |
+| **IA & Integrações** | OpenAI API (Análise de respostas)                           |
+| **E-mail**           | Nodemailer                                                  |
 
 ---
 
 ## 📂 Estrutura do Projeto
 
 ```text
-DaVinciInterview/
+MatchWorkyInterview/
 ├── app/                # Rotas do Next.js (App Router)
 │   ├── admin/          # Dashboard e gestão administrativa
 │   ├── api/            # Endpoints da API (Vagas, Respostas, Análise)
@@ -53,21 +55,25 @@ DaVinciInterview/
 ## ⚙️ Configuração Local
 
 ### 1. Requisitos
+
 - Node.js 18+
 - Conta no Supabase
 
 ### 2. Instalação
+
 ```bash
 # Clonar o repositório
-git clone https://github.com/Tomas4030/DaVinciInterview.git
-cd DaVinciInterview
+git clone https://github.com/Tomas4030/MatchWorkyInterview.git
+cd MatchWorkyInterview
 
 # Instalar dependências
 npm install
 ```
 
 ### 3. Variáveis de Ambiente
+
 Crie um ficheiro `.env.local` na raiz do projeto:
+
 ```env
 NEXT_PUBLIC_SUPABASE_URL=seu_url_supabase
 NEXT_PUBLIC_SUPABASE_ANON_KEY=sua_chave_anon_supabase
@@ -75,12 +81,15 @@ OPENAI_API_KEY=sua_chave_openai
 ```
 
 ### 4. Base de Dados
+
 Execute o script em `supabase/schema.sql` no **SQL Editor** do seu projeto Supabase para criar as tabelas e políticas de segurança (RLS).
 
 ### 5. Execução
+
 ```bash
 npm run dev
 ```
+
 Aceda a `http://localhost:3000`.
 
 ---
@@ -103,4 +112,5 @@ Aqui estão algumas sugestões para elevar o projeto ao próximo nível:
 Este projeto está sob a licença MIT. Consulte o ficheiro [LICENSE](LICENSE) para mais detalhes.
 
 ---
+
 ⭐ Desenvolvido por [Tomás Miguel](https://github.com/Tomas4030)

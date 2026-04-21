@@ -1,5 +1,5 @@
 -- ========================================
--- SCHEMA MYSQL para davinci-interviews
+-- SCHEMA MYSQL para MatchWorky-interviews
 -- Substituir: PostgreSQL → MySQL
 -- ========================================
 

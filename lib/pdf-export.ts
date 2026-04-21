@@ -201,7 +201,7 @@ export function gerarHTMLCandidato(
 
         <!-- Footer -->
         <div class="footer">
-          <p>Documento gerado automaticamente pelo sistema Chat2Work</p>
+          <p>Documento gerado automaticamente pelo sistema MatchWorky</p>
           <p>© 2026 - Todos os direitos reservados</p>
         </div>
       </div>

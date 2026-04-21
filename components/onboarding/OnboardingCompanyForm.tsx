@@ -50,7 +50,9 @@ export default function OnboardingCompanyForm() {
 
     try {
       const response = await fetch(
-        withBasePath(`/api/companies/check-slug?slug=${encodeURIComponent(nextSlug)}`),
+        withBasePath(
+          `/api/companies/check-slug?slug=${encodeURIComponent(nextSlug)}`,
+        ),
       );
       const data = await response.json();
       if (!response.ok) {
@@ -130,7 +132,10 @@ export default function OnboardingCompanyForm() {
       )}
 
       <div>
-        <label className="block text-xs font-medium text-gray-600 mb-1.5" htmlFor="company-name">
+        <label
+          className="block text-xs font-medium text-gray-600 mb-1.5"
+          htmlFor="company-name"
+        >
           Nome da empresa
         </label>
         <input
@@ -139,13 +144,16 @@ export default function OnboardingCompanyForm() {
           value={name}
           onChange={(event) => setName(event.target.value)}
           required
-          placeholder="Ex: DaVinci Tech"
+          placeholder="Ex: MatchWorky Tech"
           className="input-base"
         />
       </div>
 
       <div>
-        <label className="block text-xs font-medium text-gray-600 mb-1.5" htmlFor="company-slug">
+        <label
+          className="block text-xs font-medium text-gray-600 mb-1.5"
+          htmlFor="company-slug"
+        >
           Slug da empresa
         </label>
         <div className="flex gap-2">
@@ -172,7 +180,9 @@ export default function OnboardingCompanyForm() {
             {isSlugChecking ? "A validar..." : "Validar"}
           </button>
         </div>
-        <p className="mt-1 text-xs text-gray-500">URL pública: /{effectiveSlug || "empresa"}</p>
+        <p className="mt-1 text-xs text-gray-500">
+          URL pública: /{effectiveSlug || "empresa"}
+        </p>
         {slugError && <p className="mt-1 text-xs text-red-600">{slugError}</p>}
         {!slugError && isSlugAvailable && (
           <p className="mt-1 text-xs text-emerald-600">Slug disponível</p>
@@ -180,7 +190,10 @@ export default function OnboardingCompanyForm() {
       </div>
 
       <div>
-        <label className="block text-xs font-medium text-gray-600 mb-1.5" htmlFor="company-description">
+        <label
+          className="block text-xs font-medium text-gray-600 mb-1.5"
+          htmlFor="company-description"
+        >
           Descrição
         </label>
         <textarea
@@ -193,7 +206,10 @@ export default function OnboardingCompanyForm() {
       </div>
 
       <div>
-        <label className="block text-xs font-medium text-gray-600 mb-1.5" htmlFor="company-logo-url">
+        <label
+          className="block text-xs font-medium text-gray-600 mb-1.5"
+          htmlFor="company-logo-url"
+        >
           URL do logo
         </label>
         <input
@@ -207,7 +223,10 @@ export default function OnboardingCompanyForm() {
       </div>
 
       <div>
-        <label className="block text-xs font-medium text-gray-600 mb-1.5" htmlFor="company-primary-color">
+        <label
+          className="block text-xs font-medium text-gray-600 mb-1.5"
+          htmlFor="company-primary-color"
+        >
           Cor primária
         </label>
         <input
@@ -219,7 +238,11 @@ export default function OnboardingCompanyForm() {
         />
       </div>
 
-      <button type="submit" disabled={loading} className="btn-primary w-full py-3">
+      <button
+        type="submit"
+        disabled={loading}
+        className="btn-primary w-full py-3"
+      >
         {loading ? "A criar empresa..." : "Criar empresa"}
       </button>
     </form>

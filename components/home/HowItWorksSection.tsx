@@ -86,7 +86,7 @@ export default function HowItWorksSection() {
     <section
       id="como-funciona"
       className="relative overflow-hidden py-20 md:py-28"
-      aria-label="Como funciona o Chat2Work"
+      aria-label="Como funciona o MatchWorky"
     >
       <div
         className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,#e5e7eb_1px,transparent_1px),linear-gradient(to_bottom,#e5e7eb_1px,transparent_1px)] bg-[size:44px_44px] opacity-[0.05]"

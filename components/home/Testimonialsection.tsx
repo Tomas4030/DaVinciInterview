@@ -1,7 +1,7 @@
 const TESTIMONIALS = [
   {
     quote:
-      "Reduziamos semanas a rever CVs. Com o Chat2Work, em dois dias já tínhamos os 5 melhores candidatos prontos para entrevista presencial.",
+      "Reduziamos semanas a rever CVs. Com o MatchWorky, em dois dias já tínhamos os 5 melhores candidatos prontos para entrevista presencial.",
     author: "Ana Rodrigues",
     role: "Head of People, TechStartup Lisboa",
     initials: "AR",
