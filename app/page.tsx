@@ -1,45 +1,38 @@
 // app/page.tsx
 import type { Metadata } from "next";
-import { listarVagasAtivas, type VagaResumo } from "@/lib/api";
 import {
   Header,
   HeroSection,
-  VagasSection,
+  FeaturesSection,
   HowItWorksSection,
+  TestimonialsSection,
   PricingSection,
+  CtaSection,
   Footer,
 } from "@/components/home";
 
-export const revalidate = 60; // Cache curto para reduzir TTFB sem perder atualizações recentes
-
 export const metadata: Metadata = {
-  title: "Entrevistas com IA para empresas",
+  title: "Chat2Work — Entrevistas com IA para equipas de recrutamento",
   description:
-    "Landing principal da plataforma SaaS de entrevistas. Conhece funcionalidades e planos para equipas de recrutamento.",
+    "Automatiza a triagem de candidatos com entrevistas conversacionais. Define as perguntas, partilha o link e analisa as respostas — tudo numa plataforma.",
   openGraph: {
-    title: "Chat2Work - Entrevistas com IA para empresas",
+    title: "Chat2Work — Entrevistas com IA para empresas",
     description:
-      "Automatiza triagem inicial e melhora a experiencia de candidatura com entrevistas conversacionais.",
+      "Automatiza a triagem inicial e melhora a experiência de candidatura com entrevistas conversacionais inteligentes.",
     type: "website",
   },
 };
 
-export default async function HomePage() {
-  let vagas: VagaResumo[] = [];
-
-  try {
-    vagas = await listarVagasAtivas();
-  } catch {
-    vagas = [];
-  }
-
+export default function HomePage() {
   return (
     <main className="min-h-screen bg-[var(--c-bg)]">
       <Header />
       <HeroSection />
-      <VagasSection vagas={vagas} />
+      <FeaturesSection />
       <HowItWorksSection />
+      <TestimonialsSection />
       <PricingSection compact />
+      <CtaSection />
       <Footer />
     </main>
   );
