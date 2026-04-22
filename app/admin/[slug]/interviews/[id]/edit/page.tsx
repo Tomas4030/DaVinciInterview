@@ -3,6 +3,10 @@ import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import AdminInterviewForm from "@/components/admin/AdminInterviewForm";
 import { ADMIN_SESSION_COOKIE, parseAdminToken } from "@/lib/admin-auth";
+import {
+  extractInterviewWorkModeFromDescription,
+  stripInterviewMetaFromDescription,
+} from "@/lib/interview-meta";
 import { getCompanyMembershipBySlug } from "@/lib/queries/companies";
 import { getInterviewByIdAndCompany } from "@/lib/queries/interviews";
 
@@ -56,7 +60,8 @@ export default async function AdminCompanyInterviewEditPage({ params }: Props) {
           mode="edit"
           interviewId={interview.id}
           initialTitle={interview.title}
-          initialDescription={interview.description || ""}
+          initialDescription={stripInterviewMetaFromDescription(interview.description)}
+          initialWorkMode={extractInterviewWorkModeFromDescription(interview.description)}
           initialStatus={interview.status}
           initialQuestionsText={questionsToText(interview.questions)}
         />

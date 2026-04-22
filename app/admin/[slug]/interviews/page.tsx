@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ADMIN_SESSION_COOKIE, parseAdminToken } from "@/lib/admin-auth";
 import DeleteInterviewButton from "@/components/admin/DeleteInterviewButton";
+import { stripInterviewMetaFromDescription } from "@/lib/interview-meta";
 import { getCompanyMembershipBySlug } from "@/lib/queries/companies";
 import { listInterviewsByCompany } from "@/lib/queries/interviews";
 
@@ -79,7 +80,7 @@ export default async function AdminCompanyInterviewsPage({
     if (!searchTerm) return true;
     return (
       item.title.toLowerCase().includes(searchTerm) ||
-      String(item.description || "")
+      stripInterviewMetaFromDescription(item.description)
         .toLowerCase()
         .includes(searchTerm)
     );
@@ -163,7 +164,8 @@ export default async function AdminCompanyInterviewsPage({
                 </div>
 
                 <p className="text-sm text-[var(--c-muted)]">
-                  {item.description || "Sem descricao."}
+                  {stripInterviewMetaFromDescription(item.description) ||
+                    "Sem descricao."}
                 </p>
 
                 <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-[var(--c-muted)]">
