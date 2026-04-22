@@ -8,5 +8,5 @@ export { default as CtaSection } from "./CtaSection";
 export { default as Footer } from "./Footer";
 export { default as GridPattern } from "./GridPattern";
 
-export * from "./Icons";
+export * from "../ui/Icons";
 export * from "./config";

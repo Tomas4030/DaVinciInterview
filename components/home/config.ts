@@ -1,4 +1,4 @@
-import { IconGlobe, IconLayers, IconBuilding } from "./Icons";
+import { IconGlobe, IconLayers, IconBuilding } from "../ui/Icons";
 
 export type ModalidadeConfig = {
   badge: string;

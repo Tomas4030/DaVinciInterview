@@ -5,6 +5,7 @@ export interface InterviewRecord {
   id: string;
   company_id: string;
   legacy_vaga_id: string | null;
+  legacy_modalidade?: string | null;
   title: string;
   description: string | null;
   status: "draft" | "published" | "archived";
@@ -18,6 +19,7 @@ function mapInterview(row: any): InterviewRecord {
     id: row.id,
     company_id: row.company_id,
     legacy_vaga_id: row.legacy_vaga_id ?? null,
+    legacy_modalidade: row.legacy_modalidade ?? null,
     title: row.title,
     description: row.description ?? null,
     status: row.status,
@@ -75,10 +77,11 @@ export async function listInterviewsByCompany(
 ): Promise<InterviewRecord[]> {
   const [rows] = await query(
     `
-    SELECT *
-    FROM interviews
-    WHERE company_id = ?
-    ORDER BY created_at DESC
+    SELECT i.*, v.modalidade AS legacy_modalidade
+    FROM interviews i
+    LEFT JOIN vagas v ON v.id = i.legacy_vaga_id
+    WHERE i.company_id = ?
+    ORDER BY i.created_at DESC
     `,
     [companyId],
   );
@@ -91,10 +94,11 @@ export async function listPublishedInterviewsByCompany(
 ): Promise<InterviewRecord[]> {
   const [rows] = await query(
     `
-    SELECT *
-    FROM interviews
-    WHERE company_id = ? AND status = 'published'
-    ORDER BY created_at DESC
+    SELECT i.*, v.modalidade AS legacy_modalidade
+    FROM interviews i
+    LEFT JOIN vagas v ON v.id = i.legacy_vaga_id
+    WHERE i.company_id = ? AND i.status = 'published'
+    ORDER BY i.created_at DESC
     `,
     [companyId],
   );
