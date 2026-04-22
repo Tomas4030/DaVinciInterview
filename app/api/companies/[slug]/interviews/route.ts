@@ -1,9 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ADMIN_SESSION_COOKIE, parseAdminToken } from "@/lib/admin-auth";
-import {
-  composeInterviewDescriptionWithMeta,
-  normalizeInterviewWorkMode,
-} from "@/lib/interview-meta";
+import { normalizeInterviewWorkMode } from "@/lib/interview-meta";
 import { getCompanyMembershipBySlug } from "@/lib/queries/companies";
 import { createInterviewForCompany } from "@/lib/queries/interviews";
 
@@ -65,7 +62,8 @@ export async function POST(
 
     const interview = await createInterviewForCompany(membership.company.id, {
       title,
-      description: composeInterviewDescriptionWithMeta(description, workMode),
+      description,
+      workMode,
       status,
       questions:
         questionsArray.length > 0
