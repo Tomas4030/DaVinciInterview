@@ -74,7 +74,6 @@ export async function POST(request: NextRequest) {
         verificarDuplicata(
           normalizedEmail,
           normalizedPhone,
-          vaga_id,
           scope.companyId,
           scope.interviewId,
         ),

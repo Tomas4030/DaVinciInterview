@@ -56,7 +56,6 @@ export async function POST(request: NextRequest) {
     const temDuplicata = await verificarDuplicata(
       email,
       telefone,
-      vaga_id,
       scope.companyId,
       scope.interviewId,
     );
@@ -104,12 +103,6 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   try {
-    // TODO: Implementar validação de admin
-    const authHeader = request.headers.get("authorization");
-    if (!authHeader) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
     // Extrair vaga_id do query params (opcional)
     const vagaId = new URL(request.url).searchParams.get("vaga_id");
 

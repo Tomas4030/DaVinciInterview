@@ -23,7 +23,6 @@ export default function OnboardingCompanyForm() {
   const [slug, setSlug] = useState("");
   const [description, setDescription] = useState("");
   const [logoUrl, setLogoUrl] = useState("");
-  const [primaryColor, setPrimaryColor] = useState("#4355e8");
   const [isSlugTouched, setIsSlugTouched] = useState(false);
   const [isSlugChecking, setIsSlugChecking] = useState(false);
   const [isSlugAvailable, setIsSlugAvailable] = useState<boolean | null>(null);
@@ -81,6 +80,22 @@ export default function OnboardingCompanyForm() {
     event.preventDefault();
     setSubmitError("");
 
+    const normalizedLogoUrl = String(logoUrl || "").trim();
+    if (normalizedLogoUrl) {
+      try {
+        const parsed = new URL(normalizedLogoUrl);
+        const isHttpUrl =
+          parsed.protocol === "http:" || parsed.protocol === "https:";
+        if (!isHttpUrl) {
+          setSubmitError("URL do logo inválida. Usa http:// ou https://");
+          return;
+        }
+      } catch {
+        setSubmitError("URL do logo inválida. Verifica o endereço");
+        return;
+      }
+    }
+
     const slugValid = await checkSlugAvailability(effectiveSlug);
     if (!effectiveSlug || !slugValid) {
       return;
@@ -98,8 +113,7 @@ export default function OnboardingCompanyForm() {
           name,
           slug: effectiveSlug,
           description,
-          logoUrl,
-          primaryColor,
+          logoUrl: normalizedLogoUrl,
         }),
       });
 
@@ -131,7 +145,7 @@ export default function OnboardingCompanyForm() {
         </div>
       )}
 
-      <div>
+      <div className="">
         <label
           className="block text-xs font-medium text-gray-600 mb-1.5"
           htmlFor="company-name"
@@ -217,25 +231,12 @@ export default function OnboardingCompanyForm() {
           type="url"
           value={logoUrl}
           onChange={(event) => setLogoUrl(event.target.value)}
-          placeholder="https://..."
+          placeholder="https://exemplo.com/logo.png"
           className="input-base"
         />
-      </div>
-
-      <div>
-        <label
-          className="block text-xs font-medium text-gray-600 mb-1.5"
-          htmlFor="company-primary-color"
-        >
-          Cor primária
-        </label>
-        <input
-          id="company-primary-color"
-          type="color"
-          value={primaryColor}
-          onChange={(event) => setPrimaryColor(event.target.value)}
-          className="h-10 w-full rounded-xl border border-[var(--c-border)] bg-transparent"
-        />
+        <p className="mt-1 text-xs text-gray-500">
+          Usa um URL público com http:// ou https://
+        </p>
       </div>
 
       <button

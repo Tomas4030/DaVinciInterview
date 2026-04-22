@@ -12,7 +12,14 @@ import {
 } from "@/lib/queries/companies";
 import { slugify } from "@/lib/slug";
 
-const HEX_COLOR_REGEX = /^#[0-9A-Fa-f]{6}$/;
+function isValidHttpUrl(value: string): boolean {
+  try {
+    const parsed = new URL(value);
+    return parsed.protocol === "http:" || parsed.protocol === "https:";
+  } catch {
+    return false;
+  }
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -40,7 +47,6 @@ export async function POST(request: NextRequest) {
     const slugInput = String(body?.slug || "").trim();
     const description = String(body?.description || "").trim() || null;
     const logoUrl = String(body?.logoUrl || "").trim() || null;
-    const primaryColor = String(body?.primaryColor || "").trim() || null;
 
     if (!name) {
       return NextResponse.json(
@@ -58,9 +64,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (primaryColor && !HEX_COLOR_REGEX.test(primaryColor)) {
+    if (logoUrl && !isValidHttpUrl(logoUrl)) {
       return NextResponse.json(
-        { error: "Cor primária inválida. Usa formato #RRGGBB" },
+        { error: "URL do logo inválida. Usa http:// ou https://" },
         { status: 400 },
       );
     }
@@ -71,7 +77,6 @@ export async function POST(request: NextRequest) {
       slug,
       description,
       logoUrl,
-      primaryColor,
     });
 
     const response = NextResponse.json({

@@ -1,13 +1,15 @@
 // app/admin/login/page.tsx
 import LoginForm from "@/components/admin/LoginForm";
 import type { Metadata } from "next";
-
+import GridBackgroundPattern from "@/components/ui/GridBackgroundPattern";
 export const metadata: Metadata = { title: "Admin — Entrar" };
 
 export default function LoginPage() {
   return (
-    <main className="min-h-screen flex items-center justify-center px-4 bg-[var(--c-bg)]">
-      <div className="w-full max-w-sm">
+    <main className="relative min-h-screen flex items-center justify-center px-4 bg-[var(--c-bg)]">
+      <GridBackgroundPattern />
+
+      <div className="relative z-10 w-full max-w-sm">
         {/* Logo */}
         <div className="text-center mb-8">
           <div className="w-12 h-12 rounded-2xl bg-brand-600 flex items-center justify-center mx-auto mb-4 shadow-lg shadow-brand-200">

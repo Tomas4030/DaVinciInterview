@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import OnboardingCompanyForm from "@/components/onboarding/OnboardingCompanyForm";
+import GridBackgroundPattern from "@/components/ui/GridBackgroundPattern";
 import { ADMIN_SESSION_COOKIE, parseAdminToken } from "@/lib/admin-auth";
 import { resolveDefaultCompanyForUser } from "@/lib/queries/companies";
 
@@ -23,8 +24,10 @@ export default async function OnboardingPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[var(--c-bg)] px-4 py-10">
-      <div className="mx-auto w-full max-w-2xl">
+    <main className="relative flex min-h-screen items-center justify-center bg-[var(--c-bg)] px-4 py-10">
+      <GridBackgroundPattern />
+
+      <div className="relative z-10 w-full max-w-2xl">
         <div className="mb-8 text-center">
           <h1 className="text-2xl font-semibold text-[var(--c-text)]">Criar empresa</h1>
           <p className="mt-2 text-sm text-[var(--c-muted)]">

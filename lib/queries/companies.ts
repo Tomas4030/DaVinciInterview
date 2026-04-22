@@ -42,7 +42,6 @@ type CreateCompanyInput = {
   slug?: string;
   description?: string | null;
   logoUrl?: string | null;
-  primaryColor?: string | null;
   stripeCustomerId?: string | null;
   plan?: CompanyPlan;
   subscriptionStatus?: CompanySubscriptionStatus;
@@ -135,7 +134,7 @@ export async function createCompanyWithOwner(
         slug,
         input.description || null,
         input.logoUrl || null,
-        input.primaryColor || null,
+        null,
         input.ownerId,
         input.stripeCustomerId || null,
         input.subscriptionStatus || "trialing",

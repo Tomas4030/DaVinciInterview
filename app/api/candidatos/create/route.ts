@@ -49,7 +49,6 @@ export async function POST(request: NextRequest) {
     const temDuplicata = await verificarDuplicata(
       normalizedEmail,
       normalizedPhone,
-      vaga_id,
       scope.companyId,
       scope.interviewId,
     );

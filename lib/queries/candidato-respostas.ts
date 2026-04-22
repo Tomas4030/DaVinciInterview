@@ -82,14 +82,15 @@ export async function criarCandidatura(
  */
 export async function buscarCandidaturaPorSessao(
   sessao_id: string,
+  company_id: string,
 ): Promise<CandidaturaPrincipal | null> {
   const [rows] = await query(
     `
     SELECT * FROM candidato_respostas
-    WHERE sessao_id = ?
+    WHERE sessao_id = ? AND company_id = ?
     LIMIT 1
     `,
-    [sessao_id],
+    [sessao_id, company_id],
   );
 
   const candidaturas = rows as any[];
@@ -106,31 +107,18 @@ export async function buscarCandidaturaPorSessao(
  */
 export async function buscarCandidaturaPorEmail(
   email: string,
-  vaga_id: string,
-  company_id?: string,
-  interview_id?: string,
+  company_id: string,
+  interview_id: string,
 ): Promise<CandidaturaPrincipal | null> {
-  const hasMultiTenantScope = Boolean(company_id && interview_id);
-
-  const [rows] = hasMultiTenantScope
-    ? await query(
-        `
-        SELECT * FROM candidato_respostas
-        WHERE email = ? AND company_id = ? AND interview_id = ?
-        ORDER BY criada_em DESC
-        LIMIT 1
-        `,
-        [email, company_id as string, interview_id as string],
-      )
-    : await query(
-        `
-        SELECT * FROM candidato_respostas
-        WHERE email = ? AND vaga_id = ?
-        ORDER BY criada_em DESC
-        LIMIT 1
-        `,
-        [email, vaga_id],
-      );
+  const [rows] = await query(
+    `
+    SELECT * FROM candidato_respostas
+    WHERE email = ? AND company_id = ? AND interview_id = ?
+    ORDER BY criada_em DESC
+    LIMIT 1
+    `,
+    [email, company_id, interview_id],
+  );
 
   const candidaturas = rows as any[];
   if (candidaturas.length === 0) return null;
@@ -146,6 +134,7 @@ export async function buscarCandidaturaPorEmail(
  */
 export async function atualizarRespostas(
   sessao_id: string,
+  company_id: string,
   respostas: any[],
 ): Promise<void> {
   const respostasJson = jsonStringify(respostas);
@@ -155,9 +144,9 @@ export async function atualizarRespostas(
     `
     UPDATE candidato_respostas
     SET respostas = ?, status = 'concluida', atualizada_em = ?
-    WHERE sessao_id = ?
+    WHERE sessao_id = ? AND company_id = ?
     `,
-    [respostasJson, agora, sessao_id],
+    [respostasJson, agora, sessao_id, company_id],
   );
 }
 
@@ -166,6 +155,7 @@ export async function atualizarRespostas(
  */
 export async function atualizarStatusCandidatura(
   sessao_id: string,
+  company_id: string,
   status: string,
 ): Promise<void> {
   const agora = new Date();
@@ -174,9 +164,9 @@ export async function atualizarStatusCandidatura(
     `
     UPDATE candidato_respostas
     SET status = ?, atualizada_em = ?
-    WHERE sessao_id = ?
+    WHERE sessao_id = ? AND company_id = ?
     `,
-    [status, agora, sessao_id],
+    [status, agora, sessao_id, company_id],
   );
 }
 
@@ -203,25 +193,16 @@ export async function deletarCandidaturasPorEmail(
  */
 export async function listarCandidaturasVaga(
   vaga_id: string,
-  company_id?: string,
+  company_id: string,
 ): Promise<CandidaturaPrincipal[]> {
-  const [rows] = company_id
-    ? await query(
-        `
-        SELECT * FROM candidato_respostas
-        WHERE vaga_id = ? AND company_id = ?
-        ORDER BY criada_em DESC
-        `,
-        [vaga_id, company_id],
-      )
-    : await query(
-        `
-        SELECT * FROM candidato_respostas
-        WHERE vaga_id = ?
-        ORDER BY criada_em DESC
-        `,
-        [vaga_id],
-      );
+  const [rows] = await query(
+    `
+    SELECT * FROM candidato_respostas
+    WHERE vaga_id = ? AND company_id = ?
+    ORDER BY criada_em DESC
+    `,
+    [vaga_id, company_id],
+  );
 
   return (rows as any[]).map((candidatura) => {
     candidatura.respostas = jsonParse(candidatura.respostas);
@@ -234,27 +215,17 @@ export async function listarCandidaturasVaga(
  */
 export async function contarCandidaturasPorStatus(
   vaga_id: string,
-  company_id?: string,
+  company_id: string,
 ): Promise<{ status: string; count: number }[]> {
-  const [rows] = company_id
-    ? await query(
-        `
-        SELECT status, COUNT(*) as count
-        FROM candidato_respostas
-        WHERE vaga_id = ? AND company_id = ?
-        GROUP BY status
-        `,
-        [vaga_id, company_id],
-      )
-    : await query(
-        `
-        SELECT status, COUNT(*) as count
-        FROM candidato_respostas
-        WHERE vaga_id = ?
-        GROUP BY status
-        `,
-        [vaga_id],
-      );
+  const [rows] = await query(
+    `
+    SELECT status, COUNT(*) as count
+    FROM candidato_respostas
+    WHERE vaga_id = ? AND company_id = ?
+    GROUP BY status
+    `,
+    [vaga_id, company_id],
+  );
 
   return rows as { status: string; count: number }[];
 }

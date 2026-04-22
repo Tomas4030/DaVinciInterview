@@ -63,12 +63,12 @@ export default function Footer() {
             >
               Sobre nós
             </Link>
-            <a
-              href="mailto:hello@MatchWorky.pt"
+            <Link
+              href="/contacto"
               className="text-[0.8rem] text-[var(--c-text)]/60 transition-colors hover:text-[var(--c-text)]"
             >
               Contacto
-            </a>
+            </Link>
           </div>
 
           {/* Legal */}

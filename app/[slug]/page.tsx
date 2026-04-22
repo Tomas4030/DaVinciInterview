@@ -30,10 +30,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: `${company.name} - Entrevistas`,
     description,
+    alternates: {
+      canonical: `/${company.slug}`,
+    },
     openGraph: {
       title: `${company.name} - Entrevistas`,
       description,
       type: "website",
+      url: `/${company.slug}`,
       images: company.logo_url
         ? [
             {
@@ -42,6 +46,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
             },
           ]
         : undefined,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${company.name} - Entrevistas`,
+      description,
+      images: company.logo_url ? [company.logo_url] : undefined,
     },
   };
 }

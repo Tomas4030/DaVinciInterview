@@ -7,7 +7,7 @@ import {
   buscarCandidaturaPorSessao,
   atualizarRespostas as atualizarRespostasBD,
 } from "@/lib/queries/candidato-respostas";
-import { jsonParse } from "@/lib/db";
+import { getAdminCompanyContextFromRequest } from "@/lib/admin-context";
 
 interface Resposta {
   pergunta_id: number;
@@ -28,13 +28,15 @@ export async function GET(
   try {
     const sessaoId = params.sessaoId;
 
-    // TODO: Validar autenticação de admin aqui
-    const authHeader = request.headers.get("authorization");
-    if (!authHeader) {
+    const context = await getAdminCompanyContextFromRequest(request);
+    if (!context) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const candidatura = await buscarCandidaturaPorSessao(sessaoId);
+    const candidatura = await buscarCandidaturaPorSessao(
+      sessaoId,
+      context.company.id,
+    );
 
     if (!candidatura) {
       return NextResponse.json(
@@ -65,6 +67,11 @@ export async function POST(
     const body: UpdatePOST = await request.json();
     const { resposta } = body;
 
+    const context = await getAdminCompanyContextFromRequest(request);
+    if (!context) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     if (!resposta) {
       return NextResponse.json(
         { error: "Missing resposta field" },
@@ -73,7 +80,10 @@ export async function POST(
     }
 
     // Obter candidatura
-    const candidatura = await buscarCandidaturaPorSessao(sessaoId);
+    const candidatura = await buscarCandidaturaPorSessao(
+      sessaoId,
+      context.company.id,
+    );
 
     if (!candidatura) {
       return NextResponse.json(
@@ -98,9 +108,12 @@ export async function POST(
     }
 
     // Atualizar
-    await atualizarRespostasBD(sessaoId, respostasUpdated);
+    await atualizarRespostasBD(sessaoId, context.company.id, respostasUpdated);
 
-    const candidaturaUpdated = await buscarCandidaturaPorSessao(sessaoId);
+    const candidaturaUpdated = await buscarCandidaturaPorSessao(
+      sessaoId,
+      context.company.id,
+    );
 
     return NextResponse.json({
       success: true,

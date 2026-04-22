@@ -15,11 +15,21 @@ export const metadata: Metadata = {
   title: "MatchWorky — Entrevistas com IA para equipas de recrutamento",
   description:
     "Automatiza a triagem de candidatos com entrevistas conversacionais. Define as perguntas, partilha o link e analisa as respostas — tudo numa plataforma.",
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
     title: "MatchWorky — Entrevistas com IA para empresas",
     description:
       "Automatiza a triagem inicial e melhora a experiência de candidatura com entrevistas conversacionais inteligentes.",
     type: "website",
+    url: "/",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "MatchWorky — Entrevistas com IA para empresas",
+    description:
+      "Automatiza a triagem inicial e melhora a experiência de candidatura com entrevistas conversacionais inteligentes.",
   },
 };
 

@@ -54,7 +54,6 @@ export async function POST(request: NextRequest) {
     // Verificar se já existe candidatura com estes dados
     const candidatura = await buscarCandidaturaPorEmail(
       normalizedEmail,
-      vaga_id,
       scope.companyId,
       scope.interviewId,
     );

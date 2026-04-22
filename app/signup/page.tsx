@@ -1,12 +1,15 @@
 import type { Metadata } from "next";
 import SignupForm from "@/components/admin/SignupForm";
+import GridBackgroundPattern from "@/components/ui/GridBackgroundPattern";
 
 export const metadata: Metadata = { title: "Criar conta" };
 
 export default function SignupPage() {
   return (
-    <main className="min-h-screen flex items-center justify-center px-4 bg-[var(--c-bg)]">
-      <div className="w-full max-w-sm">
+    <main className="relative min-h-screen flex items-center justify-center px-4 bg-[var(--c-bg)]">
+      <GridBackgroundPattern />
+
+      <div className="relative z-10 w-full max-w-sm">
         <div className="text-center mb-8">
           <div className="w-12 h-12 rounded-2xl bg-brand-600 flex items-center justify-center mx-auto mb-4 shadow-lg shadow-brand-200">
             <span className="text-white text-xl font-bold font-display">D</span>

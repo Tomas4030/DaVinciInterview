@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { ADMIN_SESSION_COOKIE, parseAdminToken } from "@/lib/admin-auth";
 import { getCompanyMembershipBySlug } from "@/lib/queries/companies";
 import {
+  deleteInterviewForCompany,
   getInterviewByIdAndCompany,
   updateInterviewForCompany,
 } from "@/lib/queries/interviews";
@@ -110,5 +111,47 @@ export async function PUT(
       { error: "Erro ao atualizar entrevista" },
       { status: 500 },
     );
+  }
+}
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { slug: string; id: string } },
+) {
+  try {
+    const token = request.cookies.get(ADMIN_SESSION_COOKIE)?.value;
+    const session = parseAdminToken(token);
+    if (!session) {
+      return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
+    }
+
+    const membership = await getCompanyMembershipBySlug(session.userId, params.slug);
+    if (!membership) {
+      return NextResponse.json({ error: "Empresa não encontrada" }, { status: 404 });
+    }
+
+    if (membership.role !== "owner" && membership.role !== "admin") {
+      return NextResponse.json({ error: "Sem permissões" }, { status: 403 });
+    }
+
+    const deleted = await deleteInterviewForCompany(params.id, membership.company.id);
+    if (!deleted) {
+      return NextResponse.json({ error: "Entrevista não encontrada" }, { status: 404 });
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (error: any) {
+    if (error?.code === "ER_ROW_IS_REFERENCED_2") {
+      return NextResponse.json(
+        {
+          error:
+            "Não é possível apagar esta entrevista porque já existem respostas associadas.",
+        },
+        { status: 409 },
+      );
+    }
+
+    console.error("Erro ao apagar entrevista:", error);
+    return NextResponse.json({ error: "Erro ao apagar entrevista" }, { status: 500 });
   }
 }

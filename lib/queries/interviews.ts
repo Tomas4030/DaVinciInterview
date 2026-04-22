@@ -31,10 +31,11 @@ function mapInterview(row: any): InterviewRecord {
 
 export async function getInterviewById(
   interviewId: string,
+  companyId: string,
 ): Promise<InterviewRecord | null> {
   const [rows] = await query(
-    `SELECT * FROM interviews WHERE id = ? LIMIT 1`,
-    [interviewId],
+    `SELECT * FROM interviews WHERE id = ? AND company_id = ? LIMIT 1`,
+    [interviewId, companyId],
   );
 
   const list = rows as any[];
@@ -174,4 +175,16 @@ export async function updateInterviewForCompany(
   );
 
   return await getInterviewByIdAndCompany(interviewId, companyId);
+}
+
+export async function deleteInterviewForCompany(
+  interviewId: string,
+  companyId: string,
+): Promise<boolean> {
+  const result = await query(
+    `DELETE FROM interviews WHERE id = ? AND company_id = ?`,
+    [interviewId, companyId],
+  );
+
+  return ((result[1] as any)?.affectedRows || 0) > 0;
 }

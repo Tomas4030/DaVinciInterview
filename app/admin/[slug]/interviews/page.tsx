@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ADMIN_SESSION_COOKIE, parseAdminToken } from "@/lib/admin-auth";
+import DeleteInterviewButton from "@/components/admin/DeleteInterviewButton";
 import { getCompanyMembershipBySlug } from "@/lib/queries/companies";
 import { listInterviewsByCompany } from "@/lib/queries/interviews";
 
@@ -91,9 +92,7 @@ export default async function AdminCompanyInterviewsPage({
           <p className="text-xs uppercase tracking-[0.09em] text-[var(--c-muted)]">
             Entrevistas
           </p>
-
-          {/* ✅ ALTERAÇÃO AQUI */}
-          <h1 className="font-display font-semibold text-[var(--c-text)]">
+          <h1 className="text-2xl font-semibold text-[var(--c-text)]">
             Gestao de entrevistas
           </h1>
         </div>
@@ -176,17 +175,19 @@ export default async function AdminCompanyInterviewsPage({
                   <div className="flex flex-wrap items-center gap-2">
                     <Link
                       href={`/admin/${params.slug}/responses?interviewId=${item.id}`}
-                      className="rounded-md border border-[--c-brand] bg-[--c-brand] px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.05em] text-[--c-surface] transition-colors hover:bg-sky-100"
+                      className="rounded-md border border-[var(--c-brand)]/30 bg-[var(--c-brand-soft)] px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.05em] text-[var(--c-brand-dark)] transition-colors hover:brightness-[0.98]"
                     >
                       Ver respostas
                     </Link>
 
                     <Link
                       href={`/admin/${params.slug}/interviews/${item.id}/edit`}
-                      className="rounded-md border px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.05em] text-[--c-brand] transition-colors hover:bg-violet-100"
+                      className="rounded-md border border-[var(--c-border)] bg-[var(--c-bg)] px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.05em] text-[var(--c-text)] transition-colors hover:brightness-[0.98]"
                     >
                       Editar
                     </Link>
+
+                    <DeleteInterviewButton slug={params.slug} interviewId={item.id} />
 
                     {item.legacy_vaga_id ? (
                       <Link

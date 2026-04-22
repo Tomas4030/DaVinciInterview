@@ -12,8 +12,8 @@ export default async function InterviewEntryPage({ params }: Props) {
     notFound();
   }
 
-  const interview = await getInterviewById(params.interviewId);
-  if (!interview || interview.company_id !== company.id || interview.status !== "published") {
+  const interview = await getInterviewById(params.interviewId, company.id);
+  if (!interview || interview.status !== "published") {
     notFound();
   }
 

@@ -72,7 +72,7 @@ export default function LoginForm() {
           onChange={(e) => setEmail(e.target.value)}
           required
           autoComplete="email"
-          placeholder="admin@MatchWorkynterviews.com"
+          placeholder="admin@matchworky.pt"
           className="input-base"
         />
       </div>

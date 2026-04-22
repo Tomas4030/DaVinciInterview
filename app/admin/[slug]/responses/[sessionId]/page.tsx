@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { ADMIN_SESSION_COOKIE, parseAdminToken } from "@/lib/admin-auth";
 import { jsonParse, query } from "@/lib/db";
 import { getCompanyMembershipBySlug } from "@/lib/queries/companies";
+import { summarizeInterviewResponses } from "@/lib/response-summary";
 
 export const metadata: Metadata = { title: "Admin — Detalhe da Sessão" };
 export const dynamic = "force-dynamic";
@@ -89,6 +90,20 @@ export default async function AdminCompanyResponseDetailPage({ params }: Props) 
   }
 
   const answers = jsonParse<any[]>(row.respostas) || [];
+  const responseSummary = await summarizeInterviewResponses(
+    answers.map((item, index) => ({
+      question: getQuestionLabel(item, index),
+      answer: getAnswerText(item),
+    })),
+    row.interview_title,
+  );
+
+  const sentimentBadgeClass =
+    responseSummary.sentiment === "positivo"
+      ? "border-emerald-300/70 bg-emerald-50 text-emerald-700"
+      : responseSummary.sentiment === "negativo"
+        ? "border-red-300/70 bg-red-50 text-red-700"
+        : "border-amber-300/70 bg-amber-50 text-amber-700";
 
   return (
     <section className="space-y-6">
@@ -100,12 +115,20 @@ export default async function AdminCompanyResponseDetailPage({ params }: Props) 
           </h1>
         </div>
 
-        <Link
-          href={`/admin/${params.slug}/responses`}
-          className="rounded-lg border border-[var(--c-border)] px-4 py-2 text-sm text-[var(--c-text)] transition-colors hover:bg-[var(--c-bg)]"
-        >
-          Voltar às respostas
-        </Link>
+        <div className="flex flex-wrap items-center gap-2">
+          <a
+            href={`/admin/${params.slug}/responses/${params.sessionId}/export`}
+            className="btn-primary inline-flex px-4 py-2 text-sm"
+          >
+            Exportar CSV
+          </a>
+          <Link
+            href={`/admin/${params.slug}/responses`}
+            className="rounded-lg border border-[var(--c-border)] px-4 py-2 text-sm text-[var(--c-text)] transition-colors hover:bg-[var(--c-bg)]"
+          >
+            Voltar às respostas
+          </Link>
+        </div>
       </header>
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -127,6 +150,47 @@ export default async function AdminCompanyResponseDetailPage({ params }: Props) 
             {new Date(row.created_at).toLocaleString("pt-PT")}
           </p>
         </article>
+      </div>
+
+      <div className="rounded-xl border border-[var(--c-border)]/70 bg-[var(--c-surface)] p-5">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h2 className="text-base font-semibold text-[var(--c-text)]">Resumo inteligente</h2>
+          <span className={`rounded-full border px-2.5 py-1 text-xs font-semibold uppercase tracking-[0.04em] ${sentimentBadgeClass}`}>
+            Sentimento {responseSummary.sentiment}
+          </span>
+        </div>
+
+        <p className="mt-3 text-sm leading-relaxed text-[var(--c-text)]/85">
+          {responseSummary.executiveSummary}
+        </p>
+
+        <div className="mt-4 grid gap-4 sm:grid-cols-2">
+          <article className="rounded-lg border border-emerald-200/80 bg-emerald-50/60 p-3">
+            <p className="text-xs font-semibold uppercase tracking-[0.06em] text-emerald-700">
+              Pontos fortes
+            </p>
+            <ul className="mt-2 space-y-1.5 text-sm text-emerald-900/85">
+              {responseSummary.strengths.map((item, index) => (
+                <li key={`strength-${index}`}>• {item}</li>
+              ))}
+            </ul>
+          </article>
+
+          <article className="rounded-lg border border-amber-200/80 bg-amber-50/60 p-3">
+            <p className="text-xs font-semibold uppercase tracking-[0.06em] text-amber-700">
+              Pontos de atenção
+            </p>
+            <ul className="mt-2 space-y-1.5 text-sm text-amber-900/85">
+              {responseSummary.concerns.map((item, index) => (
+                <li key={`concern-${index}`}>• {item}</li>
+              ))}
+            </ul>
+          </article>
+        </div>
+
+        <p className="mt-3 text-xs text-[var(--c-muted)]">
+          Fonte da análise: {responseSummary.source === "ai" ? "IA" : "heurística local"}.
+        </p>
       </div>
 
       <div className="rounded-xl border border-[var(--c-border)]/70 bg-[var(--c-surface)] p-5">

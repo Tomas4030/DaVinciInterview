@@ -7,6 +7,7 @@ import {
   buscarCandidaturaPorSessao,
   atualizarRespostas,
 } from "@/lib/queries/candidato-respostas";
+import { resolveCompanyAndInterviewFromLegacyVaga } from "@/lib/queries/interviews";
 
 export async function POST(req: NextRequest) {
   try {
@@ -30,8 +31,19 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const scope = await resolveCompanyAndInterviewFromLegacyVaga(vaga_id);
+    if (!scope) {
+      return NextResponse.json(
+        { error: "Entrevista inválida para este identificador de vaga" },
+        { status: 400 },
+      );
+    }
+
     // Obter candidatura existente pela sessao_id
-    const candidatura = await buscarCandidaturaPorSessao(sessao_id);
+    const candidatura = await buscarCandidaturaPorSessao(
+      sessao_id,
+      scope.companyId,
+    );
 
     if (!candidatura) {
       return NextResponse.json(
@@ -60,10 +72,13 @@ export async function POST(req: NextRequest) {
     }
 
     // Guardar no MySQL
-    await atualizarRespostas(sessao_id, respostasUpdated);
+    await atualizarRespostas(sessao_id, scope.companyId, respostasUpdated);
 
     // Retornar candidatura atualizada
-    const candidaturaAtualizada = await buscarCandidaturaPorSessao(sessao_id);
+    const candidaturaAtualizada = await buscarCandidaturaPorSessao(
+      sessao_id,
+      scope.companyId,
+    );
 
     return NextResponse.json(
       { success: true, data: candidaturaAtualizada },
