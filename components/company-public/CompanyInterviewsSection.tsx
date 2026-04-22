@@ -84,11 +84,19 @@ export default function CompanyInterviewsSection({
             const metaWorkMode = extractInterviewWorkModeFromDescription(
               interview.description,
             );
+            const normalizedSavedWorkMode =
+              interview.work_mode && interview.work_mode !== "unspecified"
+                ? interview.work_mode
+                : "unspecified";
             const legacyWorkMode = mapLegacyModalidadeToWorkMode(
               interview.legacy_modalidade,
             );
             const workMode =
-              legacyWorkMode !== "unspecified" ? legacyWorkMode : metaWorkMode;
+              normalizedSavedWorkMode !== "unspecified"
+                ? normalizedSavedWorkMode
+                : legacyWorkMode !== "unspecified"
+                  ? legacyWorkMode
+                  : metaWorkMode;
 
             const modeConfig =
               INTERVIEW_WORK_MODE_CONFIG[

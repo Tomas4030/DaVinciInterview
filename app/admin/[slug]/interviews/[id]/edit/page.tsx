@@ -61,7 +61,10 @@ export default async function AdminCompanyInterviewEditPage({ params }: Props) {
           interviewId={interview.id}
           initialTitle={interview.title}
           initialDescription={stripInterviewMetaFromDescription(interview.description)}
-          initialWorkMode={extractInterviewWorkModeFromDescription(interview.description)}
+          initialWorkMode={
+            interview.work_mode ||
+            extractInterviewWorkModeFromDescription(interview.description)
+          }
           initialStatus={interview.status}
           initialQuestionsText={questionsToText(interview.questions)}
         />
