@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
-import Link from "next/link";
 import { notFound } from "next/navigation";
+import {
+  DashboardQuickActions,
+  DashboardStats,
+  RecentInterviewsPanel,
+} from "@/components/admin/company-dashboard";
 import { ADMIN_SESSION_COOKIE, parseAdminToken } from "@/lib/admin-auth";
 import { getCompanyMembershipBySlug } from "@/lib/queries/companies";
 import { listInterviewsByCompany } from "@/lib/queries/interviews";
@@ -78,100 +82,18 @@ export default async function AdminCompanyDashboardPage({ params }: Props) {
         <p className="text-sm text-[var(--c-muted)]">Role: {membership.role}</p>
       </header>
 
-      <div className="grid gap-3 sm:grid-cols-3">
-        <article className="rounded-xl border border-[var(--c-border)]/70 bg-[var(--c-surface)] p-4">
-          <p className="text-xs text-[var(--c-muted)]">Entrevistas</p>
-          <p className="mt-2 text-2xl font-semibold text-[var(--c-text)]">
-            {interviews.length}
-          </p>
-          <p className="mt-1 text-xs text-[var(--c-muted)]">
-            {interviewsWeek} na semana, {interviewsMonth} no mês
-          </p>
-        </article>
-        <article className="rounded-xl border border-[var(--c-border)]/70 bg-[var(--c-surface)] p-4">
-          <p className="text-xs text-[var(--c-muted)]">Publicadas</p>
-          <p className="mt-2 text-2xl font-semibold text-[var(--c-text)]">
-            {totalPublished}
-          </p>
-        </article>
-        <article className="rounded-xl border border-[var(--c-border)]/70 bg-[var(--c-surface)] p-4">
-          <p className="text-xs text-[var(--c-muted)]">Respostas</p>
-          <p className="mt-2 text-2xl font-semibold text-[var(--c-text)]">
-            {totalResponses}
-          </p>
-          <p className="mt-1 text-xs text-[var(--c-muted)]">
-            Taxa de conclusão: {completionRate}%
-          </p>
-        </article>
-      </div>
+      <DashboardStats
+        interviewsTotal={interviews.length}
+        interviewsWeek={interviewsWeek}
+        interviewsMonth={interviewsMonth}
+        publishedTotal={totalPublished}
+        responsesTotal={totalResponses}
+        completionRate={completionRate}
+      />
 
-      <div className="rounded-xl border border-[var(--c-border)]/70 bg-[var(--c-surface)] p-5">
-        <div className="mb-3 flex items-center justify-between gap-2">
-          <h2 className="text-base font-semibold text-[var(--c-text)]">
-            Entrevistas recentes
-          </h2>
-          <Link
-            href={`/admin/${params.slug}/interviews`}
-            className="text-xs text-[var(--c-muted)] hover:text-[var(--c-text)]"
-          >
-            Ver todas
-          </Link>
-        </div>
+      <RecentInterviewsPanel slug={params.slug} interviews={recentInterviews} />
 
-        {recentInterviews.length === 0 ? (
-          <p className="text-sm text-[var(--c-muted)]">
-            Sem entrevistas criadas nesta empresa.
-          </p>
-        ) : (
-          <div className="divide-y divide-[var(--c-border)]/50">
-            {recentInterviews.map((item) => (
-              <article
-                key={item.id}
-                className="flex flex-wrap items-center justify-between gap-2 py-3"
-              >
-                <div>
-                  <p className="text-sm font-medium text-[var(--c-text)]">
-                    {item.title}
-                  </p>
-                  <p className="text-xs text-[var(--c-muted)]">
-                    status: {item.status}
-                  </p>
-                </div>
-
-                <Link
-                  href={`/admin/${params.slug}/responses?interviewId=${item.id}`}
-                  className="rounded-lg border border-[var(--c-border)] px-3 py-1.5 text-xs text-[var(--c-text)] transition-colors hover:bg-[var(--c-bg)]"
-                >
-                  Ver respostas
-                </Link>
-              </article>
-            ))}
-          </div>
-        )}
-      </div>
-
-      <div className="rounded-xl border border-[var(--c-border)]/70 bg-[var(--c-surface)] p-5">
-        <p className="text-sm text-[var(--c-muted)]">
-          A estrutura base da Fase 4 esta ativa. As paginas de entrevistas,
-          respostas, definicoes e faturacao ja estao acessiveis com placeholders
-          para evolucao.
-        </p>
-
-        <div className="mt-4 flex flex-wrap gap-2">
-          <Link
-            href={`/admin/${params.slug}/interviews`}
-            className="btn-primary inline-flex px-4 py-2"
-          >
-            Gerir entrevistas
-          </Link>
-          <Link
-            href={`/admin/${params.slug}/responses`}
-            className="inline-flex rounded-lg border border-[var(--c-border)] px-4 py-2 text-sm text-[var(--c-text)]"
-          >
-            Ver respostas
-          </Link>
-        </div>
-      </div>
+      <DashboardQuickActions slug={params.slug} />
     </section>
   );
 }
