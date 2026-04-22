@@ -13,14 +13,14 @@ export default function HeroSection() {
       </div>
 
       <div className="relative mx-auto max-w-6xl px-6 pb-24 pt-20 md:pb-32 md:pt-32">
-        <div className="max-w-[700px]">
+        <div className="max-w-[700px] ">
           {/* Badge */}
-          <div className="mb-7 inline-flex animate-reveal items-center gap-2.5 rounded-full border border-[var(--c-brand)]/20 bg-[var(--c-brand)]/5 px-4 py-1.5">
+          <div className="mb-7 inline-flex animate-reveal items-center gap-2.5 rounded-full bg-[var(--c-brand)]/3 px-4 py-1.5">
             <span className="relative flex h-2 w-2">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[var(--c-brand)] opacity-50 [animation-duration:1.4s]" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-[var(--c-brand)]" />
             </span>
-            <span className="text-[0.75rem] font-semibold tracking-wide text-[var(--c-brand)]">
+            <span className="text-[0.75rem] font-semibold tracking-wide text-[var(--c-brand)] ">
               Automatiza o teu processo de recrutamento
             </span>
           </div>
@@ -70,26 +70,6 @@ export default function HeroSection() {
                 aria-hidden="true"
               >
                 <path d="M5 12h14M12 5l7 7-7 7" />
-              </svg>
-            </a>
-            <a
-              href="#como-funciona"
-              className="inline-flex items-center gap-1.5 text-[0.85rem] font-medium text-[var(--c-text)]/55 transition-colors hover:text-[var(--c-text)]"
-            >
-              Ver demo
-              <svg
-                width="12"
-                height="12"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
-              >
-                <circle cx="12" cy="12" r="10" />
-                <polygon points="10 8 16 12 10 16 10 8" />
               </svg>
             </a>
           </div>
