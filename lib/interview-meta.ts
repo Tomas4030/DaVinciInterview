@@ -42,22 +42,6 @@ export function stripInterviewMetaFromDescription(
   return source.replace(WORK_MODE_MARKER_REGEX, "").trim();
 }
 
-export function composeInterviewDescriptionWithMeta(
-  description: string | null | undefined,
-  workMode: InterviewWorkMode,
-): string | null {
-  const cleanDescription = stripInterviewMetaFromDescription(description);
-  const normalizedMode = normalizeInterviewWorkMode(workMode);
-
-  if (normalizedMode === "unspecified") {
-    return cleanDescription || null;
-  }
-
-  const marker = `[[work_mode:${normalizedMode}]]`;
-  if (!cleanDescription) return marker;
-  return `${marker}\n${cleanDescription}`;
-}
-
 export function getInterviewWorkModeLabel(workMode: InterviewWorkMode): string {
   if (workMode === "remote") return "Remoto";
   if (workMode === "hybrid") return "Hibrido";

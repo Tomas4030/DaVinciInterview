@@ -6,6 +6,7 @@ export interface InterviewRecord {
   company_id: string;
   legacy_vaga_id: string | null;
   legacy_modalidade?: string | null;
+  work_mode?: "remote" | "hybrid" | "onsite" | "unspecified" | null;
   title: string;
   description: string | null;
   status: "draft" | "published" | "archived";
@@ -20,6 +21,7 @@ function mapInterview(row: any): InterviewRecord {
     company_id: row.company_id,
     legacy_vaga_id: row.legacy_vaga_id ?? null,
     legacy_modalidade: row.legacy_modalidade ?? null,
+    work_mode: row.work_mode ?? null,
     title: row.title,
     description: row.description ?? null,
     status: row.status,
@@ -121,6 +123,7 @@ export async function resolveCompanyAndInterviewFromLegacyVaga(
 type SaveInterviewInput = {
   title: string;
   description?: string | null;
+  workMode?: "remote" | "hybrid" | "onsite" | "unspecified";
   status?: "draft" | "published" | "archived";
   questions?: any[];
 };
@@ -133,14 +136,15 @@ export async function createInterviewForCompany(
 
   await query(
     `
-    INSERT INTO interviews (id, company_id, title, description, status, questions)
-    VALUES (?, ?, ?, ?, ?, ?)
+    INSERT INTO interviews (id, company_id, title, description, work_mode, status, questions)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
     `,
     [
       interviewId,
       companyId,
       String(input.title || "").trim(),
       input.description ?? null,
+      input.workMode || "unspecified",
       input.status || "draft",
       JSON.stringify(input.questions || []),
     ],
@@ -165,12 +169,13 @@ export async function updateInterviewForCompany(
   await query(
     `
     UPDATE interviews
-    SET title = ?, description = ?, status = ?, questions = ?
+    SET title = ?, description = ?, work_mode = ?, status = ?, questions = ?
     WHERE id = ? AND company_id = ?
     `,
     [
       String(input.title || "").trim(),
       input.description ?? null,
+      input.workMode || "unspecified",
       input.status || "draft",
       JSON.stringify(input.questions || []),
       interviewId,
