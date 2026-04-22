@@ -42,7 +42,7 @@ export default function HeroSection() {
           >
             O MatchWorky conduz entrevistas conversacionais automatizadas em
             nome da tua empresa. Define as perguntas, partilha o link com os
-            candidatos e analisa as respostas — tudo numa plataforma.
+            candidatos e analisa as respostas tudo numa plataforma.
           </p>
 
           {/* CTAs */}

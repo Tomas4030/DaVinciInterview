@@ -14,7 +14,7 @@ import {
 export const metadata: Metadata = {
   title: "MatchWorky — Entrevistas com IA para equipas de recrutamento",
   description:
-    "Automatiza a triagem de candidatos com entrevistas conversacionais. Define as perguntas, partilha o link e analisa as respostas — tudo numa plataforma.",
+    "Automatiza a triagem de candidatos com entrevistas conversacionais. Define as perguntas, partilha o link e analisa as respostas tudo numa plataforma.",
   alternates: {
     canonical: "/",
   },
