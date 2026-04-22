@@ -1,4 +1,5 @@
 import GridPattern from "@/components/home/GridPattern";
+import { ChevronDown } from "@/components/ui/Icons";
 import type { CompanyRecord } from "@/lib/queries/companies";
 
 type CompanyPublicHeroProps = {
@@ -10,59 +11,73 @@ export default function CompanyPublicHero({
   company,
   interviewsCount,
 }: CompanyPublicHeroProps) {
+  const interviewsLabel =
+    interviewsCount === 0
+      ? "Sem entrevistas abertas neste momento"
+      : `${interviewsCount} entrevista${interviewsCount === 1 ? "" : "s"} aberta${interviewsCount === 1 ? "" : "s"}`;
+
   return (
-    <section className="relative overflow-hidden border-b border-[var(--c-border)]/60">
+    <section className="relative overflow-hidden">
       <div className="pointer-events-none absolute inset-0" aria-hidden="true">
         <GridPattern />
         <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[var(--c-bg)] to-transparent" />
-        <div className="absolute right-1/4 top-1/3 h-[420px] w-[420px] -translate-y-1/2 rounded-full bg-[var(--c-brand)]/[0.05] blur-[120px]" />
       </div>
 
-      <div className="relative mx-auto max-w-6xl px-6 pb-16 pt-20 md:pb-24 md:pt-28">
-        <div className="max-w-4xl">
-          <div className="mb-7 inline-flex animate-reveal items-center gap-2 rounded-full border border-[var(--c-border)] bg-[var(--c-surface)] px-4 py-1.5">
-            <span className="h-2 w-2 rounded-full bg-[var(--c-brand)]" />
-            <span className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--c-text)]/65">
-              Carreiras {company.name}
+      <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+        <div className="absolute right-1/4 top-1/3 h-[420px] w-[420px] -translate-y-1/2 rounded-full bg-[var(--c-brand)]/[0.05] blur-[110px]" />
+        <div className="absolute bottom-0 left-1/3 h-[280px] w-[280px] rounded-full bg-[var(--c-brand)]/[0.03] blur-[90px]" />
+      </div>
+
+      <div className="relative mx-auto max-w-6xl px-6 pb-20 pt-24 md:pb-28 md:pt-36">
+        <div className="max-w-3xl">
+          <div className="mb-8 inline-flex animate-reveal items-center gap-2">
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[var(--c-brand)] opacity-40 [animation-duration:1.2s]" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-[var(--c-brand)]" />
+            </span>
+
+            <span className="text-[0.95rem] font-medium text-[var(--c-text)]/60">
+              {interviewsLabel}
             </span>
           </div>
 
-          <div className="mb-5 flex items-center gap-4">
-            {company.logo_url ? (
-              <img
-                src={company.logo_url}
-                alt={`Logo ${company.name}`}
-                className="h-16 w-16 rounded-xl object-contain"
-              />
-            ) : (
-              <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-[var(--c-brand)] text-base font-semibold text-white">
-                {company.name.slice(0, 1).toUpperCase()}
-              </div>
-            )}
+          <h1
+            className="animate-reveal text-balance font-display text-[2.8rem] leading-[1.05] tracking-[-0.035em] text-[var(--c-text)] md:text-[4.2rem]"
+            style={{ animationDelay: "80ms" }}
+          >
+            Constrói o teu futuro com a{" "}
+            <span className="text-[var(--c-brand)]">{company.name}</span>
+          </h1>
 
-            <h1 className="text-balance font-display text-[2.1rem] leading-[1.08] tracking-[-0.03em] text-[var(--c-text)] md:text-[3.2rem]">
-              Vagas em aberto na {company.name}
-            </h1>
-          </div>
-
-          <p className="max-w-2xl text-[1rem] leading-relaxed text-[var(--c-text)]/65 md:text-[1.05rem]">
+          <p
+            className="mt-6 max-w-xl animate-reveal text-[1.05rem] leading-relaxed text-[var(--c-text)]/65"
+            style={{ animationDelay: "160ms" }}
+          >
             {company.description ||
-              "Consulta as oportunidades abertas, candidata-te em poucos minutos e acompanha o processo de forma simples."}
+              `Explora as oportunidades abertas na ${company.name}, responde ao teu ritmo e submete a tua candidatura em poucos minutos.`}
           </p>
 
-          <div className="mt-8 flex flex-wrap items-center gap-4 text-[0.84rem] text-[var(--c-text)]/60">
-            <span className="inline-flex items-center gap-2 rounded-full border border-[var(--c-border)]/70 bg-[var(--c-surface)] px-3 py-1.5 text-[var(--c-text)]/70">
-              {interviewsCount} entrevista{interviewsCount === 1 ? "" : "s"} publicada
-              {interviewsCount === 1 ? "" : "s"}
-            </span>
-            <span className="inline-flex items-center gap-2 rounded-full border border-[var(--c-border)]/70 bg-[var(--c-surface)] px-3 py-1.5 text-[var(--c-text)]/70">
-              Processo em 3 passos
-            </span>
+          <div
+            className="mt-9 flex flex-wrap items-center gap-x-5 gap-y-3 animate-reveal"
+            style={{ animationDelay: "240ms" }}
+          >
             <a
               href="#vagas"
-              className="inline-flex items-center gap-2 rounded-md bg-[var(--c-brand)] px-4 py-2 text-[0.78rem] font-semibold text-white transition-colors hover:bg-[var(--c-brand-dark)]"
+              className="inline-flex items-center gap-2 rounded-xl bg-[var(--c-brand)] px-5 py-[11px] text-[0.82rem] font-semibold text-white
+                         shadow-[0_1px_2px_rgba(67,85,232,0.1),0_4px_16px_rgba(67,85,232,0.22)]
+                         transition-[transform,box-shadow] duration-200 ease-[cubic-bezier(0.25,0.46,0.45,0.94)]
+                         hover:-translate-y-[2px] hover:shadow-[0_2px_4px_rgba(67,85,232,0.1),0_8px_32px_rgba(67,85,232,0.28)]
+                         active:scale-[0.985]"
             >
-              Ver entrevistas
+              Ver vagas disponíveis
+              <ChevronDown />
+            </a>
+
+            <a
+              href="#como-funciona"
+              className="text-[0.82rem] font-medium text-[var(--c-text)]/55 transition-colors duration-150 hover:text-[var(--c-text)]"
+            >
+              Como funciona
             </a>
           </div>
         </div>
