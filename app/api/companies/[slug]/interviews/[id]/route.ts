@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ADMIN_SESSION_COOKIE, parseAdminToken } from "@/lib/admin-auth";
+import {
+  composeInterviewDescriptionWithMeta,
+  normalizeInterviewWorkMode,
+} from "@/lib/interview-meta";
 import { getCompanyMembershipBySlug } from "@/lib/queries/companies";
 import {
   deleteInterviewForCompany,
@@ -79,6 +83,7 @@ export async function PUT(
     const body = await request.json();
     const title = String(body?.title || "").trim();
     const description = String(body?.description || "").trim() || null;
+    const workMode = normalizeInterviewWorkMode(body?.workMode);
     const statusRaw = String(body?.status || "draft").trim().toLowerCase();
     const questionsText = String(body?.questionsText || "");
     const questionsArray = normalizeQuestionsFromArray(body?.questions);
@@ -92,7 +97,7 @@ export async function PUT(
 
     const interview = await updateInterviewForCompany(params.id, membership.company.id, {
       title,
-      description,
+      description: composeInterviewDescriptionWithMeta(description, workMode),
       status,
       questions:
         questionsArray.length > 0
