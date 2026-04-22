@@ -84,6 +84,7 @@ CREATE TABLE IF NOT EXISTS interviews (
 
   title VARCHAR(255) NOT NULL,
   description TEXT NULL,
+  work_mode ENUM('remote', 'hybrid', 'onsite', 'unspecified') NOT NULL DEFAULT 'unspecified',
   status ENUM('draft', 'published', 'archived') NOT NULL DEFAULT 'draft',
   questions JSON NOT NULL DEFAULT (JSON_ARRAY()),
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -157,6 +158,7 @@ INSERT INTO interviews (
   legacy_vaga_id,
   title,
   description,
+  work_mode,
   status,
   questions,
   created_at,
@@ -168,6 +170,12 @@ SELECT
   v.id,
   v.titulo,
   v.descricao,
+  CASE
+    WHEN LOWER(v.modalidade) = 'remoto' THEN 'remote'
+    WHEN LOWER(v.modalidade) IN ('híbrido', 'hibrido') THEN 'hybrid'
+    WHEN LOWER(v.modalidade) = 'presencial' THEN 'onsite'
+    ELSE 'unspecified'
+  END,
   CASE WHEN v.ativa = 1 THEN 'published' ELSE 'archived' END,
   v.perguntas,
   COALESCE(v.criada_em, NOW()),
@@ -191,6 +199,7 @@ INSERT INTO interviews (
   legacy_vaga_id,
   title,
   description,
+  work_mode,
   status,
   questions,
   created_at,
@@ -202,6 +211,7 @@ SELECT
   cr.vaga_id,
   CONCAT('Entrevista legada: ', cr.vaga_id),
   'Criada automaticamente para preservar dados legados.',
+  'unspecified',
   'archived',
   JSON_ARRAY(),
   NOW(),
