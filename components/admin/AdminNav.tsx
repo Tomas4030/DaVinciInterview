@@ -8,9 +8,16 @@ import { withBasePath } from "@/lib/base-path";
 type AdminNavProps = {
   userEmail: string;
   companySlug?: string;
+  companyName?: string;
+  companyLogoUrl?: string | null;
 };
 
-export default function AdminNav({ userEmail, companySlug }: AdminNavProps) {
+export default function AdminNav({
+  userEmail,
+  companySlug,
+  companyName,
+  companyLogoUrl,
+}: AdminNavProps) {
   const router = useRouter();
   const pathname = usePathname();
 
@@ -29,6 +36,11 @@ export default function AdminNav({ userEmail, companySlug }: AdminNavProps) {
   const initial = useMemo(() => {
     return userEmail?.trim()?.charAt(0)?.toUpperCase() || "U";
   }, [userEmail]);
+
+  const companyInitial = useMemo(() => {
+    const baseName = String(companyName || "").trim();
+    return baseName ? baseName.charAt(0).toUpperCase() : "D";
+  }, [companyName]);
 
   useEffect(() => {
     function handlePointerDown(event: MouseEvent) {
@@ -82,13 +94,23 @@ export default function AdminNav({ userEmail, companySlug }: AdminNavProps) {
             aria-label="Painel de administração"
             className="group flex items-center gap-2"
           >
-            <div className="flex h-8 w-8 items-center justify-center rounded-[8px] bg-[var(--c-brand)] text-[11px] font-bold text-white shadow-[0_1px_3px_rgba(67,85,232,0.2)] transition-transform duration-200 group-hover:scale-[1.05]">
-              D
+            <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-[8px] text-[12px] font-bold text-[var(--c-text)] transition-transform duration-200 group-hover:scale-[1.05]">
+              {companyLogoUrl ? (
+                <img
+                  src={companyLogoUrl}
+                  alt={`Logo ${companyName || "empresa"}`}
+                  className="h-full w-full object-contain"
+                />
+              ) : (
+                <span className="flex h-full w-full items-center justify-center rounded-[8px] bg-[var(--c-bg)]">
+                  {companyInitial}
+                </span>
+              )}
             </div>
 
             <div className="leading-tight">
               <p className="text-[0.82rem] font-semibold leading-none tracking-tight text-[var(--c-text)]">
-                MatchWorky
+                {companyName || "MatchWorky"}
               </p>
               <p className="mt-0.5 text-[10px] leading-none text-[var(--c-muted)]">
                 Admin
@@ -183,7 +205,7 @@ export default function AdminNav({ userEmail, companySlug }: AdminNavProps) {
 
                 <div className="p-1">
                   <Link
-                    href="/"
+                    href={companySlug ? `/${companySlug}` : "/"}
                     role="menuitem"
                     onClick={() => setDropdownOpen(false)}
                     className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[0.78rem] text-[var(--c-muted)] transition-colors duration-150 hover:bg-[var(--c-bg)] hover:text-[var(--c-text)]"

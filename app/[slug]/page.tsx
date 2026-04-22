@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import type { CSSProperties } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCompanyBySlug } from "@/lib/queries/companies";
@@ -63,13 +62,9 @@ export default async function CompanyPublicPage({ params }: Props) {
   }
 
   const interviews = await listPublishedInterviewsByCompany(company.id);
-  const brandColor = company.primary_color || "var(--c-brand)";
 
   return (
-    <main
-      className="min-h-screen bg-[var(--c-bg)]"
-      style={{ "--company-brand": brandColor } as CSSProperties}
-    >
+    <main className="min-h-screen bg-[var(--c-bg)]">
       <header className="sticky top-0 z-20 border-b border-[var(--c-border)]/60 bg-[var(--c-surface)]/80 backdrop-blur-xl">
         <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-6">
           <Link
@@ -81,13 +76,10 @@ export default async function CompanyPublicPage({ params }: Props) {
               <img
                 src={company.logo_url}
                 alt={`Logo ${company.name}`}
-                className="h-8 w-8 rounded-[7px] border border-[var(--c-border)]/60 object-cover bg-white"
+                className="h-9 w-9 rounded-[8px] object-contain"
               />
             ) : (
-              <div
-                className="flex h-8 w-8 items-center justify-center rounded-[7px] text-[11px] font-bold text-white shadow-[0_1px_3px_rgba(0,0,0,0.18)] transition-transform duration-200 group-hover:scale-[1.06]"
-                style={{ backgroundColor: "var(--company-brand)" }}
-              >
+              <div className="flex h-9 w-9 items-center justify-center rounded-[8px] bg-[var(--c-text)] text-[11px] font-bold text-white transition-transform duration-200 group-hover:scale-[1.06]">
                 {company.name.slice(0, 1).toUpperCase()}
               </div>
             )}
@@ -126,66 +118,72 @@ export default async function CompanyPublicPage({ params }: Props) {
         >
           <GridPattern />
           <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[var(--c-bg)] to-transparent" />
-          <div className="absolute right-1/4 top-1/3 h-[480px] w-[480px] -translate-y-1/2 rounded-full bg-[var(--company-brand)]/10 blur-[110px]" />
         </div>
 
-        <div className="relative mx-auto max-w-6xl px-6 pb-14 pt-20 md:pb-20 md:pt-28">
+        <div
+          className="pointer-events-none absolute inset-0"
+          aria-hidden="true"
+        >
+          <div className="absolute right-1/4 top-1/3 h-[420px] w-[420px] -translate-y-1/2 rounded-full bg-[var(--c-brand)]/[0.05] blur-[110px]" />
+          <div className="absolute bottom-0 left-1/3 h-[280px] w-[280px] rounded-full bg-[var(--c-brand)]/[0.03] blur-[90px]" />
+        </div>
+
+        <div className="relative mx-auto max-w-6xl px-6 pb-20 pt-24 md:pb-28 md:pt-36">
           <div className="max-w-3xl">
-            <div className="mb-7 inline-flex animate-reveal items-center gap-2 rounded-full border border-[var(--company-brand)]/25 bg-[var(--company-brand)]/10 px-4 py-1.5">
+            <div className="mb-8 inline-flex animate-reveal items-center gap-2">
               <span className="relative flex h-2 w-2">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[var(--company-brand)] opacity-45 [animation-duration:1.2s]" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-[var(--company-brand)]" />
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[var(--c-brand)] opacity-40 [animation-duration:1.2s]" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-[var(--c-brand)]" />
               </span>
-              <span className="text-[12px] font-semibold text-[var(--company-brand)]">
-                Entrevistas abertas de {company.name}
+              <span className="text-[0.95rem] font-medium text-[var(--c-text)]/60">
+                {interviews.length} vaga{interviews.length === 1 ? "" : "s"}{" "}
+                aberta{interviews.length === 1 ? "" : "s"} · candidatura simples
               </span>
             </div>
 
-            <div className="mb-5 flex items-center gap-4">
-              {company.logo_url ? (
-                <img
-                  src={company.logo_url}
-                  alt={`Logo ${company.name}`}
-                  className="h-14 w-14 rounded-xl border border-[var(--c-border)]/60 object-cover bg-white"
-                />
-              ) : (
-                <div
-                  className="flex h-14 w-14 items-center justify-center rounded-xl text-base font-semibold text-white"
-                  style={{ backgroundColor: "var(--company-brand)" }}
-                >
-                  {company.name.slice(0, 1).toUpperCase()}
-                </div>
-              )}
+            <h1
+              className="animate-reveal text-balance font-display text-[2.8rem] leading-[1.05] tracking-[-0.035em] text-[var(--c-text)] md:text-[4.2rem]"
+              style={{ animationDelay: "80ms" }}
+            >
+              Constrói o teu 
+              futuro com a{" "}
+              <br /> <span className="text-[var(--c-brand)]">{company.name}</span>
+            </h1>
 
-              <h1 className="text-balance font-display text-[2.1rem] leading-[1.08] tracking-[-0.025em] text-[var(--c-text)] md:text-[3.2rem]">
-                Junta-te a {company.name}
-              </h1>
-            </div>
-
-            <p className="max-w-2xl text-[1rem] leading-relaxed text-[var(--c-text)]/65 md:text-[1.05rem]">
+            <p
+              className="mt-6 max-w-xl animate-reveal text-[1.05rem] leading-relaxed text-[var(--c-text)]/65"
+              style={{ animationDelay: "160ms" }}
+            >
               {company.description ||
-                "Consulta as oportunidades abertas, candidata-te em poucos minutos e acompanha o processo de forma simples."}
+                `Explora as vagas abertas da ${company.name}, responde ao teu ritmo e submete a candidatura em poucos minutos.`}
             </p>
 
-            <div className="mt-8 flex flex-wrap items-center gap-4 text-[0.84rem] text-[var(--c-text)]/60">
-              <span className="inline-flex items-center gap-2 rounded-full border border-[var(--c-border)]/70 bg-[var(--c-surface)] px-3 py-1.5">
-                {interviews.length} entrevista
-                {interviews.length === 1 ? "" : "s"} publicada
-                {interviews.length === 1 ? "" : "s"}
-              </span>
+            <div
+              className="mt-9 flex flex-wrap items-center gap-x-5 gap-y-3 animate-reveal"
+              style={{ animationDelay: "240ms" }}
+            >
               <a
                 href="#vagas"
-                className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-[0.78rem] font-semibold text-white shadow-[0_2px_8px_rgba(0,0,0,0.12)] transition-[transform,box-shadow] duration-200 hover:-translate-y-[1px] hover:shadow-[0_10px_22px_rgba(0,0,0,0.16)]"
-                style={{ backgroundColor: "var(--company-brand)" }}
+                className="inline-flex items-center gap-2 rounded-xl bg-[var(--c-brand)] px-5 py-[11px] text-[0.82rem] font-semibold text-white
+                    shadow-[0_1px_2px_rgba(67,85,232,0.1),0_4px_16px_rgba(67,85,232,0.22)]
+                    transition-[transform,box-shadow] duration-200 ease-[cubic-bezier(0.25,0.46,0.45,0.94)]
+                    hover:-translate-y-[2px] hover:shadow-[0_2px_4px_rgba(67,85,232,0.1),0_8px_32px_rgba(67,85,232,0.28)]
+                    active:scale-[0.985]"
               >
-                Ver entrevistas
+                Ver vagas disponíveis
+              </a>
+
+              <a
+                href="#como-funciona"
+                className="text-[0.82rem] font-medium text-[var(--c-text)]/55 transition-colors duration-150 hover:text-[var(--c-text)]"
+              >
+                Como funciona
               </a>
             </div>
           </div>
         </div>
       </section>
-
-      <section id="vagas" className="mx-auto max-w-6xl px-6 pb-16">
+      <section id="vagas" className="mx-auto max-w-6xl px-6 pb-16 pt-14">
         <div className="mb-8 flex items-end justify-between gap-4">
           <div>
             <h2 className="text-[1.2rem] font-semibold tracking-tight text-[var(--c-text)]">
@@ -198,7 +196,7 @@ export default async function CompanyPublicPage({ params }: Props) {
         </div>
 
         {interviews.length === 0 ? (
-          <div className="rounded-2xl border border-[var(--c-border)]/70 bg-[var(--c-surface)] px-6 py-12 text-center">
+          <div className="rounded-xl border border-[var(--c-border)]/70 bg-[var(--c-surface)] px-6 py-12 text-center">
             <p className="text-sm font-medium text-[var(--c-text)]">
               Neste momento nao existem entrevistas publicadas para esta
               empresa.
@@ -212,13 +210,13 @@ export default async function CompanyPublicPage({ params }: Props) {
             {interviews.map((interview, index) => (
               <article
                 key={interview.id}
-                className="group relative flex flex-col rounded-[14px] border border-[var(--c-border)]/80 bg-[var(--c-surface)] p-5 transition-[transform,box-shadow,border-color] duration-[350ms] ease-[cubic-bezier(0.25,0.46,0.45,0.94)] hover:-translate-y-[3px] hover:border-[var(--company-brand)]/25 hover:shadow-[0_16px_48px_rgba(0,0,0,0.08),0_2px_8px_rgba(0,0,0,0.04)] animate-reveal"
+                className="group relative flex flex-col rounded-[14px] border border-[var(--c-border)]/80 bg-[var(--c-surface)] p-5 transition-[transform,box-shadow,border-color] duration-[350ms] ease-[cubic-bezier(0.25,0.46,0.45,0.94)] hover:-translate-y-[3px] hover:border-[var(--c-text)]/12 hover:shadow-[0_16px_48px_rgba(0,0,0,0.08),0_2px_8px_rgba(0,0,0,0.04)] animate-reveal"
                 style={{ animationDelay: `${90 + index * 70}ms` }}
               >
-                <div className="pointer-events-none absolute inset-x-0 top-0 h-[2px] rounded-t-[14px] bg-gradient-to-r from-[var(--company-brand)]/70 via-[var(--company-brand)]/35 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                <div className="pointer-events-none absolute inset-x-0 top-0 h-[2px] rounded-t-[14px] bg-gradient-to-r from-[var(--c-brand)]/70 via-[var(--c-brand)]/35 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
                 <div className="mb-3 flex items-center justify-between gap-2">
-                  <span className="inline-flex items-center rounded-full border border-[var(--company-brand)]/25 bg-[var(--company-brand)]/10 px-2.5 py-1 text-[11px] font-medium text-[var(--company-brand)]">
+                  <span className="inline-flex items-center rounded-full border border-[var(--c-brand)]/20 bg-[var(--c-brand)]/10 px-2.5 py-1 text-[11px] font-medium text-[var(--c-brand)]">
                     Publicada
                   </span>
                   <span className="text-[11px] text-[var(--c-text)]/50">
@@ -227,7 +225,7 @@ export default async function CompanyPublicPage({ params }: Props) {
                   </span>
                 </div>
 
-                <h3 className="text-[1.04rem] font-semibold leading-[1.35] tracking-[-0.015em] text-[var(--c-text)] transition-colors duration-200 group-hover:text-[var(--company-brand)]">
+                <h3 className="text-[1.04rem] font-semibold leading-[1.35] tracking-[-0.015em] text-[var(--c-text)]">
                   {interview.title}
                 </h3>
 
@@ -238,8 +236,7 @@ export default async function CompanyPublicPage({ params }: Props) {
 
                 <Link
                   href={`/${company.slug}/interview/${interview.id}`}
-                  className="mt-5 inline-flex items-center justify-center rounded-xl px-4 py-2 text-[0.78rem] font-semibold text-white shadow-[0_2px_8px_rgba(0,0,0,0.12)] transition-[transform,box-shadow,opacity] duration-200 hover:-translate-y-[1px] hover:shadow-[0_10px_22px_rgba(0,0,0,0.16)] active:scale-[0.985]"
-                  style={{ backgroundColor: "var(--company-brand)" }}
+                  className="mt-5 inline-flex items-center justify-center rounded-md bg-[var(--c-brand)] px-4 py-2 text-[0.78rem] font-semibold text-white transition-colors hover:bg-[var(--c-brand-dark)] active:scale-[0.985]"
                 >
                   Candidatar-me agora
                 </Link>
@@ -251,7 +248,7 @@ export default async function CompanyPublicPage({ params }: Props) {
 
       <section
         id="como-funciona"
-        className="relative overflow-hidden py-20 md:py-24"
+        className="relative overflow-hidden border-y border-[var(--c-border)]/60 py-20 md:py-24"
       >
         <div
           className="absolute inset-0 bg-[linear-gradient(to_right,#e5e7eb_1px,transparent_1px),linear-gradient(to_bottom,#e5e7eb_1px,transparent_1px)] bg-[size:40px_40px] opacity-[0.06]"
@@ -261,10 +258,7 @@ export default async function CompanyPublicPage({ params }: Props) {
         <div className="relative mx-auto max-w-6xl px-6">
           <div className="mx-auto mb-12 max-w-2xl text-center">
             <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[var(--c-border)] bg-[var(--c-surface)] px-4 py-2 text-sm font-medium text-[var(--c-text)]/75">
-              <span
-                className="h-2 w-2 rounded-full"
-                style={{ backgroundColor: "var(--company-brand)" }}
-              />
+              <span className="h-2 w-2 rounded-full bg-[var(--c-brand)]" />
               Processo simples e rapido
             </div>
 
@@ -301,13 +295,10 @@ export default async function CompanyPublicPage({ params }: Props) {
             ].map((item) => (
               <article
                 key={item.title}
-                className="rounded-3xl border border-[var(--c-border)]/75 bg-[var(--c-surface)] p-7 shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:shadow-lg"
+                className="rounded-xl border border-[var(--c-border)]/75 bg-[var(--c-surface)] p-7 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_20px_rgba(0,0,0,0.05)]"
               >
                 <div className="mb-5 flex items-center justify-between gap-3">
-                  <span
-                    className="inline-flex h-12 w-12 items-center justify-center rounded-2xl text-white"
-                    style={{ backgroundColor: "var(--company-brand)" }}
-                  >
+                  <span className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-[var(--c-brand)] text-white">
                     {item.badge.slice(-2)}
                   </span>
                   <span className="rounded-full border border-[var(--c-border)] px-3 py-1 text-xs font-semibold text-[var(--c-text)]/70">
@@ -326,10 +317,7 @@ export default async function CompanyPublicPage({ params }: Props) {
                   className="mt-5 h-px w-full bg-[var(--c-border)]/60"
                   aria-hidden="true"
                 />
-                <p
-                  className="mt-4 text-sm font-medium"
-                  style={{ color: "var(--company-brand)" }}
-                >
+                <p className="mt-4 text-sm font-medium text-[var(--c-brand)]">
                   {item.highlight}
                 </p>
               </article>

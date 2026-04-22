@@ -29,7 +29,12 @@ export default async function AdminCompanyLayout({ children, params }: Props) {
 
   return (
     <div className="min-h-screen bg-[var(--c-bg)]">
-      <AdminNav userEmail={session.email} companySlug={membership.company.slug} />
+      <AdminNav
+        userEmail={session.email}
+        companySlug={membership.company.slug}
+        companyName={membership.company.name}
+        companyLogoUrl={membership.company.logo_url}
+      />
 
       <div className="mx-auto grid max-w-6xl gap-6 px-6 py-8 lg:grid-cols-[240px,1fr]">
         <div className="space-y-3">
