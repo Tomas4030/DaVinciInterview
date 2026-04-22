@@ -1,4 +1,4 @@
-import { SearchIcon } from "./Icons";
+import { SearchIcon } from "../ui/Icons";
 
 export default function EmptyState() {
   return (

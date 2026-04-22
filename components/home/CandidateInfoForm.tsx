@@ -9,7 +9,7 @@ import {
   isSupportedPhoneCountry,
   validatePhoneNumberForCountry,
 } from "@/lib/validation";
-import { IconMail, IconPhone, IconShield } from "@/components/home/Icons";
+import { IconMail, IconPhone, IconShield } from "@/components/ui/Icons";
 import { withBasePath } from "@/lib/base-path";
 import { getCountryCallingCode } from "libphonenumber-js";
 

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowUpRight } from "./Icons";
+import { ArrowUpRight } from "../ui/Icons";
 import { MODALIDADE_CONFIG, MODALIDADE_FALLBACK } from "./config";
 import type { VagaResumo } from "@/lib/api";
 

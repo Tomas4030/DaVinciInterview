@@ -3,6 +3,10 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { withBasePath } from "@/lib/base-path";
+import {
+  normalizeInterviewWorkMode,
+  type InterviewWorkMode,
+} from "@/lib/interview-meta";
 
 type Mode = "create" | "edit";
 
@@ -12,6 +16,7 @@ type Props = {
   interviewId?: string;
   initialTitle?: string;
   initialDescription?: string;
+  initialWorkMode?: InterviewWorkMode;
   initialStatus?: "draft" | "published" | "archived";
   initialQuestionsText?: string;
 };
@@ -34,6 +39,7 @@ export default function AdminInterviewForm({
   interviewId,
   initialTitle = "",
   initialDescription = "",
+  initialWorkMode = "unspecified",
   initialStatus = "draft",
   initialQuestionsText = "",
 }: Props) {
@@ -41,6 +47,9 @@ export default function AdminInterviewForm({
   const initialQuestions = parseQuestionsText(initialQuestionsText);
   const [title, setTitle] = useState(initialTitle);
   const [description, setDescription] = useState(initialDescription);
+  const [workMode, setWorkMode] = useState<InterviewWorkMode>(
+    normalizeInterviewWorkMode(initialWorkMode),
+  );
   const [status, setStatus] = useState(initialStatus);
   const [questions, setQuestions] = useState<string[]>(
     initialQuestions.length > 0 ? initialQuestions : [""],
@@ -83,6 +92,7 @@ export default function AdminInterviewForm({
         body: JSON.stringify({
           title,
           description,
+          workMode,
           status,
           questions: normalizedQuestions,
           questionsText: normalizedQuestions.join("\n"),
@@ -229,6 +239,28 @@ export default function AdminInterviewForm({
           className="input-base min-h-24 border-[var(--c-border)] bg-[var(--c-bg)]"
           placeholder="Resumo da vaga"
         />
+      </div>
+
+      <div>
+        <label
+          htmlFor="interview-work-mode"
+          className="mb-1.5 block text-xs font-medium text-[var(--c-muted)]"
+        >
+          Regime de trabalho
+        </label>
+        <select
+          id="interview-work-mode"
+          value={workMode}
+          onChange={(event) =>
+            setWorkMode(normalizeInterviewWorkMode(event.target.value))
+          }
+          className="input-base border-[var(--c-border)] bg-[var(--c-bg)]"
+        >
+          <option value="unspecified">Nao definido</option>
+          <option value="remote">Remoto</option>
+          <option value="hybrid">Hibrido</option>
+          <option value="onsite">Presencial</option>
+        </select>
       </div>
 
       <div>
