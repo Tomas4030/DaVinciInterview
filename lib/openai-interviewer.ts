@@ -19,6 +19,10 @@ interface NextQuestionParams {
   proximaPerguntaBase?: string;
   historicoRespostas?: Array<{ pergunta: string; resposta: string }>;
   iteracaoAtual?: number;
+  companyName?: string;
+  companyDescription?: string;
+  interviewDescription?: string;
+  interviewQuestions?: any[];
 }
 
 function ehRuidoPuro(resposta: string): boolean {
@@ -135,6 +139,10 @@ export async function obterProximaPergunta(
     respostaUser,
     proximaPerguntaBase = "",
     iteracaoAtual = 1,
+    companyName = "",
+    companyDescription = "",
+    interviewDescription = "",
+    interviewQuestions = [],
   } = params;
 
   const isUltimaPergunta = !proximaPerguntaBase?.trim();
@@ -173,7 +181,11 @@ export async function obterProximaPergunta(
         { role: "system", content: SYSTEM_PROMPT },
         {
           role: "user",
-          content: `Vaga: ${vagaTitulo}
+          content: `Empresa: ${companyName || "N/A"}
+Descrição da empresa: ${companyDescription || "N/A"}
+Vaga: ${vagaTitulo}
+Descrição da vaga: ${interviewDescription || "N/A"}
+Perguntas da entrevista (contexto): ${JSON.stringify(interviewQuestions).slice(0, 2500)}
 Pergunta da entrevista: "${perguntaAtual}"
 Resposta do candidato: "${respostaUser}"
 Próxima pergunta base (reformula com as tuas palavras): "${proximaPerguntaBase}"
