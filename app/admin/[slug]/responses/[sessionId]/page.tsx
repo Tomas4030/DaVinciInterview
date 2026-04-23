@@ -5,7 +5,6 @@ import { notFound } from "next/navigation";
 import { ADMIN_SESSION_COOKIE, parseAdminToken } from "@/lib/admin-auth";
 import { jsonParse, query } from "@/lib/db";
 import { getCompanyMembershipBySlug } from "@/lib/queries/companies";
-import { summarizeInterviewResponses } from "@/lib/response-summary";
 
 export const metadata: Metadata = { title: "Admin — Detalhe da Sessão" };
 export const dynamic = "force-dynamic";
@@ -24,6 +23,22 @@ type SessionRow = {
   respostas: string | null;
   interview_title: string | null;
 };
+
+function getStatusBadgeClass(status: string): string {
+  const normalized = String(status || "").toLowerCase();
+
+  if (normalized === "concluida") {
+    return "border-[#EDF3EC] bg-[#EDF3EC] text-[#346538]";
+  }
+  if (normalized === "em_analise") {
+    return "border-[#E1F3FE] bg-[#E1F3FE] text-[#1F6C9F]";
+  }
+  if (normalized === "rejeitada") {
+    return "border-[#FDEBEC] bg-[#FDEBEC] text-[#9F2F2D]";
+  }
+
+  return "border-[#FBF3DB] bg-[#FBF3DB] text-[#956400]";
+}
 
 function getQuestionLabel(item: any, index: number): string {
   if (typeof item?.texto_pergunta === "string" && item.texto_pergunta.trim()) {
@@ -90,20 +105,6 @@ export default async function AdminCompanyResponseDetailPage({ params }: Props) 
   }
 
   const answers = jsonParse<any[]>(row.respostas) || [];
-  const responseSummary = await summarizeInterviewResponses(
-    answers.map((item, index) => ({
-      question: getQuestionLabel(item, index),
-      answer: getAnswerText(item),
-    })),
-    row.interview_title,
-  );
-
-  const sentimentBadgeClass =
-    responseSummary.sentiment === "positivo"
-      ? "border-emerald-300/70 bg-emerald-50 text-emerald-700"
-      : responseSummary.sentiment === "negativo"
-        ? "border-red-300/70 bg-red-50 text-red-700"
-        : "border-amber-300/70 bg-amber-50 text-amber-700";
 
   return (
     <section className="space-y-6">
@@ -131,21 +132,23 @@ export default async function AdminCompanyResponseDetailPage({ params }: Props) 
         </div>
       </header>
 
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-3 lg:grid-cols-[1fr,1fr,auto,auto]">
         <article className="rounded-xl border border-[var(--c-border)]/70 bg-[var(--c-surface)] p-4">
-          <p className="text-xs text-[var(--c-muted)]">Candidato</p>
+          <p className="text-xs uppercase tracking-[0.06em] text-[var(--c-muted)]">Candidato</p>
           <p className="mt-1 text-sm font-medium text-[var(--c-text)]">{row.email}</p>
         </article>
         <article className="rounded-xl border border-[var(--c-border)]/70 bg-[var(--c-surface)] p-4">
-          <p className="text-xs text-[var(--c-muted)]">Telemóvel</p>
+          <p className="text-xs uppercase tracking-[0.06em] text-[var(--c-muted)]">Telemóvel</p>
           <p className="mt-1 text-sm font-medium text-[var(--c-text)]">{row.telefone || "—"}</p>
         </article>
         <article className="rounded-xl border border-[var(--c-border)]/70 bg-[var(--c-surface)] p-4">
-          <p className="text-xs text-[var(--c-muted)]">Estado</p>
-          <p className="mt-1 text-sm font-medium text-[var(--c-text)]">{row.status}</p>
+          <p className="text-xs uppercase tracking-[0.06em] text-[var(--c-muted)]">Estado</p>
+          <span className={`mt-2 inline-flex rounded-full border px-2.5 py-1 text-xs font-medium uppercase tracking-[0.05em] ${getStatusBadgeClass(row.status)}`}>
+            {row.status}
+          </span>
         </article>
         <article className="rounded-xl border border-[var(--c-border)]/70 bg-[var(--c-surface)] p-4">
-          <p className="text-xs text-[var(--c-muted)]">Data/Hora</p>
+          <p className="text-xs uppercase tracking-[0.06em] text-[var(--c-muted)]">Data/Hora</p>
           <p className="mt-1 text-sm font-medium text-[var(--c-text)]">
             {new Date(row.created_at).toLocaleString("pt-PT")}
           </p>
@@ -153,59 +156,18 @@ export default async function AdminCompanyResponseDetailPage({ params }: Props) 
       </div>
 
       <div className="rounded-xl border border-[var(--c-border)]/70 bg-[var(--c-surface)] p-5">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <h2 className="text-base font-semibold text-[var(--c-text)]">Resumo inteligente</h2>
-          <span className={`rounded-full border px-2.5 py-1 text-xs font-semibold uppercase tracking-[0.04em] ${sentimentBadgeClass}`}>
-            Sentimento {responseSummary.sentiment}
-          </span>
-        </div>
-
-        <p className="mt-3 text-sm leading-relaxed text-[var(--c-text)]/85">
-          {responseSummary.executiveSummary}
-        </p>
-
-        <div className="mt-4 grid gap-4 sm:grid-cols-2">
-          <article className="rounded-lg border border-emerald-200/80 bg-emerald-50/60 p-3">
-            <p className="text-xs font-semibold uppercase tracking-[0.06em] text-emerald-700">
-              Pontos fortes
-            </p>
-            <ul className="mt-2 space-y-1.5 text-sm text-emerald-900/85">
-              {responseSummary.strengths.map((item, index) => (
-                <li key={`strength-${index}`}>• {item}</li>
-              ))}
-            </ul>
-          </article>
-
-          <article className="rounded-lg border border-amber-200/80 bg-amber-50/60 p-3">
-            <p className="text-xs font-semibold uppercase tracking-[0.06em] text-amber-700">
-              Pontos de atenção
-            </p>
-            <ul className="mt-2 space-y-1.5 text-sm text-amber-900/85">
-              {responseSummary.concerns.map((item, index) => (
-                <li key={`concern-${index}`}>• {item}</li>
-              ))}
-            </ul>
-          </article>
-        </div>
-
-        <p className="mt-3 text-xs text-[var(--c-muted)]">
-          Fonte da análise: {responseSummary.source === "ai" ? "IA" : "heurística local"}.
-        </p>
-      </div>
-
-      <div className="rounded-xl border border-[var(--c-border)]/70 bg-[var(--c-surface)] p-5">
-        <h2 className="text-base font-semibold text-[var(--c-text)]">Transcrição</h2>
+        <h2 className="text-base font-semibold text-[var(--c-text)]">Perguntas e respostas</h2>
 
         {answers.length === 0 ? (
           <p className="mt-3 text-sm text-[var(--c-muted)]">Não existem respostas nesta sessão.</p>
         ) : (
           <div className="mt-4 space-y-3">
             {answers.map((item, index) => (
-              <article key={index} className="rounded-lg border border-[var(--c-border)]/60 bg-[var(--c-bg)] px-4 py-3">
+              <article key={index} className="rounded-lg border border-[var(--c-border)]/60 bg-[var(--c-bg)] px-4 py-4">
                 <p className="text-xs font-semibold uppercase tracking-[0.07em] text-[var(--c-muted)]">
                   {getQuestionLabel(item, index)}
                 </p>
-                <p className="mt-2 whitespace-pre-wrap text-sm text-[var(--c-text)]/90">
+                <p className="mt-2 whitespace-pre-wrap text-sm leading-relaxed text-[var(--c-text)]/90">
                   {getAnswerText(item)}
                 </p>
               </article>

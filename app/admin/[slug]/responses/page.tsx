@@ -6,6 +6,7 @@ import { ADMIN_SESSION_COOKIE, parseAdminToken } from "@/lib/admin-auth";
 import { query } from "@/lib/db";
 import { getCompanyMembershipBySlug } from "@/lib/queries/companies";
 import { listInterviewsByCompany } from "@/lib/queries/interviews";
+import ResponsesFilters from "@/components/admin/ResponsesFilters";
 
 export const metadata: Metadata = { title: "Admin — Respostas" };
 export const dynamic = "force-dynamic";
@@ -29,6 +30,22 @@ type ResponseRow = {
   interview_id: string;
   interview_title: string | null;
 };
+
+function getStatusBadgeClass(status: string): string {
+  const normalized = String(status || "").toLowerCase();
+
+  if (normalized === "concluida") {
+    return "border-[#EDF3EC] bg-[#EDF3EC] text-[#346538]";
+  }
+  if (normalized === "em_analise") {
+    return "border-[#E1F3FE] bg-[#E1F3FE] text-[#1F6C9F]";
+  }
+  if (normalized === "rejeitada") {
+    return "border-[#FDEBEC] bg-[#FDEBEC] text-[#9F2F2D]";
+  }
+
+  return "border-[#FBF3DB] bg-[#FBF3DB] text-[#956400]";
+}
 
 export default async function AdminCompanyResponsesPage({
   params,
@@ -90,43 +107,36 @@ export default async function AdminCompanyResponsesPage({
     values,
   );
 
+  const totalConcluidas = rows.filter((row) => row.status === "concluida").length;
+  const totalAnalise = rows.filter((row) => row.status === "em_analise").length;
+  const totalProgresso = rows.filter((row) => row.status === "em_progresso").length;
+
   return (
-    <section className="space-y-5">
-      <header>
+    <section className="space-y-6">
+      <header className="space-y-2">
         <p className="text-xs uppercase tracking-[0.09em] text-[var(--c-muted)]">Respostas</p>
         <h1 className="text-2xl font-semibold text-[var(--c-text)]">Sessoes de candidatos</h1>
+        <p className="max-w-3xl text-sm text-[var(--c-muted)]">
+          Consulta as respostas por entrevista e abre a analise global por vaga para comparar candidatos com apoio de IA.
+        </p>
       </header>
 
-      <form className="grid gap-3 rounded-xl border border-[var(--c-border)]/70 bg-[var(--c-surface)] p-4 md:grid-cols-[1fr,180px,220px,auto]">
-        <input
-          type="text"
-          name="q"
-          defaultValue={searchTerm}
-          placeholder="Pesquisar por candidato, telefone ou entrevista"
-          className="input-base"
-        />
+      <div className="grid gap-3 sm:grid-cols-3">
+        <article className="rounded-xl border border-[var(--c-border)]/70 bg-[var(--c-surface)] px-4 py-3">
+          <p className="text-xs uppercase tracking-[0.06em] text-[var(--c-muted)]">Concluidas</p>
+          <p className="mt-1 text-xl font-semibold text-[var(--c-text)]">{totalConcluidas}</p>
+        </article>
+        <article className="rounded-xl border border-[var(--c-border)]/70 bg-[var(--c-surface)] px-4 py-3">
+          <p className="text-xs uppercase tracking-[0.06em] text-[var(--c-muted)]">Em analise</p>
+          <p className="mt-1 text-xl font-semibold text-[var(--c-text)]">{totalAnalise}</p>
+        </article>
+        <article className="rounded-xl border border-[var(--c-border)]/70 bg-[var(--c-surface)] px-4 py-3">
+          <p className="text-xs uppercase tracking-[0.06em] text-[var(--c-muted)]">Em progresso</p>
+          <p className="mt-1 text-xl font-semibold text-[var(--c-text)]">{totalProgresso}</p>
+        </article>
+      </div>
 
-        <select name="status" defaultValue={statusFilter || "all"} className="input-base">
-          <option value="all">Todos os estados</option>
-          <option value="em_progresso">Em progresso</option>
-          <option value="concluida">Concluida</option>
-          <option value="em_analise">Em analise</option>
-          <option value="rejeitada">Rejeitada</option>
-        </select>
-
-        <select name="interviewId" defaultValue={interviewFilter || "all"} className="input-base">
-          <option value="all">Todas as entrevistas</option>
-          {interviews.map((item) => (
-            <option key={item.id} value={item.id}>
-              {item.title}
-            </option>
-          ))}
-        </select>
-
-        <button type="submit" className="btn-primary inline-flex justify-center px-4 py-2">
-          Filtrar
-        </button>
-      </form>
+      <ResponsesFilters slug={params.slug} interviews={interviews} />
 
       <div className="rounded-xl border border-[var(--c-border)]/70 bg-[var(--c-surface)]">
         <div className="flex items-center justify-between border-b border-[var(--c-border)]/60 px-5 py-3">
@@ -161,7 +171,7 @@ export default async function AdminCompanyResponsesPage({
                       {row.interview_title || "Entrevista sem titulo"}
                     </td>
                     <td className="px-5 py-3">
-                      <span className="rounded-full border border-[var(--c-border)] px-2.5 py-1 text-xs text-[var(--c-muted)]">
+                      <span className={`rounded-full border px-2.5 py-1 text-xs font-medium uppercase tracking-[0.05em] ${getStatusBadgeClass(row.status)}`}>
                         {row.status}
                       </span>
                     </td>
@@ -171,9 +181,9 @@ export default async function AdminCompanyResponsesPage({
                     <td className="px-5 py-3">
                       <Link
                         href={`/admin/${params.slug}/responses/${row.sessao_id}`}
-                        className="inline-flex rounded-lg border border-[var(--c-border)] px-3 py-1.5 text-xs text-[var(--c-text)] transition-colors hover:bg-[var(--c-bg)]"
+                        className="inline-flex rounded-md bg-[var(--c-brand)] px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-[var(--c-brand-dark)]"
                       >
-                        Ver detalhe
+                        Ver respostas
                       </Link>
                     </td>
                   </tr>
