@@ -2,7 +2,10 @@ import nodemailer from "nodemailer";
 
 const smtpPort = Number(process.env.SMTP_PORT || 587);
 const smtpHost = (process.env.SMTP_HOST || "").trim();
-const usingFallbackTransport = !smtpHost;
+const forceSmtpTransport = process.env.SMTP_FORCE === "true";
+const forceFallbackTransport = process.env.SMTP_USE_FALLBACK === "true";
+const usingFallbackTransport =
+  !forceSmtpTransport && (forceFallbackTransport || !smtpHost);
 
 export const transporter = nodemailer.createTransport(
   (usingFallbackTransport
@@ -47,10 +50,15 @@ export async function sendVerificationCodeEmail(to: string, code: string) {
   const info = await transporter.sendMail(message);
 
   if (usingFallbackTransport) {
-    console.warn("[email] SMTP_HOST não configurado, mensagem gerada em fallback local.", {
+    console.warn("[email] Transporte de fallback ativo, email não enviado externamente.", {
       to,
       code,
       messageId: info.messageId,
     });
   }
+
+  return {
+    usedFallbackTransport: usingFallbackTransport,
+    messageId: info.messageId,
+  };
 }

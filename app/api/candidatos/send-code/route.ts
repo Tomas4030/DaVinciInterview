@@ -105,7 +105,15 @@ export async function POST(request: NextRequest) {
     }
 
     try {
-      await sendVerificationCodeEmail(normalizedEmail, codigo);
+      const emailResult = await sendVerificationCodeEmail(normalizedEmail, codigo);
+
+      if (emailResult.usedFallbackTransport) {
+        return NextResponse.json({
+          success: true,
+          message: "Ambiente local sem SMTP externo. Usa o código de desenvolvimento.",
+          devCode: codigo,
+        });
+      }
     } catch (error) {
       console.error("[send-code] Falha no envio SMTP:", error);
 
