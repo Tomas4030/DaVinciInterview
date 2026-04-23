@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
+import { FormEvent, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import PhoneInput from "react-phone-number-input";
 import type { CountryCode, E164Number } from "libphonenumber-js";
@@ -124,36 +124,6 @@ export default function InterviewVerificationForm({
   const [globalError, setGlobalError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    const storageKey = `public_interview_session_${interviewId}`;
-    const rawSession = localStorage.getItem(storageKey);
-    if (!rawSession) return;
-
-    try {
-      const parsed = JSON.parse(rawSession) as {
-        token?: string;
-        expiresAt?: string;
-      };
-
-      if (!parsed?.token || !parsed?.expiresAt) {
-        localStorage.removeItem(storageKey);
-        return;
-      }
-
-      const isExpired = new Date(parsed.expiresAt).getTime() <= Date.now();
-      if (isExpired) {
-        localStorage.removeItem(storageKey);
-        return;
-      }
-
-      router.replace(`/${slug}/interview/${interviewId}/chat`);
-    } catch {
-      localStorage.removeItem(storageKey);
-    }
-  }, [interviewId, router, slug]);
 
   const parsedPhone = useMemo(() => {
     if (!phone) return undefined;

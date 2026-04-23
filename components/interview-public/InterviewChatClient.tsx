@@ -42,6 +42,10 @@ function uid() {
 
 const STORAGE_PREFIX = "public_interview_chat_";
 
+function getScopedChatStorageKey(interviewId: string, sessionToken: string) {
+  return `${STORAGE_PREFIX}${interviewId}_${sessionToken}`;
+}
+
 function TypingDots() {
   return (
     <div className="flex items-center gap-1 px-1 py-0.5">
@@ -124,7 +128,6 @@ export default function InterviewChatClient({
   questions,
 }: Props) {
   const router = useRouter();
-  const storageKey = `${STORAGE_PREFIX}${interviewId}`;
   const sessionStorageKey = `public_interview_session_${interviewId}`;
   const bottomRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -197,7 +200,11 @@ export default function InterviewChatClient({
 
     setSession(parsedSession);
 
-    const savedChatRaw = localStorage.getItem(storageKey);
+    const scopedStorageKey = getScopedChatStorageKey(
+      interviewId,
+      parsedSession.token,
+    );
+    const savedChatRaw = localStorage.getItem(scopedStorageKey);
     if (!savedChatRaw) {
       setMessages([]);
       setShowContextModal(true);
@@ -230,7 +237,7 @@ export default function InterviewChatClient({
       setMessages([]);
       setShowContextModal(true);
     }
-  }, [interviewId, introMessage, router, sessionStorageKey, slug, storageKey]);
+  }, [interviewId, introMessage, router, sessionStorageKey, slug]);
 
   function confirmContextAndContinue() {
     setShowContextModal(false);
@@ -243,9 +250,12 @@ export default function InterviewChatClient({
     if (typeof window === "undefined") return;
     if (!session) return;
 
+    const scopedStorageKey = getScopedChatStorageKey(interviewId, session.token);
+
     localStorage.setItem(
-      storageKey,
+      scopedStorageKey,
       JSON.stringify({
+        sessionToken: session.token,
         messages,
         currentIndex,
         iteration,
@@ -253,7 +263,7 @@ export default function InterviewChatClient({
         done,
       }),
     );
-  }, [currentIndex, done, iteration, messages, responses, session, storageKey]);
+  }, [currentIndex, done, interviewId, iteration, messages, responses, session]);
 
   async function startInterview() {
     if (!hasQuestions || done) return;
@@ -292,7 +302,9 @@ export default function InterviewChatClient({
 
     setDone(true);
     if (typeof window !== "undefined") {
-      localStorage.removeItem(storageKey);
+      const scopedStorageKey = getScopedChatStorageKey(interviewId, session.token);
+      localStorage.removeItem(scopedStorageKey);
+      localStorage.removeItem(`${STORAGE_PREFIX}${interviewId}`);
       localStorage.removeItem(sessionStorageKey);
     }
     router.replace(`/${slug}/interview/${interviewId}/done`);

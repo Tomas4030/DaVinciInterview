@@ -130,6 +130,14 @@ export default function InterviewVerifyCodeForm({
       }
 
       if (typeof window !== "undefined") {
+        const chatPrefix = `public_interview_chat_${interviewId}`;
+        for (let index = localStorage.length - 1; index >= 0; index -= 1) {
+          const key = localStorage.key(index);
+          if (key && key.startsWith(chatPrefix)) {
+            localStorage.removeItem(key);
+          }
+        }
+
         localStorage.setItem(
           `public_interview_session_${interviewId}`,
           JSON.stringify({
