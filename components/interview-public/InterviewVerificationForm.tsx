@@ -111,9 +111,9 @@ export default function InterviewVerificationForm({
   const [phone, setPhone] = useState<E164Number | undefined>();
   const [phoneCountry, setPhoneCountry] =
     useState<CountryCode>(DEFAULT_COUNTRY);
-  // Chave para forçar re-render do PhoneInput com o valor correcto
-  const [phoneKey, setPhoneKey] = useState(0);
-  const lastValidPhone = useRef<E164Number | undefined>(undefined);
+
+  // Ref para aceder ao phoneCountry actual dentro dos event handlers sem stale closure
+  const phoneCountryRef = useRef<CountryCode>(DEFAULT_COUNTRY);
 
   const [fieldErrors, setFieldErrors] = useState<{
     name?: string;
@@ -312,23 +312,22 @@ export default function InterviewVerificationForm({
 
             <Field id="phone" label="Telemóvel" error={fieldErrors.phone}>
               <div
-                className={`rounded-xl [&_.PhoneInput]:flex [&_.PhoneInput]:items-center [&_.PhoneInput]:gap-3
-                  [&_.PhoneInputCountry]:shrink-0
+                className={`rounded-xl [&_.PhoneInput]:flex [&_.PhoneInput]:items-center [&_.PhoneInput]:gap-2
+                  [&_.PhoneInputCountry]:shrink-0 [&_.PhoneInputCountry]:pl-3.5
                   [&_.PhoneInputCountrySelect]:cursor-pointer [&_.PhoneInputCountrySelect]:bg-transparent [&_.PhoneInputCountrySelect]:outline-none
                   [&_.PhoneInputCountryIcon]:h-5 [&_.PhoneInputCountryIcon]:w-7
                   [&_.PhoneInputInput]:min-w-0 [&_.PhoneInputInput]:flex-1 [&_.PhoneInputInput]:bg-transparent [&_.PhoneInputInput]:py-3 [&_.PhoneInputInput]:pr-4 [&_.PhoneInputInput]:text-sm [&_.PhoneInputInput]:outline-none`}
               >
                 <PhoneInput
-                  key={phoneKey}
                   id="phone"
                   international
                   defaultCountry={DEFAULT_COUNTRY}
                   country={phoneCountry}
                   onCountryChange={(value) => {
                     if (value) {
+                      phoneCountryRef.current = value;
                       setPhoneCountry(value);
                       setPhone(undefined);
-                      lastValidPhone.current = undefined;
                       setFieldErrors((prev) => ({ ...prev, phone: undefined }));
                     }
                   }}
@@ -336,30 +335,11 @@ export default function InterviewVerificationForm({
                   value={phone}
                   onChange={(value) => {
                     if (value) {
-                      const country = phoneCountry as CountryCode;
+                      const country = phoneCountryRef.current;
                       const nationalDigits = getNationalDigits(value, country);
                       const maxDigits = getMaxNationalDigits(country);
-
-                      if (nationalDigits.length > maxDigits) {
-                        // Bloqueia e força o input a voltar ao último valor válido
-                        setPhoneKey((k) => k + 1);
-                        // Restaura o último valor válido após o re-render
-                        setTimeout(() => {
-                          setPhone(lastValidPhone.current);
-                        }, 0);
-                        return;
-                      }
-
-                      // Actualiza o país se o parse funcionar
-                      try {
-                        const parsed = parsePhoneNumber(value);
-                        if (parsed?.country) {
-                          setPhoneCountry(parsed.country as CountryCode);
-                        }
-                      } catch {}
+                      if (nationalDigits.length > maxDigits) return;
                     }
-
-                    lastValidPhone.current = value;
                     setPhone(value);
                     setFieldErrors((prev) => ({ ...prev, phone: undefined }));
                   }}
@@ -370,6 +350,28 @@ export default function InterviewVerificationForm({
                   numberInputProps={{
                     autoComplete: "tel",
                     "aria-invalid": !!fieldErrors.phone,
+                    onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => {
+                      const isDigit = /^\d$/.test(e.key);
+                      if (!isDigit) return;
+
+                      const input = e.currentTarget;
+                      const currentValue = input.value.replace(/\D/g, "");
+                      const country = phoneCountryRef.current;
+                      const callingCode = String(
+                        getCountryCallingCode(country),
+                      ).replace(/\D/g, "");
+                      const nationalDigits = currentValue.startsWith(
+                        callingCode,
+                      )
+                        ? currentValue.slice(callingCode.length)
+                        : currentValue;
+
+                      if (
+                        nationalDigits.length >= getMaxNationalDigits(country)
+                      ) {
+                        e.preventDefault();
+                      }
+                    },
                   }}
                 />
               </div>
