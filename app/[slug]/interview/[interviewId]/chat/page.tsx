@@ -45,6 +45,9 @@ export default async function InterviewChatPage({ params }: Props) {
     <InterviewChatClient
       slug={company.slug}
       interviewId={interview.id}
+      companyName={company.name}
+      companyLogoUrl={company.logo_url || ""}
+      companyDescription={String(company.description || "")}
       interviewTitle={interview.title}
       interviewDescription={String(interview.description || "")}
       questions={normalizedQuestions}

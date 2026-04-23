@@ -18,6 +18,9 @@ type ChatMessage = {
 type Props = {
   slug: string;
   interviewId: string;
+  companyName: string;
+  companyLogoUrl: string;
+  companyDescription: string;
   interviewTitle: string;
   interviewDescription: string;
   questions: QuestionItem[];
@@ -103,6 +106,9 @@ function UserAvatar() {
 export default function InterviewChatClient({
   slug,
   interviewId,
+  companyName,
+  companyLogoUrl,
+  companyDescription,
   interviewTitle,
   interviewDescription,
   questions,
@@ -131,6 +137,7 @@ export default function InterviewChatClient({
   const [showTyping, setShowTyping] = useState(false);
   const [done, setDone] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showContextModal, setShowContextModal] = useState(true);
 
   const hasQuestions = questions.length > 0;
 
@@ -182,7 +189,8 @@ export default function InterviewChatClient({
 
     const savedChatRaw = localStorage.getItem(storageKey);
     if (!savedChatRaw) {
-      setMessages([{ id: uid(), role: "bot", text: introMessage }]);
+      setMessages([]);
+      setShowContextModal(true);
       return;
     }
 
@@ -204,10 +212,22 @@ export default function InterviewChatClient({
       setIteration(typeof saved.iteration === "number" ? saved.iteration : 1);
       setResponses(Array.isArray(saved.responses) ? saved.responses : []);
       setDone(Boolean(saved.done));
+      const hasStarted =
+        (Array.isArray(saved.messages) && saved.messages.length > 0) ||
+        (typeof saved.currentIndex === "number" && saved.currentIndex >= 0);
+      setShowContextModal(!hasStarted);
     } catch {
-      setMessages([{ id: uid(), role: "bot", text: introMessage }]);
+      setMessages([]);
+      setShowContextModal(true);
     }
   }, [interviewId, introMessage, router, sessionStorageKey, slug, storageKey]);
+
+  function confirmContextAndContinue() {
+    setShowContextModal(false);
+    if (messages.length === 0 && currentIndex === -1) {
+      setMessages([{ id: uid(), role: "bot", text: introMessage }]);
+    }
+  }
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -384,6 +404,66 @@ export default function InterviewChatClient({
 
   return (
     <div className="relative h-screen overflow-hidden bg-gray-50/60 flex flex-col">
+      {showContextModal ? (
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/35 px-4">
+          <div className="w-full max-w-lg rounded-xl border border-[#EAEAEA] bg-white p-6 sm:p-7">
+            <p className="text-[11px] uppercase tracking-[0.08em] text-[#787774]">
+              Confirmar entrevista
+            </p>
+
+            <div className="mt-4 flex items-center gap-3 border-b border-[#EAEAEA] pb-4">
+              {companyLogoUrl ? (
+                <img
+                  src={companyLogoUrl}
+                  alt={companyName}
+                  className="h-11 w-11 rounded-md border border-[#EAEAEA] object-cover"
+                />
+              ) : (
+                <div className="flex h-11 w-11 items-center justify-center rounded-md border border-[#EAEAEA] bg-[#F7F6F3] text-sm font-semibold text-[#2F3437]">
+                  {companyName.slice(0, 1).toUpperCase()}
+                </div>
+              )}
+
+              <div className="min-w-0">
+                <p className="truncate text-[16px] font-semibold text-[#111111]">
+                  {companyName}
+                </p>
+                <p className="truncate text-[13px] text-[#787774]">
+                  {interviewTitle}
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-4 space-y-2">
+              <p className="text-[12px] uppercase tracking-[0.06em] text-[#787774]">
+                Descrição da empresa
+              </p>
+              <p className="text-[14px] leading-6 text-[#2F3437]">
+                {companyDescription ||
+                  "Sem descrição adicional disponível para esta empresa."}
+              </p>
+            </div>
+
+            <div className="mt-6 grid gap-2 sm:grid-cols-2">
+              <button
+                type="button"
+                onClick={() => router.replace(`/${slug}`)}
+                className="h-11 rounded-md border border-[#EAEAEA] bg-white px-4 text-[12px] font-semibold uppercase tracking-[0.05em] text-[#2F3437] transition hover:bg-[#F7F6F3] active:scale-[0.98]"
+              >
+                Voltar
+              </button>
+              <button
+                type="button"
+                onClick={confirmContextAndContinue}
+                className="h-11 rounded-md bg-[#111111] px-4 text-[12px] font-semibold uppercase tracking-[0.05em] text-white transition hover:bg-[#333333] active:scale-[0.98]"
+              >
+                Continuar
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
       {/* ── Header ─────────────────────────────────────────────────────────── */}
       <header className="flex-shrink-0 bg-white border-b border-gray-100 px-5 py-3.5">
         <div className="max-w-2xl mx-auto flex items-center justify-between gap-4">
