@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import {
-  DashboardQuickActions,
   DashboardStats,
   RecentInterviewsPanel,
 } from "@/components/admin/company-dashboard";
@@ -92,8 +91,6 @@ export default async function AdminCompanyDashboardPage({ params }: Props) {
       />
 
       <RecentInterviewsPanel slug={params.slug} interviews={recentInterviews} />
-
-      <DashboardQuickActions slug={params.slug} />
     </section>
   );
 }
