@@ -9,7 +9,7 @@ import {
 } from "@/lib/in-memory-verification";
 import { withTimeout } from "@/lib/timeout";
 
-const INTERVIEW_SESSION_TTL_MINUTES = 15;
+const INTERVIEW_SESSION_TTL_MINUTES = 30;
 const DB_OP_TIMEOUT_MS = Number(process.env.DB_OP_TIMEOUT_MS || 3000);
 
 export async function POST(request: NextRequest) {
@@ -92,6 +92,7 @@ export async function POST(request: NextRequest) {
           verificationResult.email,
           verificationResult.telefone,
           interview.id,
+          INTERVIEW_SESSION_TTL_MINUTES,
         ),
         DB_OP_TIMEOUT_MS,
         "public-verify-code:criarSessao",

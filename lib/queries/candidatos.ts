@@ -54,9 +54,11 @@ export async function criarSessao(
   email: string,
   telefone: string,
   vaga_id: string,
+  ttlMinutes = 15,
 ): Promise<string> {
   const sessionToken = uuidv4();
-  const expiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 min
+  const ttl = Number.isFinite(ttlMinutes) ? Math.max(1, ttlMinutes) : 15;
+  const expiresAt = new Date(Date.now() + ttl * 60 * 1000);
 
   await query(
     `
