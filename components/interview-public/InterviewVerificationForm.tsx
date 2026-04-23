@@ -1,17 +1,24 @@
 "use client";
 
-import "react-phone-number-input/style.css";
-
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import PhoneInput from "react-phone-number-input";
 import type { CountryCode, E164Number } from "libphonenumber-js";
 import {
   isValidPhoneNumber,
   parsePhoneNumber,
-  validatePhoneNumberLength,
+  getExampleNumber,
+  getCountryCallingCode,
 } from "libphonenumber-js";
+import examples from "libphonenumber-js/mobile/examples";
 import { withBasePath } from "@/lib/base-path";
+import {
+  IconAlertCircle,
+  IconArrowRight,
+  IconMail,
+  IconShield,
+  IconUser,
+} from "@/components/ui/Icons";
 
 type Props = {
   slug: string;
@@ -21,98 +28,22 @@ type Props = {
 
 const DEFAULT_COUNTRY: CountryCode = "PT";
 
-function IconUser() {
-  return (
-    <svg
-      width="15"
-      height="15"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.75"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-      <circle cx="12" cy="7" r="4" />
-    </svg>
-  );
+function getMaxNationalDigits(country: CountryCode): number {
+  try {
+    const example = getExampleNumber(country, examples);
+    if (example) {
+      return example.nationalNumber.length;
+    }
+  } catch {}
+  return 15;
 }
 
-function IconMail() {
-  return (
-    <svg
-      width="15"
-      height="15"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.75"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <rect width="20" height="16" x="2" y="4" rx="2" />
-      <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
-    </svg>
-  );
-}
-
-function IconShield() {
-  return (
-    <svg
-      width="13"
-      height="13"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.75"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-    </svg>
-  );
-}
-
-function IconAlertCircle() {
-  return (
-    <svg
-      width="14"
-      height="14"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <circle cx="12" cy="12" r="10" />
-      <line x1="12" y1="8" x2="12" y2="12" />
-      <line x1="12" y1="16" x2="12.01" y2="16" />
-    </svg>
-  );
-}
-
-function IconArrowRight() {
-  return (
-    <svg
-      width="15"
-      height="15"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M5 12h14M12 5l7 7-7 7" />
-    </svg>
-  );
+function getNationalDigits(value: string, country: CountryCode): string {
+  const callingCode = String(getCountryCallingCode(country)).replace(/\D/g, "");
+  const digitsOnly = value.replace(/\D/g, "");
+  return digitsOnly.startsWith(callingCode)
+    ? digitsOnly.slice(callingCode.length)
+    : digitsOnly;
 }
 
 function LoadingSpinner({ size = 16 }: { size?: number }) {
@@ -157,9 +88,7 @@ function Field({
       >
         {label}
       </label>
-
       {children}
-
       {error && (
         <div className="flex items-center gap-1.5 text-red-500">
           <IconAlertCircle />
@@ -182,6 +111,9 @@ export default function InterviewVerificationForm({
   const [phone, setPhone] = useState<E164Number | undefined>();
   const [phoneCountry, setPhoneCountry] =
     useState<CountryCode>(DEFAULT_COUNTRY);
+  // Chave para forçar re-render do PhoneInput com o valor correcto
+  const [phoneKey, setPhoneKey] = useState(0);
+  const lastValidPhone = useRef<E164Number | undefined>(undefined);
 
   const [fieldErrors, setFieldErrors] = useState<{
     name?: string;
@@ -222,23 +154,11 @@ export default function InterviewVerificationForm({
   function handleBlur(field: "name" | "email" | "phone") {
     setFieldErrors((prev) => {
       const next = { ...prev };
-
       if (field === "name") next.name = validateName(candidateName);
       if (field === "email") next.email = validateEmail(email);
       if (field === "phone") next.phone = validatePhone(phone);
-
       return next;
     });
-  }
-
-  function canAcceptPhone(value?: E164Number) {
-    if (!value) return true;
-
-    try {
-      return validatePhoneNumberLength(value) !== "TOO_LONG";
-    } catch {
-      return true;
-    }
   }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -356,9 +276,7 @@ export default function InterviewVerificationForm({
                     setFieldErrors((prev) => ({ ...prev, name: undefined }));
                   }}
                   onBlur={() => handleBlur("name")}
-                  className={`${inputBase} ${
-                    fieldErrors.name ? inputErr : inputIdle
-                  } pl-10 pr-4 py-3`}
+                  className={`${inputBase} ${fieldErrors.name ? inputErr : inputIdle} pl-10 pr-4 py-3`}
                   placeholder="O teu nome"
                   autoComplete="name"
                   disabled={isLoading}
@@ -382,10 +300,8 @@ export default function InterviewVerificationForm({
                     setFieldErrors((prev) => ({ ...prev, email: undefined }));
                   }}
                   onBlur={() => handleBlur("email")}
-                  className={`${inputBase} ${
-                    fieldErrors.email ? inputErr : inputIdle
-                  } pl-10 pr-4 py-3`}
-                  placeholder="nome@empresa.com"
+                  className={`${inputBase} ${fieldErrors.email ? inputErr : inputIdle} pl-10 pr-4 py-3`}
+                  placeholder="nome@email.com"
                   autoComplete="email"
                   disabled={isLoading}
                   aria-invalid={!!fieldErrors.email}
@@ -397,47 +313,55 @@ export default function InterviewVerificationForm({
             <Field id="phone" label="Telemóvel" error={fieldErrors.phone}>
               <div
                 className={`rounded-xl [&_.PhoneInput]:flex [&_.PhoneInput]:items-center [&_.PhoneInput]:gap-3
-      [&_.PhoneInputCountry]:shrink-0
-      [&_.PhoneInputCountrySelect]:cursor-pointer [&_.PhoneInputCountrySelect]:bg-transparent [&_.PhoneInputCountrySelect]:outline-none
-      [&_.PhoneInputCountryIcon]:h-5 [&_.PhoneInputCountryIcon]:w-7
-      [&_.PhoneInputInput]:min-w-0 [&_.PhoneInputInput]:flex-1 [&_.PhoneInputInput]:bg-transparent [&_.PhoneInputInput]:py-3 [&_.PhoneInputInput]:pr-4 [&_.PhoneInputInput]:text-sm [&_.PhoneInputInput]:outline-none`}
+                  [&_.PhoneInputCountry]:shrink-0
+                  [&_.PhoneInputCountrySelect]:cursor-pointer [&_.PhoneInputCountrySelect]:bg-transparent [&_.PhoneInputCountrySelect]:outline-none
+                  [&_.PhoneInputCountryIcon]:h-5 [&_.PhoneInputCountryIcon]:w-7
+                  [&_.PhoneInputInput]:min-w-0 [&_.PhoneInputInput]:flex-1 [&_.PhoneInputInput]:bg-transparent [&_.PhoneInputInput]:py-3 [&_.PhoneInputInput]:pr-4 [&_.PhoneInputInput]:text-sm [&_.PhoneInputInput]:outline-none`}
               >
                 <PhoneInput
+                  key={phoneKey}
                   id="phone"
                   international
                   defaultCountry={DEFAULT_COUNTRY}
                   country={phoneCountry}
                   onCountryChange={(value) => {
-                    if (value) setPhoneCountry(value);
+                    if (value) {
+                      setPhoneCountry(value);
+                      setPhone(undefined);
+                      lastValidPhone.current = undefined;
+                      setFieldErrors((prev) => ({ ...prev, phone: undefined }));
+                    }
                   }}
                   countryCallingCodeEditable={false}
                   value={phone}
                   onChange={(value) => {
                     if (value) {
-                      try {
-                        const lengthValidation =
-                          validatePhoneNumberLength(value);
-                        if (lengthValidation === "TOO_LONG") {
-                          return;
-                        }
-                      } catch {
-                        // ignore
+                      const country = phoneCountry as CountryCode;
+                      const nationalDigits = getNationalDigits(value, country);
+                      const maxDigits = getMaxNationalDigits(country);
+
+                      if (nationalDigits.length > maxDigits) {
+                        // Bloqueia e força o input a voltar ao último valor válido
+                        setPhoneKey((k) => k + 1);
+                        // Restaura o último valor válido após o re-render
+                        setTimeout(() => {
+                          setPhone(lastValidPhone.current);
+                        }, 0);
+                        return;
                       }
-                    }
 
-                    setPhone(value);
-                    setFieldErrors((prev) => ({ ...prev, phone: undefined }));
-
-                    if (value) {
+                      // Actualiza o país se o parse funcionar
                       try {
                         const parsed = parsePhoneNumber(value);
                         if (parsed?.country) {
                           setPhoneCountry(parsed.country as CountryCode);
                         }
-                      } catch {
-                        // ignore
-                      }
+                      } catch {}
                     }
+
+                    lastValidPhone.current = value;
+                    setPhone(value);
+                    setFieldErrors((prev) => ({ ...prev, phone: undefined }));
                   }}
                   onBlur={() => handleBlur("phone")}
                   disabled={isLoading}
