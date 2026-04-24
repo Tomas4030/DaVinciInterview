@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { VagaAnalysis } from "@/lib/ai-comparison-service";
-import AiComparisonRefreshButton from "@/components/admin/AiComparisonRefreshButton";
-import VagaSelector from "@/components/admin/company-dashboard/VagaSelector";
+import AiComparisonRefreshButton from "../AiComparisonRefreshButton";
+import { VagaSelector } from "../company-dashboard";
 
 type Props = {
   slug: string;

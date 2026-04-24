@@ -1,5 +1,5 @@
 // app/admin/login/page.tsx
-import LoginForm from "@/components/admin/LoginForm";
+import { LoginForm } from "@/components/admin";
 import type { Metadata } from "next";
 import GridBackgroundPattern from "@/components/ui/GridBackgroundPattern";
 export const metadata: Metadata = { title: "Admin — Entrar" };

@@ -1,8 +1,8 @@
 import Link from "next/link";
 import type { InterviewRecord } from "@/lib/queries/interviews";
 import { stripInterviewMetaFromDescription } from "@/lib/interview-meta";
-import DeleteInterviewButton from "@/components/admin/DeleteInterviewButton";
-import InterviewStatusBadge from "@/components/admin/interviews/InterviewStatusBadge";
+import DeleteInterviewButton from "../DeleteInterviewButton";
+import InterviewStatusBadge from "./InterviewStatusBadge";
 
 type Props = {
   slug: string;

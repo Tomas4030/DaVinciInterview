@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import AdminInterviewForm from "@/components/admin/AdminInterviewForm";
+import { AdminInterviewForm } from "@/components/admin";
 
 export const metadata: Metadata = { title: "Admin — Nova Entrevista" };
 export const dynamic = "force-dynamic";

@@ -7,7 +7,7 @@ import type {
 import {
   getCandidateStatusBadgeClass,
   getInitialLetter,
-} from "@/components/admin/ai-comparacao/helpers";
+} from "./helpers";
 
 type Props = {
   slug: string;

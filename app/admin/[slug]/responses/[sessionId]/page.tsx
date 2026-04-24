@@ -5,12 +5,11 @@ import { notFound } from "next/navigation";
 import { ADMIN_SESSION_COOKIE, parseAdminToken } from "@/lib/admin-auth";
 import { jsonParse, query } from "@/lib/db";
 import { getCompanyMembershipBySlug } from "@/lib/queries/companies";
-import SessionSummaryCards from "@/components/admin/responses/SessionSummaryCards";
-import QAPairsList from "@/components/admin/responses/QAPairsList";
 import type {
   ResponseAnswerItem,
   SessionRow,
-} from "@/components/admin/responses/types";
+} from "@/components/admin/responses";
+import { QAPairsList, SessionSummaryCards } from "@/components/admin/responses";
 
 export const metadata: Metadata = { title: "Admin — Detalhe da Sessão" };
 export const dynamic = "force-dynamic";

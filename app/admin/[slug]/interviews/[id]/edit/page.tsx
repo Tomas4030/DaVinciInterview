@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
-import AdminInterviewForm from "@/components/admin/AdminInterviewForm";
+import { AdminInterviewForm } from "@/components/admin";
 import { ADMIN_SESSION_COOKIE, parseAdminToken } from "@/lib/admin-auth";
 import {
   extractInterviewWorkModeFromDescription,

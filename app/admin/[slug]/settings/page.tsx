@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import AdminCompanySettingsForm from "@/components/admin/AdminCompanySettingsForm";
+import { AdminCompanySettingsForm } from "@/components/admin";
 import { getCompanyBySlug } from "@/lib/queries/companies";
 
 export const metadata: Metadata = { title: "Admin — Definicoes" };

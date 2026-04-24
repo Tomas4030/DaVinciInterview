@@ -1,4 +1,4 @@
-import ResponseStatusBadge from "@/components/admin/responses/ResponseStatusBadge";
+import ResponseStatusBadge from "./ResponseStatusBadge";
 
 type Props = {
   email: string;

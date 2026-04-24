@@ -1,8 +1,7 @@
 import { ReactNode } from "react";
 import { cookies } from "next/headers";
 import { notFound, redirect } from "next/navigation";
-import AdminNav from "@/components/admin/AdminNav";
-import AdminCompanySidebar from "@/components/admin/AdminCompanySidebar";
+import { AdminCompanySidebar, AdminNav } from "@/components/admin";
 import { ADMIN_SESSION_COOKIE, parseAdminToken } from "@/lib/admin-auth";
 import { getCompanyMembershipBySlug } from "@/lib/queries/companies";
 

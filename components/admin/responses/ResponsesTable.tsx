@@ -1,6 +1,6 @@
 import Link from "next/link";
-import ResponseStatusBadge from "@/components/admin/responses/ResponseStatusBadge";
-import type { ResponseRow } from "@/components/admin/responses/types";
+import ResponseStatusBadge from "./ResponseStatusBadge";
+import type { ResponseRow } from "./types";
 
 type Props = {
   slug: string;

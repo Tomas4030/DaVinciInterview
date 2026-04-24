@@ -5,10 +5,12 @@ import { ADMIN_SESSION_COOKIE, parseAdminToken } from "@/lib/admin-auth";
 import { query } from "@/lib/db";
 import { getCompanyMembershipBySlug } from "@/lib/queries/companies";
 import { listInterviewsByCompany } from "@/lib/queries/interviews";
-import ResponsesFilters from "@/components/admin/ResponsesFilters";
-import ResponsesStatsGrid from "@/components/admin/responses/ResponsesStatsGrid";
-import ResponsesTable from "@/components/admin/responses/ResponsesTable";
-import type { ResponseRow } from "@/components/admin/responses/types";
+import {
+  ResponsesFilters,
+  ResponsesStatsGrid,
+  ResponsesTable,
+  type ResponseRow,
+} from "@/components/admin";
 
 export const metadata: Metadata = { title: "Admin — Respostas" };
 export const dynamic = "force-dynamic";

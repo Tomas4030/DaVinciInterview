@@ -7,9 +7,11 @@ import {
   buildAiComparisonsForCompany,
   type InterviewAnalysis,
 } from "@/lib/ai-comparison-service";
-import AiComparisonHeader from "@/components/admin/ai-comparacao/AiComparisonHeader";
-import CandidateSidebar from "@/components/admin/ai-comparacao/CandidateSidebar";
-import CandidateDetails from "@/components/admin/ai-comparacao/CandidateDetails";
+import {
+  AiComparisonHeader,
+  CandidateSidebar,
+  CandidateDetails,
+} from "@/components/admin/ai-comparacao";
 
 export const metadata: Metadata = { title: "Admin - Analise IA" };
 export const dynamic = "force-dynamic";

@@ -1,4 +1,4 @@
-import type { ResponseAnswerItem } from "@/components/admin/responses/types";
+import type { ResponseAnswerItem } from "./types";
 
 type Props = {
   answers: ResponseAnswerItem[];

@@ -6,8 +6,10 @@ import { ADMIN_SESSION_COOKIE, parseAdminToken } from "@/lib/admin-auth";
 import { stripInterviewMetaFromDescription } from "@/lib/interview-meta";
 import { getCompanyMembershipBySlug } from "@/lib/queries/companies";
 import { listInterviewsByCompany } from "@/lib/queries/interviews";
-import InterviewsFilterBar from "@/components/admin/interviews/InterviewsFilterBar";
-import InterviewListCard from "@/components/admin/interviews/InterviewListCard";
+import {
+  InterviewsFilterBar,
+  InterviewListCard,
+} from "@/components/admin/interviews";
 
 export const metadata: Metadata = { title: "Admin — Entrevistas" };
 export const dynamic = "force-dynamic";

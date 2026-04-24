@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import SignupForm from "@/components/admin/SignupForm";
+import { SignupForm } from "@/components/admin";
 import GridBackgroundPattern from "@/components/ui/GridBackgroundPattern";
 
 export const metadata: Metadata = { title: "Criar conta" };
