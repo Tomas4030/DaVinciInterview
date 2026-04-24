@@ -3,10 +3,11 @@ import { cookies } from "next/headers";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ADMIN_SESSION_COOKIE, parseAdminToken } from "@/lib/admin-auth";
-import DeleteInterviewButton from "@/components/admin/DeleteInterviewButton";
 import { stripInterviewMetaFromDescription } from "@/lib/interview-meta";
 import { getCompanyMembershipBySlug } from "@/lib/queries/companies";
 import { listInterviewsByCompany } from "@/lib/queries/interviews";
+import InterviewsFilterBar from "@/components/admin/interviews/InterviewsFilterBar";
+import InterviewListCard from "@/components/admin/interviews/InterviewListCard";
 
 export const metadata: Metadata = { title: "Admin — Entrevistas" };
 export const dynamic = "force-dynamic";
@@ -20,26 +21,6 @@ type Props = {
 };
 
 const STATUS_OPTIONS = ["all", "draft", "published", "archived"] as const;
-
-function getStatusBadgeClass(status: string): string {
-  if (status === "published") {
-    return "border-emerald-200 bg-emerald-50 text-emerald-700";
-  }
-  if (status === "draft") {
-    return "border-amber-200 bg-amber-50 text-amber-700";
-  }
-  if (status === "archived") {
-    return "border-slate-200 bg-slate-100 text-slate-600";
-  }
-  return "border-slate-200 bg-slate-100 text-slate-600";
-}
-
-function getStatusLabel(status: string): string {
-  if (status === "published") return "Publicado";
-  if (status === "draft") return "Rascunho";
-  if (status === "archived") return "Arquivado";
-  return status;
-}
 
 export default async function AdminCompanyInterviewsPage({
   params,
@@ -106,33 +87,7 @@ export default async function AdminCompanyInterviewsPage({
         </Link>
       </header>
 
-      <form className="grid gap-3 rounded-[12px] border border-[var(--c-border)] bg-[var(--c-surface)] p-4 md:grid-cols-[1fr,170px,auto]">
-        <input
-          type="text"
-          name="q"
-          defaultValue={searchTerm}
-          placeholder="Pesquisar por titulo ou descricao"
-          className="input-base border-[var(--c-border)] bg-[var(--c-bg)]"
-        />
-
-        <select
-          name="status"
-          defaultValue={statusFilter}
-          className="input-base border-[var(--c-border)] bg-[var(--c-bg)]"
-        >
-          <option value="all">Todos os estados</option>
-          <option value="draft">Rascunho</option>
-          <option value="published">Publicada</option>
-          <option value="archived">Arquivada</option>
-        </select>
-
-        <button
-          type="submit"
-          className="btn-primary inline-flex justify-center px-4 py-2"
-        >
-          Filtrar
-        </button>
-      </form>
+      <InterviewsFilterBar searchTerm={searchTerm} statusFilter={statusFilter} />
 
       <div className="rounded-[12px] border border-[var(--c-border)] bg-[var(--c-surface)]">
         <div className="flex items-center justify-between border-b border-[var(--c-border)] px-5 py-3">
@@ -149,59 +104,7 @@ export default async function AdminCompanyInterviewsPage({
         ) : (
           <div className="divide-y divide-[var(--c-border)]">
             {filteredInterviews.map((item) => (
-              <article key={item.id} className="space-y-4 px-5 py-4">
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <h2 className="text-base font-semibold text-[var(--c-text)]">
-                    {item.title}
-                  </h2>
-                  <span
-                    className={`rounded-full border px-2.5 py-1 text-[11px] font-medium uppercase tracking-[0.05em] ${getStatusBadgeClass(
-                      item.status,
-                    )}`}
-                  >
-                    {getStatusLabel(item.status)}
-                  </span>
-                </div>
-
-                <p className="text-sm text-[var(--c-muted)]">
-                  {stripInterviewMetaFromDescription(item.description) ||
-                    "Sem descricao."}
-                </p>
-
-                <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-[var(--c-muted)]">
-                  <span>
-                    {item.questions.length} pergunta
-                    {item.questions.length === 1 ? "" : "s"}
-                  </span>
-
-                  <div className="flex flex-wrap items-center gap-2">
-                    <Link
-                      href={`/admin/${params.slug}/responses?interviewId=${item.id}`}
-                      className="rounded-md border border-[var(--c-brand)]/30 bg-[var(--c-brand-soft)] px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.05em] text-[var(--c-brand-dark)] transition-colors hover:brightness-[0.98]"
-                    >
-                      Ver respostas
-                    </Link>
-
-                    <Link
-                      href={`/admin/${params.slug}/interviews/${item.id}/edit`}
-                      className="rounded-md border border-[var(--c-border)] bg-[var(--c-bg)] px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.05em] text-[var(--c-text)] transition-colors hover:brightness-[0.98]"
-                    >
-                      Editar
-                    </Link>
-
-                    <DeleteInterviewButton slug={params.slug} interviewId={item.id} />
-
-                    {item.legacy_vaga_id ? (
-                      <Link
-                        href={`/admin/entrevistas/${item.legacy_vaga_id}`}
-                        className="rounded-md border border-[var(--c-border)] bg-[var(--c-surface)] px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.05em] text-[var(--c-muted)] transition-colors hover:bg-[var(--c-bg)]"
-                      >
-                        Editar (legado)
-                      </Link>
-                    ) : null}
-                  </div>
-                </div>
-              </article>
+              <InterviewListCard key={item.id} slug={params.slug} item={item} />
             ))}
           </div>
         )}

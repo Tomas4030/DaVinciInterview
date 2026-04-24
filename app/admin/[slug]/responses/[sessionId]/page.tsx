@@ -5,6 +5,12 @@ import { notFound } from "next/navigation";
 import { ADMIN_SESSION_COOKIE, parseAdminToken } from "@/lib/admin-auth";
 import { jsonParse, query } from "@/lib/db";
 import { getCompanyMembershipBySlug } from "@/lib/queries/companies";
+import SessionSummaryCards from "@/components/admin/responses/SessionSummaryCards";
+import QAPairsList from "@/components/admin/responses/QAPairsList";
+import type {
+  ResponseAnswerItem,
+  SessionRow,
+} from "@/components/admin/responses/types";
 
 export const metadata: Metadata = { title: "Admin — Detalhe da Sessão" };
 export const dynamic = "force-dynamic";
@@ -12,60 +18,6 @@ export const dynamic = "force-dynamic";
 type Props = {
   params: { slug: string; sessionId: string };
 };
-
-type SessionRow = {
-  id: string;
-  sessao_id: string;
-  email: string;
-  telefone: string;
-  status: string;
-  created_at: string;
-  respostas: string | null;
-  interview_title: string | null;
-};
-
-function getStatusBadgeClass(status: string): string {
-  const normalized = String(status || "").toLowerCase();
-
-  if (normalized === "concluida") {
-    return "border-[#EDF3EC] bg-[#EDF3EC] text-[#346538]";
-  }
-  if (normalized === "em_analise") {
-    return "border-[#E1F3FE] bg-[#E1F3FE] text-[#1F6C9F]";
-  }
-  if (normalized === "rejeitada") {
-    return "border-[#FDEBEC] bg-[#FDEBEC] text-[#9F2F2D]";
-  }
-
-  return "border-[#FBF3DB] bg-[#FBF3DB] text-[#956400]";
-}
-
-function getQuestionLabel(item: any, index: number): string {
-  if (typeof item?.texto_pergunta === "string" && item.texto_pergunta.trim()) {
-    return item.texto_pergunta;
-  }
-  if (typeof item?.question === "string" && item.question.trim()) {
-    return item.question;
-  }
-  if (typeof item?.pergunta === "string" && item.pergunta.trim()) {
-    return item.pergunta;
-  }
-
-  return `Pergunta ${index + 1}`;
-}
-
-function getAnswerText(item: any): string {
-  if (typeof item?.resposta_texto === "string" && item.resposta_texto.trim()) {
-    return item.resposta_texto;
-  }
-  if (typeof item?.resposta === "string" && item.resposta.trim()) {
-    return item.resposta;
-  }
-  if (typeof item?.answer === "string" && item.answer.trim()) {
-    return item.answer;
-  }
-  return "—";
-}
 
 export default async function AdminCompanyResponseDetailPage({ params }: Props) {
   const cookieStore = cookies();
@@ -104,7 +56,7 @@ export default async function AdminCompanyResponseDetailPage({ params }: Props) 
     notFound();
   }
 
-  const answers = jsonParse<any[]>(row.respostas) || [];
+  const answers = jsonParse<ResponseAnswerItem[]>(row.respostas) || [];
 
   return (
     <section className="space-y-6">
@@ -132,49 +84,14 @@ export default async function AdminCompanyResponseDetailPage({ params }: Props) 
         </div>
       </header>
 
-      <div className="grid gap-3 lg:grid-cols-[1fr,1fr,auto,auto]">
-        <article className="rounded-xl border border-[var(--c-border)]/70 bg-[var(--c-surface)] p-4">
-          <p className="text-xs uppercase tracking-[0.06em] text-[var(--c-muted)]">Candidato</p>
-          <p className="mt-1 text-sm font-medium text-[var(--c-text)]">{row.email}</p>
-        </article>
-        <article className="rounded-xl border border-[var(--c-border)]/70 bg-[var(--c-surface)] p-4">
-          <p className="text-xs uppercase tracking-[0.06em] text-[var(--c-muted)]">Telemóvel</p>
-          <p className="mt-1 text-sm font-medium text-[var(--c-text)]">{row.telefone || "—"}</p>
-        </article>
-        <article className="rounded-xl border border-[var(--c-border)]/70 bg-[var(--c-surface)] p-4">
-          <p className="text-xs uppercase tracking-[0.06em] text-[var(--c-muted)]">Estado</p>
-          <span className={`mt-2 inline-flex rounded-full border px-2.5 py-1 text-xs font-medium uppercase tracking-[0.05em] ${getStatusBadgeClass(row.status)}`}>
-            {row.status}
-          </span>
-        </article>
-        <article className="rounded-xl border border-[var(--c-border)]/70 bg-[var(--c-surface)] p-4">
-          <p className="text-xs uppercase tracking-[0.06em] text-[var(--c-muted)]">Data/Hora</p>
-          <p className="mt-1 text-sm font-medium text-[var(--c-text)]">
-            {new Date(row.created_at).toLocaleString("pt-PT")}
-          </p>
-        </article>
-      </div>
+      <SessionSummaryCards
+        email={row.email}
+        telefone={row.telefone}
+        status={row.status}
+        createdAt={row.created_at}
+      />
 
-      <div className="rounded-xl border border-[var(--c-border)]/70 bg-[var(--c-surface)] p-5">
-        <h2 className="text-base font-semibold text-[var(--c-text)]">Perguntas e respostas</h2>
-
-        {answers.length === 0 ? (
-          <p className="mt-3 text-sm text-[var(--c-muted)]">Não existem respostas nesta sessão.</p>
-        ) : (
-          <div className="mt-4 space-y-3">
-            {answers.map((item, index) => (
-              <article key={index} className="rounded-lg border border-[var(--c-border)]/60 bg-[var(--c-bg)] px-4 py-4">
-                <p className="text-xs font-semibold uppercase tracking-[0.07em] text-[var(--c-muted)]">
-                  {getQuestionLabel(item, index)}
-                </p>
-                <p className="mt-2 whitespace-pre-wrap text-sm leading-relaxed text-[var(--c-text)]/90">
-                  {getAnswerText(item)}
-                </p>
-              </article>
-            ))}
-          </div>
-        )}
-      </div>
+      <QAPairsList answers={answers} />
     </section>
   );
 }
