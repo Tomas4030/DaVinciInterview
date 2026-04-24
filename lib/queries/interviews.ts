@@ -1,4 +1,4 @@
-import { jsonParse, query } from "@/lib/db";
+import { getConnection, jsonParse, query } from "@/lib/db";
 import { v4 as uuidv4 } from "uuid";
 
 export interface InterviewRecord {
@@ -190,10 +190,57 @@ export async function deleteInterviewForCompany(
   interviewId: string,
   companyId: string,
 ): Promise<boolean> {
-  const result = await query(
-    `DELETE FROM interviews WHERE id = ? AND company_id = ?`,
-    [interviewId, companyId],
-  );
+  const existing = await getInterviewByIdAndCompany(interviewId, companyId);
+  if (!existing) return false;
 
-  return ((result[1] as any)?.affectedRows || 0) > 0;
+  const sessionVagaIds = [interviewId];
+  if (existing.legacy_vaga_id && existing.legacy_vaga_id !== interviewId) {
+    sessionVagaIds.push(existing.legacy_vaga_id);
+  }
+
+  const connection = await getConnection();
+
+  try {
+    await connection.beginTransaction();
+
+    await connection.execute(
+      `DELETE FROM candidato_respostas WHERE company_id = ? AND interview_id = ?`,
+      [companyId, interviewId],
+    );
+
+    try {
+      await connection.execute(
+        `DELETE FROM ai_candidate_comparisons WHERE company_id = ? AND interview_id = ?`,
+        [companyId, interviewId],
+      );
+    } catch (error: any) {
+      if (error?.code !== "ER_NO_SUCH_TABLE") throw error;
+    }
+
+    if (sessionVagaIds.length === 1) {
+      await connection.execute(
+        `DELETE FROM candidato_entrevista_sessions WHERE vaga_id = ?`,
+        [sessionVagaIds[0]],
+      );
+    } else {
+      await connection.execute(
+        `DELETE FROM candidato_entrevista_sessions WHERE vaga_id IN (?, ?)`,
+        [sessionVagaIds[0], sessionVagaIds[1]],
+      );
+    }
+
+    const [result] = await connection.execute(
+      `DELETE FROM interviews WHERE id = ? AND company_id = ?`,
+      [interviewId, companyId],
+    );
+
+    await connection.commit();
+
+    return ((result as any)?.affectedRows || 0) > 0;
+  } catch (error) {
+    await connection.rollback();
+    throw error;
+  } finally {
+    connection.release();
+  }
 }

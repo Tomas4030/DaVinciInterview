@@ -74,7 +74,7 @@ export default async function AdminPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-lg font-semibold text-[var(--c-text)] tracking-tight">
-            Dashboard
+            Dashboardddddddddd
           </h1>
           <p className="mt-0.5 text-[0.8rem] text-[var(--c-muted)]">
             Gere entrevistas e consulta candidaturas

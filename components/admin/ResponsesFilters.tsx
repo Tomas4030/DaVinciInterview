@@ -30,26 +30,29 @@ export default function ResponsesFilters({ slug, interviews }: Props) {
     setInterviewId(searchParams.get("interviewId") || "all");
   }, [searchParams]);
 
-  const navigate = useCallback((next: { q: string; status: string; interviewId: string }) => {
-    const params = new URLSearchParams();
+  const navigate = useCallback(
+    (next: { q: string; status: string; interviewId: string }) => {
+      const params = new URLSearchParams();
 
-    if (next.q.trim()) {
-      params.set("q", next.q.trim());
-    }
-    if (next.status && next.status !== "all") {
-      params.set("status", next.status);
-    }
-    if (next.interviewId && next.interviewId !== "all") {
-      params.set("interviewId", next.interviewId);
-    }
+      if (next.q.trim()) {
+        params.set("q", next.q.trim());
+      }
+      if (next.status && next.status !== "all") {
+        params.set("status", next.status);
+      }
+      if (next.interviewId && next.interviewId !== "all") {
+        params.set("interviewId", next.interviewId);
+      }
 
-    const query = params.toString();
-    const href = query
-      ? `/admin/${slug}/responses?${query}`
-      : `/admin/${slug}/responses`;
+      const query = params.toString();
+      const href = query
+        ? `/admin/${slug}/responses?${query}`
+        : `/admin/${slug}/responses`;
 
-    router.replace(href);
-  }, [router, slug]);
+      router.replace(href);
+    },
+    [router, slug],
+  );
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -79,8 +82,6 @@ export default function ResponsesFilters({ slug, interviews }: Props) {
         <option value="all">Todos os estados</option>
         <option value="em_progresso">Em progresso</option>
         <option value="concluida">Concluida</option>
-        <option value="em_analise">Em analise</option>
-        <option value="rejeitada">Rejeitada</option>
       </select>
 
       <select
