@@ -1,6 +1,9 @@
 import { OpenAI } from "openai";
 import { jsonParse, query } from "@/lib/db";
-import { summarizeInterviewResponses, type ResponseSummary } from "@/lib/response-summary";
+import {
+  summarizeInterviewResponses,
+  type ResponseSummary,
+} from "@/lib/response-summary";
 
 type RawResponseRow = {
   sessao_id: string;
@@ -74,7 +77,11 @@ function computeCandidateScore(candidate: CandidateAnalysis): number {
   const depthBonus = clamp(candidate.answerCount * 2.5, 0, 18);
   const strengthBonus = candidate.summary.strengths.length * 3;
   const concernPenalty = candidate.summary.concerns.length * 2;
-  return clamp(Math.round(base + depthBonus + strengthBonus - concernPenalty), 0, 100);
+  return clamp(
+    Math.round(base + depthBonus + strengthBonus - concernPenalty),
+    0,
+    100,
+  );
 }
 
 function parseAiComparison(content: string) {
@@ -148,7 +155,7 @@ async function compareCandidatesForInterview(
     }));
 
     const completion = await client.chat.completions.create({
-      model: "gpt-4o-mini",
+      model: "gpt-4o-mini-mini",
       temperature: 0.2,
       max_tokens: 700,
       messages: [
@@ -179,7 +186,9 @@ Regras:
       ],
     });
 
-    const parsed = parseAiComparison(completion.choices[0]?.message?.content || "");
+    const parsed = parseAiComparison(
+      completion.choices[0]?.message?.content || "",
+    );
     if (!parsed?.ranking || !Array.isArray(parsed.ranking)) {
       return {
         ranking: heuristicRanking,
@@ -210,7 +219,9 @@ Regras:
     }>;
 
     const rankingFinal =
-      ranking.length > 0 ? ranking.sort((a, b) => b.score - a.score) : heuristicRanking;
+      ranking.length > 0
+        ? ranking.sort((a, b) => b.score - a.score)
+        : heuristicRanking;
 
     const directComparison = Array.isArray(parsed.directComparison)
       ? parsed.directComparison
@@ -338,14 +349,22 @@ export async function buildAiComparisonsForCompany(
 
   const grouped = new Map<
     string,
-    { vagaTitle: string; interviews: Map<string, { interviewTitle: string; rows: RawResponseRow[] }> }
+    {
+      vagaTitle: string;
+      interviews: Map<
+        string,
+        { interviewTitle: string; rows: RawResponseRow[] }
+      >;
+    }
   >();
 
   for (const row of rows) {
     const vagaId = String(row.vaga_id || "sem-vaga");
     const vagaTitle = String(row.vaga_title || "Vaga sem titulo");
     const interviewId = String(row.interview_id || "sem-entrevista");
-    const interviewTitle = String(row.interview_title || "Entrevista sem titulo");
+    const interviewTitle = String(
+      row.interview_title || "Entrevista sem titulo",
+    );
 
     if (!grouped.has(vagaId)) {
       grouped.set(vagaId, { vagaTitle, interviews: new Map() });
@@ -364,19 +383,27 @@ export async function buildAiComparisonsForCompany(
   for (const [vagaId, vagaEntry] of grouped.entries()) {
     const interviews: InterviewAnalysis[] = [];
 
-    for (const [interviewId, interviewEntry] of vagaEntry.interviews.entries()) {
+    for (const [
+      interviewId,
+      interviewEntry,
+    ] of vagaEntry.interviews.entries()) {
       const cacheKey = `${vagaId}::${interviewId}`;
       const cached = cachedByKey.get(cacheKey);
 
       if (cached && !forceRegenerate) {
         interviews.push({
           interviewId,
-          interviewTitle: String(cached.interview_title || interviewEntry.interviewTitle),
-          candidates: jsonParse<CandidateAnalysis[]>(cached.candidates_snapshot_json) || [],
-          ranking: jsonParse<InterviewAnalysis["ranking"]>(cached.ranking_json) || [],
-          directComparison:
-            jsonParse<string[]>(cached.direct_comparison_json) ||
-            ["Sem comparacao disponivel."],
+          interviewTitle: String(
+            cached.interview_title || interviewEntry.interviewTitle,
+          ),
+          candidates:
+            jsonParse<CandidateAnalysis[]>(cached.candidates_snapshot_json) ||
+            [],
+          ranking:
+            jsonParse<InterviewAnalysis["ranking"]>(cached.ranking_json) || [],
+          directComparison: jsonParse<string[]>(
+            cached.direct_comparison_json,
+          ) || ["Sem comparacao disponivel."],
           source: cached.source || "heuristic",
           generatedAt: cached.generated_at,
         });
@@ -393,10 +420,15 @@ export async function buildAiComparisonsForCompany(
               item?.pergunta ||
               `Pergunta ${index + 1}`,
           ),
-          answer: String(item?.resposta_texto || item?.resposta || item?.answer || "").trim(),
+          answer: String(
+            item?.resposta_texto || item?.resposta || item?.answer || "",
+          ).trim(),
         }));
 
-        const summary = await summarizeInterviewResponses(items, interviewEntry.interviewTitle);
+        const summary = await summarizeInterviewResponses(
+          items,
+          interviewEntry.interviewTitle,
+        );
         const candidate: CandidateAnalysis = {
           sessaoId: row.sessao_id,
           email: row.email,
@@ -412,7 +444,10 @@ export async function buildAiComparisonsForCompany(
         candidates.push(candidate);
       }
 
-      const comparison = await compareCandidatesForInterview(interviewEntry.interviewTitle, candidates);
+      const comparison = await compareCandidatesForInterview(
+        interviewEntry.interviewTitle,
+        candidates,
+      );
       const generatedAt = new Date().toISOString();
 
       const interview: InterviewAnalysis = {
@@ -425,7 +460,12 @@ export async function buildAiComparisonsForCompany(
         generatedAt,
       };
 
-      await upsertComparisonCache(companyId, vagaId, interview, vagaEntry.vagaTitle);
+      await upsertComparisonCache(
+        companyId,
+        vagaId,
+        interview,
+        vagaEntry.vagaTitle,
+      );
       interviews.push(interview);
     }
 

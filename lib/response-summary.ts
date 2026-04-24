@@ -57,7 +57,8 @@ function buildHeuristicSummary(
   const answers = items.map((item) => item.answer).filter(Boolean);
   const normalized = normalizeText(answers.join(" \n "));
   const totalChars = answers.reduce((acc, answer) => acc + answer.length, 0);
-  const averageChars = answers.length > 0 ? Math.round(totalChars / answers.length) : 0;
+  const averageChars =
+    answers.length > 0 ? Math.round(totalChars / answers.length) : 0;
 
   const positiveScore = POSITIVE_HINTS.reduce(
     (acc, token) => acc + (normalized.includes(token) ? 1 : 0),
@@ -81,7 +82,9 @@ function buildHeuristicSummary(
   if (averageChars >= 180) {
     strengths.push("Respostas com bom nível de detalhe e contexto.");
   } else {
-    concerns.push("Respostas curtas em várias perguntas; pode faltar profundidade.");
+    concerns.push(
+      "Respostas curtas em várias perguntas; pode faltar profundidade.",
+    );
   }
 
   if (positiveScore > 0) {
@@ -89,15 +92,21 @@ function buildHeuristicSummary(
   }
 
   if (negativeScore > 0) {
-    concerns.push("Existem sinais de insegurança em alguns pontos da entrevista.");
+    concerns.push(
+      "Existem sinais de insegurança em alguns pontos da entrevista.",
+    );
   }
 
   if (strengths.length === 0) {
-    strengths.push("Respostas consistentes e dentro do esperado para triagem inicial.");
+    strengths.push(
+      "Respostas consistentes e dentro do esperado para triagem inicial.",
+    );
   }
 
   if (concerns.length === 0) {
-    concerns.push("Não foram detetados sinais críticos de risco nesta leitura inicial.");
+    concerns.push(
+      "Não foram detetados sinais críticos de risco nesta leitura inicial.",
+    );
   }
 
   const executiveSummary = interviewTitle
@@ -127,7 +136,9 @@ function parseModelJson(content: string): Partial<ResponseSummary> | null {
     }
 
     try {
-      return JSON.parse(trimmed.slice(firstBrace, lastBrace + 1)) as Partial<ResponseSummary>;
+      return JSON.parse(
+        trimmed.slice(firstBrace, lastBrace + 1),
+      ) as Partial<ResponseSummary>;
     } catch {
       return null;
     }
@@ -156,11 +167,14 @@ export async function summarizeInterviewResponses(
   try {
     const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
     const interviewContext = safeItems
-      .map((item, index) => `P${index + 1}: ${item.question}\nR${index + 1}: ${item.answer}`)
+      .map(
+        (item, index) =>
+          `P${index + 1}: ${item.question}\nR${index + 1}: ${item.answer}`,
+      )
       .join("\n\n");
 
     const completion = await client.chat.completions.create({
-      model: "gpt-4o-mini",
+      model: "gpt-4o-mini-mini",
       temperature: 0.2,
       max_tokens: 420,
       messages: [
@@ -176,7 +190,9 @@ export async function summarizeInterviewResponses(
       ],
     });
 
-    const parsed = parseModelJson(completion.choices[0]?.message?.content || "");
+    const parsed = parseModelJson(
+      completion.choices[0]?.message?.content || "",
+    );
     if (!parsed) {
       return buildHeuristicSummary(safeItems, interviewTitle || undefined);
     }
@@ -193,7 +209,8 @@ export async function summarizeInterviewResponses(
     return {
       sentiment,
       executiveSummary:
-        executiveSummary || "Resumo gerado com base nas respostas desta sessão.",
+        executiveSummary ||
+        "Resumo gerado com base nas respostas desta sessão.",
       strengths:
         strengths.length > 0
           ? strengths

@@ -72,7 +72,7 @@ export default async function AdminCompanyResponseDetailPage({ params }: Props) 
             href={`/admin/${params.slug}/responses/${params.sessionId}/export`}
             className="btn-primary inline-flex px-4 py-2 text-sm"
           >
-            Exportar CSV
+            Exportar PDF
           </a>
           <Link
             href={`/admin/${params.slug}/responses`}

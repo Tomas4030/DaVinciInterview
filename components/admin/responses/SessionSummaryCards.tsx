@@ -25,12 +25,14 @@ export default function SessionSummaryCards({
         <p className="text-xs uppercase tracking-[0.06em] text-[var(--c-muted)]">
           Telemóvel
         </p>
-        <p className="mt-1 text-sm font-medium text-[var(--c-text)]">
+        <p className="mt-1 text-sm font-medium text-[var(--c-text)] max-w-[180px] truncate ">
           {telefone || "—"}
         </p>
       </article>
       <article className="rounded-xl border border-[var(--c-border)]/70 bg-[var(--c-surface)] p-4">
-        <p className="text-xs uppercase tracking-[0.06em] text-[var(--c-muted)]">Estado</p>
+        <p className="text-xs uppercase tracking-[0.06em] text-[var(--c-muted)]">
+          Estado
+        </p>
         <div className="mt-2">
           <ResponseStatusBadge status={status} />
         </div>

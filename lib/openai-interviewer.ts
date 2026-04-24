@@ -173,7 +173,7 @@ export async function obterProximaPergunta(
 
   try {
     const response = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
+      model: "gpt-4o-mini-mini",
       temperature: 0.4,
       max_tokens: 400,
       response_format: { type: "json_object" },

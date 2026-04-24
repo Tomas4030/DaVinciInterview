@@ -115,7 +115,7 @@ async function analisarRespostasComIA(
       .join("\n");
 
     const response = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model: "gpt-4o-mini",
       temperature: 0.5,
       max_tokens: 800,
       messages: [

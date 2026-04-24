@@ -20,7 +20,7 @@ export interface LogEntrada {
 
 class InterviewLogger {
   private sessaoId: string;
-  private modelo: string = "gpt-4o-mini";
+  private modelo: string = "gpt-4o-mini-mini";
   private versao: string = "1.0";
   private buffer: LogEntrada[] = [];
   private bufferSize = 10; // auto-flush quando atingir limite

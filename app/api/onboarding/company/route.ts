@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import {
   ADMIN_COMPANY_COOKIE,
   ADMIN_SESSION_COOKIE,
+  createAdminToken,
   getSessionMaxAgeSeconds,
   parseAdminToken,
 } from "@/lib/admin-auth";
@@ -10,6 +11,7 @@ import {
   isSlugAvailable,
   listUserCompanies,
 } from "@/lib/queries/companies";
+import { ensureUserByEmail } from "@/lib/queries/users";
 import { slugify } from "@/lib/slug";
 
 function isValidHttpUrl(value: string): boolean {
@@ -30,7 +32,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
     }
 
-    const existingCompanies = await listUserCompanies(session.userId);
+    const canonicalUser = await ensureUserByEmail(session.email);
+    const ownerUserId = canonicalUser.id;
+
+    const existingCompanies = await listUserCompanies(ownerUserId);
     if (existingCompanies.length > 0) {
       const company = existingCompanies[0];
       return NextResponse.json(
@@ -72,7 +77,7 @@ export async function POST(request: NextRequest) {
     }
 
     const company = await createCompanyWithOwner({
-      ownerId: session.userId,
+      ownerId: ownerUserId,
       name,
       slug,
       description,
@@ -92,6 +97,20 @@ export async function POST(request: NextRequest) {
       path: "/",
       maxAge: getSessionMaxAgeSeconds(),
     });
+
+    if (ownerUserId !== session.userId) {
+      response.cookies.set(
+        ADMIN_SESSION_COOKIE,
+        createAdminToken(canonicalUser.email, ownerUserId),
+        {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "lax",
+          path: "/",
+          maxAge: getSessionMaxAgeSeconds(),
+        },
+      );
+    }
 
     return response;
   } catch (error) {
