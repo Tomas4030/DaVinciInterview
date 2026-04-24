@@ -25,15 +25,31 @@ export default async function AdminCompanyDashboardPage({ params }: Props) {
     notFound();
   }
 
-  const membership = await getCompanyMembershipBySlug(
-    session.userId,
-    params.slug,
-  );
+  let membership: Awaited<ReturnType<typeof getCompanyMembershipBySlug>> = null;
+  try {
+    membership = await getCompanyMembershipBySlug(session.userId, params.slug);
+  } catch (error) {
+    console.error("[dashboard] Falha ao carregar membership", {
+      slug: params.slug,
+      userId: session.userId,
+      error,
+    });
+    notFound();
+  }
+
   if (!membership) {
     notFound();
   }
 
-  const interviews = await listInterviewsByCompany(membership.company.id);
+  let interviews: Awaited<ReturnType<typeof listInterviewsByCompany>> = [];
+  try {
+    interviews = await listInterviewsByCompany(membership.company.id);
+  } catch (error) {
+    console.error("[dashboard] Falha ao listar entrevistas", {
+      companyId: membership.company.id,
+      error,
+    });
+  }
   let totalResponses = 0;
   let totalCompleted = 0;
 

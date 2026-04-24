@@ -21,10 +21,18 @@ export default async function AdminCompanyLayout({ children, params }: Props) {
     redirect(`/admin/login?next=/admin/${params.slug}/dashboard`);
   }
 
-  const membership = await getCompanyMembershipBySlug(
-    session.userId,
-    params.slug,
-  );
+  let membership: Awaited<ReturnType<typeof getCompanyMembershipBySlug>> = null;
+  try {
+    membership = await getCompanyMembershipBySlug(session.userId, params.slug);
+  } catch (error) {
+    console.error("[admin layout] Falha ao carregar membership", {
+      slug: params.slug,
+      userId: session.userId,
+      error,
+    });
+    notFound();
+  }
+
   if (!membership) {
     notFound();
   }

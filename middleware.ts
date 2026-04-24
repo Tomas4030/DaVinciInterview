@@ -16,6 +16,31 @@ export async function middleware(request: NextRequest) {
       ? pathname.slice(basePath.length) || "/"
       : pathname;
 
+  const applyBasePath = (targetPath: string) => {
+    const normalized = targetPath.startsWith("/") ? targetPath : `/${targetPath}`;
+    if (!basePath) return normalized;
+    if (normalized === basePath || normalized.startsWith(`${basePath}/`)) {
+      return normalized;
+    }
+    return `${basePath}${normalized}`;
+  };
+
+  if (basePath) {
+    const duplicatedPrefix = `${basePath}${basePath}`;
+    if (pathname === duplicatedPrefix || pathname.startsWith(`${duplicatedPrefix}/`)) {
+      const fixedPath = pathname.replace(duplicatedPrefix, basePath);
+      const fixedUrl = request.nextUrl.clone();
+      fixedUrl.pathname = fixedPath;
+      return NextResponse.redirect(fixedUrl);
+    }
+
+    if (pathname === "/") {
+      const rewriteUrl = request.nextUrl.clone();
+      rewriteUrl.pathname = applyBasePath("/");
+      return NextResponse.rewrite(rewriteUrl);
+    }
+  }
+
   // Skip internal Next.js assets and API routes
   if (
     pathnameWithoutBasePath.startsWith("/_next") ||
@@ -38,14 +63,14 @@ export async function middleware(request: NextRequest) {
 
   if (session && (isAdminLoginRoute || isSignupRoute)) {
     const url = request.nextUrl.clone();
-    url.pathname = `${basePath}/onboarding`;
+    url.pathname = applyBasePath("/onboarding");
     url.search = "";
     return NextResponse.redirect(url);
   }
 
   if (!session && (isProtectedAdminRoute || isOnboardingRoute)) {
     const url = request.nextUrl.clone();
-    url.pathname = `${basePath}/admin/login`;
+    url.pathname = applyBasePath("/admin/login");
     url.searchParams.set("next", pathnameWithoutBasePath);
     return NextResponse.redirect(url);
   }
@@ -73,20 +98,28 @@ export async function middleware(request: NextRequest) {
     }
 
     const accessUrl = new URL(
-      `${basePath}/api/auth/company-access?slug=${encodeURIComponent(companySlug)}&requiredRole=${requiredRole}`,
+      `${applyBasePath("/api/auth/company-access")}?slug=${encodeURIComponent(companySlug)}&requiredRole=${requiredRole}`,
       request.nextUrl.origin,
     );
 
-    const accessResponse = await fetch(accessUrl.toString(), {
-      headers: {
-        cookie: request.headers.get("cookie") || "",
-      },
-      cache: "no-store",
-    });
+    let accessResponse: Response | null = null;
+    try {
+      accessResponse = await fetch(accessUrl.toString(), {
+        headers: {
+          cookie: request.headers.get("cookie") || "",
+        },
+        cache: "no-store",
+      });
+    } catch (error) {
+      const fallbackUrl = request.nextUrl.clone();
+      fallbackUrl.pathname = applyBasePath("/admin/login");
+      fallbackUrl.searchParams.set("next", pathnameWithoutBasePath);
+      return NextResponse.redirect(fallbackUrl);
+    }
 
-    if (!accessResponse.ok) {
+    if (!accessResponse?.ok) {
       const deniedUrl = request.nextUrl.clone();
-      deniedUrl.pathname = `${basePath}/404`;
+      deniedUrl.pathname = applyBasePath("/404");
       deniedUrl.search = "";
       return NextResponse.redirect(deniedUrl);
     }

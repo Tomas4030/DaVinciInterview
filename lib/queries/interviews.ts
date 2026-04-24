@@ -33,6 +33,11 @@ function mapInterview(row: any): InterviewRecord {
   };
 }
 
+function isLegacyVagasUnavailable(error: any): boolean {
+  const code = String(error?.code || "");
+  return code === "ER_NO_SUCH_TABLE" || code === "ER_BAD_FIELD_ERROR";
+}
+
 export async function getInterviewById(
   interviewId: string,
   companyId: string,
@@ -77,35 +82,75 @@ export async function getInterviewByLegacyVagaId(
 export async function listInterviewsByCompany(
   companyId: string,
 ): Promise<InterviewRecord[]> {
-  const [rows] = await query(
-    `
-    SELECT i.*, v.modalidade AS legacy_modalidade
-    FROM interviews i
-    LEFT JOIN vagas v ON v.id = i.legacy_vaga_id
-    WHERE i.company_id = ?
-    ORDER BY i.created_at DESC
-    `,
-    [companyId],
-  );
+  let rows: any[] = [];
 
-  return (rows as any[]).map(mapInterview);
+  try {
+    const [joinedRows] = await query(
+      `
+      SELECT i.*, v.modalidade AS legacy_modalidade
+      FROM interviews i
+      LEFT JOIN vagas v ON v.id = i.legacy_vaga_id
+      WHERE i.company_id = ?
+      ORDER BY i.created_at DESC
+      `,
+      [companyId],
+    );
+    rows = joinedRows as any[];
+  } catch (error: any) {
+    if (!isLegacyVagasUnavailable(error)) {
+      throw error;
+    }
+
+    const [fallbackRows] = await query(
+      `
+      SELECT i.*, NULL AS legacy_modalidade
+      FROM interviews i
+      WHERE i.company_id = ?
+      ORDER BY i.created_at DESC
+      `,
+      [companyId],
+    );
+    rows = fallbackRows as any[];
+  }
+
+  return rows.map(mapInterview);
 }
 
 export async function listPublishedInterviewsByCompany(
   companyId: string,
 ): Promise<InterviewRecord[]> {
-  const [rows] = await query(
-    `
-    SELECT i.*, v.modalidade AS legacy_modalidade
-    FROM interviews i
-    LEFT JOIN vagas v ON v.id = i.legacy_vaga_id
-    WHERE i.company_id = ? AND i.status = 'published'
-    ORDER BY i.created_at DESC
-    `,
-    [companyId],
-  );
+  let rows: any[] = [];
 
-  return (rows as any[]).map(mapInterview);
+  try {
+    const [joinedRows] = await query(
+      `
+      SELECT i.*, v.modalidade AS legacy_modalidade
+      FROM interviews i
+      LEFT JOIN vagas v ON v.id = i.legacy_vaga_id
+      WHERE i.company_id = ? AND i.status = 'published'
+      ORDER BY i.created_at DESC
+      `,
+      [companyId],
+    );
+    rows = joinedRows as any[];
+  } catch (error: any) {
+    if (!isLegacyVagasUnavailable(error)) {
+      throw error;
+    }
+
+    const [fallbackRows] = await query(
+      `
+      SELECT i.*, NULL AS legacy_modalidade
+      FROM interviews i
+      WHERE i.company_id = ? AND i.status = 'published'
+      ORDER BY i.created_at DESC
+      `,
+      [companyId],
+    );
+    rows = fallbackRows as any[];
+  }
+
+  return rows.map(mapInterview);
 }
 
 export async function resolveCompanyAndInterviewFromLegacyVaga(
