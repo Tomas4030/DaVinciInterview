@@ -6,7 +6,7 @@ const basePath = normalizeBasePath(process.env.NEXT_PUBLIC_BASE_PATH || "");
 const isDev = process.env.NODE_ENV !== "production";
 
 const nextConfig = {
-  ...(isDev ? {} : { output: "standalone" }),
+  output: "standalone",
   distDir: isDev ? ".next-dev" : ".next",
   basePath,
   assetPrefix: basePath || undefined,
