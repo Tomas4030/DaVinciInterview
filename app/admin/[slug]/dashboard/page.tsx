@@ -34,35 +34,46 @@ export default async function AdminCompanyDashboardPage({ params }: Props) {
   }
 
   const interviews = await listInterviewsByCompany(membership.company.id);
-  const [responseRows] = await query<{ total: number }>(
-    `SELECT COUNT(*) as total FROM candidato_respostas WHERE company_id = ?`,
-    [membership.company.id],
-  );
-  const [completionRows] = await query<{ completed: number }>(
-    `SELECT COUNT(*) as completed FROM candidato_respostas WHERE company_id = ? AND status = 'concluida'`,
-    [membership.company.id],
-  );
-  const [createdWindowRows] = await query<{
-    week_count: number;
-    month_count: number;
-  }>(
-    `
-    SELECT
-      SUM(CASE WHEN created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY) THEN 1 ELSE 0 END) as week_count,
-      SUM(CASE WHEN created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY) THEN 1 ELSE 0 END) as month_count
-    FROM interviews
-    WHERE company_id = ?
-    `,
-    [membership.company.id],
-  );
+  let totalResponses = 0;
+  let totalCompleted = 0;
 
-  const totalResponses = Number(responseRows[0]?.total || 0);
-  const totalCompleted = Number(completionRows[0]?.completed || 0);
+  try {
+    const [responseRows] = await query<{ total: number }>(
+      `SELECT COUNT(*) as total FROM candidato_respostas WHERE company_id = ?`,
+      [membership.company.id],
+    );
+    totalResponses = Number(responseRows[0]?.total || 0);
+  } catch (error) {
+    console.warn("[dashboard] Nao foi possivel contar respostas totais", error);
+  }
+
+  try {
+    const [completionRows] = await query<{ completed: number }>(
+      `SELECT COUNT(*) as completed FROM candidato_respostas WHERE company_id = ? AND status = 'concluida'`,
+      [membership.company.id],
+    );
+    totalCompleted = Number(completionRows[0]?.completed || 0);
+  } catch (error) {
+    console.warn("[dashboard] Nao foi possivel contar respostas concluidas", error);
+  }
+
+  const now = Date.now();
+  const weekAgo = now - 7 * 24 * 60 * 60 * 1000;
+  const monthAgo = now - 30 * 24 * 60 * 60 * 1000;
+
+  const interviewTimestamps = interviews
+    .map((item: any) => {
+      const rawDate = item?.created_at || item?.criada_em || item?.updated_at;
+      const timestamp = rawDate ? new Date(rawDate).getTime() : NaN;
+      return Number.isFinite(timestamp) ? timestamp : null;
+    })
+    .filter((timestamp): timestamp is number => timestamp !== null);
+
   const totalPublished = interviews.filter(
     (item) => item.status === "published",
   ).length;
-  const interviewsWeek = Number(createdWindowRows[0]?.week_count || 0);
-  const interviewsMonth = Number(createdWindowRows[0]?.month_count || 0);
+  const interviewsWeek = interviewTimestamps.filter((ts) => ts >= weekAgo).length;
+  const interviewsMonth = interviewTimestamps.filter((ts) => ts >= monthAgo).length;
   const completionRate =
     totalResponses > 0
       ? Math.round((totalCompleted / totalResponses) * 100)

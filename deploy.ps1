@@ -1,48 +1,72 @@
 $ErrorActionPreference = "Stop"
+Set-StrictMode -Version Latest
 
 Write-Host "[deploy] Limpar builds antigos..."
 
 if (Test-Path ".next") {
-    Remove-Item ".next" -Recurse -Force
-    Write-Host "[deploy] .next apagado"
+  Remove-Item ".next" -Recurse -Force
+  Write-Host "[deploy] .next apagado"
 }
 
 if (Test-Path ".next-dev") {
-    Remove-Item ".next-dev" -Recurse -Force
-    Write-Host "[deploy] .next-dev apagado"
+  Remove-Item ".next-dev" -Recurse -Force
+  Write-Host "[deploy] .next-dev apagado"
 }
 
 if (Test-Path "deploy") {
-    Remove-Item "deploy" -Recurse -Force
-    Write-Host "[deploy] deploy antigo apagado"
+  Remove-Item "deploy" -Recurse -Force
+  Write-Host "[deploy] deploy antigo apagado"
 }
 
 Write-Host "[deploy] Criar pasta deploy..."
 New-Item -ItemType Directory -Path "deploy" | Out-Null
 
 Write-Host "[deploy] Build production (standalone)..."
-$env:NEXT_PUBLIC_BASE_PATH = "/tomas"
-$env:NODE_ENV = "production"
+$previousNodeEnv = $env:NODE_ENV
+$previousBasePath = $env:NEXT_PUBLIC_BASE_PATH
 
-npm run build
+try {
+  $env:NODE_ENV = "production"
+  if ([string]::IsNullOrWhiteSpace($env:NEXT_PUBLIC_BASE_PATH)) {
+    $env:NEXT_PUBLIC_BASE_PATH = "/tomas"
+  }
+
+  npm run build
+}
+finally {
+  if ([string]::IsNullOrEmpty($previousNodeEnv)) {
+    Remove-Item Env:NODE_ENV -ErrorAction SilentlyContinue
+  }
+  else {
+    $env:NODE_ENV = $previousNodeEnv
+  }
+
+  if ([string]::IsNullOrEmpty($previousBasePath)) {
+    Remove-Item Env:NEXT_PUBLIC_BASE_PATH -ErrorAction SilentlyContinue
+  }
+  else {
+    $env:NEXT_PUBLIC_BASE_PATH = $previousBasePath
+  }
+}
 
 if (-not (Test-Path ".next/standalone")) {
-    Write-Host "[deploy] ERRO: .next/standalone nao foi gerado"
-    exit 1
+  throw "[deploy] ERRO: .next/standalone nao foi gerado"
 }
 
 Write-Host "[deploy] Copiar standalone..."
-Copy-Item ".next/standalone/*" "deploy/" -Recurse -Force
+Get-ChildItem ".next/standalone" -Force | ForEach-Object {
+  Copy-Item $_.FullName "deploy" -Recurse -Force
+}
 
 if (Test-Path ".next/static") {
-    Write-Host "[deploy] Copiar static files..."
-    New-Item -ItemType Directory -Path "deploy/.next/static" -Force | Out-Null
-    Copy-Item ".next/static/*" "deploy/.next/static/" -Recurse -Force
+  Write-Host "[deploy] Copiar static files..."
+  New-Item -ItemType Directory -Path "deploy/.next/static" -Force | Out-Null
+  Copy-Item ".next/static/*" "deploy/.next/static/" -Recurse -Force
 }
 
 if (Test-Path "public") {
-    Write-Host "[deploy] Copiar public..."
-    Copy-Item "public" "deploy/" -Recurse -Force
+  Write-Host "[deploy] Copiar public..."
+  Copy-Item "public" "deploy/" -Recurse -Force
 }
 
 Write-Host "[deploy] Criar app.js para cPanel..."
