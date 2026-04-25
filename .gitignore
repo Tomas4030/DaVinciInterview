@@ -42,8 +42,6 @@ OpenClaude
 .supabase/*
 *.claude
 deploy.sh
-.deploy/*
+deploy/*
 .next-dev/*
 md/*
-
-.deploy/

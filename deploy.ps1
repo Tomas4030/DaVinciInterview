@@ -27,8 +27,10 @@ $previousBasePath = $env:NEXT_PUBLIC_BASE_PATH
 
 try {
   $env:NODE_ENV = "production"
+  # Para deploy na raiz do dominio, nao forcar basePath.
+  # Se existir NEXT_PUBLIC_BASE_PATH no ambiente, o build usa esse valor.
   if ([string]::IsNullOrWhiteSpace($env:NEXT_PUBLIC_BASE_PATH)) {
-    $env:NEXT_PUBLIC_BASE_PATH = "/tomas"
+    Remove-Item Env:NEXT_PUBLIC_BASE_PATH -ErrorAction SilentlyContinue
   }
 
   npm run build

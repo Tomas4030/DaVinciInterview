@@ -8,8 +8,9 @@ import {
 
 export { ADMIN_COMPANY_COOKIE, ADMIN_SESSION_COOKIE };
 
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "admin@MatchWorkynterviews.com";
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "";
+const ADMIN_EMAIL =
+  (process.env.ADMIN_EMAIL || "admin@MatchWorkynterviews.com").trim();
+const ADMIN_PASSWORD = (process.env.ADMIN_PASSWORD || "").trim();
 
 type AdminTokenPayload = {
   userId: string;
@@ -21,7 +22,9 @@ type AdminTokenPayload = {
 
 function getAuthSecret(): string {
   const secret =
-    process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET || ADMIN_PASSWORD;
+    (process.env.AUTH_SECRET || "").trim() ||
+    (process.env.NEXTAUTH_SECRET || "").trim() ||
+    ADMIN_PASSWORD;
   return secret || "dev-insecure-auth-secret-change-me";
 }
 

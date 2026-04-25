@@ -12,9 +12,9 @@ export { ADMIN_SESSION_COOKIE };
 
 function getAuthSecretForMiddleware(): string {
   const secret =
-    process.env.AUTH_SECRET ||
-    process.env.NEXTAUTH_SECRET ||
-    process.env.ADMIN_PASSWORD;
+    (process.env.AUTH_SECRET || "").trim() ||
+    (process.env.NEXTAUTH_SECRET || "").trim() ||
+    (process.env.ADMIN_PASSWORD || "").trim();
 
   return secret || "dev-insecure-auth-secret-change-me";
 }
