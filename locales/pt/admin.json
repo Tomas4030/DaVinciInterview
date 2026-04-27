@@ -200,6 +200,8 @@
     "workModeRemote": "Remoto",
     "workModeHybrid": "Hibrido",
     "workModeOnsite": "Presencial",
+    "contextLabel": "Contexto",
+    "contextPlaceholder": "Ex: Entrevista para equipa em Franca",
     "statusLabel": "Estado",
     "statusDraft": "Rascunho",
     "statusPublished": "Publicada",

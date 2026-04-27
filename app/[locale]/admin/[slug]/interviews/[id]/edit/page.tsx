@@ -5,6 +5,7 @@ import { AdminInterviewForm } from "@/components/admin";
 import { ADMIN_SESSION_COOKIE, parseAdminToken } from "@/lib/admin-auth";
 import { tAdmin } from "@/lib/i18n/admin";
 import {
+  extractInterviewContextFromDescription,
   extractInterviewWorkModeFromDescription,
   stripInterviewMetaFromDescription,
 } from "@/lib/interview-meta";
@@ -71,6 +72,9 @@ export default async function AdminCompanyInterviewEditPage({ params }: Props) {
           interviewId={interview.id}
           initialTitle={interview.title}
           initialDescription={stripInterviewMetaFromDescription(interview.description)}
+          initialInterviewContext={extractInterviewContextFromDescription(
+            interview.description,
+          )}
           initialWorkMode={
             interview.work_mode ||
             extractInterviewWorkModeFromDescription(interview.description)

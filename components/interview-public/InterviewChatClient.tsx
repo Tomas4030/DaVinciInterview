@@ -472,11 +472,11 @@ export default function InterviewChatClient({
 
             <div className="mt-4 space-y-2">
               <p className="text-[12px] uppercase tracking-[0.06em] text-[#787774]">
-                {tInterview(locale, "chat.companyDescription")}
+                {tInterview(locale, "chat.interviewDescription")}
               </p>
               <p className="text-[14px] leading-6 text-[#2F3437]">
-                {companyDescription ||
-                  tInterview(locale, "chat.companyDescriptionFallback")}
+                {interviewDescription ||
+                  tInterview(locale, "chat.interviewDescriptionFallback")}
               </p>
             </div>
 
@@ -491,7 +491,7 @@ export default function InterviewChatClient({
               <button
                 type="button"
                 onClick={confirmContextAndContinue}
-                className="h-11 rounded-md bg-[#111111] px-4 text-[12px] font-semibold uppercase tracking-[0.05em] text-white transition hover:bg-[#333333] active:scale-[0.98]"
+                className="h-11 rounded-md bg-[var(--c-brand)] px-4 text-[12px] font-semibold uppercase tracking-[0.05em] text-white transition hover:bg-[var(--c-brand-dark)] active:scale-[0.98]"
               >
                 {tInterview(locale, "chat.continue")}
               </button>

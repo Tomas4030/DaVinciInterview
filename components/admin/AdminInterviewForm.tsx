@@ -17,11 +17,19 @@ type Props = {
   interviewId?: string;
   initialTitle?: string;
   initialDescription?: string;
+  initialInterviewContext?: string;
   initialWorkMode?: InterviewWorkMode;
   initialStatus?: "draft" | "published" | "archived";
   initialQuestionsText?: string;
   locale?: string;
 };
+
+function resolveInitialWorkMode(value: InterviewWorkMode): "remote" | "hybrid" | "onsite" {
+  if (value === "remote" || value === "hybrid" || value === "onsite") {
+    return value;
+  }
+  return "remote";
+}
 
 function parseQuestionsText(value: string): string[] {
   return String(value || "")
@@ -41,6 +49,7 @@ export default function AdminInterviewForm({
   interviewId,
   initialTitle = "",
   initialDescription = "",
+  initialInterviewContext = "",
   initialWorkMode = "unspecified",
   initialStatus = "draft",
   initialQuestionsText = "",
@@ -50,8 +59,9 @@ export default function AdminInterviewForm({
   const initialQuestions = parseQuestionsText(initialQuestionsText);
   const [title, setTitle] = useState(initialTitle);
   const [description, setDescription] = useState(initialDescription);
-  const [workMode, setWorkMode] = useState<InterviewWorkMode>(
-    normalizeInterviewWorkMode(initialWorkMode),
+  const [interviewContext, setInterviewContext] = useState(initialInterviewContext);
+  const [workMode, setWorkMode] = useState<"remote" | "hybrid" | "onsite">(
+    resolveInitialWorkMode(normalizeInterviewWorkMode(initialWorkMode)),
   );
   const [status, setStatus] = useState(initialStatus);
   const [questions, setQuestions] = useState<string[]>(
@@ -95,6 +105,7 @@ export default function AdminInterviewForm({
         body: JSON.stringify({
           title,
           description,
+          interviewContext,
           workMode,
           status,
           questions: normalizedQuestions,
@@ -244,49 +255,67 @@ export default function AdminInterviewForm({
         />
       </div>
 
-      <div>
-        <label
-          htmlFor="interview-work-mode"
-          className="mb-1.5 block text-xs font-medium text-[var(--c-muted)]"
-        >
-          {tAdmin(locale, "interviewForm.workModeLabel")}
-        </label>
-        <select
-          id="interview-work-mode"
-          value={workMode}
-          onChange={(event) =>
-            setWorkMode(normalizeInterviewWorkMode(event.target.value))
-          }
-          className="input-base border-[var(--c-border)] bg-[var(--c-bg)]"
-        >
-          <option value="unspecified">
-            {tAdmin(locale, "interviewForm.workModeUnspecified")}
-          </option>
-          <option value="remote">{tAdmin(locale, "interviewForm.workModeRemote")}</option>
-          <option value="hybrid">{tAdmin(locale, "interviewForm.workModeHybrid")}</option>
-          <option value="onsite">{tAdmin(locale, "interviewForm.workModeOnsite")}</option>
-        </select>
-      </div>
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+        <div>
+          <label
+            htmlFor="interview-work-mode"
+            className="mb-1.5 block text-xs font-medium text-[var(--c-muted)]"
+          >
+            {tAdmin(locale, "interviewForm.workModeLabel")}
+          </label>
+          <select
+            id="interview-work-mode"
+            value={workMode}
+            onChange={(event) =>
+              setWorkMode(
+                resolveInitialWorkMode(normalizeInterviewWorkMode(event.target.value)),
+              )
+            }
+            className="input-base border-[var(--c-border)] bg-[var(--c-bg)]"
+          >
+            <option value="remote">{tAdmin(locale, "interviewForm.workModeRemote")}</option>
+            <option value="hybrid">{tAdmin(locale, "interviewForm.workModeHybrid")}</option>
+            <option value="onsite">{tAdmin(locale, "interviewForm.workModeOnsite")}</option>
+          </select>
+        </div>
 
-      <div>
-        <label
-          htmlFor="interview-status"
-          className="mb-1.5 block text-xs font-medium text-[var(--c-muted)]"
-        >
-          {tAdmin(locale, "interviewForm.statusLabel")}
-        </label>
-        <select
-          id="interview-status"
-          value={status}
-          onChange={(event) =>
-            setStatus(event.target.value as "draft" | "published" | "archived")
-          }
-          className="input-base border-[var(--c-border)] bg-[var(--c-bg)]"
-        >
-          <option value="draft">{tAdmin(locale, "interviewForm.statusDraft")}</option>
-          <option value="published">{tAdmin(locale, "interviewForm.statusPublished")}</option>
-          <option value="archived">{tAdmin(locale, "interviewForm.statusArchived")}</option>
-        </select>
+        <div>
+          <label
+            htmlFor="interview-status"
+            className="mb-1.5 block text-xs font-medium text-[var(--c-muted)]"
+          >
+            {tAdmin(locale, "interviewForm.statusLabel")}
+          </label>
+          <select
+            id="interview-status"
+            value={status}
+            onChange={(event) =>
+              setStatus(event.target.value as "draft" | "published" | "archived")
+            }
+            className="input-base border-[var(--c-border)] bg-[var(--c-bg)]"
+          >
+            <option value="draft">{tAdmin(locale, "interviewForm.statusDraft")}</option>
+            <option value="published">{tAdmin(locale, "interviewForm.statusPublished")}</option>
+            <option value="archived">{tAdmin(locale, "interviewForm.statusArchived")}</option>
+          </select>
+        </div>
+
+        <div>
+          <label
+            htmlFor="interview-context"
+            className="mb-1.5 block text-xs font-medium text-[var(--c-muted)]"
+          >
+            {tAdmin(locale, "interviewForm.contextLabel")}
+          </label>
+          <input
+            id="interview-context"
+            type="text"
+            value={interviewContext}
+            onChange={(event) => setInterviewContext(event.target.value)}
+            className="input-base border-[var(--c-border)] bg-[var(--c-bg)]"
+            placeholder={tAdmin(locale, "interviewForm.contextPlaceholder")}
+          />
+        </div>
       </div>
 
       <div>

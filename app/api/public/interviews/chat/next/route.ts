@@ -4,6 +4,10 @@ import { getInterviewById } from "@/lib/queries/interviews";
 import { validarSessao } from "@/lib/queries/candidatos";
 import { validateLocalSession } from "@/lib/in-memory-verification";
 import { obterProximaPergunta } from "@/lib/openai-interviewer";
+import {
+  extractInterviewContextFromDescription,
+  stripInterviewMetaFromDescription,
+} from "@/lib/interview-meta";
 import { withTimeout } from "@/lib/timeout";
 
 const DB_OP_TIMEOUT_MS = Number(process.env.DB_OP_TIMEOUT_MS || 3000);
@@ -67,7 +71,12 @@ export async function POST(request: NextRequest) {
       iteracaoAtual,
       companyName: company.name,
       companyDescription: company.description || "",
-      interviewDescription: interview.description || "",
+      interviewDescription: stripInterviewMetaFromDescription(
+        interview.description || "",
+      ),
+      interviewContext: extractInterviewContextFromDescription(
+        interview.description || "",
+      ),
       interviewQuestions: Array.isArray(interview.questions) ? interview.questions : [],
     });
 

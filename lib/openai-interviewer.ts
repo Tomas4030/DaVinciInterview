@@ -22,6 +22,7 @@ interface NextQuestionParams {
   companyName?: string;
   companyDescription?: string;
   interviewDescription?: string;
+  interviewContext?: string;
   interviewQuestions?: any[];
 }
 
@@ -142,6 +143,7 @@ export async function obterProximaPergunta(
     companyName = "",
     companyDescription = "",
     interviewDescription = "",
+    interviewContext = "",
     interviewQuestions = [],
   } = params;
 
@@ -185,6 +187,7 @@ export async function obterProximaPergunta(
 Descrição da empresa: ${companyDescription || "N/A"}
 Vaga: ${vagaTitulo}
 Descrição da vaga: ${interviewDescription || "N/A"}
+Contexto adicional da entrevista: ${interviewContext || "N/A"}
 Perguntas da entrevista (contexto): ${JSON.stringify(interviewQuestions).slice(0, 2500)}
 Pergunta da entrevista: "${perguntaAtual}"
 Resposta do candidato: "${respostaUser}"

@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { getCompanyBySlug } from "@/lib/queries/companies";
 import { getInterviewById } from "@/lib/queries/interviews";
 import InterviewChatClient from "@/components/interview-public/InterviewChatClient";
+import { stripInterviewMetaFromDescription } from "@/lib/interview-meta";
 
 type Props = {
   params: { locale: string; slug: string; interviewId: string };
@@ -50,7 +51,9 @@ export default async function InterviewChatPage({ params }: Props) {
       companyLogoUrl={company.logo_url || ""}
       companyDescription={String(company.description || "")}
       interviewTitle={interview.title}
-      interviewDescription={String(interview.description || "")}
+      interviewDescription={stripInterviewMetaFromDescription(
+        String(interview.description || ""),
+      )}
       questions={normalizedQuestions}
     />
   );

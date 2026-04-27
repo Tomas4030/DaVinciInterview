@@ -25,7 +25,6 @@ export default function CompanyPublicHeader({ company, locale = "en" }: CompanyP
   });
   const interviews = tInterview(locale, "companyPublic.header.interviews");
   const howItWorks = tInterview(locale, "companyPublic.header.howItWorks");
-  const viewInterviews = tInterview(locale, "companyPublic.header.viewInterviews");
 
   return (
     <header className="sticky top-0 z-20 border-b border-[var(--c-border)]/60 bg-[var(--c-surface)]/80 backdrop-blur-xl">
@@ -72,18 +71,10 @@ export default function CompanyPublicHeader({ company, locale = "en" }: CompanyP
           </Link>
         </nav>
 
-        <div className="flex items-center gap-2">
-          <LocaleSelect
-            locale={locale}
-            ariaLabel={locale === "pt" ? "Selecionar idioma" : "Select language"}
-          />
-          <a
-            href="#vagas"
-            className="hidden rounded-md bg-[var(--c-brand)] px-4 py-2 text-[0.75rem] font-semibold text-white transition-colors hover:bg-[var(--c-brand-dark)] md:inline-flex"
-          >
-            {viewInterviews}
-          </a>
-        </div>
+        <LocaleSelect
+          locale={locale}
+          ariaLabel={locale === "pt" ? "Selecionar idioma" : "Select language"}
+        />
       </div>
     </header>
   );

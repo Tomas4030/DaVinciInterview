@@ -1,6 +1,7 @@
 export type InterviewWorkMode = "remote" | "hybrid" | "onsite" | "unspecified";
 
 const WORK_MODE_MARKER_REGEX = /\[\[work_mode:(remote|hybrid|onsite)\]\]/i;
+const INTERVIEW_CONTEXT_MARKER_REGEX = /\[\[interview_context:([\s\S]*?)\]\]/i;
 
 export function normalizeInterviewWorkMode(value: unknown): InterviewWorkMode {
   const normalized = String(value || "")
@@ -39,7 +40,43 @@ export function stripInterviewMetaFromDescription(
   description: string | null | undefined,
 ): string {
   const source = String(description || "");
-  return source.replace(WORK_MODE_MARKER_REGEX, "").trim();
+  return source
+    .replace(WORK_MODE_MARKER_REGEX, "")
+    .replace(INTERVIEW_CONTEXT_MARKER_REGEX, "")
+    .trim();
+}
+
+export function extractInterviewContextFromDescription(
+  description: string | null | undefined,
+): string {
+  const source = String(description || "");
+  const match = source.match(INTERVIEW_CONTEXT_MARKER_REGEX);
+  if (!match?.[1]) return "";
+  return String(match[1]).trim();
+}
+
+export function buildInterviewDescriptionWithMeta(
+  baseDescription: string | null | undefined,
+  workMode: InterviewWorkMode,
+  interviewContext: string | null | undefined,
+): string | null {
+  const cleanBase = stripInterviewMetaFromDescription(baseDescription);
+  const parts: string[] = [];
+
+  if (cleanBase) {
+    parts.push(cleanBase);
+  }
+
+  if (workMode !== "unspecified") {
+    parts.push(`[[work_mode:${workMode}]]`);
+  }
+
+  const cleanContext = String(interviewContext || "").trim();
+  if (cleanContext) {
+    parts.push(`[[interview_context:${cleanContext}]]`);
+  }
+
+  return parts.length > 0 ? parts.join("\n") : null;
 }
 
 export function getInterviewWorkModeLabel(workMode: InterviewWorkMode): string {
