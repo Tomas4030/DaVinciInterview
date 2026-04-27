@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { tAdmin } from "@/lib/i18n/admin";
 import type {
   CandidateAnalysis,
   InterviewAnalysis,
@@ -14,6 +15,7 @@ type Props = {
   selectedVaga: VagaAnalysis;
   selectedInterview: InterviewAnalysis;
   selectedCandidate: CandidateAnalysis;
+  locale?: string;
 };
 
 export default function CandidateSidebar({
@@ -21,6 +23,7 @@ export default function CandidateSidebar({
   selectedVaga,
   selectedInterview,
   selectedCandidate,
+  locale = "pt",
 }: Props) {
   const selectedRanking =
     selectedInterview.ranking && selectedInterview.ranking.length > 0
@@ -32,10 +35,10 @@ export default function CandidateSidebar({
       <div className="flex items-center justify-between gap-3">
         <div>
           <h2 className="text-[24px] font-semibold text-[var(--c-text)]">
-            Candidatos
+            {tAdmin(locale, "aiComparison.sidebarTitle")}
           </h2>
           <p className="mt-1 text-sm text-[var(--c-muted)]">
-            Total de candidatos
+            {tAdmin(locale, "aiComparison.sidebarTotal")}
           </p>
         </div>
 
@@ -62,7 +65,7 @@ export default function CandidateSidebar({
             type="text"
             value=""
             readOnly
-            placeholder="Pesquisar candidato..."
+            placeholder={tAdmin(locale, "aiComparison.searchPlaceholder")}
             className="h-[46px] w-full rounded-xl border border-[var(--c-border)]/70 bg-white pl-10 pr-4 text-sm text-[var(--c-muted)] outline-none"
           />
         </div>
@@ -108,7 +111,8 @@ export default function CandidateSidebar({
 
                   <div className="mt-3 flex items-center justify-between gap-3">
                     <p className="text-sm text-[var(--c-text)]">
-                      Score: <span className="font-semibold">{rankedItem.score}</span>
+                      {tAdmin(locale, "aiComparison.score")}: {" "}
+                      <span className="font-semibold">{rankedItem.score}</span>
                     </p>
 
                     <p className="text-sm font-semibold text-[var(--c-text)]">

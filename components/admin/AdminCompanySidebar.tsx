@@ -3,9 +3,11 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { tAdmin } from "@/lib/i18n/admin";
 
 type Props = {
   slug: string;
+  locale?: string;
 };
 
 type Item = {
@@ -109,18 +111,36 @@ const ITEMS: Item[] = [
   },
 ];
 
-export default function AdminCompanySidebar({ slug }: Props) {
+export default function AdminCompanySidebar({ slug, locale = "pt" }: Props) {
   const pathname = usePathname();
   const base = `/admin/${slug}`;
+  const items = ITEMS.map((item) => {
+    if (item.key === "interviews") {
+      return { ...item, label: tAdmin(locale, "sidebar.interviews") };
+    }
+    if (item.key === "responses") {
+      return { ...item, label: tAdmin(locale, "sidebar.responses") };
+    }
+    if (item.key === "settings") {
+      return { ...item, label: tAdmin(locale, "sidebar.settings") };
+    }
+    if (item.key === "billing") {
+      return { ...item, label: tAdmin(locale, "sidebar.billing") };
+    }
+    return item;
+  });
 
   return (
     <aside className="rounded-[20px] border border-[var(--c-border)]/70 bg-[var(--c-surface)] p-4">
       <p className="px-2 pb-3 text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--c-muted)]">
-        Navegação
+        {tAdmin(locale, "sidebar.navigation")}
       </p>
 
-      <nav className="space-y-1.5" aria-label="Navegação da empresa">
-        {ITEMS.map((item) => {
+      <nav
+        className="space-y-1.5"
+        aria-label={tAdmin(locale, "sidebar.companyNavigation")}
+      >
+        {items.map((item) => {
           const href = `${base}/${item.path}`;
           const active = pathname === href || pathname.startsWith(`${href}/`);
 

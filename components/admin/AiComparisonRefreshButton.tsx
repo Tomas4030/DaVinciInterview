@@ -2,17 +2,19 @@
 
 import { useState } from "react";
 import { withBasePath } from "@/lib/base-path";
+import { tAdmin } from "@/lib/i18n/admin";
 
 type Props = {
   slug: string;
+  locale?: string;
 };
 
-export default function AiComparisonRefreshButton({ slug }: Props) {
+export default function AiComparisonRefreshButton({ slug, locale = "pt" }: Props) {
   const [loading, setLoading] = useState(false);
 
   async function handleRefresh() {
     const confirmed = window.confirm(
-      "Deseja mesmo substituir os dados atuais da analise IA e recriar as estatisticas?",
+      tAdmin(locale, "aiComparison.refreshConfirm"),
     );
     if (!confirmed) return;
 
@@ -24,13 +26,13 @@ export default function AiComparisonRefreshButton({ slug }: Props) {
       );
 
       if (!response.ok) {
-        throw new Error("Falha ao recriar analise IA");
+        throw new Error(tAdmin(locale, "aiComparison.refreshError"));
       }
 
       window.location.reload();
     } catch (error) {
       console.error(error);
-      window.alert("Nao foi possivel recriar os dados da analise IA.");
+      window.alert(tAdmin(locale, "aiComparison.refreshError"));
     } finally {
       setLoading(false);
     }
@@ -40,10 +42,12 @@ export default function AiComparisonRefreshButton({ slug }: Props) {
     <button
       type="button"
       onClick={handleRefresh}
-      disabled={loading}
-      className="inline-flex h-8 items-center rounded-lg bg-[var(--c-brand)] px-3 text-xs font-medium text-white transition-colors hover:bg-[var(--c-brand-dark)] disabled:opacity-60"
-    >
-      {loading ? "A recriar..." : "Recriar dados IA"}
+    disabled={loading}
+    className="inline-flex h-8 items-center rounded-lg bg-[var(--c-brand)] px-3 text-xs font-medium text-white transition-colors hover:bg-[var(--c-brand-dark)] disabled:opacity-60"
+  >
+      {loading
+        ? tAdmin(locale, "aiComparison.refreshLoading")
+        : tAdmin(locale, "aiComparison.refreshAction")}
     </button>
   );
 }

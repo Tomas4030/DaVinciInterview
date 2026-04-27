@@ -1,3 +1,5 @@
+import { tLanding, tLandingObject } from "@/lib/i18n/landing";
+
 const STEPS = [
   {
     num: "01",
@@ -81,12 +83,31 @@ const STEPS = [
   },
 ];
 
-export default function HowItWorksSection() {
+type HowItWorksSectionProps = {
+  locale?: string;
+};
+
+export default function HowItWorksSection({ locale = "pt" }: HowItWorksSectionProps) {
+  const ariaLabel = tLanding(locale, "howItWorks.ariaLabel");
+  const eyebrow = tLanding(locale, "howItWorks.eyebrow");
+  const title = tLanding(locale, "howItWorks.title");
+  const description = tLanding(locale, "howItWorks.description");
+  const stepLabel = tLanding(locale, "howItWorks.stepLabel");
+  const translatedSteps = tLandingObject<
+    Array<{ title: string; desc: string; highlight: string }>
+  >(locale, "howItWorks.steps");
+  const steps = STEPS.map((step, index) => ({
+    ...step,
+    title: translatedSteps[index]?.title || step.title,
+    desc: translatedSteps[index]?.desc || step.desc,
+    highlight: translatedSteps[index]?.highlight || step.highlight,
+  }));
+
   return (
     <section
       id="como-funciona"
       className="relative overflow-hidden py-20 md:py-28"
-      aria-label="Como funciona o MatchWorky"
+      aria-label={ariaLabel}
     >
       <div
         className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,#e5e7eb_1px,transparent_1px),linear-gradient(to_bottom,#e5e7eb_1px,transparent_1px)] bg-[size:44px_44px] opacity-[0.05]"
@@ -97,20 +118,19 @@ export default function HowItWorksSection() {
         {/* Header */}
         <div className="mx-auto mb-14 max-w-2xl text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.1em] text-[var(--c-brand)]">
-            Como funciona
+            {eyebrow}
           </p>
           <h2 className="mt-3 text-3xl font-semibold tracking-tight text-[var(--c-text)] md:text-4xl">
-            Da vaga à contratação em 3 passos
+            {title}
           </h2>
           <p className="mt-4 text-[0.95rem] leading-relaxed text-[var(--c-text)]/60">
-            O processo foi desenhado para ser simples para ti e agradável para
-            os candidatos.
+            {description}
           </p>
         </div>
 
         {/* Steps */}
         <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-          {STEPS.map((step) => (
+          {steps.map((step) => (
             <div
               key={step.num}
               className={`group relative rounded-3xl border bg-white p-8 shadow-sm transition-all duration-300 hover:-translate-y-2 hover:shadow-lg ${step.accent}`}
@@ -129,7 +149,7 @@ export default function HowItWorksSection() {
                 <span
                   className={`rounded-full border px-3 py-1 text-xs font-semibold ${step.badge}`}
                 >
-                  Passo {step.num}
+                  {stepLabel} {step.num}
                 </span>
               </div>
 

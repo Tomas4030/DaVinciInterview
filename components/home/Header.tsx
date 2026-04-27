@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import AdminAccountMenu from "@/components/admin/AdminAccountMenu";
 import { getAdminCompanyContextFromServerCookies } from "@/lib/admin-context";
+import { tLanding } from "@/lib/i18n/landing";
 
 type HeaderProps = {
   locale?: string;
@@ -20,6 +21,12 @@ function withLocale(path: string, locale: string): string {
 
 export default async function Header({ locale = "pt" }: HeaderProps) {
   const adminContext = await getAdminCompanyContextFromServerCookies();
+  const ariaHome = tLanding(locale, "header.ariaHome");
+  const features = tLanding(locale, "header.features");
+  const howItWorks = tLanding(locale, "header.howItWorks");
+  const pricing = tLanding(locale, "header.pricing");
+  const login = tLanding(locale, "header.login");
+  const startFree = tLanding(locale, "header.startFree");
 
   return (
     <header className="sticky top-0 z-20 border-b border-[var(--c-border)]/60 bg-[var(--c-surface)]/80 backdrop-blur-xl">
@@ -27,7 +34,7 @@ export default async function Header({ locale = "pt" }: HeaderProps) {
         <Link
           href={withLocale("/", locale)}
           className="group flex items-center gap-2.5"
-          aria-label="Página inicial — MatchWorky"
+          aria-label={ariaHome}
         >
           <div className="flex h-18 w-18 items-center justify-center rounded-[7px] transition-transform duration-200 group-hover:scale-[1.06] group-active:scale-[0.98] overflow-hidden">
             <Image
@@ -48,19 +55,19 @@ export default async function Header({ locale = "pt" }: HeaderProps) {
             href="#funcionalidades"
             className="text-[0.82rem] font-medium text-[var(--c-text)]/65 transition-colors hover:text-[var(--c-text)]"
           >
-            Funcionalidades
+            {features}
           </a>
           <a
             href="#como-funciona"
             className="text-[0.82rem] font-medium text-[var(--c-text)]/65 transition-colors hover:text-[var(--c-text)]"
           >
-            Como funciona
+            {howItWorks}
           </a>
           <a
             href="#pricing"
             className="text-[0.82rem] font-medium text-[var(--c-text)]/65 transition-colors hover:text-[var(--c-text)]"
           >
-            Preços
+            {pricing}
           </a>
         </nav>
 
@@ -77,13 +84,13 @@ export default async function Header({ locale = "pt" }: HeaderProps) {
                 href="/admin/login"
                 className="text-[0.8rem] font-medium text-[var(--c-text)]/65 transition-colors hover:text-[var(--c-text)]"
               >
-                Entrar
+                {login}
               </Link>
               <Link
                 href={withLocale("/signup", locale)}
                 className="rounded-lg bg-[var(--c-brand)] px-4 py-2 text-[0.78rem] font-semibold text-white shadow-[0_1px_3px_rgba(67,85,232,0.2)] transition-all hover:bg-[var(--c-brand-dark)] hover:shadow-[0_2px_8px_rgba(67,85,232,0.3)] active:scale-[0.97]"
               >
-                Começar grátis
+                {startFree}
               </Link>
             </>
           )}

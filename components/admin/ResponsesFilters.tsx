@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { tAdmin } from "@/lib/i18n/admin";
 
 type InterviewOption = {
   id: string;
@@ -12,9 +13,10 @@ type InterviewOption = {
 type Props = {
   slug: string;
   interviews: InterviewOption[];
+  locale?: string;
 };
 
-export default function ResponsesFilters({ slug, interviews }: Props) {
+export default function ResponsesFilters({ slug, interviews, locale = "pt" }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -69,7 +71,7 @@ export default function ResponsesFilters({ slug, interviews }: Props) {
         name="q"
         value={q}
         onChange={(event) => setQ(event.target.value)}
-        placeholder="Pesquisar por candidato, telefone ou entrevista"
+        placeholder={tAdmin(locale, "responses.filters.searchPlaceholder")}
         className="input-base"
       />
 
@@ -79,9 +81,11 @@ export default function ResponsesFilters({ slug, interviews }: Props) {
         onChange={(event) => setStatus(event.target.value)}
         className="input-base"
       >
-        <option value="all">Todos os estados</option>
-        <option value="em_progresso">Em progresso</option>
-        <option value="concluida">Concluida</option>
+        <option value="all">{tAdmin(locale, "responses.filters.statusAll")}</option>
+        <option value="em_progresso">
+          {tAdmin(locale, "responses.filters.statusInProgress")}
+        </option>
+        <option value="concluida">{tAdmin(locale, "responses.filters.statusDone")}</option>
       </select>
 
       <select
@@ -90,7 +94,7 @@ export default function ResponsesFilters({ slug, interviews }: Props) {
         onChange={(event) => setInterviewId(event.target.value)}
         className="input-base"
       >
-        <option value="all">Todas as entrevistas</option>
+        <option value="all">{tAdmin(locale, "responses.filters.allInterviews")}</option>
         {interviews.map((item) => (
           <option key={item.id} value={item.id}>
             {item.title}
@@ -102,7 +106,7 @@ export default function ResponsesFilters({ slug, interviews }: Props) {
         href={`/admin/${slug}/responses/ai-comparacao`}
         className="inline-flex items-center justify-center rounded-lg bg-[var(--c-brand)] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[var(--c-brand-dark)]"
       >
-        Analise com IA
+        {tAdmin(locale, "responses.filters.aiAnalysis")}
       </Link>
     </div>
   );

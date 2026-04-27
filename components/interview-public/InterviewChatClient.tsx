@@ -3,6 +3,7 @@
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { withBasePath } from "@/lib/base-path";
+import { tInterview } from "@/lib/i18n/interview";
 
 type QuestionItem = {
   id: number;
@@ -158,8 +159,15 @@ export default function InterviewChatClient({
 
   const introMessage = useMemo(
     () =>
-      `Bem-vindo à entrevista para ${interviewTitle}. Esta entrevista tem ${questions.length} pergunta${questions.length === 1 ? "" : "s"}. Quando estiveres pronto, clica em Começar.`,
-    [interviewTitle, questions.length],
+      tInterview(
+        locale,
+        questions.length === 1 ? "chat.introSingular" : "chat.introPlural",
+        {
+          title: interviewTitle,
+          count: questions.length,
+        },
+      ),
+    [interviewTitle, locale, questions.length],
   );
 
   useEffect(() => {
@@ -366,14 +374,18 @@ export default function InterviewChatClient({
       const data = await response.json();
       if (!response.ok) {
         throw new Error(
-          data?.error || "Não foi possível continuar a entrevista",
+          data?.error || tInterview(locale, "chat.continueInterviewError"),
         );
       }
 
       setShowTyping(false);
       setMessages((prev) => [
         ...prev,
-        { id: uid(), role: "bot", text: data.message || "Vamos continuar." },
+        {
+          id: uid(),
+          role: "bot",
+          text: data.message || tInterview(locale, "chat.continueFallback"),
+        },
       ]);
 
       if (data.action === "follow_up") {
@@ -392,7 +404,7 @@ export default function InterviewChatClient({
     } catch (sendError) {
       console.error(sendError);
       setShowTyping(false);
-      setError("Não foi possível enviar a tua resposta. Tenta novamente.");
+      setError(tInterview(locale, "chat.sendError"));
     } finally {
       setLoading(false);
     }
@@ -420,7 +432,7 @@ export default function InterviewChatClient({
           {interviewTitle}
         </h1>
         <p className="mt-3 text-sm text-[var(--c-text)]/65">
-          Esta entrevista ainda não tem perguntas configuradas.
+          {tInterview(locale, "chat.noQuestions")}
         </p>
       </main>
     );
@@ -432,7 +444,7 @@ export default function InterviewChatClient({
         <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/35 px-4">
           <div className="w-full max-w-lg rounded-xl border border-[#EAEAEA] bg-white p-6 sm:p-7">
             <p className="text-[11px] uppercase tracking-[0.08em] text-[#787774]">
-              Confirmar entrevista
+              {tInterview(locale, "chat.confirmInterview")}
             </p>
 
             <div className="mt-4 flex items-center gap-3 border-b border-[#EAEAEA] pb-4">
@@ -460,11 +472,11 @@ export default function InterviewChatClient({
 
             <div className="mt-4 space-y-2">
               <p className="text-[12px] uppercase tracking-[0.06em] text-[#787774]">
-                Descrição da empresa
+                {tInterview(locale, "chat.companyDescription")}
               </p>
               <p className="text-[14px] leading-6 text-[#2F3437]">
                 {companyDescription ||
-                  "Sem descrição adicional disponível para esta empresa."}
+                  tInterview(locale, "chat.companyDescriptionFallback")}
               </p>
             </div>
 
@@ -474,14 +486,14 @@ export default function InterviewChatClient({
                 onClick={() => router.replace(`/${locale}/${slug}`)}
                 className="h-11 rounded-md border border-[#EAEAEA] bg-white px-4 text-[12px] font-semibold uppercase tracking-[0.05em] text-[#2F3437] transition hover:bg-[#F7F6F3] active:scale-[0.98]"
               >
-                Voltar
+                {tInterview(locale, "chat.back")}
               </button>
               <button
                 type="button"
                 onClick={confirmContextAndContinue}
                 className="h-11 rounded-md bg-[#111111] px-4 text-[12px] font-semibold uppercase tracking-[0.05em] text-white transition hover:bg-[#333333] active:scale-[0.98]"
               >
-                Continuar
+                {tInterview(locale, "chat.continue")}
               </button>
             </div>
           </div>
@@ -519,10 +531,13 @@ export default function InterviewChatClient({
               }`}
             >
               {done
-                ? "Concluída"
+                ? tInterview(locale, "chat.statusDone")
                 : currentIndex < 0
-                  ? "A iniciar"
-                  : `${currentIndex + 1} / ${questions.length}`}
+                  ? tInterview(locale, "chat.statusStarting")
+                  : tInterview(locale, "chat.statusProgress", {
+                      current: currentIndex + 1,
+                      total: questions.length,
+                    })}
             </span>
           </div>
         </div>
@@ -578,7 +593,7 @@ export default function InterviewChatClient({
               className="w-full h-11 bg-[var(--c-brand)] hover:opacity-90 active:scale-[0.99] text-white text-sm font-medium rounded-xl flex items-center justify-center gap-2 transition-all duration-150"
               type="button"
             >
-              Começar entrevista
+              {tInterview(locale, "chat.startInterview")}
               <svg
                 className="w-4 h-4"
                 fill="none"
@@ -605,7 +620,7 @@ export default function InterviewChatClient({
                   onChange={handleInputChange}
                   onKeyDown={handleKeyDown}
                   rows={1}
-                  placeholder="Escreve a tua resposta…"
+                  placeholder={tInterview(locale, "chat.answerPlaceholder")}
                   disabled={loading || showTyping || done || currentIndex < 0}
                   className="flex-1 resize-none bg-transparent border-none outline-none text-sm text-gray-800 placeholder:text-gray-400 min-h-[28px] max-h-[120px] py-1 leading-snug disabled:opacity-50"
                   style={{ height: "28px" }}
@@ -620,7 +635,7 @@ export default function InterviewChatClient({
                     currentIndex < 0
                   }
                   className="flex-shrink-0 w-8 h-8 rounded-lg bg-[var(--c-brand)] hover:opacity-90 active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed text-white flex items-center justify-center transition-all duration-150"
-                  aria-label="Enviar"
+                  aria-label={tInterview(locale, "chat.sendAria")}
                 >
                   <svg
                     className="w-3.5 h-3.5"
@@ -638,7 +653,7 @@ export default function InterviewChatClient({
                 </button>
               </form>
               <p className="text-center text-[11px] text-gray-300 mt-2.5 tracking-wide">
-                Enter para enviar · Shift+Enter para nova linha
+                {tInterview(locale, "chat.inputHint")}
               </p>
             </>
           )}

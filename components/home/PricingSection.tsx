@@ -3,32 +3,54 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { PRICING_PLANS } from "@/lib/pricing-plans";
+import { tLanding, tLandingObject } from "@/lib/i18n/landing";
 
 type PricingSectionProps = {
   compact?: boolean;
+  locale?: string;
 };
+
+const supportedLocales = new Set(["pt", "en"]);
+
+function withLocale(path: string, locale: string): string {
+  const safeLocale = supportedLocales.has(locale) ? locale : "pt";
+  if (path === "/") {
+    return `/${safeLocale}`;
+  }
+
+  return `/${safeLocale}${path}`;
+}
 
 export default function PricingSection({
   compact = false,
+  locale = "pt",
 }: PricingSectionProps) {
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">(
     "monthly",
   );
 
   const yearlyDiscountPercent = 20;
+  const customPrice = tLanding(locale, "pricing.custom");
+  const annualBilling = tLanding(locale, "pricing.annualBilling");
+  const monthCadence = tLanding(locale, "pricing.month");
+  const yearCadence = tLanding(locale, "pricing.year");
+  const plansTranslations = tLandingObject<
+    Record<string, { description: string; features: string[] }>
+  >(locale, "pricing.plans");
 
   const formattedPlans = useMemo(() => {
     return PRICING_PLANS.map((plan) => {
+      const translatedPlan = plansTranslations[plan.id];
+
       if (!plan.monthlyPriceEur) {
         return {
           ...plan,
-          displayPrice: plan.priceLabel || "Personalizado",
+          displayPrice: translatedPlan ? customPrice : plan.priceLabel || customPrice,
           cadence: "",
           savingsLabel: "",
-          subLabel:
-            billingCycle === "yearly"
-              ? "Disponivel com faturacao anual"
-              : "",
+          subLabel: billingCycle === "yearly" ? annualBilling : "",
+          description: translatedPlan?.description || plan.description,
+          features: translatedPlan?.features || plan.features,
         };
       }
 
@@ -36,9 +58,11 @@ export default function PricingSection({
         return {
           ...plan,
           displayPrice: `${plan.monthlyPriceEur} EUR`,
-          cadence: "/mes",
+          cadence: monthCadence,
           savingsLabel: "",
           subLabel: "",
+          description: translatedPlan?.description || plan.description,
+          features: translatedPlan?.features || plan.features,
         };
       }
 
@@ -49,12 +73,26 @@ export default function PricingSection({
       return {
         ...plan,
         displayPrice: `${Math.round(annualPrice)} EUR`,
-        cadence: "/ano",
-        savingsLabel: `Poupa ${yearlyDiscountPercent}%`,
-        subLabel: `Equivale a ${Math.round(monthlyEquivalent)} EUR/mes`,
+        cadence: yearCadence,
+        savingsLabel: tLanding(locale, "pricing.save", {
+          percent: yearlyDiscountPercent,
+        }),
+        subLabel: tLanding(locale, "pricing.monthlyEquivalent", {
+          value: Math.round(monthlyEquivalent),
+        }),
+        description: translatedPlan?.description || plan.description,
+        features: translatedPlan?.features || plan.features,
       };
     });
-  }, [billingCycle]);
+  }, [
+    annualBilling,
+    billingCycle,
+    customPrice,
+    locale,
+    monthCadence,
+    plansTranslations,
+    yearCadence,
+  ]);
 
   return (
     <section id="pricing" className="relative overflow-hidden py-20 md:py-28">
@@ -65,14 +103,13 @@ export default function PricingSection({
       <div className="relative mx-auto max-w-6xl px-6">
         <div className="mb-12 text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.1em] text-[var(--c-brand)]">
-            Planos
+            {tLanding(locale, "pricing.eyebrow")}
           </p>
           <h2 className="mt-3 text-3xl font-semibold tracking-tight text-[var(--c-text)] md:text-4xl">
-            Escolhe o plano ideal para a tua equipa
+            {tLanding(locale, "pricing.title")}
           </h2>
           <p className="mt-4 text-[0.95rem] leading-relaxed text-[var(--c-text)]/60">
-            Começa com um plano base e evolui sem migrações complexas. Cancela
-            quando quiseres.
+            {tLanding(locale, "pricing.description")}
           </p>
 
           <div className="mt-7 flex items-center justify-center">
@@ -87,7 +124,7 @@ export default function PricingSection({
                     : "text-[var(--c-text)]/60 hover:text-[var(--c-text)]",
                 ].join(" ")}
               >
-                Mensal
+                {tLanding(locale, "pricing.monthly")}
               </button>
 
               <button
@@ -100,7 +137,7 @@ export default function PricingSection({
                     : "text-[var(--c-text)]/60 hover:text-[var(--c-text)]",
                 ].join(" ")}
               >
-                Anual
+                {tLanding(locale, "pricing.yearly")}
                 <span className="rounded-full bg-[var(--c-brand)]/15 px-2 py-0.5 text-[0.62rem] font-bold uppercase tracking-[0.06em] text-[var(--c-brand)]">
                   -{yearlyDiscountPercent}%
                 </span>
@@ -122,11 +159,11 @@ export default function PricingSection({
             >
               {plan.highlighted && (
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                  <span className="rounded-full bg-[var(--c-brand)] px-3 py-1 text-[0.68rem] font-semibold text-white shadow-[0_2px_8px_rgba(67,85,232,0.3)]">
-                    Mais popular
-                  </span>
-                </div>
-              )}
+                    <span className="rounded-full bg-[var(--c-brand)] px-3 py-1 text-[0.68rem] font-semibold text-white shadow-[0_2px_8px_rgba(67,85,232,0.3)]">
+                      {tLanding(locale, "pricing.mostPopular")}
+                    </span>
+                  </div>
+                )}
 
               <p className="text-[0.7rem] font-bold uppercase tracking-[0.1em] text-[var(--c-text)]/50">
                 {plan.name}
@@ -179,7 +216,7 @@ export default function PricingSection({
               </ul>
 
               <Link
-                href={compact ? "/pricing" : "/signup"}
+                href={withLocale(compact ? "/pricing" : "/signup", locale)}
                 className={[
                   "block w-full rounded-xl px-4 py-2.5 text-center text-[0.82rem] font-semibold transition-all",
                   plan.highlighted
@@ -187,15 +224,16 @@ export default function PricingSection({
                     : "border border-[var(--c-border)] text-[var(--c-text)]/80 hover:border-[var(--c-brand)]/30 hover:text-[var(--c-brand)]",
                 ].join(" ")}
               >
-                {compact ? "Ver detalhes" : "Começar agora"}
+                {compact
+                  ? tLanding(locale, "pricing.viewDetails")
+                  : tLanding(locale, "pricing.startNow")}
               </Link>
             </article>
           ))}
         </div>
 
         <p className="mt-8 text-center text-[0.78rem] text-[var(--c-text)]/45">
-          Todos os planos incluem 14 dias de trial gratuito. Sem cartão de
-          crédito.
+          {tLanding(locale, "pricing.trial")}
         </p>
       </div>
     </section>

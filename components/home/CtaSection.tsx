@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { tLanding } from "@/lib/i18n/landing";
 
 type CtaSectionProps = {
   locale?: string;
@@ -16,6 +17,13 @@ function withLocale(path: string, locale: string): string {
 }
 
 export default function CtaSection({ locale = "pt" }: CtaSectionProps) {
+  const eyebrow = tLanding(locale, "cta.eyebrow");
+  const title = tLanding(locale, "cta.title");
+  const description = tLanding(locale, "cta.description");
+  const primary = tLanding(locale, "cta.primary");
+  const secondary = tLanding(locale, "cta.secondary");
+  const footnote = tLanding(locale, "cta.footnote");
+
   return (
     <section className="mx-auto max-w-6xl px-6 py-16">
       <div className="relative overflow-hidden rounded-3xl bg-[var(--c-brand)] px-10 py-14 text-center shadow-[0_16px_48px_rgba(67,85,232,0.3)]">
@@ -32,21 +40,20 @@ export default function CtaSection({ locale = "pt" }: CtaSectionProps) {
 
         <div className="relative">
           <p className="text-[0.75rem] font-semibold uppercase tracking-[0.1em] text-white/60">
-            Começa hoje
+            {eyebrow}
           </p>
           <h2 className="mt-3 text-3xl font-bold tracking-tight text-white md:text-4xl">
-            Pronto para recrutar mais rápido?
+            {title}
           </h2>
           <p className="mx-auto mt-4 max-w-lg text-[0.95rem] leading-relaxed text-white/70">
-            Junta-te às equipas que já automatizaram a sua triagem de
-            candidatos. Configura a tua primeira vaga em menos de 5 minutos.
+            {description}
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-4">
             <Link
               href={withLocale("/signup", locale)}
               className="inline-flex items-center gap-2 rounded-xl bg-white px-6 py-3 text-[0.85rem] font-bold text-[var(--c-brand)] shadow-[0_2px_8px_rgba(0,0,0,0.15)] transition-all hover:-translate-y-[2px] hover:shadow-[0_4px_16px_rgba(0,0,0,0.2)] active:scale-[0.98]"
             >
-              Começar grátis — 14 dias
+              {primary}
               <svg
                 width="14"
                 height="14"
@@ -65,11 +72,11 @@ export default function CtaSection({ locale = "pt" }: CtaSectionProps) {
               href={withLocale("/pricing", locale)}
               className="inline-flex items-center gap-2 rounded-xl border border-white/30 px-6 py-3 text-[0.85rem] font-semibold text-white transition-all hover:bg-white/10 active:scale-[0.98]"
             >
-              Ver todos os planos
+              {secondary}
             </Link>
           </div>
           <p className="mt-5 text-[0.75rem] text-white/45">
-            Sem cartão de crédito. Cancela quando quiseres.
+            {footnote}
           </p>
         </div>
       </div>

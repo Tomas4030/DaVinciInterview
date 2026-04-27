@@ -1,5 +1,6 @@
 import Link from "next/link";
 import GridPattern from "./GridPattern";
+import { tLanding, tLandingObject } from "@/lib/i18n/landing";
 
 type HeroSectionProps = {
   locale?: string;
@@ -17,6 +18,21 @@ function withLocale(path: string, locale: string): string {
 }
 
 export default function HeroSection({ locale = "pt" }: HeroSectionProps) {
+  const badge = tLanding(locale, "hero.badge");
+  const titleLine1 = tLanding(locale, "hero.titleLine1");
+  const titleHighlight = tLanding(locale, "hero.titleHighlight");
+  const titleLine2 = tLanding(locale, "hero.titleLine2");
+  const description = tLanding(locale, "hero.description");
+  const cta = tLanding(locale, "hero.cta");
+  const stats = tLandingObject<Array<{ value: string; label: string }>>(
+    locale,
+    "hero.stats",
+  );
+  const previewLabel = tLanding(locale, "hero.preview.label");
+  const previewBot1 = tLanding(locale, "hero.preview.bot1");
+  const previewUser1 = tLanding(locale, "hero.preview.user1");
+  const previewBot2 = tLanding(locale, "hero.preview.bot2");
+
   return (
     <section className="relative overflow-hidden">
       <div className="pointer-events-none absolute inset-0" aria-hidden="true">
@@ -37,7 +53,7 @@ export default function HeroSection({ locale = "pt" }: HeroSectionProps) {
               <span className="relative inline-flex h-2 w-2 rounded-full bg-[var(--c-brand)]" />
             </span>
             <span className="text-[0.75rem] font-semibold tracking-wide text-[var(--c-brand)] ">
-              Automatiza o teu processo de recrutamento
+              {badge}
             </span>
           </div>
 
@@ -46,9 +62,10 @@ export default function HeroSection({ locale = "pt" }: HeroSectionProps) {
             className="animate-reveal text-balance font-display text-[2.6rem] leading-[1.08] tracking-[-0.03em] text-[var(--c-text)] md:text-[4rem]"
             style={{ animationDelay: "60ms" }}
           >
-            Entrevistas com IA.
+            {titleLine1}
             <br />
-            <span className="text-[var(--c-brand)]">Triagem</span> sem esforço.
+            <span className="text-[var(--c-brand)]">{titleHighlight}</span>{" "}
+            {titleLine2}
           </h1>
 
           {/* Sub */}
@@ -56,9 +73,7 @@ export default function HeroSection({ locale = "pt" }: HeroSectionProps) {
             className="mt-6 max-w-[520px] animate-reveal text-[1rem] leading-relaxed text-[var(--c-text)]/60 md:text-[1.08rem]"
             style={{ animationDelay: "120ms" }}
           >
-            O MatchWorky conduz entrevistas conversacionais automatizadas em
-            nome da tua empresa. Define as perguntas, partilha o link com os
-            candidatos e analisa as respostas tudo numa plataforma.
+            {description}
           </p>
 
           {/* CTAs */}
@@ -73,7 +88,7 @@ export default function HeroSection({ locale = "pt" }: HeroSectionProps) {
                          transition-all duration-200 hover:-translate-y-[2px] hover:shadow-[0_4px_8px_rgba(67,85,232,0.15),0_12px_36px_rgba(67,85,232,0.28)]
                          active:scale-[0.985]"
             >
-              Começar grátis
+              {cta}
               <svg
                 width="14"
                 height="14"
@@ -95,11 +110,7 @@ export default function HeroSection({ locale = "pt" }: HeroSectionProps) {
             className="mt-12 flex flex-wrap items-center gap-x-8 gap-y-3 animate-reveal border-t border-[var(--c-border)]/50 pt-8"
             style={{ animationDelay: "280ms" }}
           >
-            {[
-              { value: "3×", label: "mais rápido do que triagem manual" },
-              { value: "80%", label: "redução no tempo de recrutamento" },
-              { value: "100%", label: "candidaturas estruturadas" },
-            ].map((stat) => (
+            {stats.map((stat) => (
               <div key={stat.label} className="flex flex-col">
                 <span className="text-[1.4rem] font-bold tracking-tight text-[var(--c-brand)]">
                   {stat.value}
@@ -118,14 +129,29 @@ export default function HeroSection({ locale = "pt" }: HeroSectionProps) {
           style={{ animationDelay: "320ms" }}
           aria-hidden="true"
         >
-          <ChatPreview />
+          <ChatPreview
+            previewLabel={previewLabel}
+            previewBot1={previewBot1}
+            previewUser1={previewUser1}
+            previewBot2={previewBot2}
+          />
         </div>
       </div>
     </section>
   );
 }
 
-function ChatPreview() {
+function ChatPreview({
+  previewLabel,
+  previewBot1,
+  previewUser1,
+  previewBot2,
+}: {
+  previewLabel: string;
+  previewBot1: string;
+  previewUser1: string;
+  previewBot2: string;
+}) {
   return (
     <div className="w-72 rounded-2xl border border-[var(--c-border)] bg-[var(--c-surface)] p-4 shadow-[0_24px_64px_rgba(0,0,0,0.08)]">
       <div className="mb-3 flex items-center gap-2 border-b border-[var(--c-border)]/60 pb-3">
@@ -137,7 +163,7 @@ function ChatPreview() {
             MatchWorky
           </p>
           <p className="text-[0.65rem] text-[var(--c-text)]/50">
-            Entrevista Automática
+            {previewLabel}
           </p>
         </div>
         <span className="ml-auto flex h-2 w-2 rounded-full bg-emerald-500" />
@@ -145,12 +171,12 @@ function ChatPreview() {
       <div className="space-y-2.5">
         <Bubble
           from="bot"
-          text="Olá! Sou o assistente de recrutamento da Acme. Vamos começar com algumas perguntas?"
+          text={previewBot1}
         />
-        <Bubble from="user" text="Claro, estou pronto!" />
+        <Bubble from="user" text={previewUser1} />
         <Bubble
           from="bot"
-          text="Ótimo! Fala-me um pouco sobre a tua experiência com React e TypeScript."
+          text={previewBot2}
         />
         <div className="flex items-center gap-1.5 pt-1">
           <div className="h-1.5 w-1.5 animate-bounce rounded-full bg-[var(--c-brand)]/60 [animation-delay:0ms]" />

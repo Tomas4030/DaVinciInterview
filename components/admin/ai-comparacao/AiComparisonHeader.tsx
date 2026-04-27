@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { VagaAnalysis } from "@/lib/ai-comparison-service";
+import { tAdmin } from "@/lib/i18n/admin";
 import AiComparisonRefreshButton from "../AiComparisonRefreshButton";
 import { VagaSelector } from "../company-dashboard";
 
@@ -7,12 +8,14 @@ type Props = {
   slug: string;
   vagas: VagaAnalysis[];
   selectedVagaId?: string;
+  locale?: string;
 };
 
 export default function AiComparisonHeader({
   slug,
   vagas,
   selectedVagaId,
+  locale = "pt",
 }: Props) {
   return (
     <header className="overflow-hidden rounded-2xl border border-[var(--c-border)]/60 bg-[var(--c-surface)] shadow-sm">
@@ -31,10 +34,10 @@ export default function AiComparisonHeader({
         </div>
         <div>
           <p className="text-[10.5px] font-semibold uppercase tracking-widest text-[var(--c-muted)]">
-            Análise IA
+            {tAdmin(locale, "aiComparison.headerTag")}
           </p>
           <h1 className="text-lg font-semibold leading-tight text-[var(--c-text)]">
-            Comparação de candidatos por vaga
+            {tAdmin(locale, "aiComparison.title")}
           </h1>
         </div>
       </div>
@@ -43,7 +46,7 @@ export default function AiComparisonHeader({
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2">
             <p className="shrink-0 text-[11px] font-semibold uppercase tracking-wider text-[var(--c-muted)]">
-              Vaga
+              {tAdmin(locale, "aiComparison.role")}
             </p>
             <VagaSelector
               vagas={vagas}
@@ -53,7 +56,7 @@ export default function AiComparisonHeader({
           </div>
 
           <div className="flex items-center gap-2">
-            <AiComparisonRefreshButton slug={slug} />
+            <AiComparisonRefreshButton slug={slug} locale={locale} />
 
             <Link
               href={`/admin/${slug}/responses`}
@@ -68,7 +71,7 @@ export default function AiComparisonHeader({
               >
                 <path d="M15 19l-7-7 7-7" />
               </svg>
-              Voltar às respostas
+              {tAdmin(locale, "aiComparison.backToResponses")}
             </Link>
           </div>
         </div>

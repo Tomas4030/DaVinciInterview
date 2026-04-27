@@ -4,8 +4,23 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { withBasePath } from "@/lib/base-path";
+import { tAuth } from "@/lib/i18n/auth";
 
-export default function SignupForm() {
+type SignupFormProps = {
+  locale?: string;
+};
+
+const supportedLocales = new Set(["pt", "en"]);
+
+function withLocale(path: string, locale: string): string {
+  const safeLocale = supportedLocales.has(locale) ? locale : "pt";
+  if (path === "/") {
+    return `/${safeLocale}`;
+  }
+  return `/${safeLocale}${path}`;
+}
+
+export default function SignupForm({ locale = "pt" }: SignupFormProps) {
   const router = useRouter();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -31,14 +46,14 @@ export default function SignupForm() {
 
       const data = await response.json();
       if (!response.ok) {
-        setErro(data.error || "Não foi possível criar a conta");
+        setErro(data.error || tAuth(locale, "signupForm.defaultError"));
         return;
       }
 
-      router.push(data.redirectTo || "/onboarding");
+      router.push(data.redirectTo || withLocale("/onboarding", locale));
       router.refresh();
     } catch (error) {
-      setErro("Erro ao criar conta. Tenta novamente.");
+      setErro(tAuth(locale, "signupForm.networkError"));
       console.error("Signup error:", error);
     } finally {
       setLoading(false);
@@ -55,7 +70,7 @@ export default function SignupForm() {
 
       <div>
         <label className="block text-xs font-medium text-gray-600 mb-1.5" htmlFor="name">
-          Nome
+          {tAuth(locale, "signupForm.nameLabel")}
         </label>
         <input
           id="name"
@@ -63,14 +78,14 @@ export default function SignupForm() {
           value={name}
           onChange={(e) => setName(e.target.value)}
           autoComplete="name"
-          placeholder="Nome da conta"
+          placeholder={tAuth(locale, "signupForm.namePlaceholder")}
           className="input-base"
         />
       </div>
 
       <div>
         <label className="block text-xs font-medium text-gray-600 mb-1.5" htmlFor="email">
-          Email
+          {tAuth(locale, "signupForm.emailLabel")}
         </label>
         <input
           id="email"
@@ -79,14 +94,14 @@ export default function SignupForm() {
           onChange={(e) => setEmail(e.target.value)}
           required
           autoComplete="email"
-          placeholder="tu@empresa.com"
+          placeholder={tAuth(locale, "signupForm.emailPlaceholder")}
           className="input-base"
         />
       </div>
 
       <div>
         <label className="block text-xs font-medium text-gray-600 mb-1.5" htmlFor="password">
-          Password
+          {tAuth(locale, "signupForm.passwordLabel")}
         </label>
         <input
           id="password"
@@ -96,19 +111,21 @@ export default function SignupForm() {
           required
           minLength={8}
           autoComplete="new-password"
-          placeholder="Mínimo 8 caracteres"
+          placeholder={tAuth(locale, "signupForm.passwordPlaceholder")}
           className="input-base"
         />
       </div>
 
       <button type="submit" disabled={loading} className="btn-primary w-full py-3">
-        {loading ? "A criar conta..." : "Criar conta"}
+        {loading
+          ? tAuth(locale, "signupForm.loading")
+          : tAuth(locale, "signupForm.submit")}
       </button>
 
       <p className="text-xs text-gray-500 text-center">
-        Já tens conta?{" "}
+        {tAuth(locale, "signupForm.hasAccount")}{" "}
         <Link href="/admin/login" className="text-[var(--c-brand)] font-medium">
-          Entrar
+          {tAuth(locale, "signupForm.login")}
         </Link>
       </p>
     </form>

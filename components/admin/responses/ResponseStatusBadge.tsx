@@ -1,5 +1,8 @@
+import { tAdmin } from "@/lib/i18n/admin";
+
 type Props = {
   status: string;
+  locale?: string;
 };
 
 function getStatusBadgeClass(status: string): string {
@@ -18,12 +21,22 @@ function getStatusBadgeClass(status: string): string {
   return "border-[#FBF3DB] bg-[#FBF3DB] text-[#956400]";
 }
 
-export default function ResponseStatusBadge({ status }: Props) {
+export default function ResponseStatusBadge({ status, locale = "pt" }: Props) {
+  const normalized = String(status || "").toLowerCase();
+  const labelKey =
+    normalized === "concluida"
+      ? "responses.status.concluida"
+      : normalized === "em_analise"
+        ? "responses.status.em_analise"
+        : normalized === "rejeitada"
+          ? "responses.status.rejeitada"
+          : "responses.status.em_progresso";
+
   return (
     <span
       className={`rounded-full border px-2.5 py-1 text-xs font-medium uppercase tracking-[0.05em] ${getStatusBadgeClass(status)}`}
     >
-      {status}
+      {tAdmin(locale, labelKey)}
     </span>
   );
 }

@@ -3,6 +3,7 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { withBasePath } from "@/lib/base-path";
+import { tInterview } from "@/lib/i18n/interview";
 import {
   IconAlertCircle,
   IconArrowRight,
@@ -99,7 +100,7 @@ export default function InterviewVerifyCodeForm({
     setSuccessMessage(null);
 
     if (!code.trim()) {
-      setError("Introduz o código recebido no email.");
+      setError(tInterview(locale, "verifyCodeForm.enterCodeError"));
       return;
     }
 
@@ -127,7 +128,7 @@ export default function InterviewVerifyCodeForm({
       const data = await response.json();
 
       if (!response.ok) {
-        setError(data?.error || "Código inválido ou expirado.");
+        setError(data?.error || tInterview(locale, "verifyCodeForm.invalidCodeError"));
         return;
       }
 
@@ -155,7 +156,7 @@ export default function InterviewVerifyCodeForm({
       router.push(`/${locale}/${slug}/interview/${interviewId}/chat`);
     } catch (requestError) {
       console.error(requestError);
-      setError("Erro de ligação ao servidor.");
+      setError(tInterview(locale, "verifyCodeForm.serverConnectionError"));
     } finally {
       setIsLoading(false);
     }
@@ -190,17 +191,17 @@ export default function InterviewVerifyCodeForm({
       const data = await response.json();
 
       if (!response.ok) {
-        setError(data?.error || "Erro ao reenviar código.");
+        setError(data?.error || tInterview(locale, "verifyCodeForm.resendError"));
         return;
       }
 
       const nextExpiresAt = Date.now() + 30_000;
       localStorage.setItem(cooldownStorageKey, String(nextExpiresAt));
       setResendTimer(30);
-      setSuccessMessage("Código reenviado. Verifica a tua caixa de entrada.");
+      setSuccessMessage(tInterview(locale, "verifyCodeForm.resendSuccess"));
     } catch (requestError) {
       console.error(requestError);
-      setError("Erro de ligação ao servidor ao reenviar o código.");
+      setError(tInterview(locale, "verifyCodeForm.resendConnectionError"));
     } finally {
       setIsResending(false);
     }
@@ -227,10 +228,10 @@ export default function InterviewVerifyCodeForm({
 
               <div>
                 <h1 className="text-[16px] font-semibold leading-snug text-[var(--c-text)]">
-                  Verificação por código
+                  {tInterview(locale, "verifyCodeForm.title")}
                 </h1>
                 <p className="mt-1 text-[12px] leading-relaxed text-[var(--c-text)]/55">
-                  Introduz o código enviado para o teu email.
+                  {tInterview(locale, "verifyCodeForm.description")}
                 </p>
               </div>
             </div>
@@ -242,7 +243,7 @@ export default function InterviewVerifyCodeForm({
                 htmlFor="code"
                 className="block text-[12px] font-medium tracking-wide text-[var(--c-text)]/55"
               >
-                Código de verificação
+                {tInterview(locale, "verifyCodeForm.codeLabel")}
               </label>
 
               <input
@@ -282,11 +283,11 @@ export default function InterviewVerifyCodeForm({
               {isLoading ? (
                 <>
                   <LoadingSpinner size={15} />
-                  <span>A validar…</span>
+                  <span>{tInterview(locale, "verifyCodeForm.validating")}</span>
                 </>
               ) : (
                 <>
-                  <span>Continuar</span>
+                  <span>{tInterview(locale, "verifyCodeForm.continue")}</span>
                   <span className="transition-transform duration-200 group-hover:translate-x-0.5">
                     <IconArrowRight />
                   </span>
@@ -300,7 +301,7 @@ export default function InterviewVerifyCodeForm({
                 onClick={() => router.back()}
                 className="rounded-xl border border-[var(--c-border)] bg-white px-4 py-2.5 text-[13px] font-medium text-[var(--c-text)]/70 transition-all duration-150 hover:bg-[var(--c-bg)] active:scale-[0.985]"
               >
-                Voltar
+                {tInterview(locale, "verifyCodeForm.back")}
               </button>
 
               <button
@@ -312,12 +313,14 @@ export default function InterviewVerifyCodeForm({
                 {isResending ? (
                   <>
                     <LoadingSpinner size={14} />
-                    <span>A reenviar…</span>
+                    <span>{tInterview(locale, "verifyCodeForm.resending")}</span>
                   </>
                 ) : resendTimer > 0 ? (
-                  `Reenviar em ${resendTimer}s`
+                  tInterview(locale, "verifyCodeForm.resendIn", {
+                    seconds: resendTimer,
+                  })
                 ) : (
-                  "Reenviar código"
+                  tInterview(locale, "verifyCodeForm.resendCode")
                 )}
               </button>
             </div>
@@ -325,7 +328,7 @@ export default function InterviewVerifyCodeForm({
             <div className="flex items-center justify-center gap-1.5 pt-0.5 text-[var(--c-text)]/35">
               <IconShield />
               <p className="text-[10px] tracking-wide">
-                O código expira em pouco tempo para proteger o teu acesso.
+                {tInterview(locale, "verifyCodeForm.secure")}
               </p>
             </div>
           </form>

@@ -1,3 +1,5 @@
+import { tLanding, tLandingObject } from "@/lib/i18n/landing";
+
 const TESTIMONIALS = [
   {
     quote:
@@ -25,20 +27,36 @@ const TESTIMONIALS = [
   },
 ];
 
-export default function TestimonialSection() {
+type TestimonialSectionProps = {
+  locale?: string;
+};
+
+export default function TestimonialSection({ locale = "pt" }: TestimonialSectionProps) {
+  const eyebrow = tLanding(locale, "testimonials.eyebrow");
+  const title = tLanding(locale, "testimonials.title");
+  const translatedItems = tLandingObject<
+    Array<{ quote: string; author: string; role: string }>
+  >(locale, "testimonials.items");
+  const testimonials = TESTIMONIALS.map((item, index) => ({
+    ...item,
+    quote: translatedItems[index]?.quote || item.quote,
+    author: translatedItems[index]?.author || item.author,
+    role: translatedItems[index]?.role || item.role,
+  }));
+
   return (
     <section className="mx-auto max-w-6xl px-6 py-20 md:py-24">
       <div className="mb-12 text-center">
         <p className="text-xs font-semibold uppercase tracking-[0.1em] text-[var(--c-brand)]">
-          Testemunhos
+          {eyebrow}
         </p>
         <h2 className="mt-3 text-3xl font-semibold tracking-tight text-[var(--c-text)]">
-          O que dizem as equipas de RH
+          {title}
         </h2>
       </div>
 
       <div className="grid gap-5 md:grid-cols-3">
-        {TESTIMONIALS.map((t) => (
+        {testimonials.map((t) => (
           <figure
             key={t.author}
             className="rounded-2xl border border-[var(--c-border)]/70 bg-[var(--c-surface)] p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_32px_rgba(0,0,0,0.06)]"

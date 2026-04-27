@@ -4,12 +4,14 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useMemo } from "react";
 import AdminAccountMenu from "@/components/admin/AdminAccountMenu";
+import { tAdmin } from "@/lib/i18n/admin";
 
 type AdminNavProps = {
   userEmail: string;
   companySlug?: string;
   companyName?: string;
   companyLogoUrl?: string | null;
+  locale?: string;
 };
 
 export default function AdminNav({
@@ -17,16 +19,17 @@ export default function AdminNav({
   companySlug,
   companyName,
   companyLogoUrl,
+  locale = "pt",
 }: AdminNavProps) {
   const pathname = usePathname();
 
   const adminBasePath = companySlug ? `/admin/${companySlug}` : "/admin";
 
   const NAV_LINKS = companySlug
-    ? [{ href: `${adminBasePath}/dashboard`, label: "Dashboard" }]
+    ? [{ href: `${adminBasePath}/dashboard`, label: tAdmin(locale, "nav.dashboard") }]
     : [
-        { href: adminBasePath, label: "Dashboard" },
-        { href: `${adminBasePath}/respostas`, label: "Respostas" },
+        { href: adminBasePath, label: tAdmin(locale, "nav.dashboard") },
+        { href: `${adminBasePath}/respostas`, label: tAdmin(locale, "nav.responses") },
       ];
 
   const companyInitial = useMemo(() => {
@@ -46,7 +49,7 @@ export default function AdminNav({
         <div className="flex items-center gap-7">
           <Link
             href={companySlug ? `${adminBasePath}/dashboard` : "/admin"}
-            aria-label="Painel de administração"
+            aria-label={tAdmin(locale, "nav.ariaLabel")}
             className="group flex items-center gap-2"
           >
             <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-[8px] text-[12px] font-bold text-[var(--c-text)] transition-transform duration-200 group-hover:scale-[1.05]">
@@ -68,7 +71,7 @@ export default function AdminNav({
                 {companyName || "MatchWorky"}
               </p>
               <p className="mt-0.5 text-[10px] leading-none text-[var(--c-muted)]">
-                Admin
+                {tAdmin(locale, "nav.adminBadge")}
               </p>
             </div>
           </Link>
@@ -77,7 +80,7 @@ export default function AdminNav({
 
           <div
             className="flex items-center gap-0.5"
-            aria-label="Navegação administrativa"
+            aria-label={tAdmin(locale, "nav.navigationLabel")}
           >
             {NAV_LINKS.map((link) => {
               const active = isActive(link.href);

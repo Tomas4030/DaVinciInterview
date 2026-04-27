@@ -4,8 +4,23 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { withBasePath } from "@/lib/base-path";
+import { tAuth } from "@/lib/i18n/auth";
 
-export default function LoginForm() {
+type LoginFormProps = {
+  locale?: string;
+};
+
+const supportedLocales = new Set(["pt", "en"]);
+
+function withLocale(path: string, locale: string): string {
+  const safeLocale = supportedLocales.has(locale) ? locale : "pt";
+  if (path === "/") {
+    return `/${safeLocale}`;
+  }
+  return `/${safeLocale}${path}`;
+}
+
+export default function LoginForm({ locale = "pt" }: LoginFormProps) {
   const router = useRouter();
 
   const [email, setEmail] = useState("");
@@ -27,7 +42,7 @@ export default function LoginForm() {
 
       if (!response.ok) {
         const data = await response.json();
-        setErro(data.error || "Email ou password incorretos");
+        setErro(data.error || tAuth(locale, "loginForm.defaultError"));
         setLoading(false);
         return;
       }
@@ -40,10 +55,10 @@ export default function LoginForm() {
         localStorage.setItem("admin_email", data.admin.email);
       }
 
-      router.push(data.redirectTo || "/onboarding");
+      router.push(data.redirectTo || withLocale("/onboarding", locale));
       router.refresh();
     } catch (err) {
-      setErro("Erro ao fazer login. Tenta novamente.");
+      setErro(tAuth(locale, "loginForm.networkError"));
       console.error("Login error:", err);
     } finally {
       setLoading(false);
@@ -63,7 +78,7 @@ export default function LoginForm() {
           className="block text-xs font-medium text-gray-600 mb-1.5"
           htmlFor="email"
         >
-          Email
+          {tAuth(locale, "loginForm.emailLabel")}
         </label>
         <input
           id="email"
@@ -72,7 +87,7 @@ export default function LoginForm() {
           onChange={(e) => setEmail(e.target.value)}
           required
           autoComplete="email"
-          placeholder="admin@matchworky.pt"
+          placeholder={tAuth(locale, "loginForm.emailPlaceholder")}
           className="input-base"
         />
       </div>
@@ -82,7 +97,7 @@ export default function LoginForm() {
           className="block text-xs font-medium text-gray-600 mb-1.5"
           htmlFor="password"
         >
-          Password
+          {tAuth(locale, "loginForm.passwordLabel")}
         </label>
         <input
           id="password"
@@ -91,7 +106,7 @@ export default function LoginForm() {
           onChange={(e) => setPassword(e.target.value)}
           required
           autoComplete="current-password"
-          placeholder="••••••••"
+          placeholder={tAuth(locale, "loginForm.passwordPlaceholder")}
           className="input-base"
         />
       </div>
@@ -122,17 +137,20 @@ export default function LoginForm() {
                 d="M4 12a8 8 0 018-8v8H4z"
               />
             </svg>
-            A entrar…
+            {tAuth(locale, "loginForm.loading")}
           </span>
         ) : (
-          "Entrar"
+          tAuth(locale, "loginForm.submit")
         )}
       </button>
 
       <p className="text-xs text-gray-500 text-center">
-        Ainda não tens conta?{" "}
-        <Link href="/signup" className="text-[var(--c-brand)] font-medium">
-          Criar conta
+        {tAuth(locale, "loginForm.noAccount")}{" "}
+        <Link
+          href={withLocale("/signup", locale)}
+          className="text-[var(--c-brand)] font-medium"
+        >
+          {tAuth(locale, "loginForm.createAccount")}
         </Link>
       </p>
     </form>

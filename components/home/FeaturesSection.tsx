@@ -1,3 +1,5 @@
+import { tLanding, tLandingObject } from "@/lib/i18n/landing";
+
 const FEATURES = [
   {
     icon: (
@@ -128,7 +130,24 @@ const FEATURES = [
   },
 ];
 
-export default function FeaturesSection() {
+type FeaturesSectionProps = {
+  locale?: string;
+};
+
+export default function FeaturesSection({ locale = "pt" }: FeaturesSectionProps) {
+  const eyebrow = tLanding(locale, "features.eyebrow");
+  const title = tLanding(locale, "features.title");
+  const description = tLanding(locale, "features.description");
+  const translatedItems = tLandingObject<Array<{ title: string; desc: string }>>(
+    locale,
+    "features.items",
+  );
+  const features = FEATURES.map((feature, index) => ({
+    ...feature,
+    title: translatedItems[index]?.title || feature.title,
+    desc: translatedItems[index]?.desc || feature.desc,
+  }));
+
   return (
     <section
       id="funcionalidades"
@@ -137,20 +156,19 @@ export default function FeaturesSection() {
       {/* Header */}
       <div className="mx-auto mb-14 max-w-2xl text-center">
         <p className="text-xs font-semibold uppercase tracking-[0.1em] text-[var(--c-brand)]">
-          Funcionalidades
+          {eyebrow}
         </p>
         <h2 className="mt-3 text-3xl font-semibold tracking-tight text-[var(--c-text)] md:text-4xl">
-          Tudo o que precisas para recrutar melhor
+          {title}
         </h2>
         <p className="mt-4 text-[0.95rem] leading-relaxed text-[var(--c-text)]/60">
-          Uma plataforma completa desde a criação da vaga até à análise das
-          respostas. Sem ferramentas externas. Sem complicações.
+          {description}
         </p>
       </div>
 
       {/* Grid */}
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {FEATURES.map((f) => (
+        {features.map((f) => (
           <div
             key={f.title}
             className="group rounded-2xl border border-[var(--c-border)]/70 bg-[var(--c-surface)] p-6

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { tLanding } from "@/lib/i18n/landing";
 
 type FooterProps = {
   locale?: string;
@@ -16,6 +17,20 @@ function withLocale(path: string, locale: string): string {
 }
 
 export default function Footer({ locale = "pt" }: FooterProps) {
+  const description = tLanding(locale, "footer.description");
+  const product = tLanding(locale, "footer.product");
+  const features = tLanding(locale, "footer.features");
+  const howItWorks = tLanding(locale, "footer.howItWorks");
+  const pricing = tLanding(locale, "footer.pricing");
+  const startFree = tLanding(locale, "footer.startFree");
+  const company = tLanding(locale, "footer.company");
+  const about = tLanding(locale, "footer.about");
+  const contact = tLanding(locale, "footer.contact");
+  const legal = tLanding(locale, "footer.legal");
+  const terms = tLanding(locale, "footer.terms");
+  const privacy = tLanding(locale, "footer.privacy");
+  const rights = tLanding(locale, "footer.rights");
+
   return (
     <footer className="border-t border-[var(--c-border)]/50 bg-[var(--c-surface)]">
       <div className="mx-auto max-w-6xl px-6">
@@ -31,87 +46,85 @@ export default function Footer({ locale = "pt" }: FooterProps) {
               </span>
             </div>
             <p className="mt-3 text-[0.78rem] leading-relaxed text-[var(--c-text)]/55">
-              Plataforma SaaS de entrevistas conversacionais com IA. Automatiza
-              a triagem inicial e melhora a experiência de candidatura.
+              {description}
             </p>
           </div>
 
           {/* Produto */}
           <div className="flex flex-col gap-2.5">
             <span className="text-[10px] font-bold uppercase tracking-[0.1em] text-[var(--c-text)]/40">
-              Produto
+              {product}
             </span>
             <a
               href="#funcionalidades"
               className="text-[0.8rem] text-[var(--c-text)]/60 transition-colors hover:text-[var(--c-text)]"
             >
-              Funcionalidades
+              {features}
             </a>
             <a
               href="#como-funciona"
               className="text-[0.8rem] text-[var(--c-text)]/60 transition-colors hover:text-[var(--c-text)]"
             >
-              Como funciona
+              {howItWorks}
             </a>
             <Link
               href={withLocale("/pricing", locale)}
               className="text-[0.8rem] text-[var(--c-text)]/60 transition-colors hover:text-[var(--c-text)]"
             >
-              Preços
+              {pricing}
             </Link>
             <Link
               href={withLocale("/signup", locale)}
               className="text-[0.8rem] text-[var(--c-text)]/60 transition-colors hover:text-[var(--c-text)]"
             >
-              Começar grátis
+              {startFree}
             </Link>
           </div>
 
           {/* Empresa */}
           <div className="flex flex-col gap-2.5">
             <span className="text-[10px] font-bold uppercase tracking-[0.1em] text-[var(--c-text)]/40">
-              Empresa
+              {company}
             </span>
             <Link
               href={withLocale("/sobre", locale)}
               className="text-[0.8rem] text-[var(--c-text)]/60 transition-colors hover:text-[var(--c-text)]"
             >
-              Sobre nós
+              {about}
             </Link>
             <Link
               href={withLocale("/contacto", locale)}
               className="text-[0.8rem] text-[var(--c-text)]/60 transition-colors hover:text-[var(--c-text)]"
             >
-              Contacto
+              {contact}
             </Link>
           </div>
 
           {/* Legal */}
           <div className="flex flex-col gap-2.5">
             <span className="text-[10px] font-bold uppercase tracking-[0.1em] text-[var(--c-text)]/40">
-              Legal
+              {legal}
             </span>
             <Link
               href={withLocale("/termos", locale)}
               className="text-[0.8rem] text-[var(--c-text)]/60 transition-colors hover:text-[var(--c-text)]"
             >
-              Termos de Serviço
+              {terms}
             </Link>
             <Link
               href={withLocale("/privacidade", locale)}
               className="text-[0.8rem] text-[var(--c-text)]/60 transition-colors hover:text-[var(--c-text)]"
             >
-              Política de Privacidade
+              {privacy}
             </Link>
           </div>
         </div>
 
         {/* Bottom bar */}
         <div className="flex flex-wrap items-center justify-between gap-3 border-t border-[var(--c-border)]/50 py-5">
-          <p className="text-[0.75rem] text-[var(--c-text)]/40">
-            © {new Date().getFullYear()} MatchWorky. Todos os direitos
-            reservados.
-          </p>
+            <p className="text-[0.75rem] text-[var(--c-text)]/40">
+              © {new Date().getFullYear()} MatchWorky. {rights}
+            </p>
         </div>
       </div>
     </footer>

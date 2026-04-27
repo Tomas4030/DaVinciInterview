@@ -12,6 +12,7 @@ type StaticInfoPageProps = {
   title: string;
   description: string;
   sections: Section[];
+  sideNoteLabel?: string;
   sideNoteTitle: string;
   sideNoteBody: string;
 };
@@ -30,6 +31,7 @@ export default function StaticInfoPage({
   title,
   description,
   sections,
+  sideNoteLabel = "Nota",
   sideNoteTitle,
   sideNoteBody,
 }: StaticInfoPageProps) {
@@ -63,7 +65,7 @@ export default function StaticInfoPage({
         <div className="grid grid-cols-1 gap-6 md:grid-cols-12">
           <aside className="rounded-xl border border-[#EAEAEA] bg-white p-7 md:col-span-4 md:sticky md:top-24 md:self-start">
             <p className="text-xs font-semibold uppercase tracking-[0.1em] text-[#787774]">
-              Nota
+              {sideNoteLabel}
             </p>
             <h2 className="mt-3 font-display text-2xl leading-tight tracking-[-0.02em] text-[#111111]">
               {sideNoteTitle}

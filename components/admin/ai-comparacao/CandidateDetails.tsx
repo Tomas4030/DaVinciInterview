@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { tAdmin } from "@/lib/i18n/admin";
 import type {
   CandidateAnalysis,
   InterviewAnalysis,
@@ -25,6 +26,7 @@ type Props = {
         reason: string;
       }
     | null;
+  locale?: string;
 };
 
 export default function CandidateDetails({
@@ -34,6 +36,7 @@ export default function CandidateDetails({
   selectedCandidate,
   selectedCandidateRanking,
   selectedCandidateRankingItem,
+  locale = "pt",
 }: Props) {
   return (
     <section className="space-y-5">
@@ -74,19 +77,26 @@ export default function CandidateDetails({
               <p className="mt-3 text-[60px] font-semibold leading-none text-[#4F46E5]">
                 {selectedCandidateRankingItem?.score ?? selectedCandidate.score}
               </p>
-              <p className="mt-3 text-sm text-[#4F46E5]">Excelente</p>
+              <p className="mt-3 text-sm text-[#4F46E5]">
+                {tAdmin(locale, "aiComparison.excellent")}
+              </p>
             </div>
 
             <div className="rounded-[18px] border border-[var(--c-border)]/70 bg-white px-6 py-5 text-center">
               <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--c-muted)]">
-                Ranking
+                {tAdmin(locale, "aiComparison.ranking")}
               </p>
               <p className="mt-3 text-[60px] font-semibold leading-none text-[#4F46E5]">
                 #{selectedCandidateRanking}
               </p>
               <p className="mt-3 text-sm text-[var(--c-muted)]">
-                de {selectedInterview.candidates.length} candidato
-                {selectedInterview.candidates.length === 1 ? "" : "s"}
+                {tAdmin(
+                  locale,
+                  selectedInterview.candidates.length === 1
+                    ? "aiComparison.outOfSingular"
+                    : "aiComparison.outOfPlural",
+                  { count: selectedInterview.candidates.length },
+                )}
               </p>
             </div>
           </div>
@@ -107,7 +117,7 @@ export default function CandidateDetails({
             </svg>
           </div>
           <h3 className="text-[16px] font-semibold text-[var(--c-text)]">
-            Resumo da análise
+            {tAdmin(locale, "aiComparison.summaryTitle")}
           </h3>
         </div>
 
@@ -132,7 +142,7 @@ export default function CandidateDetails({
                 </svg>
               </div>
               <h3 className="text-[16px] font-semibold text-[#2C5C35]">
-                Pontos fortes
+                {tAdmin(locale, "aiComparison.strengthsTitle")}
               </h3>
             </div>
           </div>
@@ -141,7 +151,7 @@ export default function CandidateDetails({
             <ul className="space-y-4">
               {(selectedCandidate.summary.strengths.length > 0
                 ? selectedCandidate.summary.strengths
-                : ["Sem pontos fortes identificados automaticamente."]
+                : [tAdmin(locale, "aiComparison.strengthsEmpty")]
               ).map((item, index) => (
                 <li
                   key={`strength-${index}`}
@@ -172,7 +182,7 @@ export default function CandidateDetails({
                 </svg>
               </div>
               <h3 className="text-[16px] font-semibold text-[#8C5A00]">
-                Pontos de atenção
+                {tAdmin(locale, "aiComparison.concernsTitle")}
               </h3>
             </div>
           </div>
@@ -181,7 +191,7 @@ export default function CandidateDetails({
             <ul className="space-y-4">
               {(selectedCandidate.summary.concerns.length > 0
                 ? selectedCandidate.summary.concerns
-                : ["Sem pontos de atenção identificados automaticamente."]
+                : [tAdmin(locale, "aiComparison.concernsEmpty")]
               ).map((item, index) => (
                 <li
                   key={`concern-${index}`}
@@ -212,14 +222,16 @@ export default function CandidateDetails({
             </svg>
           </div>
           <h3 className="text-[16px] font-semibold text-[var(--c-text)]">
-            Detalhes da entrevista
+            {tAdmin(locale, "aiComparison.detailsTitle")}
           </h3>
         </div>
 
         <div className="mt-5 flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
           <div className="grid flex-1 gap-6 sm:grid-cols-3">
             <div>
-              <p className="text-[12px] font-medium text-[var(--c-muted)]">Vaga</p>
+              <p className="text-[12px] font-medium text-[var(--c-muted)]">
+                {tAdmin(locale, "aiComparison.roleLabel")}
+              </p>
               <p className="mt-2 text-[15px] font-semibold text-[var(--c-text)]">
                 {selectedVaga.vagaTitle}
               </p>
@@ -227,7 +239,7 @@ export default function CandidateDetails({
 
             <div>
               <p className="text-[12px] font-medium text-[var(--c-muted)]">
-                Entrevista realizada em
+                {tAdmin(locale, "aiComparison.interviewDate")}
               </p>
               <p className="mt-2 text-[15px] font-semibold text-[var(--c-text)]">
                 {formatDate(selectedCandidate.createdAt)}
@@ -235,7 +247,9 @@ export default function CandidateDetails({
             </div>
 
             <div>
-              <p className="text-[12px] font-medium text-[var(--c-muted)]">Respostas</p>
+              <p className="text-[12px] font-medium text-[var(--c-muted)]">
+                {tAdmin(locale, "aiComparison.answers")}
+              </p>
               <p className="mt-2 text-[15px] font-semibold text-[var(--c-text)]">
                 {selectedCandidate.answerCount}
               </p>
@@ -246,7 +260,7 @@ export default function CandidateDetails({
             href={`/admin/${slug}/responses/${selectedCandidate.sessaoId}`}
             className="inline-flex h-[46px] items-center justify-center rounded-xl border border-[#D9DDF4] bg-white px-5 text-sm font-medium text-[#4F46E5] transition hover:bg-[#F8F9FF]"
           >
-            Ver respostas ↗
+            {tAdmin(locale, "aiComparison.viewAnswers")}
           </Link>
         </div>
       </div>
@@ -264,8 +278,13 @@ export default function CandidateDetails({
           <path d="M12 7h.01" />
         </svg>
         <p>
-          Análise {selectedInterview.source === "ai" ? "gerada por IA" : "calculada por heurística"} em {" "}
-          {formatDate(selectedInterview.generatedAt)}.
+          {tAdmin(locale, "aiComparison.analysisGeneratedAt", {
+            source:
+              selectedInterview.source === "ai"
+                ? tAdmin(locale, "aiComparison.analysisAi")
+                : tAdmin(locale, "aiComparison.analysisHeuristic"),
+            date: formatDate(selectedInterview.generatedAt),
+          })}
         </p>
       </div>
     </section>

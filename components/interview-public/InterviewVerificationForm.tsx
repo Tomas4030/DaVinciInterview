@@ -12,6 +12,7 @@ import {
 } from "libphonenumber-js";
 import examples from "libphonenumber-js/mobile/examples";
 import { withBasePath } from "@/lib/base-path";
+import { tInterview } from "@/lib/i18n/interview";
 import {
   IconAlertCircle,
   IconArrowRight,
@@ -137,19 +138,25 @@ export default function InterviewVerificationForm({
   }, [phone]);
 
   function validateName(value: string) {
-    return value.trim() ? undefined : "Nome obrigatório.";
+    return value.trim()
+      ? undefined
+      : tInterview(locale, "verificationForm.nameRequired");
   }
 
   function validateEmail(value: string) {
     const v = value.trim();
-    if (!v) return "Email obrigatório.";
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) return "Email inválido.";
+    if (!v) return tInterview(locale, "verificationForm.emailRequired");
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) {
+      return tInterview(locale, "verificationForm.emailInvalid");
+    }
     return undefined;
   }
 
   function validatePhone(value?: string) {
-    if (!value) return "Telemóvel obrigatório.";
-    if (!isValidPhoneNumber(value)) return "Número de telemóvel inválido.";
+    if (!value) return tInterview(locale, "verificationForm.phoneRequired");
+    if (!isValidPhoneNumber(value)) {
+      return tInterview(locale, "verificationForm.phoneInvalid");
+    }
     return undefined;
   }
 
@@ -210,12 +217,18 @@ export default function InterviewVerificationForm({
       const data = await response.json();
 
       if (!response.ok) {
-        setGlobalError(data?.error || "Não foi possível enviar o código.");
+        setGlobalError(
+          data?.error || tInterview(locale, "verificationForm.sendCodeError"),
+        );
         return;
       }
 
       if (data?.devCode) {
-        setInfo(`Código de desenvolvimento: ${data.devCode}`);
+        setInfo(
+          tInterview(locale, "verificationForm.devCode", {
+            code: data.devCode,
+          }),
+        );
       }
 
       router.push(
@@ -227,7 +240,7 @@ export default function InterviewVerificationForm({
       );
     } catch (error) {
       console.error(error);
-      setGlobalError("Erro de ligação ao servidor.");
+      setGlobalError(tInterview(locale, "verificationForm.serverConnectionError"));
     } finally {
       setIsLoading(false);
     }
@@ -255,7 +268,7 @@ export default function InterviewVerificationForm({
               {interviewTitle}
             </h1>
             <p className="mt-2 text-[13px] leading-relaxed text-[var(--c-text)]/55">
-              Confirma os teus dados para receberes o código de verificação.
+              {tInterview(locale, "verificationForm.intro")}
             </p>
           </div>
 
@@ -264,7 +277,11 @@ export default function InterviewVerificationForm({
             noValidate
             className="space-y-5 px-8 py-7"
           >
-            <Field id="name" label="Nome completo" error={fieldErrors.name}>
+            <Field
+              id="name"
+              label={tInterview(locale, "verificationForm.nameLabel")}
+              error={fieldErrors.name}
+            >
               <div className="relative">
                 <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--c-text)]/30">
                   <IconUser />
@@ -279,7 +296,7 @@ export default function InterviewVerificationForm({
                   }}
                   onBlur={() => handleBlur("name")}
                   className={`${inputBase} ${fieldErrors.name ? inputErr : inputIdle} pl-10 pr-4 py-3`}
-                  placeholder="O teu nome"
+                  placeholder={tInterview(locale, "verificationForm.namePlaceholder")}
                   autoComplete="name"
                   disabled={isLoading}
                   aria-invalid={!!fieldErrors.name}
@@ -288,7 +305,11 @@ export default function InterviewVerificationForm({
               </div>
             </Field>
 
-            <Field id="email" label="Email" error={fieldErrors.email}>
+            <Field
+              id="email"
+              label={tInterview(locale, "verificationForm.emailLabel")}
+              error={fieldErrors.email}
+            >
               <div className="relative">
                 <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--c-text)]/30">
                   <IconMail />
@@ -303,7 +324,7 @@ export default function InterviewVerificationForm({
                   }}
                   onBlur={() => handleBlur("email")}
                   className={`${inputBase} ${fieldErrors.email ? inputErr : inputIdle} pl-10 pr-4 py-3`}
-                  placeholder="nome@email.com"
+                  placeholder={tInterview(locale, "verificationForm.emailPlaceholder")}
                   autoComplete="email"
                   disabled={isLoading}
                   aria-invalid={!!fieldErrors.email}
@@ -312,7 +333,11 @@ export default function InterviewVerificationForm({
               </div>
             </Field>
 
-            <Field id="phone" label="Telemóvel" error={fieldErrors.phone}>
+            <Field
+              id="phone"
+              label={tInterview(locale, "verificationForm.phoneLabel")}
+              error={fieldErrors.phone}
+            >
               <div
                 className={`rounded-xl [&_.PhoneInput]:flex [&_.PhoneInput]:items-center [&_.PhoneInput]:gap-2
                   [&_.PhoneInputCountry]:shrink-0 [&_.PhoneInputCountry]:pl-3.5
@@ -347,7 +372,7 @@ export default function InterviewVerificationForm({
                   }}
                   onBlur={() => handleBlur("phone")}
                   disabled={isLoading}
-                  placeholder="+351 912 345 678"
+                  placeholder={tInterview(locale, "verificationForm.phonePlaceholder")}
                   className={phoneInputClass}
                   numberInputProps={{
                     autoComplete: "tel",
@@ -404,11 +429,11 @@ export default function InterviewVerificationForm({
               {isLoading ? (
                 <>
                   <LoadingSpinner size={15} />
-                  <span>A enviar código…</span>
+                  <span>{tInterview(locale, "verificationForm.sending")}</span>
                 </>
               ) : (
                 <>
-                  <span>Continuar</span>
+                  <span>{tInterview(locale, "verificationForm.continue")}</span>
                   <span className="transition-transform duration-200 group-hover:translate-x-0.5">
                     <IconArrowRight />
                   </span>
@@ -419,7 +444,7 @@ export default function InterviewVerificationForm({
             <div className="flex items-center justify-center gap-1.5 pt-1 text-[var(--c-text)]/35">
               <IconShield />
               <p className="text-[11px] tracking-wide">
-                Os teus dados estão protegidos e nunca serão partilhados.
+                {tInterview(locale, "verificationForm.secure")}
               </p>
             </div>
           </form>
