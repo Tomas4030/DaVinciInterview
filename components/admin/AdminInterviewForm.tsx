@@ -108,7 +108,7 @@ export default function AdminInterviewForm({
         return;
       }
 
-      router.push(`/admin/${slug}/interviews`);
+      router.push(`/${locale}/admin/${slug}/interviews`);
       router.refresh();
     } catch (requestError) {
       console.error("Erro ao guardar entrevista:", requestError);

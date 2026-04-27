@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { withBasePath } from "@/lib/base-path";
 
 function slugify(value: string): string {
@@ -18,6 +18,24 @@ function slugify(value: string): string {
 
 export default function OnboardingCompanyForm() {
   const router = useRouter();
+  const pathname = usePathname();
+
+  const localeFromPath = useMemo(() => {
+    const candidate = pathname?.split("/").filter(Boolean)[0] || "en";
+    return candidate === "pt" || candidate === "en" ? candidate : "en";
+  }, [pathname]);
+
+  function toLocalizedPath(path: string): string {
+    if (!path.startsWith("/")) {
+      return path;
+    }
+
+    if (path.startsWith("/admin")) {
+      return `/${localeFromPath}${path}`;
+    }
+
+    return path;
+  }
 
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
@@ -121,13 +139,13 @@ export default function OnboardingCompanyForm() {
       if (!response.ok) {
         setSubmitError(data.error || "Não foi possível criar a empresa");
         if (data.redirectTo) {
-          router.push(data.redirectTo);
+          router.push(toLocalizedPath(data.redirectTo));
           router.refresh();
         }
         return;
       }
 
-      router.push(data.redirectTo || "/admin");
+      router.push(toLocalizedPath(data.redirectTo || "/admin"));
       router.refresh();
     } catch (error) {
       setSubmitError("Erro ao criar empresa. Tenta novamente.");

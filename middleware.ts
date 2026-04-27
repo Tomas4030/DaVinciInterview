@@ -53,6 +53,16 @@ export async function middleware(request: NextRequest) {
 
   const isAdminRoute = pathnameWithoutBasePath.startsWith("/admin");
 
+  if (isAdminRoute) {
+    const localizedAdminUrl = request.nextUrl.clone();
+    localizedAdminUrl.pathname =
+      `${basePath}/${defaultLocale}${pathnameWithoutBasePath}`.replace(
+        /\/+/g,
+        "/",
+      );
+    return NextResponse.redirect(localizedAdminUrl);
+  }
+
   if (!hasLocale && !isAdminRoute) {
     const redirectUrl = request.nextUrl.clone();
     redirectUrl.pathname =
@@ -75,9 +85,22 @@ export async function middleware(request: NextRequest) {
   }
 
   // Fix login loop
-  if (pathnameWithoutBasePath === "/admin/login") {
+  const isLocalizedAdminLogin = locales.some(
+    (locale) => pathnameWithoutBasePath === `/${locale}/admin/login`,
+  );
+
+  if (isLocalizedAdminLogin) {
     const nextParam = request.nextUrl.searchParams.get("next") || "";
-    if (nextParam === "/admin/login" || nextParam === "/admin/login/") {
+    const invalidNextParam =
+      nextParam === "/admin/login" ||
+      nextParam === "/admin/login/" ||
+      locales.some(
+        (locale) =>
+          nextParam === `/${locale}/admin/login` ||
+          nextParam === `/${locale}/admin/login/`,
+      );
+
+    if (invalidNextParam) {
       const cleanLoginUrl = request.nextUrl.clone();
       cleanLoginUrl.searchParams.delete("next");
       return NextResponse.redirect(cleanLoginUrl);

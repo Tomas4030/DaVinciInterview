@@ -19,12 +19,12 @@ export default async function OnboardingPage({ params }: Props) {
   const session = parseAdminToken(token);
 
   if (!session) {
-    redirect(`/admin/login?next=/${params.locale}/onboarding`);
+    redirect(`/${params.locale}/admin/login?next=/${params.locale}/onboarding`);
   }
 
   const company = await resolveDefaultCompanyForUser(session.userId, session.email);
   if (company) {
-    redirect(`/admin/${company.slug}/dashboard`);
+    redirect(`/${params.locale}/admin/${company.slug}/dashboard`);
   }
 
   return (

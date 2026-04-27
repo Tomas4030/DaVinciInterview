@@ -124,7 +124,10 @@ export default function SignupForm({ locale = "en" }: SignupFormProps) {
 
       <p className="text-xs text-gray-500 text-center">
         {tAuth(locale, "signupForm.hasAccount")}{" "}
-        <Link href="/admin/login" className="text-[var(--c-brand)] font-medium">
+        <Link
+          href={withLocale("/admin/login", locale)}
+          className="text-[var(--c-brand)] font-medium"
+        >
           {tAuth(locale, "signupForm.login")}
         </Link>
       </p>

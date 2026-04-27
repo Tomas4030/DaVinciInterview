@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import AdminAccountMenu from "@/components/admin/AdminAccountMenu";
+import LocaleSelect from "@/components/home/LocaleSelect";
 import { getAdminCompanyContextFromServerCookies } from "@/lib/admin-context";
 import { tLanding } from "@/lib/i18n/landing";
 
@@ -27,6 +28,7 @@ export default async function Header({ locale = "en" }: HeaderProps) {
   const pricing = tLanding(locale, "header.pricing");
   const login = tLanding(locale, "header.login");
   const startFree = tLanding(locale, "header.startFree");
+  const languageAria = tLanding(locale, "header.languageAria");
 
   return (
     <header className="sticky top-0 z-20 border-b border-[var(--c-border)]/60 bg-[var(--c-surface)]/80 backdrop-blur-xl">
@@ -72,16 +74,22 @@ export default async function Header({ locale = "en" }: HeaderProps) {
         </nav>
 
         <div className="flex items-center gap-3">
+          <LocaleSelect locale={locale} ariaLabel={languageAria} />
+
           {adminContext ? (
             <AdminAccountMenu
               userEmail={adminContext.adminEmail}
               publicHref={withLocale(`/${adminContext.company.slug}`, locale)}
-              adminHref={`/admin/${adminContext.company.slug}/dashboard`}
+              adminHref={withLocale(
+                `/admin/${adminContext.company.slug}/dashboard`,
+                locale,
+              )}
+              locale={locale}
             />
           ) : (
             <>
               <Link
-                href="/admin/login"
+                href={withLocale("/admin/login", locale)}
                 className="text-[0.8rem] font-medium text-[var(--c-text)]/65 transition-colors hover:text-[var(--c-text)]"
               >
                 {login}
