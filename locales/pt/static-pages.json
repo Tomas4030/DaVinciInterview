@@ -1,0 +1,170 @@
+{
+  "contact": {
+    "meta": {
+      "title": "Contacto",
+      "description": "Fala com a equipa MatchWorky para suporte, questoes comerciais e pedidos relacionados com privacidade."
+    },
+    "eyebrow": "Contacto",
+    "title": "Fale connosco",
+    "description": "Se precisa de ajuda com configuracao, faturacao ou privacidade, a nossa equipa responde por canais diretos e objetivos.",
+    "sideNoteLabel": "Nota",
+    "sideNoteTitle": "Tempo de resposta",
+    "sideNoteBody": "Pedidos operacionais sao respondidos em dias uteis. Casos urgentes de acesso e seguranca recebem prioridade no mesmo dia.",
+    "sections": [
+      {
+        "title": "Suporte tecnico",
+        "body": [
+          "Email: suporte@matchworky.pt",
+          "Inclua, se possivel, o slug da empresa e uma descricao curta do comportamento observado."
+        ],
+        "tone": "blue"
+      },
+      {
+        "title": "Comercial e parcerias",
+        "body": [
+          "Email: hello@matchworky.pt",
+          "Partilhe o volume esperado de vagas e o fluxo atual de recrutamento para uma proposta alinhada ao seu contexto."
+        ],
+        "tone": "yellow"
+      },
+      {
+        "title": "Privacidade e dados",
+        "body": [
+          "Email: privacidade@matchworky.pt",
+          "Solicitacoes de acesso, retificacao ou eliminacao de dados devem indicar a empresa responsavel pelo processo de recrutamento."
+        ],
+        "tone": "green"
+      }
+    ]
+  },
+  "about": {
+    "meta": {
+      "title": "Sobre nos",
+      "description": "Conhece a missao da MatchWorky e a forma como desenhamos entrevistas mais claras para equipas e candidatos."
+    },
+    "eyebrow": "Empresa",
+    "title": "Sobre nos",
+    "description": "A MatchWorky nasce para reduzir friccao no recrutamento inicial, com entrevistas consistentes e uma leitura objetiva das respostas.",
+    "sideNoteLabel": "Nota",
+    "sideNoteTitle": "Foco",
+    "sideNoteBody": "Construimos um produto simples de operar no dia a dia: criar vaga, partilhar link, acompanhar respostas e decidir com contexto.",
+    "sections": [
+      {
+        "title": "1. Porque existimos",
+        "body": [
+          "Muitas equipas perdem tempo com triagem manual e entrevistas iniciais pouco estruturadas.",
+          "Criamos uma camada conversacional para padronizar esta etapa, mantendo espaco para criterio humano na decisao final."
+        ],
+        "tone": "neutral"
+      },
+      {
+        "title": "2. Como trabalhamos",
+        "body": [
+          "O produto privilegia clareza: interface objetiva, resultados comparaveis e configuracao enxuta para cada vaga.",
+          "Todas as melhorias sao validadas com base em uso real por equipas de recrutamento, nao em tendencias visuais de curto prazo."
+        ],
+        "tone": "blue"
+      },
+      {
+        "title": "3. Principios de produto",
+        "body": [
+          "Respeito pela experiencia do candidato, com fluxos transparentes e comunicacao direta.",
+          "Privacidade por padrao, com controlo dos dados por parte das empresas e trilho minimo necessario para auditoria."
+        ],
+        "tone": "green"
+      }
+    ]
+  },
+  "privacy": {
+    "meta": {
+      "title": "Politica de Privacidade",
+      "description": "Como os dados pessoais sao recolhidos, usados e protegidos na plataforma MatchWorky."
+    },
+    "eyebrow": "Privacidade",
+    "title": "Politica de privacidade",
+    "description": "Explicamos de forma direta que dados tratamos, por que motivo tratamos e como pode exercer os seus direitos em qualquer momento.",
+    "sideNoteLabel": "Nota",
+    "sideNoteTitle": "Responsabilidade",
+    "sideNoteBody": "Cada empresa cliente define a base legal para recrutamento. A MatchWorky atua como processador de dados para operacionalizar entrevistas e analises.",
+    "sections": [
+      {
+        "title": "1. Dados recolhidos",
+        "body": [
+          "Podemos recolher dados de identificacao e contacto, respostas de entrevista e metadados tecnicos de sessao para garantir funcionamento e auditoria basica.",
+          "Nao recolhemos informacao sensivel sem necessidade objetiva para o processo de candidatura configurado pela empresa cliente."
+        ],
+        "tone": "neutral"
+      },
+      {
+        "title": "2. Finalidades de tratamento",
+        "body": [
+          "Os dados sao utilizados para executar entrevistas, apresentar resultados no painel administrativo e permitir comparacao estruturada entre candidaturas.",
+          "Tambem usamos dados tecnicos para seguranca, prevencao de abuso e melhoria de estabilidade da plataforma."
+        ],
+        "tone": "blue"
+      },
+      {
+        "title": "3. Retencao e eliminacao",
+        "body": [
+          "Os dados ficam disponiveis pelo periodo definido por cada cliente, respeitando obrigacoes legais e necessidades legitimas de recrutamento.",
+          "Quando solicitado, e possivel eliminar registos ou anonimizar historicos que ja nao sejam necessarios para decisao de contratacao."
+        ],
+        "tone": "green"
+      },
+      {
+        "title": "4. Direitos do titular",
+        "body": [
+          "Pode solicitar acesso, retificacao, apagamento, limitacao de tratamento e portabilidade, nos termos da lei aplicavel.",
+          "Pedidos de privacidade podem ser submetidos pela pagina de contacto e serao encaminhados para resposta em prazo razoavel."
+        ],
+        "tone": "red"
+      }
+    ]
+  },
+  "terms": {
+    "meta": {
+      "title": "Termos de Servico",
+      "description": "Condicoes de uso da plataforma MatchWorky para equipas de recrutamento e candidatos."
+    },
+    "eyebrow": "Legal",
+    "title": "Termos de servico",
+    "description": "Ao usar o MatchWorky, aceita estas condicoes para garantir uma utilizacao clara, segura e previsivel para empresas e candidatos.",
+    "sideNoteLabel": "Nota",
+    "sideNoteTitle": "Versao atual",
+    "sideNoteBody": "Estes termos aplicam-se a toda a utilizacao da plataforma web. Quando forem atualizados, a data de revisao sera publicada nesta pagina.",
+    "sections": [
+      {
+        "title": "1. Utilizacao da plataforma",
+        "body": [
+          "A plataforma destina-se a equipas de recrutamento que pretendem estruturar entrevistas iniciais com apoio de IA.",
+          "Nao e permitido usar o servico para recolha de dados sem base legal, envio de conteudo abusivo ou qualquer atividade que viole legislacao aplicavel."
+        ],
+        "tone": "neutral"
+      },
+      {
+        "title": "2. Contas e acesso",
+        "body": [
+          "Cada conta empresarial e responsavel pela gestao dos seus acessos administrativos e pela seguranca das credenciais.",
+          "Recomendamos a revisao regular de utilizadores com acesso ao painel e a revogacao imediata de acessos que deixem de ser necessarios."
+        ],
+        "tone": "blue"
+      },
+      {
+        "title": "3. Dados de entrevistas",
+        "body": [
+          "Os dados recolhidos durante entrevistas pertencem ao cliente que cria a vaga e devem ser tratados de acordo com a politica interna de recrutamento.",
+          "A MatchWorky processa os dados para disponibilizar funcionalidades de triagem, analise e relatorios, sem uso comercial paralelo desses dados."
+        ],
+        "tone": "green"
+      },
+      {
+        "title": "4. Disponibilidade e suporte",
+        "body": [
+          "Trabalhamos para garantir elevada disponibilidade, mas podem ocorrer interrupcoes pontuais para manutencao, atualizacoes ou mitigacao de incidentes.",
+          "Questoes operacionais podem ser reportadas pela pagina de contacto para acompanhamento tecnico."
+        ],
+        "tone": "yellow"
+      }
+    ]
+  }
+}

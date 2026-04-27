@@ -1,0 +1,165 @@
+{
+  "meta": {
+    "title": "MatchWorky — AI interviews for recruiting teams",
+    "description": "Automate candidate screening with conversational interviews. Define questions, share the link, and analyze answers in one platform.",
+    "ogTitle": "MatchWorky — AI interviews for companies",
+    "ogDescription": "Automate early-stage screening and improve the candidate experience with intelligent conversational interviews."
+  },
+  "header": {
+    "ariaHome": "Home page — MatchWorky",
+    "features": "Features",
+    "howItWorks": "How it works",
+    "pricing": "Pricing",
+    "login": "Sign in",
+    "startFree": "Start free"
+  },
+  "hero": {
+    "badge": "Automate your hiring process",
+    "titleLine1": "AI-powered interviews.",
+    "titleHighlight": "Screening",
+    "titleLine2": "without the effort.",
+    "description": "MatchWorky runs automated conversational interviews on behalf of your company. Define your questions, share the link with candidates, and analyze responses in one place.",
+    "cta": "Start free",
+    "stats": [
+      { "value": "3×", "label": "faster than manual screening" },
+      { "value": "80%", "label": "reduction in hiring time" },
+      { "value": "100%", "label": "structured applications" }
+    ],
+    "preview": {
+      "label": "Automated interview",
+      "bot1": "Hi! I am Acme's recruiting assistant. Shall we start with a few questions?",
+      "user1": "Sure, I am ready!",
+      "bot2": "Great! Tell me a bit about your experience with React and TypeScript."
+    }
+  },
+  "features": {
+    "eyebrow": "Features",
+    "title": "Everything you need to hire better",
+    "description": "A complete platform from job creation to response analysis. No external tools. No complexity.",
+    "items": [
+      {
+        "title": "Conversational interviews",
+        "desc": "Candidates answer in a simple chat interface — no confusing forms, no PDFs, no friction."
+      },
+      {
+        "title": "Automatic verification",
+        "desc": "Email and phone verified with OTP codes — ensuring each candidate is unique and authentic."
+      },
+      {
+        "title": "Candidate dashboard",
+        "desc": "View all responses in a clean interface. Filter, search, and export in one click."
+      },
+      {
+        "title": "Custom questionnaires",
+        "desc": "Create role-specific questions. Add, reorder, and remove items effortlessly."
+      },
+      {
+        "title": "AI analysis",
+        "desc": "Automatic answer analysis with scoring and AI-generated summaries for every candidate."
+      },
+      {
+        "title": "Report exports",
+        "desc": "Export applications as PDF or CSV to share with your team or integrate with other systems."
+      }
+    ]
+  },
+  "howItWorks": {
+    "ariaLabel": "How MatchWorky works",
+    "eyebrow": "How it works",
+    "title": "From job post to hire in 3 steps",
+    "description": "The process is designed to be simple for your team and smooth for candidates.",
+    "stepLabel": "Step",
+    "steps": [
+      {
+        "title": "Create your role",
+        "desc": "Define title, description, and questions for candidates. You can run multiple active roles at the same time.",
+        "highlight": "Setup in minutes"
+      },
+      {
+        "title": "Share the link",
+        "desc": "Each role has a unique URL. Share it on social media, your website, or by email — candidates can join without creating an account.",
+        "highlight": "No candidate friction"
+      },
+      {
+        "title": "Analyze responses",
+        "desc": "All applications are centralized in your dashboard. AI generates summaries and scoring so you can focus on top candidates.",
+        "highlight": "Data-driven decisions"
+      }
+    ]
+  },
+  "testimonials": {
+    "eyebrow": "Testimonials",
+    "title": "What HR teams are saying",
+    "items": [
+      {
+        "quote": "We used to spend weeks reviewing CVs. With MatchWorky, in two days we already had the top 5 candidates ready for in-person interviews.",
+        "author": "Ana Rodrigues",
+        "role": "Head of People, TechStartup Lisbon"
+      },
+      {
+        "quote": "The candidate experience is amazing. Zero frustration, zero huge forms. People love answering this way.",
+        "author": "Miguel Santos",
+        "role": "Talent Acquisition, Scale-up Porto"
+      },
+      {
+        "quote": "The AI summary saves us at least 2 hours per candidate. For us, it has been a game changer in technical hiring.",
+        "author": "Sofia Mendes",
+        "role": "CTO, Digital Product"
+      }
+    ]
+  },
+  "pricing": {
+    "eyebrow": "Plans",
+    "title": "Choose the best plan for your team",
+    "description": "Start with a base plan and scale without complex migrations. Cancel anytime.",
+    "monthly": "Monthly",
+    "yearly": "Yearly",
+    "custom": "Custom",
+    "year": "/year",
+    "month": "/month",
+    "save": "Save {{percent}}%",
+    "annualBilling": "Available with annual billing",
+    "monthlyEquivalent": "Equivalent to {{value}} EUR/month",
+    "mostPopular": "Most popular",
+    "viewDetails": "View details",
+    "startNow": "Get started",
+    "trial": "All plans include a 14-day free trial. No credit card required.",
+    "plans": {
+      "basic": {
+        "description": "For small teams that want faster early screening.",
+        "features": ["1 company", "Up to 5 active interviews", "Base dashboard", "Email support"]
+      },
+      "pro": {
+        "description": "Scale with more volume and more operational control.",
+        "features": ["Up to 3 companies", "Unlimited interviews", "Performance insights", "Priority support"]
+      },
+      "enterprise": {
+        "description": "For teams with advanced security and scale requirements.",
+        "features": ["Advanced multi-company", "Dedicated SLA", "Technical support and onboarding", "Custom integrations"]
+      }
+    }
+  },
+  "cta": {
+    "eyebrow": "Start today",
+    "title": "Ready to hire faster?",
+    "description": "Join teams that already automated candidate screening. Set up your first role in under 5 minutes.",
+    "primary": "Start free — 14 days",
+    "secondary": "See all plans",
+    "footnote": "No credit card required. Cancel anytime."
+  },
+  "footer": {
+    "description": "SaaS platform for AI-powered conversational interviews. Automate early screening and improve the candidate experience.",
+    "product": "Product",
+    "features": "Features",
+    "howItWorks": "How it works",
+    "pricing": "Pricing",
+    "startFree": "Start free",
+    "company": "Company",
+    "about": "About",
+    "contact": "Contact",
+    "legal": "Legal",
+    "terms": "Terms of Service",
+    "privacy": "Privacy Policy",
+    "rights": "All rights reserved."
+  }
+}

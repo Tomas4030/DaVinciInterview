@@ -1,0 +1,114 @@
+{
+  "nav": {
+    "ariaLabel": "Painel de administração",
+    "adminBadge": "Admin",
+    "navigationLabel": "Navegação administrativa",
+    "dashboard": "Dashboard",
+    "responses": "Respostas"
+  },
+  "sidebar": {
+    "interviews": "Entrevistas",
+    "responses": "Respostas",
+    "settings": "Definições",
+    "billing": "Faturação",
+    "navigation": "Navegação",
+    "companyNavigation": "Navegação da empresa"
+  },
+  "interviews": {
+    "listCard": {
+      "noDescription": "Sem descricao.",
+      "questionSingular": "{{count}} pergunta",
+      "questionPlural": "{{count}} perguntas",
+      "viewResponses": "Ver respostas",
+      "edit": "Editar",
+      "editLegacy": "Editar (legado)"
+    },
+    "filters": {
+      "searchPlaceholder": "Pesquisar por titulo ou descricao",
+      "statusAll": "Todos os estados",
+      "statusDraft": "Rascunho",
+      "statusPublished": "Publicada",
+      "statusArchived": "Arquivada",
+      "submit": "Filtrar"
+    }
+  },
+  "responses": {
+    "table": {
+      "title": "Resultados",
+      "recordsSingular": "{{count}} registo",
+      "recordsPlural": "{{count}} registos",
+      "empty": "Sem respostas para os filtros selecionados.",
+      "candidate": "Candidato",
+      "interview": "Entrevista",
+      "status": "Estado",
+      "date": "Data",
+      "actions": "Ações",
+      "untitledInterview": "Entrevista sem titulo",
+      "viewAnswers": "Ver respostas"
+    },
+    "summary": {
+      "candidate": "Candidato",
+      "phone": "Telemóvel",
+      "status": "Estado",
+      "dateTime": "Data/Hora"
+    },
+    "qaPairs": {
+      "title": "Perguntas e respostas",
+      "empty": "Não existem respostas nesta sessão.",
+      "questionFallback": "Pergunta {{number}}",
+      "answerFallback": "—"
+    },
+    "stats": {
+      "completed": "Concluidas",
+      "inAnalysis": "Em analise",
+      "inProgress": "Em progresso"
+    },
+    "status": {
+      "concluida": "Concluida",
+      "em_analise": "Em analise",
+      "rejeitada": "Rejeitada",
+      "em_progresso": "Em progresso"
+    },
+    "filters": {
+      "searchPlaceholder": "Pesquisar por candidato, telefone ou entrevista",
+      "statusAll": "Todos os estados",
+      "statusInProgress": "Em progresso",
+      "statusDone": "Concluida",
+      "allInterviews": "Todas as entrevistas",
+      "aiAnalysis": "Analise com IA"
+    }
+  },
+  "aiComparison": {
+    "headerTag": "Análise IA",
+    "title": "Comparação de candidatos por vaga",
+    "role": "Vaga",
+    "backToResponses": "Voltar às respostas",
+    "refreshConfirm": "Deseja mesmo substituir os dados atuais da analise IA e recriar as estatisticas?",
+    "refreshError": "Nao foi possivel recriar os dados da analise IA.",
+    "refreshLoading": "A recriar...",
+    "refreshAction": "Recriar dados IA",
+    "sidebarTitle": "Candidatos",
+    "sidebarTotal": "Total de candidatos",
+    "searchPlaceholder": "Pesquisar candidato...",
+    "score": "Score",
+    "summaryTitle": "Resumo da análise",
+    "strengthsTitle": "Pontos fortes",
+    "strengthsEmpty": "Sem pontos fortes identificados automaticamente.",
+    "concernsTitle": "Pontos de atenção",
+    "concernsEmpty": "Sem pontos de atenção identificados automaticamente.",
+    "detailsTitle": "Detalhes da entrevista",
+    "roleLabel": "Vaga",
+    "interviewDate": "Entrevista realizada em",
+    "answers": "Respostas",
+    "viewAnswers": "Ver respostas ↗",
+    "analysisAi": "gerada por IA",
+    "analysisHeuristic": "calculada por heurística",
+    "analysisGeneratedAt": "Análise {{source}} em {{date}}.",
+    "excellent": "Excelente",
+    "ranking": "Ranking",
+    "outOfSingular": "de {{count}} candidato",
+    "outOfPlural": "de {{count}} candidatos",
+    "companyDescription": "Descrição da empresa",
+    "companyDescriptionFallback": "Sem descrição adicional disponível para esta empresa."
+  }
+}
