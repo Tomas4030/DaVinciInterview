@@ -4,7 +4,7 @@ import { getInterviewById } from "@/lib/queries/interviews";
 import InterviewChatClient from "@/components/interview-public/InterviewChatClient";
 
 type Props = {
-  params: { slug: string; interviewId: string };
+  params: { locale: string; slug: string; interviewId: string };
 };
 
 type InterviewQuestionInput = {
@@ -43,6 +43,7 @@ export default async function InterviewChatPage({ params }: Props) {
 
   return (
     <InterviewChatClient
+      locale={params.locale}
       slug={company.slug}
       interviewId={interview.id}
       companyName={company.name}

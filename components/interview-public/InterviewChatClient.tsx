@@ -16,6 +16,7 @@ type ChatMessage = {
 };
 
 type Props = {
+  locale: string;
   slug: string;
   interviewId: string;
   companyName: string;
@@ -118,6 +119,7 @@ function UserAvatar() {
 }
 
 export default function InterviewChatClient({
+  locale,
   slug,
   interviewId,
   companyName,
@@ -175,7 +177,7 @@ export default function InterviewChatClient({
 
     const savedSessionRaw = localStorage.getItem(sessionStorageKey);
     if (!savedSessionRaw) {
-      router.replace(`/${slug}/interview/${interviewId}/verify`);
+      router.replace(`/${locale}/${slug}/interview/${interviewId}/verify`);
       return;
     }
 
@@ -183,18 +185,18 @@ export default function InterviewChatClient({
     try {
       parsedSession = JSON.parse(savedSessionRaw) as SavedSession;
     } catch {
-      router.replace(`/${slug}/interview/${interviewId}/verify`);
+      router.replace(`/${locale}/${slug}/interview/${interviewId}/verify`);
       return;
     }
 
     if (!parsedSession?.token || !parsedSession?.expiresAt) {
-      router.replace(`/${slug}/interview/${interviewId}/verify`);
+      router.replace(`/${locale}/${slug}/interview/${interviewId}/verify`);
       return;
     }
 
     if (new Date(parsedSession.expiresAt).getTime() <= Date.now()) {
       localStorage.removeItem(sessionStorageKey);
-      router.replace(`/${slug}/interview/${interviewId}/verify`);
+      router.replace(`/${locale}/${slug}/interview/${interviewId}/verify`);
       return;
     }
 
@@ -237,7 +239,7 @@ export default function InterviewChatClient({
       setMessages([]);
       setShowContextModal(true);
     }
-  }, [interviewId, introMessage, router, sessionStorageKey, slug]);
+  }, [interviewId, introMessage, locale, router, sessionStorageKey, slug]);
 
   function confirmContextAndContinue() {
     setShowContextModal(false);
@@ -307,7 +309,7 @@ export default function InterviewChatClient({
       localStorage.removeItem(`${STORAGE_PREFIX}${interviewId}`);
       localStorage.removeItem(sessionStorageKey);
     }
-    router.replace(`/${slug}/interview/${interviewId}/done`);
+    router.replace(`/${locale}/${slug}/interview/${interviewId}/done`);
   }
 
   async function handleSend(event: FormEvent<HTMLFormElement>) {
@@ -469,7 +471,7 @@ export default function InterviewChatClient({
             <div className="mt-6 grid gap-2 sm:grid-cols-2">
               <button
                 type="button"
-                onClick={() => router.replace(`/${slug}`)}
+                onClick={() => router.replace(`/${locale}/${slug}`)}
                 className="h-11 rounded-md border border-[#EAEAEA] bg-white px-4 text-[12px] font-semibold uppercase tracking-[0.05em] text-[#2F3437] transition hover:bg-[#F7F6F3] active:scale-[0.98]"
               >
                 Voltar

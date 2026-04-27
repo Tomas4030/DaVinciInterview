@@ -8,6 +8,7 @@ import { withBasePath } from "@/lib/base-path";
 
 interface EntrevistaContainerProps {
   vaga: Vaga;
+  locale?: string;
 }
 
 interface CandidateInfo {
@@ -18,6 +19,7 @@ interface CandidateInfo {
 
 export default function EntrevistaContainer({
   vaga,
+  locale = "pt",
 }: EntrevistaContainerProps) {
   const [candidateInfo, setCandidateInfo] = useState<CandidateInfo | null>(
     null,
@@ -111,6 +113,7 @@ export default function EntrevistaContainer({
       vaga={vaga}
       candidateEmail={candidateInfo.email}
       candidatePhone={candidateInfo.phone}
+      locale={locale}
     />
   );
 }

@@ -5,7 +5,7 @@ import { getInterviewById } from "@/lib/queries/interviews";
 import { IconArrowRight, IconShield } from "@/components/ui/Icons";
 
 type Props = {
-  params: { slug: string; interviewId: string };
+  params: { locale: string; slug: string; interviewId: string };
 };
 
 const steps = [
@@ -123,7 +123,7 @@ export default async function InterviewDonePage({ params }: Props) {
           {/* Buttons */}
           <div className="mb-8 flex flex-col gap-2.5">
             <Link
-              href={`/${company.slug}`}
+              href={`/${params.locale}/${company.slug}`}
               className="btn-primary group flex w-full items-center justify-center gap-2 text-[12px] uppercase tracking-[0.06em]"
             >
               Ir para início

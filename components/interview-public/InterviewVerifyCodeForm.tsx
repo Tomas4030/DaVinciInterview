@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/Icons";
 
 type Props = {
+  locale: string;
   slug: string;
   interviewId: string;
   email: string;
@@ -42,6 +43,7 @@ function LoadingSpinner({ size = 16 }: { size?: number }) {
 }
 
 export default function InterviewVerifyCodeForm({
+  locale,
   slug,
   interviewId,
   email,
@@ -150,7 +152,7 @@ export default function InterviewVerifyCodeForm({
         );
       }
 
-      router.push(`/${slug}/interview/${interviewId}/chat`);
+      router.push(`/${locale}/${slug}/interview/${interviewId}/chat`);
     } catch (requestError) {
       console.error(requestError);
       setError("Erro de ligação ao servidor.");

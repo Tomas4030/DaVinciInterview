@@ -5,7 +5,7 @@ import EntrevistaContainer from "@/components/EntrevistaContainer";
 import type { Metadata } from "next";
 
 interface Props {
-  params: { vagaId: string };
+  params: { locale: string; vagaId: string };
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -27,5 +27,5 @@ export default async function EntrevistaPage({ params }: Props) {
 
   if (!vaga.ativa) notFound();
 
-  return <EntrevistaContainer vaga={vaga} />;
+  return <EntrevistaContainer vaga={vaga} locale={params.locale} />;
 }

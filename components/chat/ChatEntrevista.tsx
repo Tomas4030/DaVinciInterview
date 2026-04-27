@@ -5,6 +5,17 @@ import Link from "next/link";
 import type { Vaga } from "@/lib/api";
 import { withBasePath } from "@/lib/base-path";
 
+const supportedLocales = new Set(["pt", "en"]);
+
+function withLocale(path: string, locale: string): string {
+  const safeLocale = supportedLocales.has(locale) ? locale : "pt";
+  if (path === "/") {
+    return `/${safeLocale}`;
+  }
+
+  return `/${safeLocale}${path}`;
+}
+
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 interface Mensagem {
@@ -163,10 +174,12 @@ export default function ChatEntrevista({
   vaga,
   candidateEmail,
   candidatePhone,
+  locale = "pt",
 }: {
   vaga: Vaga;
   candidateEmail?: string;
   candidatePhone?: string;
+  locale?: string;
 }) {
   const [mensagens, setMensagens] = useState<Mensagem[]>([
     msgBot(
@@ -356,7 +369,7 @@ export default function ChatEntrevista({
         <div className="max-w-2xl mx-auto flex items-center justify-between gap-4">
           <div className="flex items-center gap-3 min-w-0">
             <Link
-              href="/"
+              href={withLocale("/", locale)}
               className="flex-shrink-0 w-7 h-7 rounded-lg border border-gray-200 flex items-center justify-center text-gray-400 hover:text-gray-700 hover:border-gray-300 transition-all"
             >
               <svg
@@ -467,7 +480,7 @@ export default function ChatEntrevista({
             </button>
           ) : concluida ? (
             <Link
-              href="/"
+              href={withLocale("/", locale)}
               className="w-full h-11 border border-gray-200 hover:bg-gray-50 active:scale-[0.99] text-gray-700 text-sm font-medium rounded-xl flex items-center justify-center gap-2 transition-all duration-150"
             >
               <svg

@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/Icons";
 
 type Props = {
+  locale: string;
   slug: string;
   interviewId: string;
   interviewTitle: string;
@@ -100,6 +101,7 @@ function Field({
 }
 
 export default function InterviewVerificationForm({
+  locale,
   slug,
   interviewId,
   interviewTitle,
@@ -217,7 +219,7 @@ export default function InterviewVerificationForm({
       }
 
       router.push(
-        `/${slug}/interview/${interviewId}/verify` +
+        `/${locale}/${slug}/interview/${interviewId}/verify` +
           `?email=${encodeURIComponent(normalizedEmail)}` +
           `&telefone=${encodeURIComponent(normalizedPhone || "")}` +
           `&telefone_pais=${encodeURIComponent(detectedCountry)}` +

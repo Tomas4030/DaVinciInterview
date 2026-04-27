@@ -4,7 +4,7 @@ import { getInterviewById } from "@/lib/queries/interviews";
 import InterviewVerifyCodeForm from "@/components/interview-public/InterviewVerifyCodeForm";
 
 type Props = {
-  params: { slug: string; interviewId: string };
+  params: { locale: string; slug: string; interviewId: string };
   searchParams: {
     email?: string;
     telefone?: string;
@@ -36,6 +36,7 @@ export default async function InterviewVerifyPage({
 
   return (
     <InterviewVerifyCodeForm
+      locale={params.locale}
       slug={company.slug}
       interviewId={interview.id}
       email={email}
