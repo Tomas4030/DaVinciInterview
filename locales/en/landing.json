@@ -27,9 +27,31 @@
     ],
     "preview": {
       "label": "Automated interview",
-      "bot1": "Hi! I am Acme's recruiting assistant. Shall we start with a few questions?",
-      "user1": "Sure, I am ready!",
-      "bot2": "Great! Tell me a bit about your experience with React and TypeScript."
+      "conversation": [
+        { "from": "bot", "text": "Hi! I am Acme's recruiting assistant. Ready to start?" },
+        { "from": "user", "text": "Yes, let's go." },
+        { "from": "bot", "text": "Question 1: How many years of experience do you have with React?" },
+        { "from": "user", "text": "About 4 years in product teams." },
+        { "from": "bot", "text": "Question 2: Which TypeScript patterns do you use daily?" },
+        { "from": "user", "text": "Strict typing, discriminated unions, and reusable interfaces." },
+        { "from": "bot", "text": "Question 3: Tell me about a recent performance optimization you delivered." },
+        { "from": "user", "text": "I reduced rendering costs using memoization and list virtualization." },
+        { "from": "bot", "text": "Question 4: How do you structure components for long-term maintainability?" },
+        { "from": "user", "text": "By separating UI, state logic, and domain concerns with clear boundaries." },
+        { "from": "bot", "text": "Question 5: How do you validate accessibility before shipping?" },
+        { "from": "user", "text": "Keyboard checks, semantic HTML, and screen-reader smoke tests." },
+        { "from": "bot", "text": "Question 6: Describe your collaboration with product and design." },
+        { "from": "user", "text": "Weekly planning, early prototypes, and frequent feedback loops." },
+        { "from": "bot", "text": "Question 7: How do you approach testing on frontend projects?" },
+        { "from": "user", "text": "Unit tests for logic and integration tests for critical journeys." },
+        { "from": "bot", "text": "Question 8: Share an example where you improved developer experience." },
+        { "from": "user", "text": "I created shared lint rules and templates that cut PR rework." },
+        { "from": "bot", "text": "Question 9: How do you monitor issues after release?" },
+        { "from": "user", "text": "With error tracking, dashboards, and post-release checks." },
+        { "from": "bot", "text": "Question 10: Why are you interested in this role right now?" },
+        { "from": "user", "text": "Because your product challenge fits my experience and growth goals." },
+        { "from": "bot", "text": "Great, thank you. Interview completed successfully." }
+      ]
     }
   },
   "features": {

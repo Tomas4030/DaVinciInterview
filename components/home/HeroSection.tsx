@@ -1,9 +1,15 @@
 import Link from "next/link";
 import GridPattern from "./GridPattern";
+import HeroChatPreview from "./HeroChatPreview";
 import { tLanding, tLandingObject } from "@/lib/i18n/landing";
 
 type HeroSectionProps = {
   locale?: string;
+};
+
+type PreviewMessage = {
+  from: "bot" | "user";
+  text: string;
 };
 
 const supportedLocales = new Set(["pt", "en"]);
@@ -29,9 +35,10 @@ export default function HeroSection({ locale = "en" }: HeroSectionProps) {
     "hero.stats",
   );
   const previewLabel = tLanding(locale, "hero.preview.label");
-  const previewBot1 = tLanding(locale, "hero.preview.bot1");
-  const previewUser1 = tLanding(locale, "hero.preview.user1");
-  const previewBot2 = tLanding(locale, "hero.preview.bot2");
+  const previewMessages = tLandingObject<PreviewMessage[]>(
+    locale,
+    "hero.preview.conversation",
+  );
 
   return (
     <section className="relative overflow-hidden">
@@ -107,7 +114,7 @@ export default function HeroSection({ locale = "en" }: HeroSectionProps) {
 
           {/* Social proof */}
           <div
-            className="mt-12 flex flex-wrap items-center gap-x-8 gap-y-3 animate-reveal border-t border-[var(--c-border)]/50 pt-8"
+            className="mt-12 flex flex-wrap items-center gap-x-8 gap-y-3 animate-reveal "
             style={{ animationDelay: "280ms" }}
           >
             {stats.map((stat) => (
@@ -125,87 +132,17 @@ export default function HeroSection({ locale = "en" }: HeroSectionProps) {
 
         {/* Decorative chat preview */}
         <div
-          className="absolute right-0 top-1/2 hidden -translate-y-1/2 lg:block animate-reveal"
+          className="absolute right-0 top-[25%] hidden -translate-y-1/2 lg:block animate-reveal"
           style={{ animationDelay: "320ms" }}
           aria-hidden="true"
         >
-          <ChatPreview
+          <HeroChatPreview
             previewLabel={previewLabel}
-            previewBot1={previewBot1}
-            previewUser1={previewUser1}
-            previewBot2={previewBot2}
+            messages={previewMessages}
+            loop
           />
         </div>
       </div>
     </section>
-  );
-}
-
-function ChatPreview({
-  previewLabel,
-  previewBot1,
-  previewUser1,
-  previewBot2,
-}: {
-  previewLabel: string;
-  previewBot1: string;
-  previewUser1: string;
-  previewBot2: string;
-}) {
-  return (
-    <div className="w-72 rounded-2xl border border-[var(--c-border)] bg-[var(--c-surface)] p-4 shadow-[0_24px_64px_rgba(0,0,0,0.08)]">
-      <div className="mb-3 flex items-center gap-2 border-b border-[var(--c-border)]/60 pb-3">
-        <div className="h-7 w-7 rounded-lg bg-[var(--c-brand)] flex items-center justify-center text-[10px] font-bold text-white">
-          C
-        </div>
-        <div>
-          <p className="text-[0.72rem] font-semibold text-[var(--c-text)]">
-            MatchWorky
-          </p>
-          <p className="text-[0.65rem] text-[var(--c-text)]/50">
-            {previewLabel}
-          </p>
-        </div>
-        <span className="ml-auto flex h-2 w-2 rounded-full bg-emerald-500" />
-      </div>
-      <div className="space-y-2.5">
-        <Bubble
-          from="bot"
-          text={previewBot1}
-        />
-        <Bubble from="user" text={previewUser1} />
-        <Bubble
-          from="bot"
-          text={previewBot2}
-        />
-        <div className="flex items-center gap-1.5 pt-1">
-          <div className="h-1.5 w-1.5 animate-bounce rounded-full bg-[var(--c-brand)]/60 [animation-delay:0ms]" />
-          <div className="h-1.5 w-1.5 animate-bounce rounded-full bg-[var(--c-brand)]/60 [animation-delay:150ms]" />
-          <div className="h-1.5 w-1.5 animate-bounce rounded-full bg-[var(--c-brand)]/60 [animation-delay:300ms]" />
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function Bubble({ from, text }: { from: "bot" | "user"; text: string }) {
-  if (from === "bot") {
-    return (
-      <div className="flex gap-1.5">
-        <div className="mt-0.5 h-5 w-5 shrink-0 rounded-md bg-[var(--c-brand)] flex items-center justify-center text-[8px] font-bold text-white">
-          C
-        </div>
-        <div className="max-w-[85%] rounded-xl rounded-tl-sm bg-[var(--c-bg)] px-3 py-2 text-[0.68rem] leading-relaxed text-[var(--c-text)]/80">
-          {text}
-        </div>
-      </div>
-    );
-  }
-  return (
-    <div className="flex justify-end">
-      <div className="max-w-[80%] rounded-xl rounded-tr-sm bg-[var(--c-brand)] px-3 py-2 text-[0.68rem] leading-relaxed text-white">
-        {text}
-      </div>
-    </div>
   );
 }
