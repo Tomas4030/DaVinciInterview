@@ -11,7 +11,7 @@ export default function ResponsesStatsGrid({
   totalConcluidas,
   totalAnalise,
   totalProgresso,
-  locale = "pt",
+  locale = "en",
 }: Props) {
   return (
     <div className="grid gap-3 sm:grid-cols-3">

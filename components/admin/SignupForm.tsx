@@ -13,14 +13,14 @@ type SignupFormProps = {
 const supportedLocales = new Set(["pt", "en"]);
 
 function withLocale(path: string, locale: string): string {
-  const safeLocale = supportedLocales.has(locale) ? locale : "pt";
+  const safeLocale = supportedLocales.has(locale) ? locale : "en";
   if (path === "/") {
     return `/${safeLocale}`;
   }
   return `/${safeLocale}${path}`;
 }
 
-export default function SignupForm({ locale = "pt" }: SignupFormProps) {
+export default function SignupForm({ locale = "en" }: SignupFormProps) {
   const router = useRouter();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");

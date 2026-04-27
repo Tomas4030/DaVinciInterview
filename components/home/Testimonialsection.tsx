@@ -31,7 +31,7 @@ type TestimonialSectionProps = {
   locale?: string;
 };
 
-export default function TestimonialSection({ locale = "pt" }: TestimonialSectionProps) {
+export default function TestimonialSection({ locale = "en" }: TestimonialSectionProps) {
   const eyebrow = tLanding(locale, "testimonials.eyebrow");
   const title = tLanding(locale, "testimonials.title");
   const translatedItems = tLandingObject<

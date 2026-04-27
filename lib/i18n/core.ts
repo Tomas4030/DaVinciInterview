@@ -23,7 +23,7 @@ const i18n = i18next.createInstance();
 let initialized = false;
 
 function normalizeLocale(locale: string): "pt" | "en" {
-  return SUPPORTED_LOCALES.has(locale) ? (locale as "pt" | "en") : "pt";
+  return SUPPORTED_LOCALES.has(locale) ? (locale as "pt" | "en") : "en";
 }
 
 function ensureI18nInitialized() {
@@ -48,7 +48,7 @@ function ensureI18nInitialized() {
         interview: enInterview,
       },
     },
-    fallbackLng: "pt",
+    fallbackLng: "en",
     supportedLngs: ["pt", "en"],
     ns: ["landing", "staticPages", "auth", "admin", "interview"],
     defaultNS: "landing",

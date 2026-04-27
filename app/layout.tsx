@@ -54,7 +54,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="pt">
+    <html lang="en">
       <body
         className={`${dmSans.variable} ${dmSerifDisplay.variable} ${jetBrainsMono.variable} min-h-screen bg-[var(--c-bg)]`}
       >

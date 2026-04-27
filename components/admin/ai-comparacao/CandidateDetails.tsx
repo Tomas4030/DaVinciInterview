@@ -36,7 +36,7 @@ export default function CandidateDetails({
   selectedCandidate,
   selectedCandidateRanking,
   selectedCandidateRankingItem,
-  locale = "pt",
+  locale = "en",
 }: Props) {
   return (
     <section className="space-y-5">

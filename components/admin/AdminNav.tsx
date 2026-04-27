@@ -19,7 +19,7 @@ export default function AdminNav({
   companySlug,
   companyName,
   companyLogoUrl,
-  locale = "pt",
+  locale = "en",
 }: AdminNavProps) {
   const pathname = usePathname();
 

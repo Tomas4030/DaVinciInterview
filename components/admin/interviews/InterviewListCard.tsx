@@ -11,7 +11,7 @@ type Props = {
   locale?: string;
 };
 
-export default function InterviewListCard({ slug, item, locale = "pt" }: Props) {
+export default function InterviewListCard({ slug, item, locale = "en" }: Props) {
   return (
     <article className="space-y-4 px-5 py-4">
       <div className="flex flex-wrap items-center justify-between gap-2">

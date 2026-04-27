@@ -111,7 +111,7 @@ const ITEMS: Item[] = [
   },
 ];
 
-export default function AdminCompanySidebar({ slug, locale = "pt" }: Props) {
+export default function AdminCompanySidebar({ slug, locale = "en" }: Props) {
   const pathname = usePathname();
   const base = `/admin/${slug}`;
   const items = ITEMS.map((item) => {

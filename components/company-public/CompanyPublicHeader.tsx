@@ -9,7 +9,7 @@ type CompanyPublicHeaderProps = {
 const supportedLocales = new Set(["pt", "en"]);
 
 function withLocale(path: string, locale: string): string {
-  const safeLocale = supportedLocales.has(locale) ? locale : "pt";
+  const safeLocale = supportedLocales.has(locale) ? locale : "en";
   if (path === "/") {
     return `/${safeLocale}`;
   }
@@ -17,7 +17,7 @@ function withLocale(path: string, locale: string): string {
   return `/${safeLocale}${path}`;
 }
 
-export default function CompanyPublicHeader({ company, locale = "pt" }: CompanyPublicHeaderProps) {
+export default function CompanyPublicHeader({ company, locale = "en" }: CompanyPublicHeaderProps) {
   return (
     <header className="sticky top-0 z-20 border-b border-[var(--c-border)]/60 bg-[var(--c-surface)]/80 backdrop-blur-xl">
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-6">

@@ -11,7 +11,7 @@ type HeaderProps = {
 const supportedLocales = new Set(["pt", "en"]);
 
 function withLocale(path: string, locale: string): string {
-  const safeLocale = supportedLocales.has(locale) ? locale : "pt";
+  const safeLocale = supportedLocales.has(locale) ? locale : "en";
   if (path === "/") {
     return `/${safeLocale}`;
   }
@@ -19,7 +19,7 @@ function withLocale(path: string, locale: string): string {
   return `/${safeLocale}${path}`;
 }
 
-export default async function Header({ locale = "pt" }: HeaderProps) {
+export default async function Header({ locale = "en" }: HeaderProps) {
   const adminContext = await getAdminCompanyContextFromServerCookies();
   const ariaHome = tLanding(locale, "header.ariaHome");
   const features = tLanding(locale, "header.features");

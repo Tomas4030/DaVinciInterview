@@ -8,7 +8,7 @@ import { withBasePath } from "@/lib/base-path";
 const supportedLocales = new Set(["pt", "en"]);
 
 function withLocale(path: string, locale: string): string {
-  const safeLocale = supportedLocales.has(locale) ? locale : "pt";
+  const safeLocale = supportedLocales.has(locale) ? locale : "en";
   if (path === "/") {
     return `/${safeLocale}`;
   }
@@ -174,7 +174,7 @@ export default function ChatEntrevista({
   vaga,
   candidateEmail,
   candidatePhone,
-  locale = "pt",
+  locale = "en",
 }: {
   vaga: Vaga;
   candidateEmail?: string;

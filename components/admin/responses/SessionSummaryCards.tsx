@@ -14,7 +14,7 @@ export default function SessionSummaryCards({
   telefone,
   status,
   createdAt,
-  locale = "pt",
+  locale = "en",
 }: Props) {
   return (
     <div className="grid gap-3 lg:grid-cols-[1fr,1fr,auto,auto]">

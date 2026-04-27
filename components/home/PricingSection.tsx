@@ -13,7 +13,7 @@ type PricingSectionProps = {
 const supportedLocales = new Set(["pt", "en"]);
 
 function withLocale(path: string, locale: string): string {
-  const safeLocale = supportedLocales.has(locale) ? locale : "pt";
+  const safeLocale = supportedLocales.has(locale) ? locale : "en";
   if (path === "/") {
     return `/${safeLocale}`;
   }
@@ -23,7 +23,7 @@ function withLocale(path: string, locale: string): string {
 
 export default function PricingSection({
   compact = false,
-  locale = "pt",
+  locale = "en",
 }: PricingSectionProps) {
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">(
     "monthly",

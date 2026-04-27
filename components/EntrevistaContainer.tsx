@@ -19,7 +19,7 @@ interface CandidateInfo {
 
 export default function EntrevistaContainer({
   vaga,
-  locale = "pt",
+  locale = "en",
 }: EntrevistaContainerProps) {
   const [candidateInfo, setCandidateInfo] = useState<CandidateInfo | null>(
     null,

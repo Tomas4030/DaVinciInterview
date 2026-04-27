@@ -15,7 +15,7 @@ export default function AiComparisonHeader({
   slug,
   vagas,
   selectedVagaId,
-  locale = "pt",
+  locale = "en",
 }: Props) {
   return (
     <header className="overflow-hidden rounded-2xl border border-[var(--c-border)]/60 bg-[var(--c-surface)] shadow-sm">

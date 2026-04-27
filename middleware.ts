@@ -43,7 +43,7 @@ export async function middleware(request: NextRequest) {
 
   // 🌍 i18n logic
   const locales = ["pt", "en"];
-  const defaultLocale = "pt";
+  const defaultLocale = "en";
 
   const hasLocale = locales.some(
     (locale) =>

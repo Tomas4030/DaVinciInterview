@@ -134,7 +134,7 @@ type FeaturesSectionProps = {
   locale?: string;
 };
 
-export default function FeaturesSection({ locale = "pt" }: FeaturesSectionProps) {
+export default function FeaturesSection({ locale = "en" }: FeaturesSectionProps) {
   const eyebrow = tLanding(locale, "features.eyebrow");
   const title = tLanding(locale, "features.title");
   const description = tLanding(locale, "features.description");

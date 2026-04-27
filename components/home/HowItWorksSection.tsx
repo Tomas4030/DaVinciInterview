@@ -87,7 +87,7 @@ type HowItWorksSectionProps = {
   locale?: string;
 };
 
-export default function HowItWorksSection({ locale = "pt" }: HowItWorksSectionProps) {
+export default function HowItWorksSection({ locale = "en" }: HowItWorksSectionProps) {
   const ariaLabel = tLanding(locale, "howItWorks.ariaLabel");
   const eyebrow = tLanding(locale, "howItWorks.eyebrow");
   const title = tLanding(locale, "howItWorks.title");

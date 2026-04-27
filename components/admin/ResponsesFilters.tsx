@@ -16,7 +16,7 @@ type Props = {
   locale?: string;
 };
 
-export default function ResponsesFilters({ slug, interviews, locale = "pt" }: Props) {
+export default function ResponsesFilters({ slug, interviews, locale = "en" }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
 

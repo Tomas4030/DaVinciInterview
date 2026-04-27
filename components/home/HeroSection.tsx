@@ -9,7 +9,7 @@ type HeroSectionProps = {
 const supportedLocales = new Set(["pt", "en"]);
 
 function withLocale(path: string, locale: string): string {
-  const safeLocale = supportedLocales.has(locale) ? locale : "pt";
+  const safeLocale = supportedLocales.has(locale) ? locale : "en";
   if (path === "/") {
     return `/${safeLocale}`;
   }
@@ -17,7 +17,7 @@ function withLocale(path: string, locale: string): string {
   return `/${safeLocale}${path}`;
 }
 
-export default function HeroSection({ locale = "pt" }: HeroSectionProps) {
+export default function HeroSection({ locale = "en" }: HeroSectionProps) {
   const badge = tLanding(locale, "hero.badge");
   const titleLine1 = tLanding(locale, "hero.titleLine1");
   const titleHighlight = tLanding(locale, "hero.titleHighlight");

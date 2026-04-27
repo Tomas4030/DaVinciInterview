@@ -9,7 +9,7 @@ type Props = {
   locale?: string;
 };
 
-export default function AiComparisonRefreshButton({ slug, locale = "pt" }: Props) {
+export default function AiComparisonRefreshButton({ slug, locale = "en" }: Props) {
   const [loading, setLoading] = useState(false);
 
   async function handleRefresh() {

@@ -26,7 +26,7 @@ const toneClassMap: Record<NonNullable<Section["tone"]>, string> = {
 };
 
 export default function StaticInfoPage({
-  locale = "pt",
+  locale = "en",
   eyebrow,
   title,
   description,

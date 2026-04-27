@@ -23,7 +23,7 @@ export default function CandidateSidebar({
   selectedVaga,
   selectedInterview,
   selectedCandidate,
-  locale = "pt",
+  locale = "en",
 }: Props) {
   const selectedRanking =
     selectedInterview.ranking && selectedInterview.ranking.length > 0

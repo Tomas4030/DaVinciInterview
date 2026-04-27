@@ -39,7 +39,7 @@ function getAnswerText(item: ResponseAnswerItem, locale: string): string {
   return tAdmin(locale, "responses.qaPairs.answerFallback");
 }
 
-export default function QAPairsList({ answers, locale = "pt" }: Props) {
+export default function QAPairsList({ answers, locale = "en" }: Props) {
   return (
     <div className="rounded-xl border border-[var(--c-border)]/70 bg-[var(--c-surface)] p-5">
       <h2 className="text-base font-semibold text-[var(--c-text)]">

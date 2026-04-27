@@ -8,7 +8,7 @@ type CtaSectionProps = {
 const supportedLocales = new Set(["pt", "en"]);
 
 function withLocale(path: string, locale: string): string {
-  const safeLocale = supportedLocales.has(locale) ? locale : "pt";
+  const safeLocale = supportedLocales.has(locale) ? locale : "en";
   if (path === "/") {
     return `/${safeLocale}`;
   }
@@ -16,7 +16,7 @@ function withLocale(path: string, locale: string): string {
   return `/${safeLocale}${path}`;
 }
 
-export default function CtaSection({ locale = "pt" }: CtaSectionProps) {
+export default function CtaSection({ locale = "en" }: CtaSectionProps) {
   const eyebrow = tLanding(locale, "cta.eyebrow");
   const title = tLanding(locale, "cta.title");
   const description = tLanding(locale, "cta.description");

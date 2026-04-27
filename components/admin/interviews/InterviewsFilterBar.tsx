@@ -9,7 +9,7 @@ type Props = {
 export default function InterviewsFilterBar({
   searchTerm,
   statusFilter,
-  locale = "pt",
+  locale = "en",
 }: Props) {
   return (
     <form className="grid gap-3 rounded-[12px] border border-[var(--c-border)] bg-[var(--c-surface)] p-4 md:grid-cols-[1fr,170px,auto]">

@@ -8,7 +8,7 @@ type FooterProps = {
 const supportedLocales = new Set(["pt", "en"]);
 
 function withLocale(path: string, locale: string): string {
-  const safeLocale = supportedLocales.has(locale) ? locale : "pt";
+  const safeLocale = supportedLocales.has(locale) ? locale : "en";
   if (path === "/") {
     return `/${safeLocale}`;
   }
@@ -16,7 +16,7 @@ function withLocale(path: string, locale: string): string {
   return `/${safeLocale}${path}`;
 }
 
-export default function Footer({ locale = "pt" }: FooterProps) {
+export default function Footer({ locale = "en" }: FooterProps) {
   const description = tLanding(locale, "footer.description");
   const product = tLanding(locale, "footer.product");
   const features = tLanding(locale, "footer.features");

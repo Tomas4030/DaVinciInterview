@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import GridBackgroundPattern from "@/components/ui/GridBackgroundPattern";
 import { tAuth } from "@/lib/i18n/auth";
 
-const locale = "pt";
+const locale = "en";
 
 export const metadata: Metadata = { title: tAuth(locale, "loginPage.metaTitle") };
 

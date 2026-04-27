@@ -9,7 +9,7 @@ type Props = {
   locale?: string;
 };
 
-export default function ResponsesTable({ slug, rows, locale = "pt" }: Props) {
+export default function ResponsesTable({ slug, rows, locale = "en" }: Props) {
   return (
     <div className="rounded-xl border border-[var(--c-border)]/70 bg-[var(--c-surface)]">
       <div className="flex items-center justify-between border-b border-[var(--c-border)]/60 px-5 py-3">
