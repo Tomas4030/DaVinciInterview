@@ -1,18 +1,25 @@
 import type { Metadata } from "next";
 import StaticInfoPage from "@/components/home/StaticInfoPage";
 
-export const metadata: Metadata = {
-  title: "Contacto",
-  description:
-    "Fala com a equipa MatchWorky para suporte, questoes comerciais e pedidos relacionados com privacidade.",
-  alternates: {
-    canonical: "/contacto",
-  },
+type Props = {
+  params: { locale: string };
 };
 
-export default function ContactPage() {
+export function generateMetadata({ params }: Props): Metadata {
+  return {
+    title: "Contacto",
+    description:
+      "Fala com a equipa MatchWorky para suporte, questoes comerciais e pedidos relacionados com privacidade.",
+    alternates: {
+      canonical: `/${params.locale}/contacto`,
+    },
+  };
+}
+
+export default function ContactPage({ params }: Props) {
   return (
     <StaticInfoPage
+      locale={params.locale}
       eyebrow="Contacto"
       title="Fale connosco"
       description="Se precisa de ajuda com configuracao, faturacao ou privacidade, a nossa equipa responde por canais diretos e objetivos."

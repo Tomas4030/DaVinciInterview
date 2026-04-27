@@ -1,18 +1,25 @@
 import type { Metadata } from "next";
 import StaticInfoPage from "@/components/home/StaticInfoPage";
 
-export const metadata: Metadata = {
-  title: "Termos de Servico",
-  description:
-    "Condicoes de uso da plataforma MatchWorky para equipas de recrutamento e candidatos.",
-  alternates: {
-    canonical: "/termos",
-  },
+type Props = {
+  params: { locale: string };
 };
 
-export default function TermsPage() {
+export function generateMetadata({ params }: Props): Metadata {
+  return {
+    title: "Termos de Servico",
+    description:
+      "Condicoes de uso da plataforma MatchWorky para equipas de recrutamento e candidatos.",
+    alternates: {
+      canonical: `/${params.locale}/termos`,
+    },
+  };
+}
+
+export default function TermsPage({ params }: Props) {
   return (
     <StaticInfoPage
+      locale={params.locale}
       eyebrow="Legal"
       title="Termos de servico"
       description="Ao usar o MatchWorky, aceita estas condicoes para garantir uma utilizacao clara, segura e previsivel para empresas e candidatos."

@@ -11,7 +11,7 @@ import { getCompanyBySlug } from "@/lib/queries/companies";
 import { listPublishedInterviewsByCompany } from "@/lib/queries/interviews";
 
 type Props = {
-  params: { slug: string };
+  params: { locale: string; slug: string };
 };
 
 function isCompanyInactive(subscriptionStatus: string): boolean {
@@ -30,20 +30,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const description =
     company.description || `Conhece as entrevistas abertas da ${company.name}.`;
 
-  return {
-    title: `${company.name} - Entrevistas`,
-    description,
-    alternates: {
-      canonical: `/${company.slug}`,
-    },
-    openGraph: {
+    return {
       title: `${company.name} - Entrevistas`,
       description,
-      type: "website",
-      url: `/${company.slug}`,
-      images: company.logo_url
-        ? [
-            {
+      alternates: {
+        canonical: `/${params.locale}/${company.slug}`,
+      },
+      openGraph: {
+        title: `${company.name} - Entrevistas`,
+        description,
+        type: "website",
+        url: `/${params.locale}/${company.slug}`,
+        images: company.logo_url
+          ? [
+              {
               url: company.logo_url,
               alt: `${company.name} logo`,
             },
@@ -69,11 +69,11 @@ export default async function CompanyPublicPage({ params }: Props) {
 
   return (
     <main className="min-h-screen bg-[var(--c-bg)]">
-      <CompanyPublicHeader company={company} />
+      <CompanyPublicHeader company={company} locale={params.locale} />
       <CompanyPublicHero company={company} interviewsCount={interviews.length} />
       <CompanyInterviewsSection companySlug={company.slug} interviews={interviews} />
       <CompanyHowItWorksSection />
-      <Footer />
+      <Footer locale={params.locale} />
     </main>
   );
 }

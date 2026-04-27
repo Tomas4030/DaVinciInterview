@@ -1,18 +1,25 @@
 import type { Metadata } from "next";
 import StaticInfoPage from "@/components/home/StaticInfoPage";
 
-export const metadata: Metadata = {
-  title: "Politica de Privacidade",
-  description:
-    "Como os dados pessoais sao recolhidos, usados e protegidos na plataforma MatchWorky.",
-  alternates: {
-    canonical: "/privacidade",
-  },
+type Props = {
+  params: { locale: string };
 };
 
-export default function PrivacyPage() {
+export function generateMetadata({ params }: Props): Metadata {
+  return {
+    title: "Politica de Privacidade",
+    description:
+      "Como os dados pessoais sao recolhidos, usados e protegidos na plataforma MatchWorky.",
+    alternates: {
+      canonical: `/${params.locale}/privacidade`,
+    },
+  };
+}
+
+export default function PrivacyPage({ params }: Props) {
   return (
     <StaticInfoPage
+      locale={params.locale}
       eyebrow="Privacidade"
       title="Politica de privacidade"
       description="Explicamos de forma direta que dados tratamos, por que motivo tratamos e como pode exercer os seus direitos em qualquer momento."

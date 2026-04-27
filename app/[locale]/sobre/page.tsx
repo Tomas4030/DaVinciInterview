@@ -1,18 +1,25 @@
 import type { Metadata } from "next";
 import StaticInfoPage from "@/components/home/StaticInfoPage";
 
-export const metadata: Metadata = {
-  title: "Sobre nos",
-  description:
-    "Conhece a missao da MatchWorky e a forma como desenhamos entrevistas mais claras para equipas e candidatos.",
-  alternates: {
-    canonical: "/sobre",
-  },
+type Props = {
+  params: { locale: string };
 };
 
-export default function AboutPage() {
+export function generateMetadata({ params }: Props): Metadata {
+  return {
+    title: "Sobre nos",
+    description:
+      "Conhece a missao da MatchWorky e a forma como desenhamos entrevistas mais claras para equipas e candidatos.",
+    alternates: {
+      canonical: `/${params.locale}/sobre`,
+    },
+  };
+}
+
+export default function AboutPage({ params }: Props) {
   return (
     <StaticInfoPage
+      locale={params.locale}
       eyebrow="Empresa"
       title="Sobre nos"
       description="A MatchWorky nasce para reduzir friccao no recrutamento inicial, com entrevistas consistentes e uma leitura objetiva das respostas."
