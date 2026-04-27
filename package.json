@@ -10,6 +10,7 @@
     "phase1:check": "node scripts/phase1-isolation-check.js"
   },
   "dependencies": {
+    "i18next": "^26.0.8",
     "libphonenumber-js": "^1.12.42",
     "mysql2": "^3.22.0",
     "next": "^14.2.35",
