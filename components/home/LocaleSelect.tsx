@@ -10,9 +10,17 @@ type LocaleSelectProps = {
 
 const SUPPORTED_LOCALES = new Set(["pt", "en"]);
 
-const LOCALE_LABELS: Record<string, string> = {
-  pt: "PT",
-  en: "EN",
+const LOCALE_META: Record<string, { label: string; flagSrc: string; flagAlt: string }> = {
+  pt: {
+    label: "PT",
+    flagSrc: "https://flagcdn.com/w40/pt.png",
+    flagAlt: "Portugal",
+  },
+  en: {
+    label: "EN",
+    flagSrc: "https://flagcdn.com/w40/gb.png",
+    flagAlt: "English",
+  },
 };
 
 function toLocalizedPath(pathname: string, targetLocale: string): string {
@@ -88,7 +96,12 @@ export default function LocaleSelect({ locale, ariaLabel }: LocaleSelectProps) {
         onClick={() => setOpen((prev) => !prev)}
         className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-[var(--c-border)] bg-[var(--c-surface)] px-2.5 text-[0.76rem] font-semibold text-[var(--c-text)] transition-colors hover:border-[var(--c-border)]/80"
       >
-        <span>{LOCALE_LABELS[currentLocale]}</span>
+        <img
+          src={LOCALE_META[currentLocale].flagSrc}
+          alt={LOCALE_META[currentLocale].flagAlt}
+          className="h-3.5 w-5 rounded-[2px] object-cover"
+        />
+        <span>{LOCALE_META[currentLocale].label}</span>
         <svg
           width="12"
           height="12"
@@ -110,8 +123,7 @@ export default function LocaleSelect({ locale, ariaLabel }: LocaleSelectProps) {
           role="menu"
           className="absolute right-0 top-[calc(100%+6px)] z-30 min-w-[68px] overflow-hidden rounded-lg border border-[var(--c-border)] bg-[var(--c-surface)] p-1 shadow-[0_8px_28px_rgba(0,0,0,0.12)]"
         >
-          {(Object.keys(LOCALE_LABELS) as Array<keyof typeof LOCALE_LABELS>).map(
-            (item) => {
+          {(Object.keys(LOCALE_META) as Array<keyof typeof LOCALE_META>).map((item) => {
               const active = item === currentLocale;
 
               return (
@@ -121,18 +133,23 @@ export default function LocaleSelect({ locale, ariaLabel }: LocaleSelectProps) {
                   role="menuitem"
                   onClick={() => changeLocale(item)}
                   className={[
-                    "flex w-full items-center justify-between rounded-md px-2 py-1.5 text-left text-[0.75rem] font-medium transition-colors",
+                    "flex w-full items-center rounded-md px-2 py-1.5 text-left text-[0.75rem] font-medium transition-colors",
                     active
                       ? "bg-[var(--c-brand)]/10 text-[var(--c-brand)]"
                       : "text-[var(--c-text)] hover:bg-[var(--c-bg)]",
                   ].join(" ")}
                 >
-                  {LOCALE_LABELS[item]}
-                  {active ? <span>•</span> : null}
+                  <span className="inline-flex items-center gap-1.5">
+                    <img
+                      src={LOCALE_META[item].flagSrc}
+                      alt={LOCALE_META[item].flagAlt}
+                      className="h-3.5 w-5 rounded-[2px] object-cover"
+                    />
+                    <span>{LOCALE_META[item].label}</span>
+                  </span>
                 </button>
               );
-            },
-          )}
+            })}
         </div>
       ) : null}
     </div>
