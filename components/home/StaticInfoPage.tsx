@@ -7,6 +7,7 @@ type Section = {
 };
 
 type StaticInfoPageProps = {
+  locale?: string;
   eyebrow: string;
   title: string;
   description: string;
@@ -24,6 +25,7 @@ const toneClassMap: Record<NonNullable<Section["tone"]>, string> = {
 };
 
 export default function StaticInfoPage({
+  locale = "pt",
   eyebrow,
   title,
   description,
@@ -33,7 +35,7 @@ export default function StaticInfoPage({
 }: StaticInfoPageProps) {
   return (
     <main className="min-h-screen bg-[#FBFBFA] text-[#2F3437]">
-      <Header />
+      <Header locale={locale} />
 
       <section className="relative overflow-hidden border-b border-[#EAEAEA]">
         <div
@@ -91,7 +93,7 @@ export default function StaticInfoPage({
         </div>
       </section>
 
-      <Footer />
+      <Footer locale={locale} />
     </main>
   );
 }

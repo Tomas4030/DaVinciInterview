@@ -3,14 +3,26 @@ import type { CompanyRecord } from "@/lib/queries/companies";
 
 type CompanyPublicHeaderProps = {
   company: CompanyRecord;
+  locale?: string;
 };
 
-export default function CompanyPublicHeader({ company }: CompanyPublicHeaderProps) {
+const supportedLocales = new Set(["pt", "en"]);
+
+function withLocale(path: string, locale: string): string {
+  const safeLocale = supportedLocales.has(locale) ? locale : "pt";
+  if (path === "/") {
+    return `/${safeLocale}`;
+  }
+
+  return `/${safeLocale}${path}`;
+}
+
+export default function CompanyPublicHeader({ company, locale = "pt" }: CompanyPublicHeaderProps) {
   return (
     <header className="sticky top-0 z-20 border-b border-[var(--c-border)]/60 bg-[var(--c-surface)]/80 backdrop-blur-xl">
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-6">
         <Link
-          href={`/${company.slug}`}
+          href={withLocale(`/${company.slug}`, locale)}
           className="group flex items-center gap-2.5"
           aria-label={`Pagina publica de ${company.name}`}
         >
@@ -44,7 +56,7 @@ export default function CompanyPublicHeader({ company }: CompanyPublicHeaderProp
             Como funciona
           </a>
           <Link
-            href="/"
+            href={withLocale("/", locale)}
             className="text-[0.8rem] font-medium text-[var(--c-text)]/65 transition-colors hover:text-[var(--c-text)]"
           >
             MatchWorky

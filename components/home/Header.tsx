@@ -3,14 +3,29 @@ import Image from "next/image";
 import AdminAccountMenu from "@/components/admin/AdminAccountMenu";
 import { getAdminCompanyContextFromServerCookies } from "@/lib/admin-context";
 
-export default async function Header() {
+type HeaderProps = {
+  locale?: string;
+};
+
+const supportedLocales = new Set(["pt", "en"]);
+
+function withLocale(path: string, locale: string): string {
+  const safeLocale = supportedLocales.has(locale) ? locale : "pt";
+  if (path === "/") {
+    return `/${safeLocale}`;
+  }
+
+  return `/${safeLocale}${path}`;
+}
+
+export default async function Header({ locale = "pt" }: HeaderProps) {
   const adminContext = await getAdminCompanyContextFromServerCookies();
 
   return (
     <header className="sticky top-0 z-20 border-b border-[var(--c-border)]/60 bg-[var(--c-surface)]/80 backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
         <Link
-          href="/"
+          href={withLocale("/", locale)}
           className="group flex items-center gap-2.5"
           aria-label="Página inicial — MatchWorky"
         >
@@ -53,7 +68,7 @@ export default async function Header() {
           {adminContext ? (
             <AdminAccountMenu
               userEmail={adminContext.adminEmail}
-              publicHref={`/${adminContext.company.slug}`}
+              publicHref={withLocale(`/${adminContext.company.slug}`, locale)}
               adminHref={`/admin/${adminContext.company.slug}/dashboard`}
             />
           ) : (
@@ -65,7 +80,7 @@ export default async function Header() {
                 Entrar
               </Link>
               <Link
-                href="/signup"
+                href={withLocale("/signup", locale)}
                 className="rounded-lg bg-[var(--c-brand)] px-4 py-2 text-[0.78rem] font-semibold text-white shadow-[0_1px_3px_rgba(67,85,232,0.2)] transition-all hover:bg-[var(--c-brand-dark)] hover:shadow-[0_2px_8px_rgba(67,85,232,0.3)] active:scale-[0.97]"
               >
                 Começar grátis

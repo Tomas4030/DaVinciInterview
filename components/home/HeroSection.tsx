@@ -1,6 +1,22 @@
+import Link from "next/link";
 import GridPattern from "./GridPattern";
 
-export default function HeroSection() {
+type HeroSectionProps = {
+  locale?: string;
+};
+
+const supportedLocales = new Set(["pt", "en"]);
+
+function withLocale(path: string, locale: string): string {
+  const safeLocale = supportedLocales.has(locale) ? locale : "pt";
+  if (path === "/") {
+    return `/${safeLocale}`;
+  }
+
+  return `/${safeLocale}${path}`;
+}
+
+export default function HeroSection({ locale = "pt" }: HeroSectionProps) {
   return (
     <section className="relative overflow-hidden">
       <div className="pointer-events-none absolute inset-0" aria-hidden="true">
@@ -50,8 +66,8 @@ export default function HeroSection() {
             className="mt-9 flex flex-wrap items-center gap-x-4 gap-y-3 animate-reveal"
             style={{ animationDelay: "200ms" }}
           >
-            <a
-              href="/signup"
+            <Link
+              href={withLocale("/signup", locale)}
               className="inline-flex items-center gap-2 rounded-xl bg-[var(--c-brand)] px-6 py-3 text-[0.85rem] font-semibold text-white
                          shadow-[0_2px_4px_rgba(67,85,232,0.15),0_6px_24px_rgba(67,85,232,0.2)]
                          transition-all duration-200 hover:-translate-y-[2px] hover:shadow-[0_4px_8px_rgba(67,85,232,0.15),0_12px_36px_rgba(67,85,232,0.28)]
@@ -71,7 +87,7 @@ export default function HeroSection() {
               >
                 <path d="M5 12h14M12 5l7 7-7 7" />
               </svg>
-            </a>
+            </Link>
           </div>
 
           {/* Social proof */}

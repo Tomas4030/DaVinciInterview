@@ -1,6 +1,21 @@
 import Link from "next/link";
 
-export default function Footer() {
+type FooterProps = {
+  locale?: string;
+};
+
+const supportedLocales = new Set(["pt", "en"]);
+
+function withLocale(path: string, locale: string): string {
+  const safeLocale = supportedLocales.has(locale) ? locale : "pt";
+  if (path === "/") {
+    return `/${safeLocale}`;
+  }
+
+  return `/${safeLocale}${path}`;
+}
+
+export default function Footer({ locale = "pt" }: FooterProps) {
   return (
     <footer className="border-t border-[var(--c-border)]/50 bg-[var(--c-surface)]">
       <div className="mx-auto max-w-6xl px-6">
@@ -39,13 +54,13 @@ export default function Footer() {
               Como funciona
             </a>
             <Link
-              href="/pricing"
+              href={withLocale("/pricing", locale)}
               className="text-[0.8rem] text-[var(--c-text)]/60 transition-colors hover:text-[var(--c-text)]"
             >
               Preços
             </Link>
             <Link
-              href="/signup"
+              href={withLocale("/signup", locale)}
               className="text-[0.8rem] text-[var(--c-text)]/60 transition-colors hover:text-[var(--c-text)]"
             >
               Começar grátis
@@ -58,13 +73,13 @@ export default function Footer() {
               Empresa
             </span>
             <Link
-              href="/sobre"
+              href={withLocale("/sobre", locale)}
               className="text-[0.8rem] text-[var(--c-text)]/60 transition-colors hover:text-[var(--c-text)]"
             >
               Sobre nós
             </Link>
             <Link
-              href="/contacto"
+              href={withLocale("/contacto", locale)}
               className="text-[0.8rem] text-[var(--c-text)]/60 transition-colors hover:text-[var(--c-text)]"
             >
               Contacto
@@ -77,13 +92,13 @@ export default function Footer() {
               Legal
             </span>
             <Link
-              href="/termos"
+              href={withLocale("/termos", locale)}
               className="text-[0.8rem] text-[var(--c-text)]/60 transition-colors hover:text-[var(--c-text)]"
             >
               Termos de Serviço
             </Link>
             <Link
-              href="/privacidade"
+              href={withLocale("/privacidade", locale)}
               className="text-[0.8rem] text-[var(--c-text)]/60 transition-colors hover:text-[var(--c-text)]"
             >
               Política de Privacidade

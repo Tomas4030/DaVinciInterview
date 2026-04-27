@@ -1,4 +1,21 @@
-export default function CtaSection() {
+import Link from "next/link";
+
+type CtaSectionProps = {
+  locale?: string;
+};
+
+const supportedLocales = new Set(["pt", "en"]);
+
+function withLocale(path: string, locale: string): string {
+  const safeLocale = supportedLocales.has(locale) ? locale : "pt";
+  if (path === "/") {
+    return `/${safeLocale}`;
+  }
+
+  return `/${safeLocale}${path}`;
+}
+
+export default function CtaSection({ locale = "pt" }: CtaSectionProps) {
   return (
     <section className="mx-auto max-w-6xl px-6 py-16">
       <div className="relative overflow-hidden rounded-3xl bg-[var(--c-brand)] px-10 py-14 text-center shadow-[0_16px_48px_rgba(67,85,232,0.3)]">
@@ -25,8 +42,8 @@ export default function CtaSection() {
             candidatos. Configura a tua primeira vaga em menos de 5 minutos.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-4">
-            <a
-              href="/signup"
+            <Link
+              href={withLocale("/signup", locale)}
               className="inline-flex items-center gap-2 rounded-xl bg-white px-6 py-3 text-[0.85rem] font-bold text-[var(--c-brand)] shadow-[0_2px_8px_rgba(0,0,0,0.15)] transition-all hover:-translate-y-[2px] hover:shadow-[0_4px_16px_rgba(0,0,0,0.2)] active:scale-[0.98]"
             >
               Começar grátis — 14 dias
@@ -43,13 +60,13 @@ export default function CtaSection() {
               >
                 <path d="M5 12h14M12 5l7 7-7 7" />
               </svg>
-            </a>
-            <a
-              href="/pricing"
+            </Link>
+            <Link
+              href={withLocale("/pricing", locale)}
               className="inline-flex items-center gap-2 rounded-xl border border-white/30 px-6 py-3 text-[0.85rem] font-semibold text-white transition-all hover:bg-white/10 active:scale-[0.98]"
             >
               Ver todos os planos
-            </a>
+            </Link>
           </div>
           <p className="mt-5 text-[0.75rem] text-white/45">
             Sem cartão de crédito. Cancela quando quiseres.
