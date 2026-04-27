@@ -1,8 +1,8 @@
 export type PricingPlan = {
   id: "basic" | "pro" | "enterprise";
   name: string;
-  priceLabel: string;
-  cadence: string;
+  monthlyPriceEur?: number;
+  priceLabel?: string;
   description: string;
   features: string[];
   highlighted?: boolean;
@@ -12,8 +12,7 @@ export const PRICING_PLANS: PricingPlan[] = [
   {
     id: "basic",
     name: "Basic",
-    priceLabel: "49 EUR",
-    cadence: "/mes",
+    monthlyPriceEur: 49,
     description: "Para equipas pequenas que querem acelerar triagem inicial.",
     features: [
       "1 empresa",
@@ -25,8 +24,7 @@ export const PRICING_PLANS: PricingPlan[] = [
   {
     id: "pro",
     name: "Pro",
-    priceLabel: "149 EUR",
-    cadence: "/mes",
+    monthlyPriceEur: 149,
     description: "Escala com mais volume e mais controlo operacional.",
     features: [
       "Ate 3 empresas",
@@ -40,7 +38,6 @@ export const PRICING_PLANS: PricingPlan[] = [
     id: "enterprise",
     name: "Enterprise",
     priceLabel: "Personalizado",
-    cadence: "",
     description: "Para equipas com requisitos avancados de seguranca e escala.",
     features: [
       "Multi-empresa avancado",

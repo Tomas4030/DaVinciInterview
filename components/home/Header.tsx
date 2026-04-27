@@ -1,6 +1,11 @@
 import Link from "next/link";
 import Image from "next/image";
-export default function Header() {
+import AdminAccountMenu from "@/components/admin/AdminAccountMenu";
+import { getAdminCompanyContextFromServerCookies } from "@/lib/admin-context";
+
+export default async function Header() {
+  const adminContext = await getAdminCompanyContextFromServerCookies();
+
   return (
     <header className="sticky top-0 z-20 border-b border-[var(--c-border)]/60 bg-[var(--c-surface)]/80 backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
@@ -36,27 +41,37 @@ export default function Header() {
           >
             Como funciona
           </a>
-          <Link
-            href="/pricing"
+          <a
+            href="#pricing"
             className="text-[0.82rem] font-medium text-[var(--c-text)]/65 transition-colors hover:text-[var(--c-text)]"
           >
             Preços
-          </Link>
+          </a>
         </nav>
 
         <div className="flex items-center gap-3">
-          <Link
-            href="/admin/login"
-            className="text-[0.8rem] font-medium text-[var(--c-text)]/65 transition-colors hover:text-[var(--c-text)]"
-          >
-            Entrar
-          </Link>
-          <Link
-            href="/signup"
-            className="rounded-lg bg-[var(--c-brand)] px-4 py-2 text-[0.78rem] font-semibold text-white shadow-[0_1px_3px_rgba(67,85,232,0.2)] transition-all hover:bg-[var(--c-brand-dark)] hover:shadow-[0_2px_8px_rgba(67,85,232,0.3)] active:scale-[0.97]"
-          >
-            Começar grátis
-          </Link>
+          {adminContext ? (
+            <AdminAccountMenu
+              userEmail={adminContext.adminEmail}
+              publicHref={`/${adminContext.company.slug}`}
+              adminHref={`/admin/${adminContext.company.slug}/dashboard`}
+            />
+          ) : (
+            <>
+              <Link
+                href="/admin/login"
+                className="text-[0.8rem] font-medium text-[var(--c-text)]/65 transition-colors hover:text-[var(--c-text)]"
+              >
+                Entrar
+              </Link>
+              <Link
+                href="/signup"
+                className="rounded-lg bg-[var(--c-brand)] px-4 py-2 text-[0.78rem] font-semibold text-white shadow-[0_1px_3px_rgba(67,85,232,0.2)] transition-all hover:bg-[var(--c-brand-dark)] hover:shadow-[0_2px_8px_rgba(67,85,232,0.3)] active:scale-[0.97]"
+              >
+                Começar grátis
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </header>

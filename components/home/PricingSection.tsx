@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useMemo, useState } from "react";
 import { PRICING_PLANS } from "@/lib/pricing-plans";
 
 type PricingSectionProps = {
@@ -8,6 +11,51 @@ type PricingSectionProps = {
 export default function PricingSection({
   compact = false,
 }: PricingSectionProps) {
+  const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">(
+    "monthly",
+  );
+
+  const yearlyDiscountPercent = 20;
+
+  const formattedPlans = useMemo(() => {
+    return PRICING_PLANS.map((plan) => {
+      if (!plan.monthlyPriceEur) {
+        return {
+          ...plan,
+          displayPrice: plan.priceLabel || "Personalizado",
+          cadence: "",
+          savingsLabel: "",
+          subLabel:
+            billingCycle === "yearly"
+              ? "Disponivel com faturacao anual"
+              : "",
+        };
+      }
+
+      if (billingCycle === "monthly") {
+        return {
+          ...plan,
+          displayPrice: `${plan.monthlyPriceEur} EUR`,
+          cadence: "/mes",
+          savingsLabel: "",
+          subLabel: "",
+        };
+      }
+
+      const annualWithoutDiscount = plan.monthlyPriceEur * 12;
+      const annualPrice = annualWithoutDiscount * (1 - yearlyDiscountPercent / 100);
+      const monthlyEquivalent = annualPrice / 12;
+
+      return {
+        ...plan,
+        displayPrice: `${Math.round(annualPrice)} EUR`,
+        cadence: "/ano",
+        savingsLabel: `Poupa ${yearlyDiscountPercent}%`,
+        subLabel: `Equivale a ${Math.round(monthlyEquivalent)} EUR/mes`,
+      };
+    });
+  }, [billingCycle]);
+
   return (
     <section id="pricing" className="relative overflow-hidden py-20 md:py-28">
       <div
@@ -26,10 +74,43 @@ export default function PricingSection({
             Começa com um plano base e evolui sem migrações complexas. Cancela
             quando quiseres.
           </p>
+
+          <div className="mt-7 flex items-center justify-center">
+            <div className="inline-flex items-center gap-1 rounded-xl border border-[var(--c-border)]/70 bg-[var(--c-surface)] p-1">
+              <button
+                type="button"
+                onClick={() => setBillingCycle("monthly")}
+                className={[
+                  "rounded-lg px-3.5 py-2 text-[0.78rem] font-semibold transition-colors",
+                  billingCycle === "monthly"
+                    ? "bg-[var(--c-bg)] text-[var(--c-text)]"
+                    : "text-[var(--c-text)]/60 hover:text-[var(--c-text)]",
+                ].join(" ")}
+              >
+                Mensal
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setBillingCycle("yearly")}
+                className={[
+                  "inline-flex items-center gap-2 rounded-lg px-3.5 py-2 text-[0.78rem] font-semibold transition-colors",
+                  billingCycle === "yearly"
+                    ? "bg-[var(--c-bg)] text-[var(--c-text)]"
+                    : "text-[var(--c-text)]/60 hover:text-[var(--c-text)]",
+                ].join(" ")}
+              >
+                Anual
+                <span className="rounded-full bg-[var(--c-brand)]/15 px-2 py-0.5 text-[0.62rem] font-bold uppercase tracking-[0.06em] text-[var(--c-brand)]">
+                  -{yearlyDiscountPercent}%
+                </span>
+              </button>
+            </div>
+          </div>
         </div>
 
         <div className="grid gap-5 md:grid-cols-3">
-          {PRICING_PLANS.map((plan) => (
+          {formattedPlans.map((plan) => (
             <article
               key={plan.id}
               className={[
@@ -51,13 +132,23 @@ export default function PricingSection({
                 {plan.name}
               </p>
               <p className="mt-3 text-[2rem] font-bold tracking-tight text-[var(--c-text)]">
-                {plan.priceLabel}
+                {plan.displayPrice}
               </p>
               {plan.cadence && (
                 <p className="text-[0.75rem] text-[var(--c-text)]/50">
                   {plan.cadence}
                 </p>
               )}
+              {plan.subLabel ? (
+                <p className="mt-1 text-[0.72rem] text-[var(--c-text)]/50">
+                  {plan.subLabel}
+                </p>
+              ) : null}
+              {plan.savingsLabel ? (
+                <p className="mt-2 inline-flex rounded-full bg-emerald-50 px-2.5 py-1 text-[0.62rem] font-bold uppercase tracking-[0.08em] text-emerald-700">
+                  {plan.savingsLabel}
+                </p>
+              ) : null}
               <p className="mt-3 text-[0.82rem] leading-relaxed text-[var(--c-text)]/65">
                 {plan.description}
               </p>
