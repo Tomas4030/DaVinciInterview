@@ -1,10 +1,17 @@
 import type { Metadata } from "next";
 import { SignupForm } from "@/components/admin";
 import GridBackgroundPattern from "@/components/ui/GridBackgroundPattern";
+import { tAuth } from "@/lib/i18n/auth";
 
-export const metadata: Metadata = { title: "Criar conta" };
+type Props = {
+  params: { locale: string };
+};
 
-export default function SignupPage() {
+export function generateMetadata({ params }: Props): Metadata {
+  return { title: tAuth(params.locale, "signupPage.metaTitle") };
+}
+
+export default function SignupPage({ params }: Props) {
   return (
     <main className="relative min-h-screen flex items-center justify-center px-4 bg-[var(--c-bg)]">
       <GridBackgroundPattern />
@@ -14,13 +21,15 @@ export default function SignupPage() {
           <div className="w-12 h-12 rounded-2xl bg-brand-600 flex items-center justify-center mx-auto mb-4 shadow-lg shadow-brand-200">
             <span className="text-white text-xl font-bold font-display">D</span>
           </div>
-          <h1 className="text-xl font-semibold text-gray-900">Criar conta</h1>
+          <h1 className="text-xl font-semibold text-gray-900">
+            {tAuth(params.locale, "signupPage.title")}
+          </h1>
           <p className="text-sm text-gray-500 mt-1">
-            Regista-te para criar a tua empresa
+            {tAuth(params.locale, "signupPage.subtitle")}
           </p>
         </div>
 
-        <SignupForm />
+        <SignupForm locale={params.locale} />
       </div>
     </main>
   );

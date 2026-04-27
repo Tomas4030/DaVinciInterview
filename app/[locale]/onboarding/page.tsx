@@ -9,13 +9,17 @@ import { resolveDefaultCompanyForUser } from "@/lib/queries/companies";
 export const metadata: Metadata = { title: "Onboarding" };
 export const dynamic = "force-dynamic";
 
-export default async function OnboardingPage() {
+type Props = {
+  params: { locale: string };
+};
+
+export default async function OnboardingPage({ params }: Props) {
   const cookieStore = cookies();
   const token = cookieStore.get(ADMIN_SESSION_COOKIE)?.value;
   const session = parseAdminToken(token);
 
   if (!session) {
-    redirect("/admin/login?next=/onboarding");
+    redirect(`/admin/login?next=/${params.locale}/onboarding`);
   }
 
   const company = await resolveDefaultCompanyForUser(session.userId, session.email);

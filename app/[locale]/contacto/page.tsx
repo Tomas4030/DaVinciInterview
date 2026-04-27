@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import StaticInfoPage from "@/components/home/StaticInfoPage";
+import { tStaticPages, tStaticPagesObject } from "@/lib/i18n/static-pages";
+import type { StaticPageContent } from "@/lib/i18n/types";
 
 type Props = {
   params: { locale: string };
@@ -7,9 +9,8 @@ type Props = {
 
 export function generateMetadata({ params }: Props): Metadata {
   return {
-    title: "Contacto",
-    description:
-      "Fala com a equipa MatchWorky para suporte, questoes comerciais e pedidos relacionados com privacidade.",
+    title: tStaticPages(params.locale, "contact.meta.title"),
+    description: tStaticPages(params.locale, "contact.meta.description"),
     alternates: {
       canonical: `/${params.locale}/contacto`,
     },
@@ -17,40 +18,21 @@ export function generateMetadata({ params }: Props): Metadata {
 }
 
 export default function ContactPage({ params }: Props) {
+  const content = tStaticPagesObject<StaticPageContent>(
+    params.locale,
+    "contact",
+  );
+
   return (
     <StaticInfoPage
       locale={params.locale}
-      eyebrow="Contacto"
-      title="Fale connosco"
-      description="Se precisa de ajuda com configuracao, faturacao ou privacidade, a nossa equipa responde por canais diretos e objetivos."
-      sideNoteTitle="Tempo de resposta"
-      sideNoteBody="Pedidos operacionais sao respondidos em dias uteis. Casos urgentes de acesso e seguranca recebem prioridade no mesmo dia."
-      sections={[
-        {
-          title: "Suporte tecnico",
-          body: [
-            "Email: suporte@matchworky.pt",
-            "Inclua, se possivel, o slug da empresa e uma descricao curta do comportamento observado.",
-          ],
-          tone: "blue",
-        },
-        {
-          title: "Comercial e parcerias",
-          body: [
-            "Email: hello@matchworky.pt",
-            "Partilhe o volume esperado de vagas e o fluxo atual de recrutamento para uma proposta alinhada ao seu contexto.",
-          ],
-          tone: "yellow",
-        },
-        {
-          title: "Privacidade e dados",
-          body: [
-            "Email: privacidade@matchworky.pt",
-            "Solicitacoes de acesso, retificacao ou eliminacao de dados devem indicar a empresa responsavel pelo processo de recrutamento.",
-          ],
-          tone: "green",
-        },
-      ]}
+      eyebrow={content.eyebrow}
+      title={content.title}
+      description={content.description}
+      sideNoteLabel={content.sideNoteLabel}
+      sideNoteTitle={content.sideNoteTitle}
+      sideNoteBody={content.sideNoteBody}
+      sections={content.sections}
     />
   );
 }

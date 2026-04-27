@@ -9,31 +9,34 @@ import {
   CtaSection,
   Footer,
 } from "@/components/home";
+import { tLanding } from "@/lib/i18n/landing";
 
 type Props = {
   params: { locale: string };
 };
 
 export function generateMetadata({ params }: Props): Metadata {
+  const title = tLanding(params.locale, "meta.title");
+  const description = tLanding(params.locale, "meta.description");
+  const ogTitle = tLanding(params.locale, "meta.ogTitle");
+  const ogDescription = tLanding(params.locale, "meta.ogDescription");
+
   return {
-    title: "MatchWorky — Entrevistas com IA para equipas de recrutamento",
-    description:
-      "Automatiza a triagem de candidatos com entrevistas conversacionais. Define as perguntas, partilha o link e analisa as respostas tudo numa plataforma.",
+    title,
+    description,
     alternates: {
       canonical: `/${params.locale}`,
     },
     openGraph: {
-      title: "MatchWorky — Entrevistas com IA para empresas",
-      description:
-        "Automatiza a triagem inicial e melhora a experiência de candidatura com entrevistas conversacionais inteligentes.",
+      title: ogTitle,
+      description: ogDescription,
       type: "website",
       url: `/${params.locale}`,
     },
     twitter: {
       card: "summary_large_image",
-      title: "MatchWorky — Entrevistas com IA para empresas",
-      description:
-        "Automatiza a triagem inicial e melhora a experiência de candidatura com entrevistas conversacionais inteligentes.",
+      title: ogTitle,
+      description: ogDescription,
     },
   };
 }
@@ -43,10 +46,10 @@ export default function HomePage({ params }: Props) {
     <main className="min-h-screen bg-[var(--c-bg)]">
       <Header locale={params.locale} />
       <HeroSection locale={params.locale} />
-      <FeaturesSection />
-      <HowItWorksSection />
-      <TestimonialsSection />
-      <PricingSection compact />
+      <FeaturesSection locale={params.locale} />
+      <HowItWorksSection locale={params.locale} />
+      <TestimonialsSection locale={params.locale} />
+      <PricingSection compact locale={params.locale} />
       <CtaSection locale={params.locale} />
       <Footer locale={params.locale} />
     </main>

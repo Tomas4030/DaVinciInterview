@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import StaticInfoPage from "@/components/home/StaticInfoPage";
+import { tStaticPages, tStaticPagesObject } from "@/lib/i18n/static-pages";
+import type { StaticPageContent } from "@/lib/i18n/types";
 
 type Props = {
   params: { locale: string };
@@ -7,9 +9,8 @@ type Props = {
 
 export function generateMetadata({ params }: Props): Metadata {
   return {
-    title: "Termos de Servico",
-    description:
-      "Condicoes de uso da plataforma MatchWorky para equipas de recrutamento e candidatos.",
+    title: tStaticPages(params.locale, "terms.meta.title"),
+    description: tStaticPages(params.locale, "terms.meta.description"),
     alternates: {
       canonical: `/${params.locale}/termos`,
     },
@@ -17,47 +18,18 @@ export function generateMetadata({ params }: Props): Metadata {
 }
 
 export default function TermsPage({ params }: Props) {
+  const content = tStaticPagesObject<StaticPageContent>(params.locale, "terms");
+
   return (
     <StaticInfoPage
       locale={params.locale}
-      eyebrow="Legal"
-      title="Termos de servico"
-      description="Ao usar o MatchWorky, aceita estas condicoes para garantir uma utilizacao clara, segura e previsivel para empresas e candidatos."
-      sideNoteTitle="Versao atual"
-      sideNoteBody="Estes termos aplicam-se a toda a utilizacao da plataforma web. Quando forem atualizados, a data de revisao sera publicada nesta pagina."
-      sections={[
-        {
-          title: "1. Utilizacao da plataforma",
-          body: [
-            "A plataforma destina-se a equipas de recrutamento que pretendem estruturar entrevistas iniciais com apoio de IA.",
-            "Nao e permitido usar o servico para recolha de dados sem base legal, envio de conteudo abusivo ou qualquer atividade que viole legislacao aplicavel.",
-          ],
-        },
-        {
-          title: "2. Contas e acesso",
-          body: [
-            "Cada conta empresarial e responsavel pela gestao dos seus acessos administrativos e pela seguranca das credenciais.",
-            "Recomendamos a revisao regular de utilizadores com acesso ao painel e a revogacao imediata de acessos que deixem de ser necessarios.",
-          ],
-          tone: "blue",
-        },
-        {
-          title: "3. Dados de entrevistas",
-          body: [
-            "Os dados recolhidos durante entrevistas pertencem ao cliente que cria a vaga e devem ser tratados de acordo com a politica interna de recrutamento.",
-            "A MatchWorky processa os dados para disponibilizar funcionalidades de triagem, analise e relatorios, sem uso comercial paralelo desses dados.",
-          ],
-          tone: "green",
-        },
-        {
-          title: "4. Disponibilidade e suporte",
-          body: [
-            "Trabalhamos para garantir elevada disponibilidade, mas podem ocorrer interrupcoes pontuais para manutencao, atualizacoes ou mitigacao de incidentes.",
-            "Questoes operacionais podem ser reportadas pela pagina de contacto para acompanhamento tecnico.",
-          ],
-          tone: "yellow",
-        },
-      ]}
+      eyebrow={content.eyebrow}
+      title={content.title}
+      description={content.description}
+      sideNoteLabel={content.sideNoteLabel}
+      sideNoteTitle={content.sideNoteTitle}
+      sideNoteBody={content.sideNoteBody}
+      sections={content.sections}
     />
   );
 }

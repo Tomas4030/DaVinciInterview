@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import StaticInfoPage from "@/components/home/StaticInfoPage";
+import { tStaticPages, tStaticPagesObject } from "@/lib/i18n/static-pages";
+import type { StaticPageContent } from "@/lib/i18n/types";
 
 type Props = {
   params: { locale: string };
@@ -7,9 +9,8 @@ type Props = {
 
 export function generateMetadata({ params }: Props): Metadata {
   return {
-    title: "Sobre nos",
-    description:
-      "Conhece a missao da MatchWorky e a forma como desenhamos entrevistas mais claras para equipas e candidatos.",
+    title: tStaticPages(params.locale, "about.meta.title"),
+    description: tStaticPages(params.locale, "about.meta.description"),
     alternates: {
       canonical: `/${params.locale}/sobre`,
     },
@@ -17,39 +18,18 @@ export function generateMetadata({ params }: Props): Metadata {
 }
 
 export default function AboutPage({ params }: Props) {
+  const content = tStaticPagesObject<StaticPageContent>(params.locale, "about");
+
   return (
     <StaticInfoPage
       locale={params.locale}
-      eyebrow="Empresa"
-      title="Sobre nos"
-      description="A MatchWorky nasce para reduzir friccao no recrutamento inicial, com entrevistas consistentes e uma leitura objetiva das respostas."
-      sideNoteTitle="Foco"
-      sideNoteBody="Construimos um produto simples de operar no dia a dia: criar vaga, partilhar link, acompanhar respostas e decidir com contexto."
-      sections={[
-        {
-          title: "1. Porque existimos",
-          body: [
-            "Muitas equipas perdem tempo com triagem manual e entrevistas iniciais pouco estruturadas.",
-            "Criamos uma camada conversacional para padronizar esta etapa, mantendo espaco para criterio humano na decisao final.",
-          ],
-        },
-        {
-          title: "2. Como trabalhamos",
-          body: [
-            "O produto privilegia clareza: interface objetiva, resultados comparaveis e configuracao enxuta para cada vaga.",
-            "Todas as melhorias sao validadas com base em uso real por equipas de recrutamento, nao em tendencias visuais de curto prazo.",
-          ],
-          tone: "blue",
-        },
-        {
-          title: "3. Principios de produto",
-          body: [
-            "Respeito pela experiencia do candidato, com fluxos transparentes e comunicacao direta.",
-            "Privacidade por padrao, com controlo dos dados por parte das empresas e trilho minimo necessario para auditoria.",
-          ],
-          tone: "green",
-        },
-      ]}
+      eyebrow={content.eyebrow}
+      title={content.title}
+      description={content.description}
+      sideNoteLabel={content.sideNoteLabel}
+      sideNoteTitle={content.sideNoteTitle}
+      sideNoteBody={content.sideNoteBody}
+      sections={content.sections}
     />
   );
 }

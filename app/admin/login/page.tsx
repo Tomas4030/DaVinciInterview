@@ -2,7 +2,11 @@
 import { LoginForm } from "@/components/admin";
 import type { Metadata } from "next";
 import GridBackgroundPattern from "@/components/ui/GridBackgroundPattern";
-export const metadata: Metadata = { title: "Admin — Entrar" };
+import { tAuth } from "@/lib/i18n/auth";
+
+const locale = "pt";
+
+export const metadata: Metadata = { title: tAuth(locale, "loginPage.metaTitle") };
 
 export default function LoginPage() {
   return (
@@ -16,14 +20,14 @@ export default function LoginPage() {
             <span className="text-white text-xl font-bold font-display">D</span>
           </div>
           <h1 className="text-xl font-semibold text-gray-900">
-            MatchWorky Admin
+            {tAuth(locale, "loginPage.title")}
           </h1>
           <p className="text-sm text-gray-500 mt-1">
-            Entra na tua conta para gerir entrevistas
+            {tAuth(locale, "loginPage.subtitle")}
           </p>
         </div>
 
-        <LoginForm />
+        <LoginForm locale={locale} />
       </div>
     </main>
   );

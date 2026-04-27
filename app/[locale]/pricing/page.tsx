@@ -27,7 +27,7 @@ export default function PricingPage({ params }: Props) {
   return (
     <main className="min-h-screen bg-[var(--c-bg)]">
       <Header locale={params.locale} />
-      <PricingSection />
+      <PricingSection locale={params.locale} />
       <Footer locale={params.locale} />
     </main>
   );
