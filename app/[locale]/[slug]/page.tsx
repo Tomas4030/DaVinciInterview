@@ -7,6 +7,7 @@ import {
   CompanyPublicHero,
 } from "@/components/company-public";
 import { Footer } from "@/components/home";
+import { tInterview } from "@/lib/i18n/interview";
 import { getCompanyBySlug } from "@/lib/queries/companies";
 import { listPublishedInterviewsByCompany } from "@/lib/queries/interviews";
 
@@ -23,27 +24,34 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   if (!company || isCompanyInactive(company.subscription_status)) {
     return {
-      title: "Empresa nao encontrada",
+      title: tInterview(params.locale, "companyPublic.meta.notFound"),
     };
   }
 
   const description =
-    company.description || `Conhece as entrevistas abertas da ${company.name}.`;
+    company.description ||
+    tInterview(params.locale, "companyPublic.meta.descriptionFallback", {
+      companyName: company.name,
+    });
 
-    return {
-      title: `${company.name} - Entrevistas`,
+  const title = tInterview(params.locale, "companyPublic.meta.title", {
+    companyName: company.name,
+  });
+
+  return {
+    title,
+    description,
+    alternates: {
+      canonical: `/${params.locale}/${company.slug}`,
+    },
+    openGraph: {
+      title,
       description,
-      alternates: {
-        canonical: `/${params.locale}/${company.slug}`,
-      },
-      openGraph: {
-        title: `${company.name} - Entrevistas`,
-        description,
-        type: "website",
-        url: `/${params.locale}/${company.slug}`,
-        images: company.logo_url
-          ? [
-              {
+      type: "website",
+      url: `/${params.locale}/${company.slug}`,
+      images: company.logo_url
+        ? [
+            {
               url: company.logo_url,
               alt: `${company.name} logo`,
             },
@@ -52,7 +60,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
     twitter: {
       card: "summary_large_image",
-      title: `${company.name} - Entrevistas`,
+      title,
       description,
       images: company.logo_url ? [company.logo_url] : undefined,
     },
@@ -70,9 +78,17 @@ export default async function CompanyPublicPage({ params }: Props) {
   return (
     <main className="min-h-screen bg-[var(--c-bg)]">
       <CompanyPublicHeader company={company} locale={params.locale} />
-      <CompanyPublicHero company={company} interviewsCount={interviews.length} />
-      <CompanyInterviewsSection companySlug={company.slug} interviews={interviews} />
-      <CompanyHowItWorksSection />
+      <CompanyPublicHero
+        company={company}
+        interviewsCount={interviews.length}
+        locale={params.locale}
+      />
+      <CompanyInterviewsSection
+        companySlug={company.slug}
+        interviews={interviews}
+        locale={params.locale}
+      />
+      <CompanyHowItWorksSection locale={params.locale} />
       <Footer locale={params.locale} />
     </main>
   );

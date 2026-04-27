@@ -1,20 +1,42 @@
 import GridPattern from "@/components/home/GridPattern";
 import { ChevronDown } from "@/components/ui/Icons";
+import { tInterview } from "@/lib/i18n/interview";
 import type { CompanyRecord } from "@/lib/queries/companies";
 
 type CompanyPublicHeroProps = {
   company: CompanyRecord;
   interviewsCount: number;
+  locale?: string;
 };
+
+function getInterviewsLabel(locale: string, count: number) {
+  if (count === 0) {
+    return tInterview(locale, "companyPublic.hero.interviewsNone");
+  }
+
+  return tInterview(
+    locale,
+    count === 1
+      ? "companyPublic.hero.interviewsOpenSingular"
+      : "companyPublic.hero.interviewsOpenPlural",
+    { count },
+  );
+}
 
 export default function CompanyPublicHero({
   company,
   interviewsCount,
+  locale = "en",
 }: CompanyPublicHeroProps) {
-  const interviewsLabel =
-    interviewsCount === 0
-      ? "Sem entrevistas abertas neste momento"
-      : `${interviewsCount} entrevista${interviewsCount === 1 ? "" : "s"} aberta${interviewsCount === 1 ? "" : "s"}`;
+  const interviewsLabel = getInterviewsLabel(locale, interviewsCount);
+  const titlePrefix = tInterview(locale, "companyPublic.hero.titlePrefix");
+  const fallbackDescription = tInterview(
+    locale,
+    "companyPublic.hero.descriptionFallback",
+    { companyName: company.name },
+  );
+  const viewOpenRoles = tInterview(locale, "companyPublic.hero.viewOpenRoles");
+  const howItWorks = tInterview(locale, "companyPublic.hero.howItWorks");
 
   return (
     <section className="relative overflow-hidden">
@@ -45,7 +67,7 @@ export default function CompanyPublicHero({
             className="animate-reveal text-balance font-display text-[2.8rem] leading-[1.05] tracking-[-0.035em] text-[var(--c-text)] md:text-[4.2rem]"
             style={{ animationDelay: "80ms" }}
           >
-            Constrói o teu futuro com a{" "}
+            {titlePrefix}{" "}
             <span className="text-[var(--c-brand)]">{company.name}</span>
           </h1>
 
@@ -54,7 +76,7 @@ export default function CompanyPublicHero({
             style={{ animationDelay: "160ms" }}
           >
             {company.description ||
-              `Explora as oportunidades abertas na ${company.name}, responde ao teu ritmo e submete a tua candidatura em poucos minutos.`}
+              fallbackDescription}
           </p>
 
           <div
@@ -69,7 +91,7 @@ export default function CompanyPublicHero({
                          hover:-translate-y-[2px] hover:shadow-[0_2px_4px_rgba(67,85,232,0.1),0_8px_32px_rgba(67,85,232,0.28)]
                          active:scale-[0.985]"
             >
-              Ver vagas disponíveis
+              {viewOpenRoles}
               <ChevronDown />
             </a>
 
@@ -77,7 +99,7 @@ export default function CompanyPublicHero({
               href="#como-funciona"
               className="text-[0.82rem] font-medium text-[var(--c-text)]/55 transition-colors duration-150 hover:text-[var(--c-text)]"
             >
-              Como funciona
+              {howItWorks}
             </a>
           </div>
         </div>

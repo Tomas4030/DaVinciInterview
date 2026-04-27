@@ -9,20 +9,30 @@ import {
   estimateInterviewDurationMinutes,
   extractInterviewWorkModeFromDescription,
   getInterviewQuestionCount,
-  getInterviewWorkModeLabel,
   mapLegacyModalidadeToWorkMode,
   stripInterviewMetaFromDescription,
 } from "@/lib/interview-meta";
+import { tInterview } from "@/lib/i18n/interview";
 import type { InterviewRecord } from "@/lib/queries/interviews";
 
 type CompanyInterviewsSectionProps = {
+  locale?: string;
   companySlug: string;
   interviews: InterviewRecord[];
 };
 
-function getInterviewsLabel(count: number) {
-  if (count === 0) return "Sem posições disponíveis de momento";
-  return `${count} posiç${count === 1 ? "ão" : "ões"} disponívei${count === 1 ? "l" : "s"}`;
+function getInterviewsLabel(locale: string, count: number) {
+  if (count === 0) {
+    return tInterview(locale, "companyPublic.interviews.countNone");
+  }
+
+  return tInterview(
+    locale,
+    count === 1
+      ? "companyPublic.interviews.countSingular"
+      : "companyPublic.interviews.countPlural",
+    { count },
+  );
 }
 
 const INTERVIEW_WORK_MODE_CONFIG = {
@@ -44,27 +54,39 @@ const INTERVIEW_WORK_MODE_CONFIG = {
 } as const;
 
 const INTERVIEW_WORK_MODE_FALLBACK = {
-  label: "Entrevista",
+  label: "",
   badge: "bg-gray-50 text-gray-600 ring-1 ring-gray-200/50",
   dot: "bg-gray-400",
   Icon: IconGlobe,
 };
 
 export default function CompanyInterviewsSection({
+  locale = "en",
   companySlug,
   interviews,
 }: CompanyInterviewsSectionProps) {
   const interviewsCount = interviews.length;
+  const sectionTitle = tInterview(locale, "companyPublic.interviews.sectionTitle");
+  const emptyTitle = tInterview(locale, "companyPublic.interviews.emptyTitle");
+  const emptyDescription = tInterview(
+    locale,
+    "companyPublic.interviews.emptyDescription",
+  );
+  const fallbackDescription = tInterview(
+    locale,
+    "companyPublic.interviews.fallbackDescription",
+  );
+  const startLabel = tInterview(locale, "companyPublic.interviews.start");
 
   return (
     <section id="vagas" className="relative mx-auto max-w-6xl px-6 pb-16 pt-14">
       <div className="mb-10 flex items-end gap-6">
         <div>
           <h2 className="text-[1.15rem] font-semibold tracking-tight text-[var(--c-text)]">
-            Vagas abertas
+            {sectionTitle}
           </h2>
           <p className="mt-1 text-[0.82rem] text-[var(--c-text)]/55">
-            {getInterviewsLabel(interviewsCount)}
+            {getInterviewsLabel(locale, interviewsCount)}
           </p>
         </div>
       </div>
@@ -72,10 +94,10 @@ export default function CompanyInterviewsSection({
       {interviewsCount === 0 ? (
         <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-[var(--c-border)] bg-[var(--c-surface)] px-8 py-24 text-center">
           <p className="font-medium text-[var(--c-text)]">
-            Nenhuma vaga disponível de momento.
+            {emptyTitle}
           </p>
           <p className="mt-1.5 text-sm text-[var(--c-text)]/60">
-            Volta em breve ou contacta o recrutador.
+            {emptyDescription}
           </p>
         </div>
       ) : (
@@ -104,9 +126,13 @@ export default function CompanyInterviewsSection({
               ] ?? INTERVIEW_WORK_MODE_FALLBACK;
 
             const workModeLabel =
-              workMode === "unspecified"
-                ? INTERVIEW_WORK_MODE_FALLBACK.label
-                : getInterviewWorkModeLabel(workMode);
+              workMode === "remote"
+                ? tInterview(locale, "companyPublic.interviews.workModeRemote")
+                : workMode === "hybrid"
+                  ? tInterview(locale, "companyPublic.interviews.workModeHybrid")
+                  : workMode === "onsite"
+                    ? tInterview(locale, "companyPublic.interviews.workModeOnsite")
+                    : tInterview(locale, "companyPublic.interviews.workModeFallback");
             const { badge, dot, Icon } = modeConfig;
 
             const totalQuestions = getInterviewQuestionCount(
@@ -155,23 +181,32 @@ export default function CompanyInterviewsSection({
                     </p>
                   ) : (
                     <p className="text-[0.815rem] italic leading-relaxed text-[var(--c-text)]/40">
-                      Sem descrição disponível.
+                      {fallbackDescription}
                     </p>
                   )}
                 </div>
 
                 <div className="mt-4 flex items-center justify-between border-t border-[var(--c-border)]/60 pt-3.5">
                   <span className="text-[11px] text-[var(--c-text)]/50">
-                    {totalQuestions}{" "}
-                    {totalQuestions === 1 ? "pergunta" : "perguntas"}
+                    {tInterview(
+                      locale,
+                      totalQuestions === 1
+                        ? "companyPublic.interviews.questionSingular"
+                        : "companyPublic.interviews.questionPlural",
+                      { count: totalQuestions },
+                    )}
                   </span>
 
                   <Link
-                    href={`/${companySlug}/interview/${interview.id}`}
-                    aria-label={`Iniciar entrevista: ${interview.title}`}
+                    href={`/${locale}/${companySlug}/interview/${interview.id}`}
+                    aria-label={tInterview(
+                      locale,
+                      "companyPublic.interviews.startAria",
+                      { title: interview.title },
+                    )}
                     className="group/link inline-flex items-center gap-1 text-[11px] font-semibold uppercase tracking-[0.06em] text-[var(--c-text)]/50 transition-colors duration-200 hover:text-[var(--c-brand)]"
                   >
-                    Iniciar
+                    {startLabel}
                     <span className="transition-transform duration-200 group-hover/link:translate-x-[2px] group-hover/link:-translate-y-[2px]">
                       <ArrowUpRight />
                     </span>

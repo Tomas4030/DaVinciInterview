@@ -1,25 +1,12 @@
 import { IconGlobe, IconLayers, IconBuilding } from "@/components/ui/Icons";
+import { tInterview, tInterviewObject } from "@/lib/i18n/interview";
 
-const COMPANY_STEPS = [
-  {
-    num: "1",
-    title: "Escolhe a vaga",
-    desc: "Vê as oportunidades abertas desta empresa e seleciona a que melhor combina com o teu perfil.",
-    highlight: "Tudo centralizado num só sítio",
-  },
-  {
-    num: "2",
-    title: "Responde ao teu ritmo",
-    desc: "A candidatura acontece em formato conversacional, de forma mais simples, natural e sem complicações.",
-    highlight: "Experiência simples e guiada",
-  },
-  {
-    num: "3",
-    title: "Submete a candidatura",
-    desc: "Depois de concluíres, as tuas respostas ficam prontas para a equipa de recrutamento analisar.",
-    highlight: "Envio rápido e claro",
-  },
-];
+type CompanyStep = {
+  num: string;
+  title: string;
+  desc: string;
+  highlight: string;
+};
 
 const stepStyles = [
   {
@@ -62,12 +49,25 @@ function StepIcon({ index }: { index: number }) {
   );
 }
 
-export default function CompanyHowItWorksSection() {
+type CompanyHowItWorksSectionProps = {
+  locale?: string;
+};
+
+export default function CompanyHowItWorksSection({
+  locale = "en",
+}: CompanyHowItWorksSectionProps) {
+  const ariaLabel = tInterview(locale, "companyPublic.howItWorks.ariaLabel");
+  const badge = tInterview(locale, "companyPublic.howItWorks.badge");
+  const title = tInterview(locale, "companyPublic.howItWorks.title");
+  const description = tInterview(locale, "companyPublic.howItWorks.description");
+  const stepLabel = tInterview(locale, "companyPublic.howItWorks.stepLabel");
+  const steps = tInterviewObject<CompanyStep[]>(locale, "companyPublic.howItWorks.steps");
+
   return (
     <section
       id="como-funciona"
       className="relative overflow-hidden py-20 md:py-24"
-      aria-label="Como funciona o processo"
+      aria-label={ariaLabel}
     >
       <div
         className="absolute inset-0 bg-[linear-gradient(to_right,#e5e7eb_1px,transparent_1px),linear-gradient(to_bottom,#e5e7eb_1px,transparent_1px)] bg-[size:40px_40px] opacity-[0.06]"
@@ -81,21 +81,20 @@ export default function CompanyHowItWorksSection() {
               className="h-2 w-2 shrink-0 rounded-full bg-blue-600"
               aria-hidden="true"
             />
-            Processo simples e rápido
+            {badge}
           </div>
 
           <h2 className="text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
-            Como funciona
+            {title}
           </h2>
 
           <p className="mt-4 text-base leading-7 text-slate-600 sm:text-lg">
-            Em três passos, escolhes uma vaga, respondes ao teu ritmo e submetes
-            a candidatura sem complicações.
+            {description}
           </p>
         </div>
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-          {COMPANY_STEPS.map((item, index) => {
+          {steps.map((item, index) => {
             const style = stepStyles[index];
 
             return (
@@ -114,7 +113,7 @@ export default function CompanyHowItWorksSection() {
                   <span
                     className={`shrink-0 rounded-full border px-3 py-1 text-xs font-semibold whitespace-nowrap ${style.badge}`}
                   >
-                    Passo {item.num.padStart(2, "0")}
+                    {stepLabel} {item.num.padStart(2, "0")}
                   </span>
                 </div>
 

@@ -1,6 +1,5 @@
 {
   "verificationForm": {
-    "emptyFallback": "Mensagem indisponível",
     "nameRequired": "Nome obrigatório.",
     "emailRequired": "Email obrigatório.",
     "emailInvalid": "Email inválido.",
@@ -57,5 +56,71 @@
     "answerPlaceholder": "Escreve a tua resposta…",
     "sendAria": "Enviar",
     "inputHint": "Enter para enviar · Shift+Enter para nova linha"
+  },
+  "companyPublic": {
+    "meta": {
+      "notFound": "Empresa nao encontrada",
+      "title": "{{companyName}} - Entrevistas",
+      "descriptionFallback": "Conhece as entrevistas abertas da {{companyName}}."
+    },
+    "header": {
+      "publicPageAria": "Pagina publica de {{companyName}}",
+      "interviews": "Entrevistas",
+      "howItWorks": "Como funciona",
+      "viewInterviews": "Ver entrevistas"
+    },
+    "hero": {
+      "interviewsNone": "Sem entrevistas abertas neste momento",
+      "interviewsOpenSingular": "{{count}} entrevista aberta",
+      "interviewsOpenPlural": "{{count}} entrevistas abertas",
+      "titlePrefix": "Constroi o teu futuro com a",
+      "descriptionFallback": "Explora as oportunidades abertas na {{companyName}}, responde ao teu ritmo e submete a tua candidatura em poucos minutos.",
+      "viewOpenRoles": "Ver vagas disponiveis",
+      "howItWorks": "Como funciona"
+    },
+    "interviews": {
+      "sectionTitle": "Vagas abertas",
+      "countNone": "Sem posicoes disponiveis de momento",
+      "countSingular": "{{count}} posicao disponivel",
+      "countPlural": "{{count}} posicoes disponiveis",
+      "emptyTitle": "Nenhuma vaga disponivel de momento.",
+      "emptyDescription": "Volta em breve ou contacta o recrutador.",
+      "fallbackDescription": "Sem descricao disponivel.",
+      "questionSingular": "{{count}} pergunta",
+      "questionPlural": "{{count}} perguntas",
+      "start": "Iniciar",
+      "startAria": "Iniciar entrevista: {{title}}",
+      "workModeRemote": "Remoto",
+      "workModeHybrid": "Hibrido",
+      "workModeOnsite": "Presencial",
+      "workModeFallback": "Entrevista"
+    },
+    "howItWorks": {
+      "ariaLabel": "Como funciona o processo",
+      "badge": "Processo simples e rapido",
+      "title": "Como funciona",
+      "description": "Em tres passos, escolhes uma vaga, respondes ao teu ritmo e submetes a candidatura sem complicacoes.",
+      "stepLabel": "Passo",
+      "steps": [
+        {
+          "num": "1",
+          "title": "Escolhe a vaga",
+          "desc": "Ve as oportunidades abertas desta empresa e seleciona a que melhor combina com o teu perfil.",
+          "highlight": "Tudo centralizado num so sitio"
+        },
+        {
+          "num": "2",
+          "title": "Responde ao teu ritmo",
+          "desc": "A candidatura acontece em formato conversacional, de forma mais simples, natural e sem complicacoes.",
+          "highlight": "Experiencia simples e guiada"
+        },
+        {
+          "num": "3",
+          "title": "Submete a candidatura",
+          "desc": "Depois de concluires, as tuas respostas ficam prontas para a equipa de recrutamento analisar.",
+          "highlight": "Envio rapido e claro"
+        }
+      ]
+    }
   }
 }

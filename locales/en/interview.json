@@ -1,6 +1,5 @@
 {
   "verificationForm": {
-    "emptyFallback": "Message unavailable",
     "nameRequired": "Name is required.",
     "emailRequired": "Email is required.",
     "emailInvalid": "Invalid email.",
@@ -57,5 +56,71 @@
     "answerPlaceholder": "Write your answer…",
     "sendAria": "Send",
     "inputHint": "Enter to send · Shift+Enter for newline"
+  },
+  "companyPublic": {
+    "meta": {
+      "notFound": "Company not found",
+      "title": "{{companyName}} - Interviews",
+      "descriptionFallback": "Explore open interviews at {{companyName}}."
+    },
+    "header": {
+      "publicPageAria": "Public page of {{companyName}}",
+      "interviews": "Interviews",
+      "howItWorks": "How it works",
+      "viewInterviews": "View interviews"
+    },
+    "hero": {
+      "interviewsNone": "No interviews open right now",
+      "interviewsOpenSingular": "{{count}} interview open",
+      "interviewsOpenPlural": "{{count}} interviews open",
+      "titlePrefix": "Build your future with",
+      "descriptionFallback": "Explore open opportunities at {{companyName}}, answer at your pace, and submit your application in minutes.",
+      "viewOpenRoles": "View open roles",
+      "howItWorks": "How it works"
+    },
+    "interviews": {
+      "sectionTitle": "Open roles",
+      "countNone": "No positions available at the moment",
+      "countSingular": "{{count}} position available",
+      "countPlural": "{{count}} positions available",
+      "emptyTitle": "No open role at the moment.",
+      "emptyDescription": "Check back soon or contact the recruiter.",
+      "fallbackDescription": "No description available.",
+      "questionSingular": "{{count}} question",
+      "questionPlural": "{{count}} questions",
+      "start": "Start",
+      "startAria": "Start interview: {{title}}",
+      "workModeRemote": "Remote",
+      "workModeHybrid": "Hybrid",
+      "workModeOnsite": "Onsite",
+      "workModeFallback": "Interview"
+    },
+    "howItWorks": {
+      "ariaLabel": "How the process works",
+      "badge": "Simple and fast process",
+      "title": "How it works",
+      "description": "In three steps, pick a role, answer at your pace, and submit your application without friction.",
+      "stepLabel": "Step",
+      "steps": [
+        {
+          "num": "1",
+          "title": "Choose the role",
+          "desc": "Review this company's open opportunities and pick the one that best matches your profile.",
+          "highlight": "Everything centralized in one place"
+        },
+        {
+          "num": "2",
+          "title": "Answer at your pace",
+          "desc": "The application runs in a conversational format, making the experience simple, natural, and straightforward.",
+          "highlight": "Simple and guided experience"
+        },
+        {
+          "num": "3",
+          "title": "Submit application",
+          "desc": "After you finish, your responses are ready for the recruiting team to review.",
+          "highlight": "Fast and clear submission"
+        }
+      ]
+    }
   }
 }

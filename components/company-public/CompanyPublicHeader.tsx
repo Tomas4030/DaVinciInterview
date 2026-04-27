@@ -1,5 +1,6 @@
 import Link from "next/link";
 import LocaleSelect from "@/components/home/LocaleSelect";
+import { tInterview } from "@/lib/i18n/interview";
 import type { CompanyRecord } from "@/lib/queries/companies";
 
 type CompanyPublicHeaderProps = {
@@ -19,13 +20,20 @@ function withLocale(path: string, locale: string): string {
 }
 
 export default function CompanyPublicHeader({ company, locale = "en" }: CompanyPublicHeaderProps) {
+  const publicPageAria = tInterview(locale, "companyPublic.header.publicPageAria", {
+    companyName: company.name,
+  });
+  const interviews = tInterview(locale, "companyPublic.header.interviews");
+  const howItWorks = tInterview(locale, "companyPublic.header.howItWorks");
+  const viewInterviews = tInterview(locale, "companyPublic.header.viewInterviews");
+
   return (
     <header className="sticky top-0 z-20 border-b border-[var(--c-border)]/60 bg-[var(--c-surface)]/80 backdrop-blur-xl">
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-6">
         <Link
           href={withLocale(`/${company.slug}`, locale)}
           className="group flex items-center gap-2.5"
-          aria-label={`Pagina publica de ${company.name}`}
+          aria-label={publicPageAria}
         >
           {company.logo_url ? (
             <img
@@ -48,13 +56,13 @@ export default function CompanyPublicHeader({ company, locale = "en" }: CompanyP
             href="#vagas"
             className="text-[0.8rem] font-medium text-[var(--c-text)]/65 transition-colors hover:text-[var(--c-text)]"
           >
-            Entrevistas
+            {interviews}
           </a>
           <a
             href="#como-funciona"
             className="text-[0.8rem] font-medium text-[var(--c-text)]/65 transition-colors hover:text-[var(--c-text)]"
           >
-            Como funciona
+            {howItWorks}
           </a>
           <Link
             href={withLocale("/", locale)}
@@ -73,7 +81,7 @@ export default function CompanyPublicHeader({ company, locale = "en" }: CompanyP
             href="#vagas"
             className="hidden rounded-md bg-[var(--c-brand)] px-4 py-2 text-[0.75rem] font-semibold text-white transition-colors hover:bg-[var(--c-brand-dark)] md:inline-flex"
           >
-            Ver entrevistas
+            {viewInterviews}
           </a>
         </div>
       </div>
