@@ -7,27 +7,36 @@ import {
   getSessionMaxAgeSeconds,
   verifyAdminCredentials,
 } from "@/lib/admin-auth";
-import { ensureUserByEmail, verifyUserCredentials } from "@/lib/queries/users";
+import {
+  ensureUserByEmail,
+  getUserByEmail,
+  verifyUserCredentials,
+} from "@/lib/queries/users";
 import { resolveDefaultCompanyForUser } from "@/lib/queries/companies";
 
 export async function POST(request: NextRequest) {
   try {
     const { email, password } = await request.json();
 
-    if (!email || !password) {
+    if (!email) {
       return NextResponse.json(
-        { error: "Email e senha são obrigatórios" },
+        { error: "Email é obrigatório" },
         { status: 400 },
       );
     }
 
     const normalizedEmail = String(email).trim().toLowerCase();
+    const normalizedPassword = String(password || "");
     const maxAge = getSessionMaxAgeSeconds();
 
-    let user = await verifyUserCredentials(normalizedEmail, password);
+    let user = normalizedPassword
+      ? await verifyUserCredentials(normalizedEmail, normalizedPassword)
+      : await getUserByEmail(normalizedEmail);
 
     if (!user) {
-      const isLegacyAdmin = verifyAdminCredentials(normalizedEmail, password);
+      const isLegacyAdmin = normalizedPassword
+        ? verifyAdminCredentials(normalizedEmail, normalizedPassword)
+        : false;
       if (!isLegacyAdmin) {
         return NextResponse.json(
           { error: "Email ou senha inválidos" },
@@ -38,8 +47,16 @@ export async function POST(request: NextRequest) {
       user = await ensureUserByEmail(normalizedEmail);
     }
 
-    const token = createAdminToken(user.email, user.id);
     const company = await resolveDefaultCompanyForUser(user.id, user.email);
+
+    if (!normalizedPassword && !company) {
+      return NextResponse.json(
+        { error: "Este email não está associado a nenhuma empresa" },
+        { status: 403 },
+      );
+    }
+
+    const token = createAdminToken(user.email, user.id);
     const redirectTo = company
       ? `/admin/${company.slug}/dashboard`
       : "/onboarding";

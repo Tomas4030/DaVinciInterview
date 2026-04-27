@@ -36,6 +36,11 @@ export interface CompanyMemberRecord {
   updated_at: string;
 }
 
+export interface CompanyMemberWithUserRecord extends CompanyMemberRecord {
+  user_email: string;
+  user_name: string | null;
+}
+
 type CreateCompanyInput = {
   ownerId: string;
   name: string;
@@ -339,4 +344,181 @@ export async function updateCompanyProfile(
   );
 
   return await getCompanyById(normalizedCompanyId);
+}
+
+export async function listCompanyMembers(
+  companyId: string,
+): Promise<CompanyMemberWithUserRecord[]> {
+  const normalizedCompanyId = String(companyId || "").trim();
+  if (!normalizedCompanyId) return [];
+
+  const [rows] = await query<CompanyMemberWithUserRecord>(
+    `
+    SELECT
+      cm.id,
+      cm.company_id,
+      cm.user_id,
+      cm.role,
+      cm.created_at,
+      cm.updated_at,
+      u.email AS user_email,
+      u.name AS user_name
+    FROM company_members cm
+    JOIN users u ON u.id = cm.user_id
+    WHERE cm.company_id = ?
+    ORDER BY
+      CASE cm.role
+        WHEN 'owner' THEN 1
+        WHEN 'admin' THEN 2
+        ELSE 3
+      END,
+      u.email ASC
+    `,
+    [normalizedCompanyId],
+  );
+
+  return rows;
+}
+
+export async function getCompanyMemberById(
+  memberId: string,
+  companyId: string,
+): Promise<CompanyMemberWithUserRecord | null> {
+  const normalizedMemberId = String(memberId || "").trim();
+  const normalizedCompanyId = String(companyId || "").trim();
+  if (!normalizedMemberId || !normalizedCompanyId) return null;
+
+  const [rows] = await query<CompanyMemberWithUserRecord>(
+    `
+    SELECT
+      cm.id,
+      cm.company_id,
+      cm.user_id,
+      cm.role,
+      cm.created_at,
+      cm.updated_at,
+      u.email AS user_email,
+      u.name AS user_name
+    FROM company_members cm
+    JOIN users u ON u.id = cm.user_id
+    WHERE cm.id = ? AND cm.company_id = ?
+    LIMIT 1
+    `,
+    [normalizedMemberId, normalizedCompanyId],
+  );
+
+  return rows[0] || null;
+}
+
+export async function getCompanyMemberByUserId(
+  userId: string,
+  companyId: string,
+): Promise<CompanyMemberRecord | null> {
+  const normalizedUserId = String(userId || "").trim();
+  const normalizedCompanyId = String(companyId || "").trim();
+  if (!normalizedUserId || !normalizedCompanyId) return null;
+
+  const [rows] = await query<CompanyMemberRecord>(
+    `
+    SELECT *
+    FROM company_members
+    WHERE user_id = ? AND company_id = ?
+    LIMIT 1
+    `,
+    [normalizedUserId, normalizedCompanyId],
+  );
+
+  return rows[0] || null;
+}
+
+export async function addCompanyMember(input: {
+  companyId: string;
+  userId: string;
+  role: Exclude<CompanyRole, "owner">;
+}): Promise<CompanyMemberRecord> {
+  const companyId = String(input.companyId || "").trim();
+  const userId = String(input.userId || "").trim();
+  const role = input.role === "admin" ? "admin" : "viewer";
+
+  if (!companyId || !userId) {
+    throw new Error("Parâmetros inválidos para adicionar membro");
+  }
+
+  const existing = await getCompanyMemberByUserId(userId, companyId);
+  if (existing) {
+    return existing;
+  }
+
+  const id = uuidv4();
+  await query(
+    `
+    INSERT INTO company_members (id, company_id, user_id, role)
+    VALUES (?, ?, ?, ?)
+    `,
+    [id, companyId, userId, role],
+  );
+
+  const created = await getCompanyMemberByUserId(userId, companyId);
+  if (!created) {
+    throw new Error("Membro criado mas não encontrado");
+  }
+
+  return created;
+}
+
+export async function updateCompanyMemberRole(input: {
+  memberId: string;
+  companyId: string;
+  role: Exclude<CompanyRole, "owner">;
+}): Promise<CompanyMemberRecord | null> {
+  const memberId = String(input.memberId || "").trim();
+  const companyId = String(input.companyId || "").trim();
+  const role = input.role === "admin" ? "admin" : "viewer";
+  if (!memberId || !companyId) return null;
+
+  await query(
+    `
+    UPDATE company_members
+    SET role = ?
+    WHERE id = ? AND company_id = ?
+    `,
+    [role, memberId, companyId],
+  );
+
+  const [rows] = await query<CompanyMemberRecord>(
+    `
+    SELECT *
+    FROM company_members
+    WHERE id = ? AND company_id = ?
+    LIMIT 1
+    `,
+    [memberId, companyId],
+  );
+
+  return rows[0] || null;
+}
+
+export async function deleteCompanyMember(
+  memberId: string,
+  companyId: string,
+): Promise<boolean> {
+  const normalizedMemberId = String(memberId || "").trim();
+  const normalizedCompanyId = String(companyId || "").trim();
+  if (!normalizedMemberId || !normalizedCompanyId) return false;
+
+  const existing = await getCompanyMemberById(
+    normalizedMemberId,
+    normalizedCompanyId,
+  );
+  if (!existing) return false;
+
+  await query(
+    `
+    DELETE FROM company_members
+    WHERE id = ? AND company_id = ?
+    `,
+    [normalizedMemberId, normalizedCompanyId],
+  );
+
+  return true;
 }

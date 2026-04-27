@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { AdminCompanySettingsForm } from "@/components/admin";
+import {
+  AdminCompanyMembersManager,
+  AdminCompanySettingsForm,
+} from "@/components/admin";
 import { tAdmin } from "@/lib/i18n/admin";
 import { getCompanyBySlug } from "@/lib/queries/companies";
 
@@ -41,6 +44,19 @@ export default async function AdminCompanySettingsPage({ params }: Props) {
           initialLogoUrl={company.logo_url || ""}
           locale={params.locale}
         />
+      </div>
+
+      <div className="space-y-4 rounded-xl border border-[var(--c-border)]/70 bg-[var(--c-surface)] p-5">
+        <div>
+          <h2 className="text-lg font-semibold text-[var(--c-text)]">
+            {tAdmin(params.locale, "members.title")}
+          </h2>
+          <p className="text-sm text-[var(--c-muted)]">
+            {tAdmin(params.locale, "members.description")}
+          </p>
+        </div>
+
+        <AdminCompanyMembersManager slug={company.slug} locale={params.locale} />
       </div>
     </section>
   );

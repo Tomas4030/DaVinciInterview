@@ -104,7 +104,6 @@ export default function LoginForm({ locale = "en" }: LoginFormProps) {
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          required
           autoComplete="current-password"
           placeholder={tAuth(locale, "loginForm.passwordPlaceholder")}
           className="input-base"
