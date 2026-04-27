@@ -6,16 +6,22 @@ import {
   RecentInterviewsPanel,
 } from "@/components/admin/company-dashboard";
 import { ADMIN_SESSION_COOKIE, parseAdminToken } from "@/lib/admin-auth";
+import { tAdmin } from "@/lib/i18n/admin";
 import { getCompanyMembershipBySlug } from "@/lib/queries/companies";
 import { listInterviewsByCompany } from "@/lib/queries/interviews";
 import { query } from "@/lib/db";
 
-export const metadata: Metadata = { title: "Admin — Dashboard" };
 export const dynamic = "force-dynamic";
 
 type Props = {
-  params: { slug: string };
+  params: { locale: string; slug: string };
 };
+
+export function generateMetadata({ params }: Props): Metadata {
+  return {
+    title: tAdmin(params.locale, "dashboardPage.metaTitle"),
+  };
+}
 
 export default async function AdminCompanyDashboardPage({ params }: Props) {
   const cookieStore = cookies();
@@ -100,12 +106,14 @@ export default async function AdminCompanyDashboardPage({ params }: Props) {
     <section className="space-y-6">
       <header className="space-y-1">
         <p className="text-xs uppercase tracking-[0.09em] text-[var(--c-muted)]">
-          Empresa
+          {tAdmin(params.locale, "dashboardPage.eyebrow")}
         </p>
         <h1 className="text-2xl font-semibold text-[var(--c-text)]">
           {membership.company.name}
         </h1>
-        <p className="text-sm text-[var(--c-muted)]">Role: {membership.role}</p>
+        <p className="text-sm text-[var(--c-muted)]">
+          {tAdmin(params.locale, "layout.roleLabel")}: {membership.role}
+        </p>
       </header>
 
       <DashboardStats
@@ -115,9 +123,14 @@ export default async function AdminCompanyDashboardPage({ params }: Props) {
         publishedTotal={totalPublished}
         responsesTotal={totalResponses}
         completionRate={completionRate}
+        locale={params.locale}
       />
 
-      <RecentInterviewsPanel slug={params.slug} interviews={recentInterviews} />
+      <RecentInterviewsPanel
+        slug={params.slug}
+        interviews={recentInterviews}
+        locale={params.locale}
+      />
     </section>
   );
 }

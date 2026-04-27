@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import { ADMIN_SESSION_COOKIE, parseAdminToken } from "@/lib/admin-auth";
+import { tAdmin } from "@/lib/i18n/admin";
 import { getCompanyMembershipBySlug } from "@/lib/queries/companies";
 import {
   buildAiComparisonsForCompany,
@@ -13,16 +14,21 @@ import {
   CandidateDetails,
 } from "@/components/admin/ai-comparacao";
 
-export const metadata: Metadata = { title: "Admin - Analise IA" };
 export const dynamic = "force-dynamic";
 
 type Props = {
-  params: { slug: string };
+  params: { locale: string; slug: string };
   searchParams?: {
     vaga?: string;
     sessao?: string;
   };
 };
+
+export function generateMetadata({ params }: Props): Metadata {
+  return {
+    title: tAdmin(params.locale, "aiComparisonPage.metaTitle"),
+  };
+}
 
 export default async function AdminCompanyAiComparisonPage({
   params,
@@ -93,11 +99,12 @@ export default async function AdminCompanyAiComparisonPage({
         slug={params.slug}
         vagas={vagas}
         selectedVagaId={selectedVaga?.vagaId}
+        locale={params.locale}
       />
 
       {!selectedVaga || !selectedInterview || !selectedCandidate ? (
         <div className="rounded-[20px] border border-[var(--c-border)]/70 bg-[var(--c-surface)] p-8 text-sm text-[var(--c-muted)]">
-          Ainda não existem candidatos suficientes para análise.
+          {tAdmin(params.locale, "aiComparisonPage.empty")}
         </div>
       ) : (
         <div className="grid gap-5 xl:grid-cols-[320px,1fr]">
@@ -106,6 +113,7 @@ export default async function AdminCompanyAiComparisonPage({
             selectedVaga={selectedVaga}
             selectedInterview={selectedInterview}
             selectedCandidate={selectedCandidate}
+            locale={params.locale}
           />
 
           <CandidateDetails
@@ -115,6 +123,7 @@ export default async function AdminCompanyAiComparisonPage({
             selectedCandidate={selectedCandidate}
             selectedCandidateRanking={selectedCandidateRanking}
             selectedCandidateRankingItem={selectedCandidateRankingItem}
+            locale={params.locale}
           />
         </div>
       )}

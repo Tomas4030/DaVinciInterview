@@ -4,11 +4,17 @@ import type { Metadata } from "next";
 import GridBackgroundPattern from "@/components/ui/GridBackgroundPattern";
 import { tAuth } from "@/lib/i18n/auth";
 
-const locale = "en";
+type Props = {
+  params: { locale: string };
+};
 
-export const metadata: Metadata = { title: tAuth(locale, "loginPage.metaTitle") };
+export function generateMetadata({ params }: Props): Metadata {
+  return {
+    title: tAuth(params.locale, "loginPage.metaTitle"),
+  };
+}
 
-export default function LoginPage() {
+export default function LoginPage({ params }: Props) {
   return (
     <main className="relative min-h-screen flex items-center justify-center px-4 bg-[var(--c-bg)]">
       <GridBackgroundPattern />
@@ -20,14 +26,14 @@ export default function LoginPage() {
             <span className="text-white text-xl font-bold font-display">D</span>
           </div>
           <h1 className="text-xl font-semibold text-gray-900">
-            {tAuth(locale, "loginPage.title")}
+            {tAuth(params.locale, "loginPage.title")}
           </h1>
           <p className="text-sm text-gray-500 mt-1">
-            {tAuth(locale, "loginPage.subtitle")}
+            {tAuth(params.locale, "loginPage.subtitle")}
           </p>
         </div>
 
-        <LoginForm locale={locale} />
+        <LoginForm locale={params.locale} />
       </div>
     </main>
   );

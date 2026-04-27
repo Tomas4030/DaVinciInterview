@@ -257,7 +257,7 @@ export default function CandidateDetails({
           </div>
 
           <Link
-            href={`/admin/${slug}/responses/${selectedCandidate.sessaoId}`}
+            href={`/${locale}/admin/${slug}/responses/${selectedCandidate.sessaoId}`}
             className="inline-flex h-[46px] items-center justify-center rounded-xl border border-[#D9DDF4] bg-white px-5 text-sm font-medium text-[#4F46E5] transition hover:bg-[#F8F9FF]"
           >
             {tAdmin(locale, "aiComparison.viewAnswers")}

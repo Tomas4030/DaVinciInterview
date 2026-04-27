@@ -68,11 +68,13 @@ export default function ResponsesTable({ slug, rows, locale = "en" }: Props) {
                     <ResponseStatusBadge status={row.status} locale={locale} />
                   </td>
                   <td className="px-5 py-3 text-[var(--c-muted)]">
-                    {new Date(row.created_at).toLocaleString("pt-PT")}
+                    {new Date(row.created_at).toLocaleString(
+                      locale === "pt" ? "pt-PT" : "en-US",
+                    )}
                   </td>
                   <td className="px-5 py-3">
                     <Link
-                      href={`/admin/${slug}/responses/${row.sessao_id}`}
+                      href={`/${locale}/admin/${slug}/responses/${row.sessao_id}`}
                       className="inline-flex rounded-md bg-[var(--c-brand)] px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-[var(--c-brand-dark)]"
                     >
                       {tAdmin(locale, "responses.table.viewAnswers")}

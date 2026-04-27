@@ -52,6 +52,7 @@ export default function AiComparisonHeader({
               vagas={vagas}
               selectedVagaId={selectedVagaId}
               slug={slug}
+              locale={locale}
             />
           </div>
 
@@ -59,7 +60,7 @@ export default function AiComparisonHeader({
             <AiComparisonRefreshButton slug={slug} locale={locale} />
 
             <Link
-              href={`/admin/${slug}/responses`}
+              href={`/${locale}/admin/${slug}/responses`}
               className="inline-flex h-8 items-center gap-1.5 rounded-lg bg-[#4F46E5] px-3 text-xs font-medium text-white shadow-sm transition hover:bg-[#4338CA] active:scale-[0.98]"
             >
               <svg

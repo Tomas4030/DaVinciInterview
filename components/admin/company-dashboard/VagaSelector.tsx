@@ -6,13 +6,21 @@ interface VagaSelectorProps {
   vagas: { vagaId: string; vagaTitle: string }[];
   selectedVagaId?: string;
   slug: string;
+  locale?: string;
 }
 
-export default function VagaSelector({ vagas, selectedVagaId, slug }: VagaSelectorProps) {
+export default function VagaSelector({
+  vagas,
+  selectedVagaId,
+  slug,
+  locale = "en",
+}: VagaSelectorProps) {
   const router = useRouter();
 
   function handleChange(e: React.ChangeEvent<HTMLSelectElement>) {
-    router.push(`/admin/${slug}/responses/ai-comparacao?vaga=${e.target.value}`);
+    router.push(
+      `/${locale}/admin/${slug}/responses/ai-comparacao?vaga=${e.target.value}`,
+    );
   }
 
   return (

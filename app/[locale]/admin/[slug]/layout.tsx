@@ -3,11 +3,12 @@ import { cookies } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 import { AdminCompanySidebar, AdminNav } from "@/components/admin";
 import { ADMIN_SESSION_COOKIE, parseAdminToken } from "@/lib/admin-auth";
+import { tAdmin } from "@/lib/i18n/admin";
 import { getCompanyMembershipBySlug } from "@/lib/queries/companies";
 
 type Props = {
   children: ReactNode;
-  params: { slug: string };
+  params: { locale: string; slug: string };
 };
 
 export const dynamic = "force-dynamic";
@@ -18,7 +19,9 @@ export default async function AdminCompanyLayout({ children, params }: Props) {
   const session = parseAdminToken(token);
 
   if (!session) {
-    redirect(`/admin/login?next=/admin/${params.slug}/dashboard`);
+    redirect(
+      `/${params.locale}/admin/login?next=/${params.locale}/admin/${params.slug}/dashboard`,
+    );
   }
 
   let membership: Awaited<ReturnType<typeof getCompanyMembershipBySlug>> = null;
@@ -44,24 +47,25 @@ export default async function AdminCompanyLayout({ children, params }: Props) {
         companySlug={membership.company.slug}
         companyName={membership.company.name}
         companyLogoUrl={membership.company.logo_url}
+        locale={params.locale}
       />
 
       <div className="mx-auto max-w-[1540px] px-4 py-6 sm:px-6 lg:px-8">
         <div className="grid gap-5 lg:grid-cols-[250px,1fr]">
           <div className="space-y-4">
-            <AdminCompanySidebar slug={membership.company.slug} />
+            <AdminCompanySidebar slug={membership.company.slug} locale={params.locale} />
 
             <section className="rounded-[20px] border border-[var(--c-border)]/70 bg-[var(--c-surface)] p-4">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--c-muted)]">
-                Empresa ativa
-              </p>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--c-muted)]">
+                  {tAdmin(params.locale, "layout.activeCompany")}
+                </p>
 
               <p className="mt-3 text-[15px] font-semibold text-[var(--c-text)]">
                 {membership.company.name}
               </p>
 
               <p className="mt-2 text-sm text-[var(--c-muted)]">
-                Role: {membership.role}
+                {tAdmin(params.locale, "layout.roleLabel")}: {membership.role}
               </p>
             </section>
 
@@ -83,10 +87,10 @@ export default async function AdminCompanyLayout({ children, params }: Props) {
 
                 <div className="min-w-0">
                   <p className="text-sm font-semibold text-[#3556D8]">
-                    Precisa de ajuda?
+                    {tAdmin(params.locale, "layout.helpTitle")}
                   </p>
                   <p className="mt-1 text-sm text-[var(--c-muted)]">
-                    Fale com o nosso suporte
+                    {tAdmin(params.locale, "layout.helpSubtitle")}
                   </p>
                 </div>
               </div>
@@ -95,7 +99,7 @@ export default async function AdminCompanyLayout({ children, params }: Props) {
                 type="button"
                 className="mt-4 w-full rounded-xl border border-[#D6DDF3] bg-white px-4 py-3 text-sm font-medium text-[#3556D8] transition hover:bg-[#F8FAFF]"
               >
-                Contactar suporte
+                {tAdmin(params.locale, "layout.helpAction")}
               </button>
             </section>
           </div>

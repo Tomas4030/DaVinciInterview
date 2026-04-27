@@ -23,7 +23,9 @@ export default function AdminNav({
 }: AdminNavProps) {
   const pathname = usePathname();
 
-  const adminBasePath = companySlug ? `/admin/${companySlug}` : "/admin";
+  const adminBasePath = companySlug
+    ? `/${locale}/admin/${companySlug}`
+    : `/${locale}/admin`;
 
   const NAV_LINKS = companySlug
     ? [{ href: `${adminBasePath}/dashboard`, label: tAdmin(locale, "nav.dashboard") }]
@@ -56,7 +58,7 @@ export default function AdminNav({
               {companyLogoUrl ? (
                 <img
                   src={companyLogoUrl}
-                  alt={`Logo ${companyName || "empresa"}`}
+                  alt={`Logo ${companyName || "company"}`}
                   className="h-full w-full object-contain"
                 />
               ) : (
@@ -107,7 +109,8 @@ export default function AdminNav({
         <div className="flex items-center gap-2">
           <AdminAccountMenu
             userEmail={userEmail}
-            publicHref={companySlug ? `/${companySlug}` : "/"}
+            publicHref={companySlug ? `/${locale}/${companySlug}` : `/${locale}`}
+            locale={locale}
           />
         </div>
       </div>

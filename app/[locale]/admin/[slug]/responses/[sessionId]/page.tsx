@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ADMIN_SESSION_COOKIE, parseAdminToken } from "@/lib/admin-auth";
 import { jsonParse, query } from "@/lib/db";
+import { tAdmin } from "@/lib/i18n/admin";
 import { getCompanyMembershipBySlug } from "@/lib/queries/companies";
 import type {
   ResponseAnswerItem,
@@ -11,12 +12,17 @@ import type {
 } from "@/components/admin/responses";
 import { QAPairsList, SessionSummaryCards } from "@/components/admin/responses";
 
-export const metadata: Metadata = { title: "Admin — Detalhe da Sessão" };
 export const dynamic = "force-dynamic";
 
 type Props = {
-  params: { slug: string; sessionId: string };
+  params: { locale: string; slug: string; sessionId: string };
 };
+
+export function generateMetadata({ params }: Props): Metadata {
+  return {
+    title: tAdmin(params.locale, "responseDetailPage.metaTitle"),
+  };
+}
 
 export default async function AdminCompanyResponseDetailPage({ params }: Props) {
   const cookieStore = cookies();
@@ -61,24 +67,27 @@ export default async function AdminCompanyResponseDetailPage({ params }: Props) 
     <section className="space-y-6">
       <header className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <p className="text-xs uppercase tracking-[0.09em] text-[var(--c-muted)]">Sessão</p>
+          <p className="text-xs uppercase tracking-[0.09em] text-[var(--c-muted)]">
+            {tAdmin(params.locale, "responseDetailPage.eyebrow")}
+          </p>
           <h1 className="text-2xl font-semibold text-[var(--c-text)]">
-            {row.interview_title || "Entrevista"}
+            {row.interview_title ||
+              tAdmin(params.locale, "responseDetailPage.fallbackInterviewTitle")}
           </h1>
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
           <a
-            href={`/admin/${params.slug}/responses/${params.sessionId}/export`}
+            href={`/${params.locale}/admin/${params.slug}/responses/${params.sessionId}/export`}
             className="btn-primary inline-flex px-4 py-2 text-sm"
           >
-            Exportar PDF
+            {tAdmin(params.locale, "responseDetailPage.exportPdf")}
           </a>
           <Link
-            href={`/admin/${params.slug}/responses`}
+            href={`/${params.locale}/admin/${params.slug}/responses`}
             className="rounded-lg border border-[var(--c-border)] px-4 py-2 text-sm text-[var(--c-text)] transition-colors hover:bg-[var(--c-bg)]"
           >
-            Voltar às respostas
+            {tAdmin(params.locale, "responseDetailPage.backToResponses")}
           </Link>
         </div>
       </header>
@@ -88,9 +97,10 @@ export default async function AdminCompanyResponseDetailPage({ params }: Props) 
         telefone={row.telefone}
         status={row.status}
         createdAt={row.created_at}
+        locale={params.locale}
       />
 
-      <QAPairsList answers={answers} />
+      <QAPairsList answers={answers} locale={params.locale} />
     </section>
   );
 }

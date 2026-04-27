@@ -4,17 +4,20 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { withBasePath } from "@/lib/base-path";
+import { tAdmin } from "@/lib/i18n/admin";
 
 type AdminAccountMenuProps = {
   userEmail: string;
   publicHref: string;
   adminHref?: string;
+  locale?: string;
 };
 
 export default function AdminAccountMenu({
   userEmail,
   publicHref,
   adminHref,
+  locale = "en",
 }: AdminAccountMenuProps) {
   const router = useRouter();
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -51,12 +54,12 @@ export default function AdminAccountMenu({
     try {
       await fetch(withBasePath("/api/auth/logout-admin"), { method: "POST" });
     } catch (error) {
-      console.error("Erro ao terminar sessão:", error);
+      console.error(tAdmin(locale, "accountMenu.logoutError"), error);
     } finally {
       localStorage.removeItem("admin_token");
       localStorage.removeItem("admin_email");
       setDropdownOpen(false);
-      router.push("/admin/login");
+      router.push(`/${locale}/admin/login`);
       router.refresh();
     }
   }
@@ -66,7 +69,7 @@ export default function AdminAccountMenu({
       <button
         type="button"
         onClick={() => setDropdownOpen((open) => !open)}
-        aria-label="Menu do utilizador"
+        aria-label={tAdmin(locale, "accountMenu.ariaLabel")}
         aria-expanded={dropdownOpen}
         aria-haspopup="menu"
         className={[
@@ -112,7 +115,9 @@ export default function AdminAccountMenu({
               <p className="truncate text-[11px] font-medium text-[var(--c-text)]">
                 {userEmail}
               </p>
-              <p className="text-[10px] text-[var(--c-muted)]">Administrador</p>
+              <p className="text-[10px] text-[var(--c-muted)]">
+                {tAdmin(locale, "accountMenu.adminRole")}
+              </p>
             </div>
           </div>
 
@@ -140,7 +145,7 @@ export default function AdminAccountMenu({
                   <rect x="14" y="14" width="7" height="7" />
                   <rect x="3" y="14" width="7" height="7" />
                 </svg>
-                Ver página de admin
+                {tAdmin(locale, "accountMenu.viewAdmin")}
               </Link>
             ) : null}
 
@@ -165,7 +170,7 @@ export default function AdminAccountMenu({
                 <polyline points="15 3 21 3 21 9" />
                 <line x1="10" y1="14" x2="21" y2="3" />
               </svg>
-              Ver site público
+              {tAdmin(locale, "accountMenu.viewPublic")}
             </Link>
 
             <div className="my-1 border-t border-[var(--c-border)]/40" />
@@ -191,7 +196,7 @@ export default function AdminAccountMenu({
                 <polyline points="16 17 21 12 16 7" />
                 <line x1="21" y1="12" x2="9" y2="12" />
               </svg>
-              Terminar sessão
+              {tAdmin(locale, "accountMenu.logout")}
             </button>
           </div>
         </div>

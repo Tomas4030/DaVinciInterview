@@ -110,5 +110,144 @@
     "outOfPlural": "de {{count}} candidatos",
     "companyDescription": "Descrição da empresa",
     "companyDescriptionFallback": "Sem descrição adicional disponível para esta empresa."
+  },
+  "layout": {
+    "activeCompany": "Empresa ativa",
+    "roleLabel": "Perfil",
+    "helpTitle": "Precisa de ajuda?",
+    "helpSubtitle": "Fale com o nosso suporte",
+    "helpAction": "Contactar suporte"
+  },
+  "dashboardPage": {
+    "metaTitle": "Admin — Dashboard",
+    "eyebrow": "Empresa"
+  },
+  "dashboardStats": {
+    "interviews": "Entrevistas",
+    "period": "{{week}} na semana, {{month}} no mes",
+    "published": "Publicadas",
+    "responses": "Respostas",
+    "completionRate": "Taxa de conclusao: {{rate}}%"
+  },
+  "recentInterviews": {
+    "title": "Entrevistas recentes",
+    "viewAll": "Ver todas",
+    "empty": "Sem entrevistas criadas nesta empresa.",
+    "status": "status: {{status}}",
+    "viewResponses": "Ver respostas"
+  },
+  "responsesPage": {
+    "metaTitle": "Admin — Respostas",
+    "eyebrow": "Respostas",
+    "title": "Sessoes de candidatos",
+    "description": "Consulta as respostas por entrevista e abre a analise global por vaga para comparar candidatos com apoio de IA."
+  },
+  "responseDetailPage": {
+    "metaTitle": "Admin — Detalhe da Sessao",
+    "eyebrow": "Sessao",
+    "fallbackInterviewTitle": "Entrevista",
+    "exportPdf": "Exportar PDF",
+    "backToResponses": "Voltar as respostas"
+  },
+  "settingsPage": {
+    "metaTitle": "Admin — Definicoes",
+    "eyebrow": "Definicoes",
+    "title": "Definicoes da empresa"
+  },
+  "interviewsPage": {
+    "metaTitle": "Admin — Entrevistas",
+    "eyebrow": "Entrevistas",
+    "title": "Gestao de entrevistas",
+    "newInterview": "Nova entrevista",
+    "results": "Resultados",
+    "countSingular": "{{count}} entrevista",
+    "countPlural": "{{count}} entrevistas",
+    "empty": "Sem resultados para os filtros selecionados."
+  },
+  "interviewsNewPage": {
+    "metaTitle": "Admin — Nova Entrevista",
+    "eyebrow": "Entrevistas",
+    "title": "Nova entrevista"
+  },
+  "interviewsEditPage": {
+    "metaTitle": "Admin — Editar Entrevista",
+    "eyebrow": "Entrevistas",
+    "title": "Editar entrevista"
+  },
+  "billingPage": {
+    "metaTitle": "Admin — Faturacao",
+    "eyebrow": "Faturacao",
+    "title": "Conta e faturacao",
+    "description": "Placeholder da Fase 4 para integracao Stripe e gestao de plano da empresa."
+  },
+  "deleteInterview": {
+    "defaultError": "Nao foi possivel apagar a entrevista.",
+    "networkError": "Erro ao apagar entrevista.",
+    "loading": "A apagar...",
+    "trigger": "Apagar",
+    "confirmTitle": "Confirmar remocao",
+    "confirmBody": "Ao confirmar, vais apagar esta vaga/entrevista e tambem todas as respostas e analises IA associadas. Esta acao e permanente.",
+    "cancel": "Cancelar",
+    "confirm": "Confirmar e apagar"
+  },
+  "interviewForm": {
+    "defaultError": "Nao foi possivel guardar a entrevista",
+    "networkError": "Erro ao guardar entrevista",
+    "titleLabel": "Titulo",
+    "titlePlaceholder": "Ex: Frontend Developer",
+    "descriptionLabel": "Descricao",
+    "descriptionPlaceholder": "Resumo da vaga",
+    "workModeLabel": "Regime de trabalho",
+    "workModeUnspecified": "Nao definido",
+    "workModeRemote": "Remoto",
+    "workModeHybrid": "Hibrido",
+    "workModeOnsite": "Presencial",
+    "statusLabel": "Estado",
+    "statusDraft": "Rascunho",
+    "statusPublished": "Publicada",
+    "statusArchived": "Arquivada",
+    "desiredQuestions": "Numero de perguntas desejado",
+    "generating": "A gerar perguntas...",
+    "generateAction": "Gerar perguntas com IA (placeholder)",
+    "questionsTitle": "Perguntas",
+    "addQuestion": "Adicionar",
+    "questionPlaceholder": "Pergunta {{number}}...",
+    "removeQuestion": "Remover",
+    "deleteQuestion": "Apagar",
+    "saving": "A guardar...",
+    "create": "Criar entrevista",
+    "save": "Guardar alteracoes",
+    "aiFallbackRole": "a vaga",
+    "aiTemplate1": "Fala sobre a tua experiencia mais relevante para {{role}}.",
+    "aiTemplate2": "Como organizas prioridades e entregas quando tens prazos curtos?",
+    "aiTemplate3": "Descreve um desafio tecnico/profissional recente e como o resolveste.",
+    "aiTemplate4": "Que competencias consideras essenciais para ter sucesso em {{role}}?",
+    "aiTemplate5": "Como colaboras com equipas multidisciplinares em projetos complexos?",
+    "aiTemplate6": "Que resultados concretos ja alcancaste em funcoes semelhantes?",
+    "aiTemplate7": "Como lidas com feedback e iteracao continua no teu trabalho?",
+    "aiTemplate8": "Que ferramentas e praticas usas para garantir qualidade no teu trabalho?"
+  },
+  "settingsForm": {
+    "defaultError": "Nao foi possivel guardar alteracoes",
+    "success": "Definicoes atualizadas com sucesso.",
+    "networkError": "Erro ao guardar alteracoes. Tenta novamente.",
+    "nameLabel": "Nome da empresa",
+    "descriptionLabel": "Descricao",
+    "descriptionPlaceholder": "Descricao curta da empresa",
+    "logoUrlLabel": "URL do logo",
+    "save": "Guardar alteracoes",
+    "saving": "A guardar..."
+  },
+  "accountMenu": {
+    "ariaLabel": "Menu do utilizador",
+    "adminRole": "Administrador",
+    "viewAdmin": "Ver pagina de admin",
+    "viewPublic": "Ver site publico",
+    "logout": "Terminar sessao",
+    "logoutError": "Erro ao terminar sessao:"
+  },
+  "aiComparisonPage": {
+    "metaTitle": "Admin - Analise IA",
+    "empty": "Ainda nao existem candidatos suficientes para analise."
   }
 }

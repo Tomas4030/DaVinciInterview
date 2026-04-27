@@ -3,12 +3,14 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { withBasePath } from "@/lib/base-path";
+import { tAdmin } from "@/lib/i18n/admin";
 
 type Props = {
   slug: string;
   initialName: string;
   initialDescription: string;
   initialLogoUrl: string;
+  locale?: string;
 };
 
 export default function AdminCompanySettingsForm({
@@ -16,6 +18,7 @@ export default function AdminCompanySettingsForm({
   initialName,
   initialDescription,
   initialLogoUrl,
+  locale = "en",
 }: Props) {
   const router = useRouter();
   const [name, setName] = useState(initialName);
@@ -46,15 +49,15 @@ export default function AdminCompanySettingsForm({
 
       const data = await response.json();
       if (!response.ok) {
-        setError(data?.error || "Não foi possível guardar alterações");
+        setError(data?.error || tAdmin(locale, "settingsForm.defaultError"));
         return;
       }
 
-      setSuccess("Definições atualizadas com sucesso.");
+      setSuccess(tAdmin(locale, "settingsForm.success"));
       router.refresh();
     } catch (requestError) {
       console.error("Erro ao guardar definições:", requestError);
-      setError("Erro ao guardar alterações. Tenta novamente.");
+      setError(tAdmin(locale, "settingsForm.networkError"));
     } finally {
       setLoading(false);
     }
@@ -76,7 +79,7 @@ export default function AdminCompanySettingsForm({
 
       <div>
         <label htmlFor="company-name" className="mb-1.5 block text-xs font-medium text-[var(--c-muted)]">
-          Nome da empresa
+          {tAdmin(locale, "settingsForm.nameLabel")}
         </label>
         <input
           id="company-name"
@@ -90,20 +93,20 @@ export default function AdminCompanySettingsForm({
 
       <div>
         <label htmlFor="company-description" className="mb-1.5 block text-xs font-medium text-[var(--c-muted)]">
-          Descrição
+          {tAdmin(locale, "settingsForm.descriptionLabel")}
         </label>
         <textarea
           id="company-description"
           value={description}
           onChange={(event) => setDescription(event.target.value)}
           className="input-base min-h-24"
-          placeholder="Descrição curta da empresa"
+          placeholder={tAdmin(locale, "settingsForm.descriptionPlaceholder")}
         />
       </div>
 
       <div>
         <label htmlFor="company-logo-url" className="mb-1.5 block text-xs font-medium text-[var(--c-muted)]">
-          URL do logo
+          {tAdmin(locale, "settingsForm.logoUrlLabel")}
         </label>
         <input
           id="company-logo-url"
@@ -116,7 +119,9 @@ export default function AdminCompanySettingsForm({
       </div>
 
       <button type="submit" disabled={loading} className="btn-primary inline-flex px-5 py-2.5">
-        {loading ? "A guardar..." : "Guardar alterações"}
+        {loading
+          ? tAdmin(locale, "settingsForm.saving")
+          : tAdmin(locale, "settingsForm.save")}
       </button>
     </form>
   );

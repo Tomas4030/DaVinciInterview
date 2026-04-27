@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ADMIN_SESSION_COOKIE, parseAdminToken } from "@/lib/admin-auth";
+import { tAdmin } from "@/lib/i18n/admin";
 import { stripInterviewMetaFromDescription } from "@/lib/interview-meta";
 import { getCompanyMembershipBySlug } from "@/lib/queries/companies";
 import { listInterviewsByCompany } from "@/lib/queries/interviews";
@@ -11,16 +12,21 @@ import {
   InterviewListCard,
 } from "@/components/admin/interviews";
 
-export const metadata: Metadata = { title: "Admin — Entrevistas" };
 export const dynamic = "force-dynamic";
 
 type Props = {
-  params: { slug: string };
+  params: { locale: string; slug: string };
   searchParams?: {
     q?: string;
     status?: string;
   };
 };
+
+export function generateMetadata({ params }: Props): Metadata {
+  return {
+    title: tAdmin(params.locale, "interviewsPage.metaTitle"),
+  };
+}
 
 const STATUS_OPTIONS = ["all", "draft", "published", "archived"] as const;
 
@@ -74,39 +80,56 @@ export default async function AdminCompanyInterviewsPage({
       <header className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <p className="text-xs uppercase tracking-[0.09em] text-[var(--c-muted)]">
-            Entrevistas
+            {tAdmin(params.locale, "interviewsPage.eyebrow")}
           </p>
           <h1 className="text-2xl font-semibold text-[var(--c-text)]">
-            Gestao de entrevistas
+            {tAdmin(params.locale, "interviewsPage.title")}
           </h1>
         </div>
 
         <Link
-          href={`/admin/${params.slug}/interviews/new`}
+          href={`/${params.locale}/admin/${params.slug}/interviews/new`}
           className="btn-primary inline-flex px-4 py-2"
         >
-          Nova entrevista
+          {tAdmin(params.locale, "interviewsPage.newInterview")}
         </Link>
       </header>
 
-      <InterviewsFilterBar searchTerm={searchTerm} statusFilter={statusFilter} />
+      <InterviewsFilterBar
+        searchTerm={searchTerm}
+        statusFilter={statusFilter}
+        locale={params.locale}
+      />
 
       <div className="rounded-[12px] border border-[var(--c-border)] bg-[var(--c-surface)]">
         <div className="flex items-center justify-between border-b border-[var(--c-border)] px-5 py-3">
-          <p className="text-sm font-medium text-[var(--c-text)]">Resultados</p>
+          <p className="text-sm font-medium text-[var(--c-text)]">
+            {tAdmin(params.locale, "interviewsPage.results")}
+          </p>
           <p className="text-xs text-[var(--c-muted)]">
-            {filteredInterviews.length} entrevistas
+            {filteredInterviews.length === 1
+              ? tAdmin(params.locale, "interviewsPage.countSingular", {
+                  count: filteredInterviews.length,
+                })
+              : tAdmin(params.locale, "interviewsPage.countPlural", {
+                  count: filteredInterviews.length,
+                })}
           </p>
         </div>
 
         {filteredInterviews.length === 0 ? (
           <p className="px-5 py-10 text-sm text-[var(--c-muted)]">
-            Sem resultados para os filtros selecionados.
+            {tAdmin(params.locale, "interviewsPage.empty")}
           </p>
         ) : (
           <div className="divide-y divide-[var(--c-border)]">
             {filteredInterviews.map((item) => (
-              <InterviewListCard key={item.id} slug={params.slug} item={item} />
+              <InterviewListCard
+                key={item.id}
+                slug={params.slug}
+                item={item}
+                locale={params.locale}
+              />
             ))}
           </div>
         )}

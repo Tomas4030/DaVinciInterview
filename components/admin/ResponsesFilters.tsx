@@ -48,8 +48,8 @@ export default function ResponsesFilters({ slug, interviews, locale = "en" }: Pr
 
       const query = params.toString();
       const href = query
-        ? `/admin/${slug}/responses?${query}`
-        : `/admin/${slug}/responses`;
+        ? `/${locale}/admin/${slug}/responses?${query}`
+        : `/${locale}/admin/${slug}/responses`;
 
       router.replace(href);
     },
@@ -103,7 +103,7 @@ export default function ResponsesFilters({ slug, interviews, locale = "en" }: Pr
       </select>
 
       <Link
-        href={`/admin/${slug}/responses/ai-comparacao`}
+        href={`/${locale}/admin/${slug}/responses/ai-comparacao`}
         className="inline-flex items-center justify-center rounded-lg bg-[var(--c-brand)] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[var(--c-brand-dark)]"
       >
         {tAdmin(locale, "responses.filters.aiAnalysis")}

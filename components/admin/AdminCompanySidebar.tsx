@@ -113,7 +113,7 @@ const ITEMS: Item[] = [
 
 export default function AdminCompanySidebar({ slug, locale = "en" }: Props) {
   const pathname = usePathname();
-  const base = `/admin/${slug}`;
+  const base = `/${locale}/admin/${slug}`;
   const items = ITEMS.map((item) => {
     if (item.key === "interviews") {
       return { ...item, label: tAdmin(locale, "sidebar.interviews") };

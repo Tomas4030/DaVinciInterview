@@ -110,5 +110,144 @@
     "outOfPlural": "of {{count}} candidates",
     "companyDescription": "Company description",
     "companyDescriptionFallback": "No additional company description available."
+  },
+  "layout": {
+    "activeCompany": "Active company",
+    "roleLabel": "Role",
+    "helpTitle": "Need help?",
+    "helpSubtitle": "Talk to our support team",
+    "helpAction": "Contact support"
+  },
+  "dashboardPage": {
+    "metaTitle": "Admin — Dashboard",
+    "eyebrow": "Company"
+  },
+  "dashboardStats": {
+    "interviews": "Interviews",
+    "period": "{{week}} this week, {{month}} this month",
+    "published": "Published",
+    "responses": "Responses",
+    "completionRate": "Completion rate: {{rate}}%"
+  },
+  "recentInterviews": {
+    "title": "Recent interviews",
+    "viewAll": "View all",
+    "empty": "No interviews created for this company.",
+    "status": "status: {{status}}",
+    "viewResponses": "View responses"
+  },
+  "responsesPage": {
+    "metaTitle": "Admin — Responses",
+    "eyebrow": "Responses",
+    "title": "Candidate sessions",
+    "description": "Review responses by interview and open global analysis per role to compare candidates with AI support."
+  },
+  "responseDetailPage": {
+    "metaTitle": "Admin — Session details",
+    "eyebrow": "Session",
+    "fallbackInterviewTitle": "Interview",
+    "exportPdf": "Export PDF",
+    "backToResponses": "Back to responses"
+  },
+  "settingsPage": {
+    "metaTitle": "Admin — Settings",
+    "eyebrow": "Settings",
+    "title": "Company settings"
+  },
+  "interviewsPage": {
+    "metaTitle": "Admin — Interviews",
+    "eyebrow": "Interviews",
+    "title": "Interview management",
+    "newInterview": "New interview",
+    "results": "Results",
+    "countSingular": "{{count}} interview",
+    "countPlural": "{{count}} interviews",
+    "empty": "No results for selected filters."
+  },
+  "interviewsNewPage": {
+    "metaTitle": "Admin — New Interview",
+    "eyebrow": "Interviews",
+    "title": "New interview"
+  },
+  "interviewsEditPage": {
+    "metaTitle": "Admin — Edit Interview",
+    "eyebrow": "Interviews",
+    "title": "Edit interview"
+  },
+  "billingPage": {
+    "metaTitle": "Admin — Billing",
+    "eyebrow": "Billing",
+    "title": "Account and billing",
+    "description": "Phase 4 placeholder for Stripe integration and company plan management."
+  },
+  "deleteInterview": {
+    "defaultError": "Could not delete the interview.",
+    "networkError": "Error deleting interview.",
+    "loading": "Deleting...",
+    "trigger": "Delete",
+    "confirmTitle": "Confirm removal",
+    "confirmBody": "By confirming, you will delete this role/interview and all associated responses and AI analyses. This action is permanent.",
+    "cancel": "Cancel",
+    "confirm": "Confirm and delete"
+  },
+  "interviewForm": {
+    "defaultError": "Could not save the interview",
+    "networkError": "Error saving interview",
+    "titleLabel": "Title",
+    "titlePlaceholder": "Ex: Frontend Developer",
+    "descriptionLabel": "Description",
+    "descriptionPlaceholder": "Role summary",
+    "workModeLabel": "Work mode",
+    "workModeUnspecified": "Not defined",
+    "workModeRemote": "Remote",
+    "workModeHybrid": "Hybrid",
+    "workModeOnsite": "Onsite",
+    "statusLabel": "Status",
+    "statusDraft": "Draft",
+    "statusPublished": "Published",
+    "statusArchived": "Archived",
+    "desiredQuestions": "Desired number of questions",
+    "generating": "Generating questions...",
+    "generateAction": "Generate questions with AI (placeholder)",
+    "questionsTitle": "Questions",
+    "addQuestion": "Add",
+    "questionPlaceholder": "Question {{number}}...",
+    "removeQuestion": "Remove",
+    "deleteQuestion": "Delete",
+    "saving": "Saving...",
+    "create": "Create interview",
+    "save": "Save changes",
+    "aiFallbackRole": "the role",
+    "aiTemplate1": "Tell us about your most relevant experience for {{role}}.",
+    "aiTemplate2": "How do you organize priorities and deliverables under short deadlines?",
+    "aiTemplate3": "Describe a recent technical/professional challenge and how you solved it.",
+    "aiTemplate4": "Which skills are essential to succeed in {{role}}?",
+    "aiTemplate5": "How do you collaborate with cross-functional teams on complex projects?",
+    "aiTemplate6": "What concrete outcomes have you achieved in similar roles?",
+    "aiTemplate7": "How do you handle feedback and continuous iteration in your work?",
+    "aiTemplate8": "Which tools and practices do you use to ensure quality in your work?"
+  },
+  "settingsForm": {
+    "defaultError": "Could not save changes",
+    "success": "Settings updated successfully.",
+    "networkError": "Error saving changes. Try again.",
+    "nameLabel": "Company name",
+    "descriptionLabel": "Description",
+    "descriptionPlaceholder": "Short company description",
+    "logoUrlLabel": "Logo URL",
+    "save": "Save changes",
+    "saving": "Saving..."
+  },
+  "accountMenu": {
+    "ariaLabel": "User menu",
+    "adminRole": "Administrator",
+    "viewAdmin": "View admin page",
+    "viewPublic": "View public site",
+    "logout": "Sign out",
+    "logoutError": "Error while signing out:"
+  },
+  "aiComparisonPage": {
+    "metaTitle": "Admin - AI Analysis",
+    "empty": "There are not enough candidates for analysis yet."
   }
 }

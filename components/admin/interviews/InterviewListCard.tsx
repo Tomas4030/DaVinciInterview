@@ -16,7 +16,7 @@ export default function InterviewListCard({ slug, item, locale = "en" }: Props) 
     <article className="space-y-4 px-5 py-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h2 className="text-base font-semibold text-[var(--c-text)]">{item.title}</h2>
-        <InterviewStatusBadge status={item.status} />
+        <InterviewStatusBadge status={item.status} locale={locale} />
       </div>
 
       <p className="text-sm text-[var(--c-muted)]">
@@ -37,20 +37,20 @@ export default function InterviewListCard({ slug, item, locale = "en" }: Props) 
 
         <div className="flex flex-wrap items-center gap-2">
           <Link
-            href={`/admin/${slug}/responses?interviewId=${item.id}`}
+            href={`/${locale}/admin/${slug}/responses?interviewId=${item.id}`}
             className="rounded-md border border-[var(--c-brand)]/30 bg-[var(--c-brand-soft)] px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.05em] text-[var(--c-brand-dark)] transition-colors hover:brightness-[0.98]"
           >
             {tAdmin(locale, "interviews.listCard.viewResponses")}
           </Link>
 
           <Link
-            href={`/admin/${slug}/interviews/${item.id}/edit`}
+            href={`/${locale}/admin/${slug}/interviews/${item.id}/edit`}
             className="rounded-md border border-[var(--c-border)] bg-[var(--c-bg)] px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.05em] text-[var(--c-text)] transition-colors hover:brightness-[0.98]"
           >
             {tAdmin(locale, "interviews.listCard.edit")}
           </Link>
 
-          <DeleteInterviewButton slug={slug} interviewId={item.id} />
+          <DeleteInterviewButton slug={slug} interviewId={item.id} locale={locale} />
 
           {item.legacy_vaga_id ? (
             <Link

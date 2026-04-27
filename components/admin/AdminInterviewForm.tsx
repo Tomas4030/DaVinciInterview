@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { withBasePath } from "@/lib/base-path";
+import { tAdmin } from "@/lib/i18n/admin";
 import {
   normalizeInterviewWorkMode,
   type InterviewWorkMode,
@@ -19,6 +20,7 @@ type Props = {
   initialWorkMode?: InterviewWorkMode;
   initialStatus?: "draft" | "published" | "archived";
   initialQuestionsText?: string;
+  locale?: string;
 };
 
 function parseQuestionsText(value: string): string[] {
@@ -42,6 +44,7 @@ export default function AdminInterviewForm({
   initialWorkMode = "unspecified",
   initialStatus = "draft",
   initialQuestionsText = "",
+  locale = "en",
 }: Props) {
   const router = useRouter();
   const initialQuestions = parseQuestionsText(initialQuestionsText);
@@ -101,7 +104,7 @@ export default function AdminInterviewForm({
 
       const data = await response.json();
       if (!response.ok) {
-        setError(data?.error || "Não foi possível guardar a entrevista");
+        setError(data?.error || tAdmin(locale, "interviewForm.defaultError"));
         return;
       }
 
@@ -109,7 +112,7 @@ export default function AdminInterviewForm({
       router.refresh();
     } catch (requestError) {
       console.error("Erro ao guardar entrevista:", requestError);
-      setError("Erro ao guardar entrevista");
+      setError(tAdmin(locale, "interviewForm.networkError"));
     } finally {
       setLoading(false);
     }
@@ -172,20 +175,20 @@ export default function AdminInterviewForm({
     setError("");
 
     const count = clampQuestionCount(desiredQuestionCount);
-    const role = title.trim() || "a vaga";
+    const role = title.trim() || tAdmin(locale, "interviewForm.aiFallbackRole");
 
     try {
       await new Promise((resolve) => setTimeout(resolve, 900));
 
       const templates = [
-        `Fala sobre a tua experiência mais relevante para ${role}.`,
-        `Como organizas prioridades e entregas quando tens prazos curtos?`,
-        `Descreve um desafio técnico/profissional recente e como o resolveste.`,
-        `Que competências consideras essenciais para ter sucesso em ${role}?`,
-        `Como colaboras com equipas multidisciplinares em projetos complexos?`,
-        `Que resultados concretos já alcançaste em funções semelhantes?`,
-        `Como lidas com feedback e iteração contínua no teu trabalho?`,
-        `Que ferramentas e práticas usas para garantir qualidade no teu trabalho?`,
+        tAdmin(locale, "interviewForm.aiTemplate1", { role }),
+        tAdmin(locale, "interviewForm.aiTemplate2"),
+        tAdmin(locale, "interviewForm.aiTemplate3"),
+        tAdmin(locale, "interviewForm.aiTemplate4", { role }),
+        tAdmin(locale, "interviewForm.aiTemplate5"),
+        tAdmin(locale, "interviewForm.aiTemplate6"),
+        tAdmin(locale, "interviewForm.aiTemplate7"),
+        tAdmin(locale, "interviewForm.aiTemplate8"),
       ];
 
       const generated = Array.from({ length: count }).map((_, index) => {
@@ -212,7 +215,7 @@ export default function AdminInterviewForm({
           htmlFor="interview-title"
           className="mb-1.5 block text-xs font-medium text-[var(--c-muted)]"
         >
-          Titulo
+          {tAdmin(locale, "interviewForm.titleLabel")}
         </label>
         <input
           id="interview-title"
@@ -221,7 +224,7 @@ export default function AdminInterviewForm({
           onChange={(event) => setTitle(event.target.value)}
           required
           className="input-base border-[var(--c-border)] bg-[var(--c-bg)]"
-          placeholder="Ex: Frontend Developer"
+          placeholder={tAdmin(locale, "interviewForm.titlePlaceholder")}
         />
       </div>
 
@@ -230,14 +233,14 @@ export default function AdminInterviewForm({
           htmlFor="interview-description"
           className="mb-1.5 block text-xs font-medium text-[var(--c-muted)]"
         >
-          Descricao
+          {tAdmin(locale, "interviewForm.descriptionLabel")}
         </label>
         <textarea
           id="interview-description"
           value={description}
           onChange={(event) => setDescription(event.target.value)}
           className="input-base min-h-24 border-[var(--c-border)] bg-[var(--c-bg)]"
-          placeholder="Resumo da vaga"
+          placeholder={tAdmin(locale, "interviewForm.descriptionPlaceholder")}
         />
       </div>
 
@@ -246,7 +249,7 @@ export default function AdminInterviewForm({
           htmlFor="interview-work-mode"
           className="mb-1.5 block text-xs font-medium text-[var(--c-muted)]"
         >
-          Regime de trabalho
+          {tAdmin(locale, "interviewForm.workModeLabel")}
         </label>
         <select
           id="interview-work-mode"
@@ -256,10 +259,12 @@ export default function AdminInterviewForm({
           }
           className="input-base border-[var(--c-border)] bg-[var(--c-bg)]"
         >
-          <option value="unspecified">Nao definido</option>
-          <option value="remote">Remoto</option>
-          <option value="hybrid">Hibrido</option>
-          <option value="onsite">Presencial</option>
+          <option value="unspecified">
+            {tAdmin(locale, "interviewForm.workModeUnspecified")}
+          </option>
+          <option value="remote">{tAdmin(locale, "interviewForm.workModeRemote")}</option>
+          <option value="hybrid">{tAdmin(locale, "interviewForm.workModeHybrid")}</option>
+          <option value="onsite">{tAdmin(locale, "interviewForm.workModeOnsite")}</option>
         </select>
       </div>
 
@@ -268,7 +273,7 @@ export default function AdminInterviewForm({
           htmlFor="interview-status"
           className="mb-1.5 block text-xs font-medium text-[var(--c-muted)]"
         >
-          Estado
+          {tAdmin(locale, "interviewForm.statusLabel")}
         </label>
         <select
           id="interview-status"
@@ -278,9 +283,9 @@ export default function AdminInterviewForm({
           }
           className="input-base border-[var(--c-border)] bg-[var(--c-bg)]"
         >
-          <option value="draft">Rascunho</option>
-          <option value="published">Publicada</option>
-          <option value="archived">Arquivada</option>
+          <option value="draft">{tAdmin(locale, "interviewForm.statusDraft")}</option>
+          <option value="published">{tAdmin(locale, "interviewForm.statusPublished")}</option>
+          <option value="archived">{tAdmin(locale, "interviewForm.statusArchived")}</option>
         </select>
       </div>
 
@@ -289,7 +294,7 @@ export default function AdminInterviewForm({
           htmlFor="desired-questions"
           className="mb-1.5 block text-xs font-medium text-[var(--c-muted)]"
         >
-          Número de perguntas desejado
+          {tAdmin(locale, "interviewForm.desiredQuestions")}
         </label>
 
         <div className="flex flex-wrap items-center gap-2">
@@ -314,8 +319,8 @@ export default function AdminInterviewForm({
             className="rounded-md border border-[var(--c-brand)]/20 bg-[var(--c-brand-soft)] px-4 py-2 text-xs font-semibold uppercase tracking-[0.05em] text-[var(--c-brand-dark)] transition-colors hover:brightness-[0.98] disabled:opacity-60"
           >
             {generating
-              ? "A gerar perguntas..."
-              : "Gerar perguntas com IA (placeholder)"}
+              ? tAdmin(locale, "interviewForm.generating")
+              : tAdmin(locale, "interviewForm.generateAction")}
           </button>
         </div>
       </div>
@@ -323,7 +328,7 @@ export default function AdminInterviewForm({
       <section className="overflow-hidden ">
         <div className="flex items-center justify-between px-5">
           <h2 className="text-[0.8rem] font-semibold text-[var(--c-text)]">
-            Perguntas
+            {tAdmin(locale, "interviewForm.questionsTitle")}
             <span className="ml-2 text-[11px] font-normal text-[var(--c-muted)]">
               {questions.length}
             </span>
@@ -333,7 +338,7 @@ export default function AdminInterviewForm({
             onClick={addQuestion}
             className="inline-flex items-center gap-1.5 rounded-md border border-[var(--c-border)] bg-[var(--c-surface)] px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.05em] text-[var(--c-text)] transition-colors hover:bg-[var(--c-bg)]"
           >
-            Adicionar
+            {tAdmin(locale, "interviewForm.addQuestion")}
           </button>
         </div>
 
@@ -371,17 +376,19 @@ export default function AdminInterviewForm({
                 onChange={(event) => updateQuestion(index, event.target.value)}
                 rows={2}
                 className="min-h-20 flex-1 resize-none bg-transparent px-2 py-1.5 text-sm leading-7 text-[var(--c-text)] placeholder:text-[var(--c-muted)] focus:outline-none"
-                placeholder={`Pergunta ${index + 1}…`}
+                placeholder={tAdmin(locale, "interviewForm.questionPlaceholder", {
+                  number: index + 1,
+                })}
               />
 
               <div className="flex flex-col gap-1 pt-1 opacity-100">
                 <button
                   type="button"
                   onClick={() => removeQuestion(index)}
-                  title="Remover"
+                  title={tAdmin(locale, "interviewForm.removeQuestion")}
                   className="inline-flex min-w-[70px] items-center justify-center rounded-md border border-red-200 bg-red-50 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.05em] text-red-700 transition-colors hover:bg-red-100"
                 >
-                  Apagar
+                  {tAdmin(locale, "interviewForm.deleteQuestion")}
                 </button>
               </div>
             </div>
@@ -395,10 +402,10 @@ export default function AdminInterviewForm({
         className="btn-primary inline-flex px-5 py-2.5"
       >
         {loading
-          ? "A guardar..."
+          ? tAdmin(locale, "interviewForm.saving")
           : mode === "create"
-            ? "Criar entrevista"
-            : "Guardar alterações"}
+            ? tAdmin(locale, "interviewForm.create")
+            : tAdmin(locale, "interviewForm.save")}
       </button>
     </form>
   );

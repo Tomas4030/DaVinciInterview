@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import { ADMIN_SESSION_COOKIE, parseAdminToken } from "@/lib/admin-auth";
 import { query } from "@/lib/db";
+import { tAdmin } from "@/lib/i18n/admin";
 import { getCompanyMembershipBySlug } from "@/lib/queries/companies";
 import { listInterviewsByCompany } from "@/lib/queries/interviews";
 import {
@@ -12,17 +13,22 @@ import {
   type ResponseRow,
 } from "@/components/admin";
 
-export const metadata: Metadata = { title: "Admin — Respostas" };
 export const dynamic = "force-dynamic";
 
 type Props = {
-  params: { slug: string };
+  params: { locale: string; slug: string };
   searchParams?: {
     q?: string;
     status?: string;
     interviewId?: string;
   };
 };
+
+export function generateMetadata({ params }: Props): Metadata {
+  return {
+    title: tAdmin(params.locale, "responsesPage.metaTitle"),
+  };
+}
 
 export default async function AdminCompanyResponsesPage({
   params,
@@ -91,10 +97,14 @@ export default async function AdminCompanyResponsesPage({
   return (
     <section className="space-y-6">
       <header className="space-y-2">
-        <p className="text-xs uppercase tracking-[0.09em] text-[var(--c-muted)]">Respostas</p>
-        <h1 className="text-2xl font-semibold text-[var(--c-text)]">Sessoes de candidatos</h1>
+        <p className="text-xs uppercase tracking-[0.09em] text-[var(--c-muted)]">
+          {tAdmin(params.locale, "responsesPage.eyebrow")}
+        </p>
+        <h1 className="text-2xl font-semibold text-[var(--c-text)]">
+          {tAdmin(params.locale, "responsesPage.title")}
+        </h1>
         <p className="max-w-3xl text-sm text-[var(--c-muted)]">
-          Consulta as respostas por entrevista e abre a analise global por vaga para comparar candidatos com apoio de IA.
+          {tAdmin(params.locale, "responsesPage.description")}
         </p>
       </header>
 
@@ -102,11 +112,16 @@ export default async function AdminCompanyResponsesPage({
         totalConcluidas={totalConcluidas}
         totalAnalise={totalAnalise}
         totalProgresso={totalProgresso}
+        locale={params.locale}
       />
 
-      <ResponsesFilters slug={params.slug} interviews={interviews} />
+      <ResponsesFilters
+        slug={params.slug}
+        interviews={interviews}
+        locale={params.locale}
+      />
 
-      <ResponsesTable slug={params.slug} rows={rows} />
+      <ResponsesTable slug={params.slug} rows={rows} locale={params.locale} />
     </section>
   );
 }

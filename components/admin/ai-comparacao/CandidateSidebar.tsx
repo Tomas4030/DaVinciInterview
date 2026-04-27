@@ -83,7 +83,7 @@ export default function CandidateSidebar({
           return (
             <Link
               key={candidate.sessaoId}
-              href={`/admin/${slug}/responses/ai-comparacao?vaga=${selectedVaga.vagaId}&sessao=${candidate.sessaoId}`}
+              href={`/${locale}/admin/${slug}/responses/ai-comparacao?vaga=${selectedVaga.vagaId}&sessao=${candidate.sessaoId}`}
               className={[
                 "block rounded-[18px] border px-4 py-4 transition",
                 isActive
