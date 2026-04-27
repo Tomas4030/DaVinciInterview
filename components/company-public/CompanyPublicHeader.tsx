@@ -1,4 +1,5 @@
 import Link from "next/link";
+import LocaleSelect from "@/components/home/LocaleSelect";
 import type { CompanyRecord } from "@/lib/queries/companies";
 
 type CompanyPublicHeaderProps = {
@@ -63,12 +64,18 @@ export default function CompanyPublicHeader({ company, locale = "en" }: CompanyP
           </Link>
         </nav>
 
-        <a
-          href="#vagas"
-          className="hidden rounded-md bg-[var(--c-brand)] px-4 py-2 text-[0.75rem] font-semibold text-white transition-colors hover:bg-[var(--c-brand-dark)] md:inline-flex"
-        >
-          Ver entrevistas
-        </a>
+        <div className="flex items-center gap-2">
+          <LocaleSelect
+            locale={locale}
+            ariaLabel={locale === "pt" ? "Selecionar idioma" : "Select language"}
+          />
+          <a
+            href="#vagas"
+            className="hidden rounded-md bg-[var(--c-brand)] px-4 py-2 text-[0.75rem] font-semibold text-white transition-colors hover:bg-[var(--c-brand-dark)] md:inline-flex"
+          >
+            Ver entrevistas
+          </a>
+        </div>
       </div>
     </header>
   );
