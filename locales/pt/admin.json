@@ -107,9 +107,7 @@
     "excellent": "Excelente",
     "ranking": "Ranking",
     "outOfSingular": "de {{count}} candidato",
-    "outOfPlural": "de {{count}} candidatos",
-    "companyDescription": "Descrição da empresa",
-    "companyDescriptionFallback": "Sem descrição adicional disponível para esta empresa."
+    "outOfPlural": "de {{count}} candidatos"
   },
   "layout": {
     "activeCompany": "Empresa ativa",
