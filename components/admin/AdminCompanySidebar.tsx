@@ -92,6 +92,25 @@ const ITEMS: Item[] = [
     ),
   },
   {
+    key: "team",
+    label: "Utilizadores",
+    path: "team",
+    icon: (
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        className={iconClassName}
+      >
+        <circle cx="9" cy="9" r="3" />
+        <circle cx="17" cy="11" r="2" />
+        <path d="M4.5 18a4.5 4.5 0 0 1 9 0" />
+        <path d="M14 18a3 3 0 0 1 6 0" />
+      </svg>
+    ),
+  },
+  {
     key: "billing",
     label: "Faturação",
     path: "billing",
@@ -123,6 +142,9 @@ export default function AdminCompanySidebar({ slug, locale = "en" }: Props) {
     }
     if (item.key === "settings") {
       return { ...item, label: tAdmin(locale, "sidebar.settings") };
+    }
+    if (item.key === "team") {
+      return { ...item, label: tAdmin(locale, "sidebar.team") };
     }
     if (item.key === "billing") {
       return { ...item, label: tAdmin(locale, "sidebar.billing") };

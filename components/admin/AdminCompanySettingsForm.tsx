@@ -64,7 +64,7 @@ export default function AdminCompanySettingsForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
+    <form onSubmit={handleSubmit} className="space-y-6">
       {error ? (
         <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
           {error}
@@ -77,22 +77,38 @@ export default function AdminCompanySettingsForm({
         </div>
       ) : null}
 
-      <div>
-        <label htmlFor="company-name" className="mb-1.5 block text-xs font-medium text-[var(--c-muted)]">
-          {tAdmin(locale, "settingsForm.nameLabel")}
-        </label>
-        <input
-          id="company-name"
-          type="text"
-          value={name}
-          onChange={(event) => setName(event.target.value)}
-          required
-          className="input-base"
-        />
+      <div className="space-y-4">
+        <div>
+          <label htmlFor="company-name" className="mb-1.5 block text-[11px] font-medium uppercase tracking-[0.08em] text-[var(--c-muted)]">
+            {tAdmin(locale, "settingsForm.nameLabel")}
+          </label>
+          <input
+            id="company-name"
+            type="text"
+            value={name}
+            onChange={(event) => setName(event.target.value)}
+            required
+            className="input-base"
+          />
+        </div>
+
+        <div>
+          <label htmlFor="company-logo-url" className="mb-1.5 block text-[11px] font-medium uppercase tracking-[0.08em] text-[var(--c-muted)]">
+            {tAdmin(locale, "settingsForm.logoUrlLabel")}
+          </label>
+          <input
+            id="company-logo-url"
+            type="url"
+            value={logoUrl}
+            onChange={(event) => setLogoUrl(event.target.value)}
+            className="input-base"
+            placeholder="https://..."
+          />
+        </div>
       </div>
 
       <div>
-        <label htmlFor="company-description" className="mb-1.5 block text-xs font-medium text-[var(--c-muted)]">
+        <label htmlFor="company-description" className="mb-1.5 block text-[11px] font-medium uppercase tracking-[0.08em] text-[var(--c-muted)]">
           {tAdmin(locale, "settingsForm.descriptionLabel")}
         </label>
         <textarea
@@ -101,20 +117,6 @@ export default function AdminCompanySettingsForm({
           onChange={(event) => setDescription(event.target.value)}
           className="input-base min-h-24"
           placeholder={tAdmin(locale, "settingsForm.descriptionPlaceholder")}
-        />
-      </div>
-
-      <div>
-        <label htmlFor="company-logo-url" className="mb-1.5 block text-xs font-medium text-[var(--c-muted)]">
-          {tAdmin(locale, "settingsForm.logoUrlLabel")}
-        </label>
-        <input
-          id="company-logo-url"
-          type="url"
-          value={logoUrl}
-          onChange={(event) => setLogoUrl(event.target.value)}
-          className="input-base"
-          placeholder="https://..."
         />
       </div>
 

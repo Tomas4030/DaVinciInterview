@@ -10,6 +10,7 @@
     "interviews": "Entrevistas",
     "responses": "Respostas",
     "settings": "Definições",
+    "team": "Utilizadores",
     "billing": "Faturação",
     "navigation": "Navegação",
     "companyNavigation": "Navegação da empresa"
@@ -151,6 +152,11 @@
     "metaTitle": "Admin — Definicoes",
     "eyebrow": "Definicoes",
     "title": "Definicoes da empresa"
+  },
+  "teamPage": {
+    "metaTitle": "Admin — Utilizadores",
+    "eyebrow": "Utilizadores",
+    "title": "Equipa da empresa"
   },
   "interviewsPage": {
     "metaTitle": "Admin — Entrevistas",

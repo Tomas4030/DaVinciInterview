@@ -34,7 +34,6 @@ export default function AdminCompanyMembersManager({
   const [newRole, setNewRole] = useState<"admin" | "viewer">("viewer");
   const [adding, setAdding] = useState(false);
 
-  const [pendingRoles, setPendingRoles] = useState<Record<string, "admin" | "viewer">>({});
   const [savingRoleId, setSavingRoleId] = useState<string | null>(null);
   const [removingId, setRemovingId] = useState<string | null>(null);
 
@@ -55,12 +54,6 @@ export default function AdminCompanyMembersManager({
 
       const nextMembers = Array.isArray(data?.members) ? data.members : [];
       setMembers(nextMembers);
-      const nextPending: Record<string, "admin" | "viewer"> = {};
-      for (const member of nextMembers) {
-        if (member.role === "owner") continue;
-        nextPending[member.id] = normalizeEditableRole(member.role);
-      }
-      setPendingRoles(nextPending);
     } catch (requestError) {
       console.error("Erro ao carregar membros:", requestError);
       setError(tAdmin(locale, "members.networkError"));
@@ -109,9 +102,11 @@ export default function AdminCompanyMembersManager({
     }
   }
 
-  async function handleSaveRole(member: CompanyMember) {
+  async function handleChangeRole(
+    member: CompanyMember,
+    role: "admin" | "viewer",
+  ) {
     if (member.role === "owner") return;
-    const role = normalizeEditableRole(pendingRoles[member.id]);
 
     setError("");
     setSuccess("");
@@ -173,24 +168,27 @@ export default function AdminCompanyMembersManager({
   }
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-4">
       {error ? (
-        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div className="rounded-lg border border-red-200/80 bg-red-50/80 px-4 py-3 text-sm text-red-700">
           {error}
         </div>
       ) : null}
 
       {success ? (
-        <div className="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+        <div className="rounded-lg border border-emerald-200/80 bg-emerald-50/80 px-4 py-3 text-sm text-emerald-700">
           {success}
         </div>
       ) : null}
 
-      <form onSubmit={handleAddMember} className="grid gap-3 md:grid-cols-[minmax(0,1fr)_180px_auto] md:items-end">
+      <form
+        onSubmit={handleAddMember}
+        className="grid gap-3 rounded-xl border border-[var(--c-border)]/70 bg-[var(--c-bg)]/35 p-3 md:grid-cols-[minmax(0,1fr)_150px_auto] md:items-end"
+      >
         <div>
           <label
             htmlFor="member-email"
-            className="mb-1.5 block text-xs font-medium text-[var(--c-muted)]"
+            className="mb-1.5 block text-[11px] font-medium uppercase tracking-[0.08em] text-[var(--c-muted)]"
           >
             {tAdmin(locale, "members.emailLabel")}
           </label>
@@ -208,7 +206,7 @@ export default function AdminCompanyMembersManager({
         <div>
           <label
             htmlFor="member-role"
-            className="mb-1.5 block text-xs font-medium text-[var(--c-muted)]"
+            className="mb-1.5 block text-[11px] font-medium uppercase tracking-[0.08em] text-[var(--c-muted)]"
           >
             {tAdmin(locale, "members.roleLabel")}
           </label>
@@ -218,7 +216,7 @@ export default function AdminCompanyMembersManager({
             onChange={(event) =>
               setNewRole(normalizeEditableRole(event.target.value))
             }
-            className="input-base"
+            className="input-base h-10 pr-9 text-sm leading-5"
           >
             <option value="admin">{tAdmin(locale, "members.roleAdmin")}</option>
             <option value="viewer">{tAdmin(locale, "members.roleViewer")}</option>
@@ -230,100 +228,85 @@ export default function AdminCompanyMembersManager({
         </button>
       </form>
 
-      <div className="overflow-x-auto rounded-lg border border-[var(--c-border)]/70">
-        <table className="min-w-full divide-y divide-[var(--c-border)]/70 text-sm">
-          <thead className="bg-[var(--c-bg)]/70 text-left text-xs uppercase tracking-[0.05em] text-[var(--c-muted)]">
-            <tr>
-              <th className="px-4 py-3">{tAdmin(locale, "members.tableEmail")}</th>
-              <th className="px-4 py-3">{tAdmin(locale, "members.tableRole")}</th>
-              <th className="px-4 py-3 text-right">{tAdmin(locale, "members.tableActions")}</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-[var(--c-border)]/60 bg-[var(--c-surface)]">
-            {loading ? (
-              <tr>
-                <td className="px-4 py-5 text-[var(--c-muted)]" colSpan={3}>
-                  {tAdmin(locale, "members.loading")}
-                </td>
-              </tr>
-            ) : members.length === 0 ? (
-              <tr>
-                <td className="px-4 py-5 text-[var(--c-muted)]" colSpan={3}>
-                  {tAdmin(locale, "members.empty")}
-                </td>
-              </tr>
-            ) : (
-              members.map((member) => {
-                const isOwner = member.role === "owner";
-                const pendingRole = isOwner
-                  ? "owner"
-                  : normalizeEditableRole(pendingRoles[member.id]);
+      {loading ? (
+        <div className="space-y-2 rounded-xl border border-[var(--c-border)]/70 bg-[var(--c-surface)] p-3">
+          {Array.from({ length: 4 }).map((_, index) => (
+            <div
+              key={index}
+              className="grid animate-pulse grid-cols-[minmax(0,1fr)_120px] items-center gap-3 rounded-md border border-[var(--c-border)]/50 bg-[var(--c-bg)]/40 px-3 py-3"
+            >
+              <div className="h-3.5 w-3/4 rounded bg-[var(--c-border)]/70" />
+              <div className="h-8 w-full rounded bg-[var(--c-border)]/70" />
+            </div>
+          ))}
+          <p className="pt-1 text-xs text-[var(--c-muted)]">{tAdmin(locale, "members.loading")}</p>
+        </div>
+      ) : members.length === 0 ? (
+        <div className="rounded-xl border border-dashed border-[var(--c-border)] bg-[var(--c-bg)]/30 px-4 py-8 text-center">
+          <p className="text-sm font-medium text-[var(--c-text)]">{tAdmin(locale, "members.empty")}</p>
+          <p className="mt-1 text-xs text-[var(--c-muted)]">{tAdmin(locale, "members.emailPlaceholder")}</p>
+        </div>
+      ) : (
+        <ul className="divide-y divide-[var(--c-border)]/60 overflow-hidden rounded-xl border border-[var(--c-border)]/70 bg-[var(--c-surface)]">
+          {members.map((member) => {
+            const isOwner = member.role === "owner";
 
-                return (
-                  <tr key={member.id}>
-                    <td className="px-4 py-3">
-                      <div className="font-medium text-[var(--c-text)]">{member.user_email}</div>
-                      {member.user_name ? (
-                        <div className="text-xs text-[var(--c-muted)]">{member.user_name}</div>
-                      ) : null}
-                    </td>
-                    <td className="px-4 py-3">
-                      {isOwner ? (
-                        <span className="inline-flex rounded-md bg-[var(--c-brand-soft)] px-2 py-1 text-xs font-semibold text-[var(--c-brand-dark)]">
-                          {tAdmin(locale, "members.roleOwner")}
-                        </span>
-                      ) : (
-                        <select
-                          value={pendingRole}
-                          onChange={(event) =>
-                            setPendingRoles((current) => ({
-                              ...current,
-                              [member.id]: normalizeEditableRole(event.target.value),
-                            }))
-                          }
-                          className="input-base h-9 max-w-[160px]"
-                        >
-                          <option value="admin">{tAdmin(locale, "members.roleAdmin")}</option>
-                          <option value="viewer">{tAdmin(locale, "members.roleViewer")}</option>
-                        </select>
-                      )}
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="flex justify-end gap-2">
-                        {!isOwner ? (
-                          <button
-                            type="button"
-                            onClick={() => handleSaveRole(member)}
-                            disabled={savingRoleId === member.id}
-                            className="rounded-md border border-[var(--c-border)] bg-[var(--c-bg)] px-3 py-1.5 text-xs font-semibold text-[var(--c-text)]"
-                          >
-                            {savingRoleId === member.id
-                              ? tAdmin(locale, "members.saving")
-                              : tAdmin(locale, "members.saveAction")}
-                          </button>
-                        ) : null}
+            return (
+              <li
+                key={member.id}
+                className="flex flex-col gap-3 px-4 py-3.5 sm:flex-row sm:items-center sm:justify-between"
+              >
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-medium text-[var(--c-text)]">
+                    {member.user_email}
+                  </p>
+                  {member.user_name ? (
+                    <p className="mt-0.5 truncate text-xs text-[var(--c-muted)]">
+                      {member.user_name}
+                    </p>
+                  ) : null}
+                </div>
 
-                        {!isOwner ? (
-                          <button
-                            type="button"
-                            onClick={() => handleRemoveMember(member)}
-                            disabled={removingId === member.id}
-                            className="rounded-md border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-700"
-                          >
-                            {removingId === member.id
-                              ? tAdmin(locale, "members.removing")
-                              : tAdmin(locale, "members.removeAction")}
-                          </button>
-                        ) : null}
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })
-            )}
-          </tbody>
-        </table>
-      </div>
+                <div className="flex flex-nowrap items-center justify-start gap-2 sm:justify-end">
+                  {isOwner ? (
+                    <span className="inline-flex rounded-md bg-[var(--c-brand-soft)] px-2 py-1 text-xs font-semibold text-[var(--c-brand-dark)]">
+                      {tAdmin(locale, "members.roleOwner")}
+                    </span>
+                  ) : (
+                    <>
+                      <select
+                        value={normalizeEditableRole(member.role)}
+                        onChange={(event) =>
+                          handleChangeRole(
+                            member,
+                            normalizeEditableRole(event.target.value),
+                          )
+                        }
+                        disabled={savingRoleId === member.id || removingId === member.id}
+                        className="input-base h-10 min-w-[170px] pr-9 text-sm leading-5"
+                      >
+                        <option value="admin">{tAdmin(locale, "members.roleAdmin")}</option>
+                        <option value="viewer">{tAdmin(locale, "members.roleViewer")}</option>
+                      </select>
+
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveMember(member)}
+                        disabled={removingId === member.id || savingRoleId === member.id}
+                        className="inline-flex h-10 items-center rounded-md border border-red-200 bg-red-50 px-3 text-xs font-semibold text-red-700 transition-colors hover:bg-red-100"
+                      >
+                        {removingId === member.id
+                          ? tAdmin(locale, "members.removing")
+                          : tAdmin(locale, "members.removeAction")}
+                      </button>
+                    </>
+                  )}
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      )}
     </div>
   );
 }

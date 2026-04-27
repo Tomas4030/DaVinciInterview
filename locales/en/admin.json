@@ -10,6 +10,7 @@
     "interviews": "Interviews",
     "responses": "Responses",
     "settings": "Settings",
+    "team": "Users",
     "billing": "Billing",
     "navigation": "Navigation",
     "companyNavigation": "Company navigation"
@@ -151,6 +152,11 @@
     "metaTitle": "Admin — Settings",
     "eyebrow": "Settings",
     "title": "Company settings"
+  },
+  "teamPage": {
+    "metaTitle": "Admin — Users",
+    "eyebrow": "Users",
+    "title": "Company team"
   },
   "interviewsPage": {
     "metaTitle": "Admin — Interviews",
