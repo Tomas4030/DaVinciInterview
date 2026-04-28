@@ -264,9 +264,9 @@
     "roleLabel": "Papel",
     "roleOwner": "Owner",
     "roleAdmin": "Admin",
-    "roleViewer": "Viewer",
-    "addAction": "Adicionar",
-    "adding": "A adicionar...",
+    "roleViewer": "Membro",
+    "addAction": "Enviar convite",
+    "adding": "A enviar...",
     "saveAction": "Guardar",
     "saving": "A guardar...",
     "removeAction": "Remover",
@@ -276,7 +276,12 @@
     "tableActions": "Acoes",
     "added": "Utilizador adicionado com sucesso.",
     "updated": "Utilizador atualizado com sucesso.",
-    "removed": "Utilizador removido com sucesso."
+    "removed": "Utilizador removido com sucesso.",
+    "inviteSent": "Convite enviado com sucesso.",
+    "inviteRevoked": "Convite revogado com sucesso.",
+    "pendingInvites": "Convites pendentes",
+    "noPendingInvites": "Sem convites pendentes.",
+    "revokeInvite": "Revogar"
   },
   "accountMenu": {
     "ariaLabel": "Menu do utilizador",

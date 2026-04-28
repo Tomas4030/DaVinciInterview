@@ -264,9 +264,9 @@
     "roleLabel": "Role",
     "roleOwner": "Owner",
     "roleAdmin": "Admin",
-    "roleViewer": "Viewer",
-    "addAction": "Add",
-    "adding": "Adding...",
+    "roleViewer": "Member",
+    "addAction": "Send invite",
+    "adding": "Sending...",
     "saveAction": "Save",
     "saving": "Saving...",
     "removeAction": "Remove",
@@ -276,7 +276,12 @@
     "tableActions": "Actions",
     "added": "User added successfully.",
     "updated": "User updated successfully.",
-    "removed": "User removed successfully."
+    "removed": "User removed successfully.",
+    "inviteSent": "Invite sent successfully.",
+    "inviteRevoked": "Invite revoked successfully.",
+    "pendingInvites": "Pending invites",
+    "noPendingInvites": "No pending invites.",
+    "revokeInvite": "Revoke"
   },
   "accountMenu": {
     "ariaLabel": "User menu",
