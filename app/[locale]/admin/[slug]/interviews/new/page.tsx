@@ -38,7 +38,7 @@ export default async function AdminCompanyInterviewNewPage({ params }: Props) {
         </h1>
       </header>
 
-      <div className="rounded-xl border border-[var(--c-border)]/70 bg-[var(--c-surface)] p-5">
+      <div className="rounded-xl p-5">
         <AdminInterviewForm
           slug={params.slug}
           mode="create"

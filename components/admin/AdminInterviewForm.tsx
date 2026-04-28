@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { withBasePath } from "@/lib/base-path";
 import { tAdmin } from "@/lib/i18n/admin";
@@ -36,7 +36,9 @@ type Props = {
   locale?: string;
 };
 
-function resolveInitialWorkMode(value: InterviewWorkMode): "remote" | "hybrid" | "onsite" {
+function resolveInitialWorkMode(
+  value: InterviewWorkMode,
+): "remote" | "hybrid" | "onsite" {
   if (value === "remote" || value === "hybrid" || value === "onsite") {
     return value;
   }
@@ -94,7 +96,9 @@ export default function AdminInterviewForm({
   const initialQuestions = parseQuestionsText(initialQuestionsText);
   const [title, setTitle] = useState(initialTitle);
   const [description, setDescription] = useState(initialDescription);
-  const [interviewContext, setInterviewContext] = useState(initialInterviewContext);
+  const [interviewContext, setInterviewContext] = useState(
+    initialInterviewContext,
+  );
   const [employmentType, setEmploymentType] = useState<InterviewEmploymentType>(
     normalizeInterviewEmploymentType(initialEmploymentType),
   );
@@ -129,7 +133,14 @@ export default function AdminInterviewForm({
   const [loading, setLoading] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState("");
-  const [submitAction, setSubmitAction] = useState<"default" | "publish">("default");
+  const [submitAction, setSubmitAction] = useState<"default" | "publish">(
+    "default",
+  );
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const endpoint =
     mode === "create"
@@ -298,259 +309,335 @@ export default function AdminInterviewForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
+    <form onSubmit={handleSubmit} className="space-y-6 pb-0">
       {error ? (
-        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div className="rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-sm font-medium text-red-700">
           {error}
         </div>
       ) : null}
 
-      <div>
-        <label
-          htmlFor="interview-title"
-          className="mb-1.5 block text-xs font-medium text-[var(--c-muted)]"
-        >
-          {tAdmin(locale, "interviewForm.titleLabel")}
-        </label>
-        <input
-          id="interview-title"
-          type="text"
-          value={title}
-          onChange={(event) => setTitle(event.target.value)}
-          required
-          className="input-base border-[var(--c-border)] bg-[var(--c-bg)]"
-          placeholder={tAdmin(locale, "interviewForm.titlePlaceholder")}
-        />
-      </div>
-
-      <div>
-        <label
-          htmlFor="interview-description"
-          className="mb-1.5 block text-xs font-medium text-[var(--c-muted)]"
-        >
-          {tAdmin(locale, "interviewForm.descriptionLabel")}
-        </label>
-        <textarea
-          id="interview-description"
-          value={description}
-          onChange={(event) => setDescription(event.target.value)}
-          className="input-base min-h-24 border-[var(--c-border)] bg-[var(--c-bg)]"
-          placeholder={tAdmin(locale, "interviewForm.descriptionPlaceholder")}
-        />
-      </div>
-
-      <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
-        <div>
-          <label
-            htmlFor="interview-work-mode"
-            className="mb-1.5 block text-xs font-medium text-[var(--c-muted)]"
-          >
-            {tAdmin(locale, "interviewForm.workModeLabel")}
-          </label>
-          <select
-            id="interview-work-mode"
-            value={workMode}
-            onChange={(event) =>
-              setWorkMode(
-                resolveInitialWorkMode(normalizeInterviewWorkMode(event.target.value)),
-              )
-            }
-            className="input-base border-[var(--c-border)] bg-[var(--c-bg)]"
-          >
-            <option value="remote">{tAdmin(locale, "interviewForm.workModeRemote")}</option>
-            <option value="hybrid">{tAdmin(locale, "interviewForm.workModeHybrid")}</option>
-            <option value="onsite">{tAdmin(locale, "interviewForm.workModeOnsite")}</option>
-          </select>
-        </div>
-
-        <div>
-          <label
-            htmlFor="interview-employment-type"
-            className="mb-1.5 block text-xs font-medium text-[var(--c-muted)]"
-          >
-            {tAdmin(locale, "interviewForm.employmentTypeLabel")}
-          </label>
-          <select
-            id="interview-employment-type"
-            value={employmentType}
-            onChange={(event) =>
-              setEmploymentType(normalizeInterviewEmploymentType(event.target.value))
-            }
-            className="input-base border-[var(--c-border)] bg-[var(--c-bg)]"
-          >
-            <option value="unspecified">
-              {tAdmin(locale, "interviewForm.employmentTypeUnspecified")}
-            </option>
-            <option value="full_time">
-              {tAdmin(locale, "interviewForm.employmentTypeFullTime")}
-            </option>
-            <option value="part_time">
-              {tAdmin(locale, "interviewForm.employmentTypePartTime")}
-            </option>
-            <option value="contract">
-              {tAdmin(locale, "interviewForm.employmentTypeContract")}
-            </option>
-            <option value="internship">
-              {tAdmin(locale, "interviewForm.employmentTypeInternship")}
-            </option>
-          </select>
-        </div>
-
-        <div>
-          <label
-            htmlFor="interview-context"
-            className="mb-1.5 block text-xs font-medium text-[var(--c-muted)]"
-          >
-            {tAdmin(locale, "interviewForm.contextLabel")}
-          </label>
-          <input
-            id="interview-context"
-            type="text"
-            value={interviewContext}
-            onChange={(event) => setInterviewContext(event.target.value)}
-            className="input-base border-[var(--c-border)] bg-[var(--c-bg)]"
-            placeholder={tAdmin(locale, "interviewForm.contextPlaceholder")}
-          />
-        </div>
-
-        <div>
-          <label
-            htmlFor="interview-experience-level"
-            className="mb-1.5 block text-xs font-medium text-[var(--c-muted)]"
-          >
-            {tAdmin(locale, "interviewForm.experienceLevelLabel")}
-          </label>
-          <select
-            id="interview-experience-level"
-            value={experienceLevel}
-            onChange={(event) =>
-              setExperienceLevel(normalizeInterviewExperienceLevel(event.target.value))
-            }
-            className="input-base border-[var(--c-border)] bg-[var(--c-bg)]"
-          >
-            <option value="desired">
-              {tAdmin(locale, "interviewForm.experienceLevelDesired")}
-            </option>
-            <option value="not_required">
-              {tAdmin(locale, "interviewForm.experienceLevelNotRequired")}
-            </option>
-          </select>
-        </div>
-
-        <div>
-          <label
-            htmlFor="interview-card-emoji"
-            className="mb-1.5 block text-xs font-medium text-[var(--c-muted)]"
-          >
-            {tAdmin(locale, "interviewForm.cardEmojiLabel")}
-          </label>
-          <input
-            id="interview-card-emoji"
-            type="text"
-            value={cardEmoji}
-            onChange={(event) => setCardEmoji(event.target.value.slice(0, 8))}
-            className="input-base border-[var(--c-border)] bg-[var(--c-bg)]"
-            placeholder={tAdmin(locale, "interviewForm.cardEmojiPlaceholder")}
-          />
-        </div>
-
-        <div>
-          <label
-            htmlFor="interview-card-theme"
-            className="mb-1.5 block text-xs font-medium text-[var(--c-muted)]"
-          >
-            {tAdmin(locale, "interviewForm.cardThemeLabel")}
-          </label>
-          <select
-            id="interview-card-theme"
-            value={cardTheme}
-            onChange={(event) => setCardTheme(normalizeInterviewCardTheme(event.target.value))}
-            className="input-base border-[var(--c-border)] bg-[var(--c-bg)]"
-          >
-            <option value="sky">{tAdmin(locale, "interviewForm.cardThemeSky")}</option>
-            <option value="mint">{tAdmin(locale, "interviewForm.cardThemeMint")}</option>
-            <option value="violet">{tAdmin(locale, "interviewForm.cardThemeViolet")}</option>
-            <option value="amber">{tAdmin(locale, "interviewForm.cardThemeAmber")}</option>
-            <option value="slate">{tAdmin(locale, "interviewForm.cardThemeSlate")}</option>
-          </select>
-        </div>
-
-        <div>
-          <label
-            htmlFor="interview-status"
-            className="mb-1.5 block text-xs font-medium text-[var(--c-muted)]"
-          >
-            {tAdmin(locale, "interviewForm.statusLabel")}
-          </label>
-          <select
-            id="interview-status"
-            value={status}
-            onChange={(event) =>
-              setStatus(event.target.value as "draft" | "published" | "archived")
-            }
-            className="input-base border-[var(--c-border)] bg-[var(--c-bg)]"
-          >
-            <option value="draft">{tAdmin(locale, "interviewForm.statusDraft")}</option>
-            <option value="published">{tAdmin(locale, "interviewForm.statusPublished")}</option>
-            <option value="archived">{tAdmin(locale, "interviewForm.statusArchived")}</option>
-          </select>
-        </div>
-      </div>
-
-      <div>
-        <label
-          htmlFor="desired-questions"
-          className="mb-1.5 block text-xs font-medium text-[var(--c-muted)]"
-        >
-          {tAdmin(locale, "interviewForm.desiredQuestions")}
-        </label>
-
-        <div className="flex flex-wrap items-center gap-2">
-          <input
-            id="desired-questions"
-            type="number"
-            min={1}
-            max={maxQuestionsByPlan}
-            value={desiredQuestionCount}
-            onChange={(event) =>
-              setDesiredQuestionCount(
-                clampQuestionCount(Number(event.target.value || 1), maxQuestionsByPlan),
-              )
-            }
-            className="input-base w-32 border-[var(--c-border)] bg-[var(--c-bg)]"
-          />
-
-          <button
-            type="button"
-            onClick={generateQuestionsWithAI}
-            disabled={generating}
-            className="rounded-md border border-[var(--c-brand)]/20 bg-[var(--c-brand-soft)] px-4 py-2 text-xs font-semibold uppercase tracking-[0.05em] text-[var(--c-brand-dark)] transition-colors hover:brightness-[0.98] disabled:opacity-60"
-          >
-            {generating
-              ? tAdmin(locale, "interviewForm.generating")
-              : tAdmin(locale, "interviewForm.generateAction")}
-          </button>
-        </div>
-      </div>
-
-      <section className="overflow-hidden ">
-        <div className="flex items-center justify-between px-5">
-          <h2 className="text-[0.8rem] font-semibold text-[var(--c-text)]">
-            {tAdmin(locale, "interviewForm.questionsTitle")}
-            <span className="ml-2 text-[11px] font-normal text-[var(--c-muted)]">
-              {questions.length}
+      <div className="grid grid-cols-1 gap-5 xl:grid-cols-2">
+        <section className="rounded-[22px] border border-slate-200 bg-white p-6 shadow-[0_18px_55px_rgba(15,23,42,0.05)]">
+          <div className="mb-6 flex items-center gap-3">
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+              📋
             </span>
-          </h2>
+            <h2 className="text-lg font-bold tracking-[-0.03em] text-slate-950">
+              1. {tAdmin(locale, "interviewForm.sectionMainInfo")}
+            </h2>
+          </div>
+
+          <div className="space-y-5">
+            <div>
+              <label
+                htmlFor="interview-title"
+                className="mb-2 block text-xs font-semibold text-slate-500"
+              >
+                {tAdmin(locale, "interviewForm.titleLabel")}
+              </label>
+              <input
+                id="interview-title"
+                type="text"
+                value={title}
+                onChange={(event) => setTitle(event.target.value)}
+                required
+                className="h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-950 outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100"
+                placeholder={tAdmin(locale, "interviewForm.titlePlaceholder")}
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="interview-description"
+                className="mb-2 block text-xs font-semibold text-slate-500"
+              >
+                {tAdmin(locale, "interviewForm.descriptionLabel")}
+              </label>
+              <textarea
+                id="interview-description"
+                value={description}
+                onChange={(event) => setDescription(event.target.value)}
+                className="min-h-[170px] w-full resize-none rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm leading-6 text-slate-950 outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100"
+                placeholder={tAdmin(
+                  locale,
+                  "interviewForm.descriptionPlaceholder",
+                )}
+              />
+            </div>
+          </div>
+        </section>
+
+        <section className="rounded-[22px] border border-slate-200 bg-white p-6 shadow-[0_18px_55px_rgba(15,23,42,0.05)]">
+          <div className="mb-6 flex items-center gap-3">
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
+              💼
+            </span>
+            <h2 className="text-lg font-bold tracking-[-0.03em] text-slate-950">
+              2. {tAdmin(locale, "interviewForm.sectionRoleDetails")}
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+            <div>
+              <label
+                htmlFor="interview-work-mode"
+                className="mb-2 block text-xs font-semibold text-slate-500"
+              >
+                {tAdmin(locale, "interviewForm.workModeLabel")}
+              </label>
+              <select
+                id="interview-work-mode"
+                value={workMode}
+                onChange={(event) =>
+                  setWorkMode(
+                    resolveInitialWorkMode(
+                      normalizeInterviewWorkMode(event.target.value),
+                    ),
+                  )
+                }
+                className="h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-950 outline-none transition focus:border-emerald-400 focus:ring-4 focus:ring-emerald-100"
+              >
+                <option value="remote">
+                  {tAdmin(locale, "interviewForm.workModeRemote")}
+                </option>
+                <option value="hybrid">
+                  {tAdmin(locale, "interviewForm.workModeHybrid")}
+                </option>
+                <option value="onsite">
+                  {tAdmin(locale, "interviewForm.workModeOnsite")}
+                </option>
+              </select>
+            </div>
+
+            <div>
+              <label
+                htmlFor="interview-employment-type"
+                className="mb-2 block text-xs font-semibold text-slate-500"
+              >
+                {tAdmin(locale, "interviewForm.employmentTypeLabel")}
+              </label>
+              <select
+                id="interview-employment-type"
+                value={employmentType}
+                onChange={(event) =>
+                  setEmploymentType(
+                    normalizeInterviewEmploymentType(event.target.value),
+                  )
+                }
+                className="h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-950 outline-none transition focus:border-emerald-400 focus:ring-4 focus:ring-emerald-100"
+              >
+                <option value="unspecified">
+                  {tAdmin(locale, "interviewForm.employmentTypeUnspecified")}
+                </option>
+                <option value="full_time">
+                  {tAdmin(locale, "interviewForm.employmentTypeFullTime")}
+                </option>
+                <option value="part_time">
+                  {tAdmin(locale, "interviewForm.employmentTypePartTime")}
+                </option>
+                <option value="contract">
+                  {tAdmin(locale, "interviewForm.employmentTypeContract")}
+                </option>
+                <option value="internship">
+                  {tAdmin(locale, "interviewForm.employmentTypeInternship")}
+                </option>
+              </select>
+            </div>
+
+            <div>
+              <label
+                htmlFor="interview-context"
+                className="mb-2 block text-xs font-semibold text-slate-500"
+              >
+                {tAdmin(locale, "interviewForm.contextLabel")}
+              </label>
+              <input
+                id="interview-context"
+                type="text"
+                value={interviewContext}
+                onChange={(event) => setInterviewContext(event.target.value)}
+                className="h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-950 outline-none transition focus:border-emerald-400 focus:ring-4 focus:ring-emerald-100"
+                placeholder={tAdmin(locale, "interviewForm.contextPlaceholder")}
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="interview-experience-level"
+                className="mb-2 block text-xs font-semibold text-slate-500"
+              >
+                {tAdmin(locale, "interviewForm.experienceLevelLabel")}
+              </label>
+              <select
+                id="interview-experience-level"
+                value={experienceLevel}
+                onChange={(event) =>
+                  setExperienceLevel(
+                    normalizeInterviewExperienceLevel(event.target.value),
+                  )
+                }
+                className="h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-950 outline-none transition focus:border-emerald-400 focus:ring-4 focus:ring-emerald-100"
+              >
+                <option value="desired">
+                  {tAdmin(locale, "interviewForm.experienceLevelDesired")}
+                </option>
+                <option value="not_required">
+                  {tAdmin(locale, "interviewForm.experienceLevelNotRequired")}
+                </option>
+              </select>
+            </div>
+
+            <div>
+              <label
+                htmlFor="interview-card-theme"
+                className="mb-2 block text-xs font-semibold text-slate-500"
+              >
+                {tAdmin(locale, "interviewForm.cardThemeLabel")}
+              </label>
+              <select
+                id="interview-card-theme"
+                value={cardTheme}
+                onChange={(event) =>
+                  setCardTheme(normalizeInterviewCardTheme(event.target.value))
+                }
+                className="h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-950 outline-none transition focus:border-emerald-400 focus:ring-4 focus:ring-emerald-100"
+              >
+                <option value="sky">
+                  {tAdmin(locale, "interviewForm.cardThemeSky")}
+                </option>
+                <option value="mint">
+                  {tAdmin(locale, "interviewForm.cardThemeMint")}
+                </option>
+                <option value="violet">
+                  {tAdmin(locale, "interviewForm.cardThemeViolet")}
+                </option>
+                <option value="amber">
+                  {tAdmin(locale, "interviewForm.cardThemeAmber")}
+                </option>
+                <option value="slate">
+                  {tAdmin(locale, "interviewForm.cardThemeSlate")}
+                </option>
+              </select>
+            </div>
+
+            <div>
+              <label
+                htmlFor="interview-card-emoji"
+                className="mb-2 block text-xs font-semibold text-slate-500"
+              >
+                {tAdmin(locale, "interviewForm.cardEmojiLabel")}
+              </label>
+              <input
+                id="interview-card-emoji"
+                type="text"
+                value={cardEmoji}
+                onChange={(event) =>
+                  setCardEmoji(event.target.value.slice(0, 8))
+                }
+                className="h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-950 outline-none transition focus:border-emerald-400 focus:ring-4 focus:ring-emerald-100"
+                placeholder={tAdmin(
+                  locale,
+                  "interviewForm.cardEmojiPlaceholder",
+                )}
+              />
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <section className="rounded-[22px] border border-slate-200 bg-white p-6 shadow-[0_18px_55px_rgba(15,23,42,0.05)]">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_1fr] lg:items-center">
+          <div>
+            <div className="mb-5 flex items-center gap-3">
+              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-violet-50 text-violet-600">
+                ✨
+              </span>
+              <h2 className="text-lg font-bold tracking-[-0.03em] text-slate-950">
+                3. {tAdmin(locale, "interviewForm.sectionAiGeneration")}
+              </h2>
+            </div>
+
+            <label
+              htmlFor="desired-questions"
+              className="mb-2 block text-xs font-semibold text-slate-500"
+            >
+              {tAdmin(locale, "interviewForm.desiredQuestions")}
+            </label>
+
+            <div className="flex flex-wrap items-center gap-3">
+              <input
+                id="desired-questions"
+                type="number"
+                min={1}
+                max={maxQuestionsByPlan}
+                value={desiredQuestionCount}
+                onChange={(event) =>
+                  setDesiredQuestionCount(
+                    clampQuestionCount(
+                      Number(event.target.value || 1),
+                      maxQuestionsByPlan,
+                    ),
+                  )
+                }
+                className="h-12 w-36 rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-950 outline-none transition focus:border-violet-400 focus:ring-4 focus:ring-violet-100"
+              />
+
+              <button
+                type="button"
+                onClick={generateQuestionsWithAI}
+                disabled={generating}
+                className="inline-flex h-12 items-center justify-center rounded-xl bg-blue-600 px-8 text-sm font-bold text-white shadow-[0_14px_35px_rgba(37,99,235,0.25)] transition hover:bg-blue-700 disabled:opacity-60"
+              >
+                ⚡{" "}
+                {generating
+                  ? tAdmin(locale, "interviewForm.generating")
+                  : tAdmin(locale, "interviewForm.generateAction")}
+              </button>
+            </div>
+          </div>
+
+          <div className="rounded-xl border border-slate-200 bg-white p-5">
+            <div className="flex items-start gap-3">
+              <div className="mt-0.5 text-violet-500">✨</div>
+
+              <div>
+                <p className="font-medium text-slate-900">
+                  {tAdmin(locale, "interviewForm.aiInfoTitle")}
+                </p>
+
+                <p className="mt-1 text-sm leading-6 text-slate-500">
+                  {tAdmin(locale, "interviewForm.aiInfoDescription")}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="rounded-[22px] border border-slate-200 bg-white p-6 shadow-[0_18px_55px_rgba(15,23,42,0.05)]">
+        <div className="mb-5 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+              💬
+            </span>
+            <h2 className="text-lg font-bold tracking-[-0.03em] text-slate-950">
+              4. {tAdmin(locale, "interviewForm.questionsTitle")}
+              <span className="ml-2 text-sm font-medium text-slate-400">
+                {questions.length}
+              </span>
+            </h2>
+          </div>
+
           <button
             type="button"
             onClick={addQuestion}
-            className="inline-flex items-center gap-1.5 rounded-md border border-[var(--c-border)] bg-[var(--c-surface)] px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.05em] text-[var(--c-text)] transition-colors hover:bg-[var(--c-bg)]"
+            className="inline-flex items-center gap-2 rounded-xl bg-blue-50 px-4 py-2.5 text-sm font-bold text-blue-700 transition hover:bg-blue-100"
           >
-            {tAdmin(locale, "interviewForm.addQuestion")}
+            + {tAdmin(locale, "interviewForm.addQuestion")}
           </button>
         </div>
 
-        <div className="space-y-3 p-5">
+        <div className="space-y-3">
           {questions.map((question, index) => (
             <div
               key={index}
@@ -565,69 +652,87 @@ export default function AdminInterviewForm({
               }}
               onDragEnd={handleDragEnd}
               className={[
-                "group/pergunta flex items-start gap-3 rounded-[10px] border border-[var(--c-border)] bg-[var(--c-surface)] px-3 py-2.5 animate-reveal",
+                "group flex items-center gap-4 rounded-2xl border border-slate-200 bg-slate-50/70 px-4 py-4 transition",
                 draggedQuestionIndex === index
                   ? "cursor-grabbing"
                   : "cursor-grab",
                 dragOverQuestionIndex === index
-                  ? "border-[var(--c-brand)]/25 bg-[var(--c-brand-soft)]/45"
+                  ? "border-blue-300 bg-blue-50"
                   : "",
               ].join(" ")}
-              style={{ animationDelay: `${index * 25}ms` }}
             >
-              <span className="mt-3 flex h-6 w-6 shrink-0 select-none items-center justify-center rounded-md border border-[var(--c-border)] bg-[var(--c-bg)] text-[10px] font-bold tabular-nums text-[var(--c-muted)]">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-violet-50 text-sm font-bold text-violet-700">
                 {index + 1}
               </span>
 
               <textarea
                 value={question}
                 onChange={(event) => updateQuestion(index, event.target.value)}
-                rows={2}
-                className="min-h-20 flex-1 resize-none bg-transparent px-2 py-1.5 text-sm leading-7 text-[var(--c-text)] placeholder:text-[var(--c-muted)] focus:outline-none"
-                placeholder={tAdmin(locale, "interviewForm.questionPlaceholder", {
-                  number: index + 1,
-                })}
+                rows={1}
+                className="min-h-[44px] flex-1 resize-none bg-transparent text-sm leading-6 text-slate-950 outline-none placeholder:text-slate-400"
+                placeholder={tAdmin(
+                  locale,
+                  "interviewForm.questionPlaceholder",
+                  {
+                    number: index + 1,
+                  },
+                )}
               />
 
-              <div className="flex flex-col gap-1 pt-1 opacity-100">
-                <button
-                  type="button"
-                  onClick={() => removeQuestion(index)}
-                  title={tAdmin(locale, "interviewForm.removeQuestion")}
-                  className="inline-flex min-w-[70px] items-center justify-center rounded-md border border-red-200 bg-red-50 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.05em] text-red-700 transition-colors hover:bg-red-100"
-                >
-                  {tAdmin(locale, "interviewForm.deleteQuestion")}
-                </button>
-              </div>
+              <button
+                type="button"
+                onClick={() => removeQuestion(index)}
+                className="inline-flex items-center gap-2 rounded-xl bg-red-50 px-4 py-2 text-xs font-bold text-red-600 transition hover:bg-red-100"
+              >
+                🗑 {tAdmin(locale, "interviewForm.deleteQuestion")}
+              </button>
             </div>
           ))}
         </div>
+
+        <p className="mt-4 text-xs text-slate-400">
+          {tAdmin(locale, "interviewForm.reorderHint")}
+        </p>
       </section>
 
-      <div className="flex flex-wrap items-center gap-2">
-        <button
-          type="submit"
-          disabled={loading}
-          onClick={() => setSubmitAction("default")}
-          className="btn-primary inline-flex px-5 py-2.5"
-        >
-          {loading
-            ? tAdmin(locale, "interviewForm.saving")
-            : mode === "create"
-              ? tAdmin(locale, "interviewForm.create")
-              : tAdmin(locale, "interviewForm.save")}
-        </button>
+      <div className="fix bottom-4 z-30 mt-8 rounded-[22px] border border-slate-200 bg-white/95 p-4 shadow-[0_18px_55px_rgba(15,23,42,0.10)] backdrop-blur">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <button
+            type="button"
+            onClick={() => router.push(`/${locale}/admin/${slug}/interviews`)}
+            className="rounded-xl border border-slate-200 bg-white px-6 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+          >
+            {tAdmin(locale, "interviewForm.cancel")}
+          </button>
 
-        <button
-          type="submit"
-          disabled={loading}
-          onClick={() => setSubmitAction("publish")}
-          className="inline-flex rounded-lg border border-[var(--c-brand)] px-5 py-2.5 text-sm font-semibold text-[var(--c-brand)] transition-colors hover:bg-[var(--c-brand-soft)] disabled:opacity-60"
-        >
-          {mode === "create"
-            ? tAdmin(locale, "interviewForm.createAndPublish")
-            : tAdmin(locale, "interviewForm.saveAndPublish")}
-        </button>
+          <div className="flex flex-wrap items-center gap-3">
+            <button
+              type="submit"
+              disabled={loading}
+              onClick={() => setSubmitAction("default")}
+              className="rounded-xl border border-blue-200 bg-white px-6 py-3 text-sm font-bold text-blue-700 transition hover:bg-blue-50 disabled:opacity-60"
+            >
+              💾{" "}
+              {loading
+                ? tAdmin(locale, "interviewForm.saving")
+                : mode === "create"
+                  ? tAdmin(locale, "interviewForm.create")
+                  : tAdmin(locale, "interviewForm.save")}
+            </button>
+
+            <button
+              type="submit"
+              disabled={loading}
+              onClick={() => setSubmitAction("publish")}
+              className="rounded-xl bg-blue-600 px-6 py-3 text-sm font-bold text-white shadow-[0_14px_35px_rgba(37,99,235,0.25)] transition hover:bg-blue-700 disabled:opacity-60"
+            >
+              🚀{" "}
+              {mode === "create"
+                ? tAdmin(locale, "interviewForm.createAndPublish")
+                : tAdmin(locale, "interviewForm.saveAndPublish")}
+            </button>
+          </div>
+        </div>
       </div>
     </form>
   );
