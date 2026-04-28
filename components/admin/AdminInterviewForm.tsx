@@ -58,6 +58,23 @@ export default function AdminInterviewForm({
   companyPlan = "basic",
   locale = "en",
 }: Props) {
+  function resolveFriendlyError(message: string): string {
+    const normalized = String(message || "").toLowerCase();
+    if (normalized.includes("plano free permite apenas 1 entrevista ativa")) {
+      return tAdmin(locale, "interviewForm.limitFreeActiveInterview");
+    }
+    if (normalized.includes("plano basic permite até 5 entrevistas ativas")) {
+      return tAdmin(locale, "interviewForm.limitBasicActiveInterviews");
+    }
+    if (normalized.includes("plano free nao inclui geracao de perguntas")) {
+      return tAdmin(locale, "interviewForm.limitFreeAiGeneration");
+    }
+    if (normalized.includes("ia nao devolveu perguntas suficientes")) {
+      return tAdmin(locale, "interviewForm.aiGenerateEmpty");
+    }
+    return message;
+  }
+
   const maxQuestionsByPlan = companyPlan === "free" ? 5 : 20;
   const router = useRouter();
   const initialQuestions = parseQuestionsText(initialQuestionsText);
@@ -119,7 +136,12 @@ export default function AdminInterviewForm({
 
       const data = await response.json();
       if (!response.ok) {
-        setError(data?.error || tAdmin(locale, "interviewForm.defaultError"));
+        const rawError = String(data?.error || "").trim();
+        setError(
+          rawError
+            ? resolveFriendlyError(rawError)
+            : tAdmin(locale, "interviewForm.defaultError"),
+        );
         return;
       }
 
@@ -213,7 +235,12 @@ export default function AdminInterviewForm({
 
       const data = await response.json();
       if (!response.ok) {
-        setError(data?.error || tAdmin(locale, "interviewForm.aiGenerateError"));
+        const rawError = String(data?.error || "").trim();
+        setError(
+          rawError
+            ? resolveFriendlyError(rawError)
+            : tAdmin(locale, "interviewForm.aiGenerateError"),
+        );
         return;
       }
 

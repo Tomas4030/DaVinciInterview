@@ -369,6 +369,13 @@ export async function GET(
     return NextResponse.json({ error: "Empresa nao encontrada" }, { status: 404 });
   }
 
+  if (membership.company.plan === "free") {
+    return NextResponse.json(
+      { error: "Exportacao PDF nao disponivel no plano Free" },
+      { status: 403 },
+    );
+  }
+
   const [rows] = await query<ResponseRow>(
     `
     SELECT

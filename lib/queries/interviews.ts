@@ -153,6 +153,24 @@ export async function listPublishedInterviewsByCompany(
   return rows.map(mapInterview);
 }
 
+export async function countPublishedInterviewsByCompany(
+  companyId: string,
+): Promise<number> {
+  const normalizedCompanyId = String(companyId || "").trim();
+  if (!normalizedCompanyId) return 0;
+
+  const [rows] = await query<{ total: number }>(
+    `
+    SELECT COUNT(*) AS total
+    FROM interviews
+    WHERE company_id = ? AND status = 'published'
+    `,
+    [normalizedCompanyId],
+  );
+
+  return Number(rows?.[0]?.total || 0);
+}
+
 export async function resolveCompanyAndInterviewFromLegacyVaga(
   vagaId: string,
 ): Promise<{ companyId: string; interviewId: string } | null> {

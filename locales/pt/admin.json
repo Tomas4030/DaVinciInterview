@@ -88,6 +88,7 @@
     "refreshError": "Nao foi possivel recriar os dados da analise IA.",
     "refreshLoading": "A recriar...",
     "refreshAction": "Recriar dados IA",
+    "limitProOnly": "Comparacao IA disponivel apenas no plano Pro.",
     "sidebarTitle": "Candidatos",
     "sidebarTotal": "Total de candidatos",
     "searchPlaceholder": "Pesquisar candidato...",
@@ -146,6 +147,7 @@
     "eyebrow": "Sessao",
     "fallbackInterviewTitle": "Entrevista",
     "exportPdf": "Exportar PDF",
+    "exportPdfLocked": "Exportar PDF (disponivel no Basic/Pro)",
     "backToResponses": "Voltar as respostas"
   },
   "settingsPage": {
@@ -226,6 +228,9 @@
     "aiTitleRequired": "Preenche o titulo da vaga antes de gerar perguntas.",
     "aiGenerateError": "Nao foi possivel gerar perguntas com IA.",
     "aiGenerateEmpty": "A IA nao devolveu perguntas validas. Tenta novamente.",
+    "limitFreeActiveInterview": "Plano Free: so podes ter 1 entrevista ativa/publicada. Faz upgrade para Basic para desbloquear mais.",
+    "limitBasicActiveInterviews": "Plano Basic: podes ter ate 5 entrevistas ativas/publicadas. Faz upgrade para Pro para ilimitado.",
+    "limitFreeAiGeneration": "Plano Free: a geracao de perguntas com IA esta bloqueada. Faz upgrade para Basic.",
     "aiFallbackRole": "a vaga",
     "aiTemplate1": "Fala sobre a tua experiencia mais relevante para {{role}}.",
     "aiTemplate2": "Como organizas prioridades e entregas quando tens prazos curtos?",

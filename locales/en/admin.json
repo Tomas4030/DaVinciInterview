@@ -88,6 +88,7 @@
     "refreshError": "Could not rebuild AI analysis data.",
     "refreshLoading": "Rebuilding...",
     "refreshAction": "Rebuild AI data",
+    "limitProOnly": "AI comparison is available only on Pro plan.",
     "sidebarTitle": "Candidates",
     "sidebarTotal": "Total candidates",
     "searchPlaceholder": "Search candidate...",
@@ -146,6 +147,7 @@
     "eyebrow": "Session",
     "fallbackInterviewTitle": "Interview",
     "exportPdf": "Export PDF",
+    "exportPdfLocked": "Export PDF (available on Basic/Pro)",
     "backToResponses": "Back to responses"
   },
   "settingsPage": {
@@ -226,6 +228,9 @@
     "aiTitleRequired": "Fill in the role title before generating questions.",
     "aiGenerateError": "Could not generate questions with AI.",
     "aiGenerateEmpty": "AI returned no valid questions. Please try again.",
+    "limitFreeActiveInterview": "Free plan: you can only have 1 active/published interview. Upgrade to Basic to unlock more.",
+    "limitBasicActiveInterviews": "Basic plan: you can have up to 5 active/published interviews. Upgrade to Pro for unlimited.",
+    "limitFreeAiGeneration": "Free plan: AI question generation is locked. Upgrade to Basic.",
     "aiFallbackRole": "the role",
     "aiTemplate1": "Tell us about your most relevant experience for {{role}}.",
     "aiTemplate2": "How do you organize priorities and deliverables under short deadlines?",

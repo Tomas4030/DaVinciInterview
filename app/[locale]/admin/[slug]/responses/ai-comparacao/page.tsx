@@ -45,6 +45,10 @@ export default async function AdminCompanyAiComparisonPage({
   );
   if (!membership) notFound();
 
+  if (membership.company.plan !== "pro" && membership.company.plan !== "enterprise") {
+    notFound();
+  }
+
   const vagas = await buildAiComparisonsForCompany(membership.company.id);
 
   const selectedVaga =

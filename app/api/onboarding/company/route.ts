@@ -36,18 +36,6 @@ export async function POST(request: NextRequest) {
     const canonicalUser = await ensureUserByEmail(session.email);
     const ownerUserId = canonicalUser.id;
 
-    const existingCompanies = await listUserCompanies(ownerUserId);
-    if (existingCompanies.length > 0) {
-      const company = existingCompanies[0];
-      return NextResponse.json(
-        {
-          error: "Já tens uma empresa associada",
-          redirectTo: `/admin/${company.slug}/dashboard`,
-        },
-        { status: 409 },
-      );
-    }
-
     const body = await request.json();
     const name = String(body?.name || "").trim();
     const slugInput = String(body?.slug || "").trim();
@@ -58,6 +46,22 @@ export async function POST(request: NextRequest) {
       rawPlan === "free" || rawPlan === "basic" || rawPlan === "pro" || rawPlan === "enterprise"
         ? (rawPlan as CompanyPlan)
         : "basic";
+
+    const existingCompanies = await listUserCompanies(ownerUserId);
+    const maxCompaniesByPlan = plan === "pro" || plan === "enterprise" ? 3 : 1;
+    if (existingCompanies.length >= maxCompaniesByPlan) {
+      const company = existingCompanies[0];
+      return NextResponse.json(
+        {
+          error:
+            maxCompaniesByPlan === 1
+              ? "O teu plano permite apenas 1 empresa."
+              : "O teu plano permite até 3 empresas.",
+          redirectTo: `/admin/${company.slug}/dashboard`,
+        },
+        { status: 409 },
+      );
+    }
 
     if (!name) {
       return NextResponse.json(

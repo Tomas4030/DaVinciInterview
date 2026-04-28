@@ -6,6 +6,7 @@ import {
 } from "@/lib/interview-meta";
 import { getCompanyMembershipBySlug } from "@/lib/queries/companies";
 import {
+  countPublishedInterviewsByCompany,
   deleteInterviewForCompany,
   getInterviewByIdAndCompany,
   updateInterviewForCompany,
@@ -88,7 +89,6 @@ export async function PUT(
     const statusRaw = String(body?.status || "draft").trim().toLowerCase();
     const questionsText = String(body?.questionsText || "");
     const questionsArray = normalizeQuestionsFromArray(body?.questions);
-    const maxQuestionsByPlan = membership.company.plan === "free" ? 5 : 20;
 
     if (!title) {
       return NextResponse.json({ error: "Título é obrigatório" }, { status: 400 });
@@ -96,6 +96,38 @@ export async function PUT(
 
     const status =
       statusRaw === "published" || statusRaw === "archived" ? statusRaw : "draft";
+
+    const maxQuestionsByPlan = membership.company.plan === "free" ? 5 : 999;
+    const maxPublishedByPlan =
+      membership.company.plan === "free"
+        ? 1
+        : membership.company.plan === "basic"
+          ? 5
+          : Number.POSITIVE_INFINITY;
+
+    if (status === "published" && Number.isFinite(maxPublishedByPlan)) {
+      const existingInterview = await getInterviewByIdAndCompany(
+        params.id,
+        membership.company.id,
+      );
+      const isAlreadyPublished = existingInterview?.status === "published";
+      if (!isAlreadyPublished) {
+        const currentPublished = await countPublishedInterviewsByCompany(
+          membership.company.id,
+        );
+        if (currentPublished >= maxPublishedByPlan) {
+          return NextResponse.json(
+            {
+              error:
+                membership.company.plan === "free"
+                  ? "Plano Free permite apenas 1 entrevista ativa/publicada."
+                  : "Plano Basic permite até 5 entrevistas ativas/publicadas.",
+            },
+            { status: 403 },
+          );
+        }
+      }
+    }
 
     const normalizedQuestions = (
       questionsArray.length > 0

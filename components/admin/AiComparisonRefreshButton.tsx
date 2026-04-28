@@ -26,6 +26,11 @@ export default function AiComparisonRefreshButton({ slug, locale = "en" }: Props
       );
 
       if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        const rawError = String(data?.error || "").toLowerCase();
+        if (rawError.includes("comparacao ia disponivel apenas no plano pro")) {
+          throw new Error(tAdmin(locale, "aiComparison.limitProOnly"));
+        }
         throw new Error(tAdmin(locale, "aiComparison.refreshError"));
       }
 

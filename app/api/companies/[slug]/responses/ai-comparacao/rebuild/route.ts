@@ -28,6 +28,13 @@ export async function POST(request: NextRequest, { params }: Props) {
       );
     }
 
+    if (membership.company.plan !== "pro" && membership.company.plan !== "enterprise") {
+      return NextResponse.json(
+        { error: "Comparacao IA disponivel apenas no plano Pro." },
+        { status: 403 },
+      );
+    }
+
     const vagas = await buildAiComparisonsForCompany(membership.company.id, {
       forceRegenerate: true,
     });

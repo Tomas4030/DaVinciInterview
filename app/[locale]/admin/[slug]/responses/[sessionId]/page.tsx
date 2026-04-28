@@ -77,12 +77,18 @@ export default async function AdminCompanyResponseDetailPage({ params }: Props) 
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          <a
-            href={`/${params.locale}/admin/${params.slug}/responses/${params.sessionId}/export`}
-            className="btn-primary inline-flex px-4 py-2 text-sm"
-          >
-            {tAdmin(params.locale, "responseDetailPage.exportPdf")}
-          </a>
+          {membership.company.plan === "free" ? (
+            <span className="inline-flex cursor-not-allowed rounded-lg border border-[var(--c-border)] px-4 py-2 text-sm text-[var(--c-muted)]">
+              {tAdmin(params.locale, "responseDetailPage.exportPdfLocked")}
+            </span>
+          ) : (
+            <a
+              href={`/${params.locale}/admin/${params.slug}/responses/${params.sessionId}/export`}
+              className="btn-primary inline-flex px-4 py-2 text-sm"
+            >
+              {tAdmin(params.locale, "responseDetailPage.exportPdf")}
+            </a>
+          )}
           <Link
             href={`/${params.locale}/admin/${params.slug}/responses`}
             className="rounded-lg border border-[var(--c-border)] px-4 py-2 text-sm text-[var(--c-text)] transition-colors hover:bg-[var(--c-bg)]"
