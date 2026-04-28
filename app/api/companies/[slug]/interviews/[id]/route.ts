@@ -217,3 +217,57 @@ export async function DELETE(
     return NextResponse.json({ error: "Erro ao apagar entrevista" }, { status: 500 });
   }
 }
+
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: { slug: string; id: string } },
+) {
+  try {
+    const token = request.cookies.get(ADMIN_SESSION_COOKIE)?.value;
+    const session = parseAdminToken(token);
+    if (!session) {
+      return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
+    }
+
+    const membership = await getCompanyMembershipBySlug(session.userId, params.slug);
+    if (!membership) {
+      return NextResponse.json({ error: "Empresa não encontrada" }, { status: 404 });
+    }
+
+    if (membership.role !== "owner" && membership.role !== "admin") {
+      return NextResponse.json({ error: "Sem permissões" }, { status: 403 });
+    }
+
+    const body = await request.json().catch(() => ({}));
+    const nextStatus = String(body?.status || "").trim().toLowerCase();
+    if (nextStatus !== "archived" && nextStatus !== "draft") {
+      return NextResponse.json({ error: "Status inválido" }, { status: 400 });
+    }
+
+    const existing = await getInterviewByIdAndCompany(params.id, membership.company.id);
+    if (!existing) {
+      return NextResponse.json({ error: "Entrevista não encontrada" }, { status: 404 });
+    }
+
+    const interview = await updateInterviewForCompany(params.id, membership.company.id, {
+      title: existing.title,
+      description: existing.description,
+      workMode: existing.work_mode || "unspecified",
+      employmentType: existing.employment_type || "unspecified",
+      experienceLevel: existing.experience_level || "not_required",
+      cardEmoji: existing.card_emoji || "",
+      cardTheme: existing.card_theme || "slate",
+      status: nextStatus as "archived" | "draft",
+      questions: existing.questions,
+    });
+
+    if (!interview) {
+      return NextResponse.json({ error: "Entrevista não encontrada" }, { status: 404 });
+    }
+
+    return NextResponse.json({ success: true, interview });
+  } catch (error) {
+    console.error("Erro ao atualizar estado da entrevista:", error);
+    return NextResponse.json({ error: "Erro ao atualizar estado da entrevista" }, { status: 500 });
+  }
+}

@@ -101,8 +101,8 @@ export default async function AdminCompanyInterviewsPage({
         locale={params.locale}
       />
 
-      <div className="rounded-[12px] border border-[var(--c-border)] bg-[var(--c-surface)]">
-        <div className="flex items-center justify-between border-b border-[var(--c-border)] px-5 py-3">
+      <div>
+        <div className="mb-3 flex items-center justify-between px-1 py-1">
           <p className="text-sm font-medium text-[var(--c-text)]">
             {tAdmin(params.locale, "interviewsPage.results")}
           </p>
@@ -118,11 +118,11 @@ export default async function AdminCompanyInterviewsPage({
         </div>
 
         {filteredInterviews.length === 0 ? (
-          <p className="px-5 py-10 text-sm text-[var(--c-muted)]">
+          <p className="rounded-xl border border-[var(--c-border)] bg-white px-5 py-10 text-sm text-[var(--c-muted)]">
             {tAdmin(params.locale, "interviewsPage.empty")}
           </p>
         ) : (
-          <div className="divide-y divide-[var(--c-border)]">
+          <div className="space-y-4">
             {filteredInterviews.map((item) => (
               <InterviewListCard
                 key={item.id}
