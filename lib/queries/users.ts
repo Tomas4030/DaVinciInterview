@@ -23,6 +23,18 @@ export async function getUserByEmail(email: string): Promise<UserRecord | null> 
   return rows[0] || null;
 }
 
+export async function getUserById(userId: string): Promise<UserRecord | null> {
+  const normalizedUserId = String(userId || "").trim();
+  if (!normalizedUserId) return null;
+
+  const [rows] = await query<UserRecord>(
+    `SELECT * FROM users WHERE id = ? LIMIT 1`,
+    [normalizedUserId],
+  );
+
+  return rows[0] || null;
+}
+
 export async function ensureUserByEmail(email: string): Promise<UserRecord> {
   const normalizedEmail = String(email || "").trim().toLowerCase();
   if (!normalizedEmail) {
