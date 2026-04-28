@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { ADMIN_SESSION_COOKIE, parseAdminToken } from "@/lib/admin-auth";
 import {
   buildInterviewDescriptionWithMeta,
+  normalizeInterviewEmploymentType,
   normalizeInterviewWorkMode,
 } from "@/lib/interview-meta";
 import { getCompanyMembershipBySlug } from "@/lib/queries/companies";
@@ -56,6 +57,7 @@ export async function POST(
     const descriptionInput = String(body?.description || "").trim();
     const interviewContext = String(body?.interviewContext || "").trim();
     const workMode = normalizeInterviewWorkMode(body?.workMode);
+    const employmentType = normalizeInterviewEmploymentType(body?.employmentType);
     const statusRaw = String(body?.status || "draft").trim().toLowerCase();
     const questionsText = String(body?.questionsText || "");
     const questionsArray = normalizeQuestionsFromArray(body?.questions);
@@ -103,9 +105,11 @@ export async function POST(
       description: buildInterviewDescriptionWithMeta(
         descriptionInput,
         workMode,
+        employmentType,
         interviewContext,
       ),
       workMode,
+      employmentType,
       status,
       questions: normalizedQuestions,
     });

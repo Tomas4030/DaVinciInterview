@@ -6,7 +6,9 @@ import { ADMIN_SESSION_COOKIE, parseAdminToken } from "@/lib/admin-auth";
 import { tAdmin } from "@/lib/i18n/admin";
 import {
   extractInterviewContextFromDescription,
+  extractInterviewEmploymentTypeFromDescription,
   extractInterviewWorkModeFromDescription,
+  normalizeInterviewEmploymentType,
   stripInterviewMetaFromDescription,
 } from "@/lib/interview-meta";
 import { getCompanyMembershipBySlug } from "@/lib/queries/companies";
@@ -75,6 +77,11 @@ export default async function AdminCompanyInterviewEditPage({ params }: Props) {
           initialInterviewContext={extractInterviewContextFromDescription(
             interview.description,
           )}
+          initialEmploymentType={
+            interview.employment_type && interview.employment_type !== "unspecified"
+              ? normalizeInterviewEmploymentType(interview.employment_type)
+              : extractInterviewEmploymentTypeFromDescription(interview.description)
+          }
           initialWorkMode={
             interview.work_mode ||
             extractInterviewWorkModeFromDescription(interview.description)
