@@ -384,6 +384,7 @@ CREATE TABLE IF NOT EXISTS interviews (
   title VARCHAR(255) NOT NULL,
   description TEXT NULL,
   work_mode ENUM('remote', 'hybrid', 'onsite', 'unspecified') NOT NULL DEFAULT 'unspecified',
+  employment_type ENUM('full_time', 'part_time', 'contract', 'internship', 'unspecified') NOT NULL DEFAULT 'unspecified',
   status ENUM('draft', 'published', 'archived') NOT NULL DEFAULT 'draft',
   questions JSON NOT NULL DEFAULT (JSON_ARRAY()),
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,

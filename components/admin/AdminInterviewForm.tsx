@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { withBasePath } from "@/lib/base-path";
 import { tAdmin } from "@/lib/i18n/admin";
 import {
+  normalizeInterviewEmploymentType,
+  type InterviewEmploymentType,
   normalizeInterviewWorkMode,
   type InterviewWorkMode,
 } from "@/lib/interview-meta";
@@ -19,6 +21,7 @@ type Props = {
   initialTitle?: string;
   initialDescription?: string;
   initialInterviewContext?: string;
+  initialEmploymentType?: InterviewEmploymentType;
   initialWorkMode?: InterviewWorkMode;
   initialStatus?: "draft" | "published" | "archived";
   initialQuestionsText?: string;
@@ -52,6 +55,7 @@ export default function AdminInterviewForm({
   initialTitle = "",
   initialDescription = "",
   initialInterviewContext = "",
+  initialEmploymentType = "unspecified",
   initialWorkMode = "unspecified",
   initialStatus = "draft",
   initialQuestionsText = "",
@@ -81,6 +85,9 @@ export default function AdminInterviewForm({
   const [title, setTitle] = useState(initialTitle);
   const [description, setDescription] = useState(initialDescription);
   const [interviewContext, setInterviewContext] = useState(initialInterviewContext);
+  const [employmentType, setEmploymentType] = useState<InterviewEmploymentType>(
+    normalizeInterviewEmploymentType(initialEmploymentType),
+  );
   const [workMode, setWorkMode] = useState<"remote" | "hybrid" | "onsite">(
     resolveInitialWorkMode(normalizeInterviewWorkMode(initialWorkMode)),
   );
@@ -102,6 +109,7 @@ export default function AdminInterviewForm({
   const [loading, setLoading] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState("");
+  const [submitAction, setSubmitAction] = useState<"default" | "publish">("default");
 
   const endpoint =
     mode === "create"
@@ -116,6 +124,7 @@ export default function AdminInterviewForm({
     const normalizedQuestions = questions
       .map((item) => item.trim())
       .filter(Boolean);
+    const statusToSave = submitAction === "publish" ? "published" : status;
 
     try {
       const response = await fetch(endpoint, {
@@ -127,8 +136,9 @@ export default function AdminInterviewForm({
           title,
           description,
           interviewContext,
+          employmentType,
           workMode,
-          status,
+          status: statusToSave,
           questions: normalizedQuestions,
           questionsText: normalizedQuestions.join("\n"),
         }),
@@ -306,7 +316,7 @@ export default function AdminInterviewForm({
         />
       </div>
 
-      <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
         <div>
           <label
             htmlFor="interview-work-mode"
@@ -332,22 +342,34 @@ export default function AdminInterviewForm({
 
         <div>
           <label
-            htmlFor="interview-status"
+            htmlFor="interview-employment-type"
             className="mb-1.5 block text-xs font-medium text-[var(--c-muted)]"
           >
-            {tAdmin(locale, "interviewForm.statusLabel")}
+            {tAdmin(locale, "interviewForm.employmentTypeLabel")}
           </label>
           <select
-            id="interview-status"
-            value={status}
+            id="interview-employment-type"
+            value={employmentType}
             onChange={(event) =>
-              setStatus(event.target.value as "draft" | "published" | "archived")
+              setEmploymentType(normalizeInterviewEmploymentType(event.target.value))
             }
             className="input-base border-[var(--c-border)] bg-[var(--c-bg)]"
           >
-            <option value="draft">{tAdmin(locale, "interviewForm.statusDraft")}</option>
-            <option value="published">{tAdmin(locale, "interviewForm.statusPublished")}</option>
-            <option value="archived">{tAdmin(locale, "interviewForm.statusArchived")}</option>
+            <option value="unspecified">
+              {tAdmin(locale, "interviewForm.employmentTypeUnspecified")}
+            </option>
+            <option value="full_time">
+              {tAdmin(locale, "interviewForm.employmentTypeFullTime")}
+            </option>
+            <option value="part_time">
+              {tAdmin(locale, "interviewForm.employmentTypePartTime")}
+            </option>
+            <option value="contract">
+              {tAdmin(locale, "interviewForm.employmentTypeContract")}
+            </option>
+            <option value="internship">
+              {tAdmin(locale, "interviewForm.employmentTypeInternship")}
+            </option>
           </select>
         </div>
 
@@ -366,6 +388,27 @@ export default function AdminInterviewForm({
             className="input-base border-[var(--c-border)] bg-[var(--c-bg)]"
             placeholder={tAdmin(locale, "interviewForm.contextPlaceholder")}
           />
+        </div>
+
+        <div>
+          <label
+            htmlFor="interview-status"
+            className="mb-1.5 block text-xs font-medium text-[var(--c-muted)]"
+          >
+            {tAdmin(locale, "interviewForm.statusLabel")}
+          </label>
+          <select
+            id="interview-status"
+            value={status}
+            onChange={(event) =>
+              setStatus(event.target.value as "draft" | "published" | "archived")
+            }
+            className="input-base border-[var(--c-border)] bg-[var(--c-bg)]"
+          >
+            <option value="draft">{tAdmin(locale, "interviewForm.statusDraft")}</option>
+            <option value="published">{tAdmin(locale, "interviewForm.statusPublished")}</option>
+            <option value="archived">{tAdmin(locale, "interviewForm.statusArchived")}</option>
+          </select>
         </div>
       </div>
 
@@ -476,17 +519,31 @@ export default function AdminInterviewForm({
         </div>
       </section>
 
-      <button
-        type="submit"
-        disabled={loading}
-        className="btn-primary inline-flex px-5 py-2.5"
-      >
-        {loading
-          ? tAdmin(locale, "interviewForm.saving")
-          : mode === "create"
-            ? tAdmin(locale, "interviewForm.create")
-            : tAdmin(locale, "interviewForm.save")}
-      </button>
+      <div className="flex flex-wrap items-center gap-2">
+        <button
+          type="submit"
+          disabled={loading}
+          onClick={() => setSubmitAction("default")}
+          className="btn-primary inline-flex px-5 py-2.5"
+        >
+          {loading
+            ? tAdmin(locale, "interviewForm.saving")
+            : mode === "create"
+              ? tAdmin(locale, "interviewForm.create")
+              : tAdmin(locale, "interviewForm.save")}
+        </button>
+
+        <button
+          type="submit"
+          disabled={loading}
+          onClick={() => setSubmitAction("publish")}
+          className="inline-flex rounded-lg border border-[var(--c-brand)] px-5 py-2.5 text-sm font-semibold text-[var(--c-brand)] transition-colors hover:bg-[var(--c-brand-soft)] disabled:opacity-60"
+        >
+          {mode === "create"
+            ? tAdmin(locale, "interviewForm.createAndPublish")
+            : tAdmin(locale, "interviewForm.saveAndPublish")}
+        </button>
+      </div>
     </form>
   );
 }

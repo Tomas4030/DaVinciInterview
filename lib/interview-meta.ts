@@ -1,7 +1,15 @@
 export type InterviewWorkMode = "remote" | "hybrid" | "onsite" | "unspecified";
+export type InterviewEmploymentType =
+  | "full_time"
+  | "part_time"
+  | "contract"
+  | "internship"
+  | "unspecified";
 
 const WORK_MODE_MARKER_REGEX = /\[\[work_mode:(remote|hybrid|onsite)\]\]/i;
 const INTERVIEW_CONTEXT_MARKER_REGEX = /\[\[interview_context:([\s\S]*?)\]\]/i;
+const EMPLOYMENT_TYPE_MARKER_REGEX =
+  /\[\[employment_type:(full_time|part_time|contract|internship)\]\]/i;
 
 export function normalizeInterviewWorkMode(value: unknown): InterviewWorkMode {
   const normalized = String(value || "")
@@ -11,6 +19,20 @@ export function normalizeInterviewWorkMode(value: unknown): InterviewWorkMode {
   if (normalized === "remote") return "remote";
   if (normalized === "hybrid") return "hybrid";
   if (normalized === "onsite") return "onsite";
+  return "unspecified";
+}
+
+export function normalizeInterviewEmploymentType(
+  value: unknown,
+): InterviewEmploymentType {
+  const normalized = String(value || "")
+    .trim()
+    .toLowerCase();
+
+  if (normalized === "full_time") return "full_time";
+  if (normalized === "part_time") return "part_time";
+  if (normalized === "contract") return "contract";
+  if (normalized === "internship") return "internship";
   return "unspecified";
 }
 
@@ -42,6 +64,7 @@ export function stripInterviewMetaFromDescription(
   const source = String(description || "");
   return source
     .replace(WORK_MODE_MARKER_REGEX, "")
+    .replace(EMPLOYMENT_TYPE_MARKER_REGEX, "")
     .replace(INTERVIEW_CONTEXT_MARKER_REGEX, "")
     .trim();
 }
@@ -55,9 +78,19 @@ export function extractInterviewContextFromDescription(
   return String(match[1]).trim();
 }
 
+export function extractInterviewEmploymentTypeFromDescription(
+  description: string | null | undefined,
+): InterviewEmploymentType {
+  const source = String(description || "");
+  const match = source.match(EMPLOYMENT_TYPE_MARKER_REGEX);
+  if (!match?.[1]) return "unspecified";
+  return normalizeInterviewEmploymentType(match[1]);
+}
+
 export function buildInterviewDescriptionWithMeta(
   baseDescription: string | null | undefined,
   workMode: InterviewWorkMode,
+  employmentType: InterviewEmploymentType,
   interviewContext: string | null | undefined,
 ): string | null {
   const cleanBase = stripInterviewMetaFromDescription(baseDescription);
@@ -69,6 +102,10 @@ export function buildInterviewDescriptionWithMeta(
 
   if (workMode !== "unspecified") {
     parts.push(`[[work_mode:${workMode}]]`);
+  }
+
+  if (employmentType !== "unspecified") {
+    parts.push(`[[employment_type:${employmentType}]]`);
   }
 
   const cleanContext = String(interviewContext || "").trim();

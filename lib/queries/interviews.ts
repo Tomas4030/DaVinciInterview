@@ -7,6 +7,13 @@ export interface InterviewRecord {
   legacy_vaga_id: string | null;
   legacy_modalidade?: string | null;
   work_mode?: "remote" | "hybrid" | "onsite" | "unspecified" | null;
+  employment_type?:
+    | "full_time"
+    | "part_time"
+    | "contract"
+    | "internship"
+    | "unspecified"
+    | null;
   title: string;
   description: string | null;
   status: "draft" | "published" | "archived";
@@ -22,6 +29,7 @@ function mapInterview(row: any): InterviewRecord {
     legacy_vaga_id: row.legacy_vaga_id ?? null,
     legacy_modalidade: row.legacy_modalidade ?? null,
     work_mode: row.work_mode ?? null,
+    employment_type: row.employment_type ?? null,
     title: row.title,
     description: row.description ?? null,
     status: row.status,
@@ -187,6 +195,12 @@ type SaveInterviewInput = {
   title: string;
   description?: string | null;
   workMode?: "remote" | "hybrid" | "onsite" | "unspecified";
+  employmentType?:
+    | "full_time"
+    | "part_time"
+    | "contract"
+    | "internship"
+    | "unspecified";
   status?: "draft" | "published" | "archived";
   questions?: any[];
 };
@@ -199,8 +213,8 @@ export async function createInterviewForCompany(
 
   await query(
     `
-    INSERT INTO interviews (id, company_id, title, description, work_mode, status, questions)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO interviews (id, company_id, title, description, work_mode, employment_type, status, questions)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `,
     [
       interviewId,
@@ -208,6 +222,7 @@ export async function createInterviewForCompany(
       String(input.title || "").trim(),
       input.description ?? null,
       input.workMode || "unspecified",
+      input.employmentType || "unspecified",
       input.status || "draft",
       JSON.stringify(input.questions || []),
     ],
@@ -232,13 +247,14 @@ export async function updateInterviewForCompany(
   await query(
     `
     UPDATE interviews
-    SET title = ?, description = ?, work_mode = ?, status = ?, questions = ?
+    SET title = ?, description = ?, work_mode = ?, employment_type = ?, status = ?, questions = ?
     WHERE id = ? AND company_id = ?
     `,
     [
       String(input.title || "").trim(),
       input.description ?? null,
       input.workMode || "unspecified",
+      input.employmentType || "unspecified",
       input.status || "draft",
       JSON.stringify(input.questions || []),
       interviewId,

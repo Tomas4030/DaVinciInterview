@@ -7,9 +7,12 @@ import {
 } from "@/components/ui/Icons";
 import {
   estimateInterviewDurationMinutes,
+  extractInterviewContextFromDescription,
+  extractInterviewEmploymentTypeFromDescription,
   extractInterviewWorkModeFromDescription,
   getInterviewQuestionCount,
   mapLegacyModalidadeToWorkMode,
+  normalizeInterviewEmploymentType,
   stripInterviewMetaFromDescription,
 } from "@/lib/interview-meta";
 import { tInterview } from "@/lib/i18n/interview";
@@ -125,6 +128,40 @@ export default function CompanyInterviewsSection({
                 workMode as keyof typeof INTERVIEW_WORK_MODE_CONFIG
               ] ?? INTERVIEW_WORK_MODE_FALLBACK;
 
+            const savedEmploymentType = normalizeInterviewEmploymentType(
+              interview.employment_type,
+            );
+            const employmentType =
+              savedEmploymentType !== "unspecified"
+                ? savedEmploymentType
+                : extractInterviewEmploymentTypeFromDescription(
+                    interview.description,
+                  );
+
+            const employmentTypeLabel =
+              employmentType === "full_time"
+                ? tInterview(locale, "companyPublic.interviews.employmentTypeFullTime")
+                : employmentType === "part_time"
+                  ? tInterview(locale, "companyPublic.interviews.employmentTypePartTime")
+                  : employmentType === "contract"
+                    ? tInterview(
+                        locale,
+                        "companyPublic.interviews.employmentTypeContract",
+                      )
+                    : employmentType === "internship"
+                      ? tInterview(
+                          locale,
+                          "companyPublic.interviews.employmentTypeInternship",
+                        )
+                      : tInterview(
+                          locale,
+                          "companyPublic.interviews.employmentTypeFallback",
+                        );
+
+            const interviewContext = extractInterviewContextFromDescription(
+              interview.description,
+            );
+
             const workModeLabel =
               workMode === "remote"
                 ? tInterview(locale, "companyPublic.interviews.workModeRemote")
@@ -174,6 +211,20 @@ export default function CompanyInterviewsSection({
                   <h3 className="text-[1.05rem] font-semibold leading-[1.35] tracking-[-0.015em] text-[var(--c-text)] transition-colors duration-200 group-hover:text-[var(--c-brand)]">
                     {interview.title}
                   </h3>
+
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    <span className="inline-flex items-center rounded-full bg-[var(--c-bg)] px-2.5 py-1 text-[10px] font-medium tracking-[0.02em] text-[var(--c-text)]/70 ring-1 ring-[var(--c-border)]/70">
+                      {tInterview(locale, "companyPublic.interviews.employmentTypeLabel")}: {employmentTypeLabel}
+                    </span>
+                    {interviewContext ? (
+                      <span
+                        className="inline-flex max-w-full items-center truncate rounded-full bg-[var(--c-bg)] px-2.5 py-1 text-[10px] font-medium tracking-[0.02em] text-[var(--c-text)]/70 ring-1 ring-[var(--c-border)]/70"
+                        title={interviewContext}
+                      >
+                        {tInterview(locale, "companyPublic.interviews.contextLabel")}: {interviewContext}
+                      </span>
+                    ) : null}
+                  </div>
 
                   {cleanDescription ? (
                     <p className="line-clamp-2 text-[0.815rem] leading-relaxed text-[var(--c-text)]/60">

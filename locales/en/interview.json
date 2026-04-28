@@ -93,7 +93,14 @@
       "workModeRemote": "Remote",
       "workModeHybrid": "Hybrid",
       "workModeOnsite": "Onsite",
-      "workModeFallback": "Interview"
+      "workModeFallback": "Interview",
+      "employmentTypeLabel": "Employment",
+      "employmentTypeFullTime": "Full-time",
+      "employmentTypePartTime": "Part-time",
+      "employmentTypeContract": "Contract",
+      "employmentTypeInternship": "Internship",
+      "employmentTypeFallback": "Not defined",
+      "contextLabel": "Context"
     },
     "howItWorks": {
       "ariaLabel": "How the process works",
