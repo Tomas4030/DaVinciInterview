@@ -81,6 +81,7 @@ export default async function AdminCompanyInterviewEditPage({ params }: Props) {
           }
           initialStatus={interview.status}
           initialQuestionsText={questionsToText(interview.questions)}
+          companyPlan={membership.company.plan}
           locale={params.locale}
         />
       </div>

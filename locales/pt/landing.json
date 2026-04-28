@@ -137,7 +137,7 @@
     "description": "Começa com um plano base e evolui sem migrações complexas. Cancela quando quiseres.",
     "monthly": "Mensal",
     "yearly": "Anual",
-    "custom": "Personalizado",
+    "custom": "Grátis",
     "year": "/ano",
     "month": "/mês",
     "save": "Poupa {{percent}}%",
@@ -150,15 +150,15 @@
     "plans": {
       "basic": {
         "description": "Para equipas pequenas que querem acelerar triagem inicial.",
-        "features": ["1 empresa", "Até 5 entrevistas ativas", "Dashboard base", "Suporte por email"]
+        "features": ["1 empresa", "Até 5 entrevistas ativas", "Perguntas ilimitadas", "Dashboard base", "Suporte por email"]
+      },
+      "free": {
+        "description": "Ideal para testar a plataforma com limites de uso.",
+        "features": ["1 empresa", "Até 1 entrevista ativa", "Até 5 perguntas por entrevista", "Sem geração de perguntas por IA", "Sem exportação PDF"]
       },
       "pro": {
         "description": "Escala com mais volume e mais controlo operacional.",
-        "features": ["Até 3 empresas", "Entrevistas ilimitadas", "Insights de desempenho", "Prioridade no suporte"]
-      },
-      "enterprise": {
-        "description": "Para equipas com requisitos avançados de segurança e escala.",
-        "features": ["Multi-empresa avançado", "SLA dedicado", "Apoio técnico e onboarding", "Integrações customizadas"]
+        "features": ["Até 3 empresas", "Entrevistas ativas ilimitadas", "Perguntas ilimitadas", "Insights de desempenho", "Prioridade no suporte"]
       }
     }
   },

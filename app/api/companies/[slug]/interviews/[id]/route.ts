@@ -88,6 +88,7 @@ export async function PUT(
     const statusRaw = String(body?.status || "draft").trim().toLowerCase();
     const questionsText = String(body?.questionsText || "");
     const questionsArray = normalizeQuestionsFromArray(body?.questions);
+    const maxQuestionsByPlan = membership.company.plan === "free" ? 5 : 20;
 
     if (!title) {
       return NextResponse.json({ error: "Título é obrigatório" }, { status: 400 });
@@ -95,6 +96,12 @@ export async function PUT(
 
     const status =
       statusRaw === "published" || statusRaw === "archived" ? statusRaw : "draft";
+
+    const normalizedQuestions = (
+      questionsArray.length > 0
+        ? questionsArray
+        : normalizeQuestionsFromText(questionsText)
+    ).slice(0, maxQuestionsByPlan);
 
     const interview = await updateInterviewForCompany(params.id, membership.company.id, {
       title,
@@ -105,10 +112,7 @@ export async function PUT(
       ),
       workMode,
       status,
-      questions:
-        questionsArray.length > 0
-          ? questionsArray
-          : normalizeQuestionsFromText(questionsText),
+      questions: normalizedQuestions,
     });
 
     if (!interview) {

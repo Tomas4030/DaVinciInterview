@@ -42,7 +42,7 @@ export default function PricingSection({
     return PRICING_PLANS.map((plan) => {
       const translatedPlan = plansTranslations[plan.id];
 
-      if (!plan.monthlyPriceEur) {
+      if (plan.monthlyPriceEur === undefined) {
         return {
           ...plan,
           displayPrice: translatedPlan ? customPrice : plan.priceLabel || customPrice,
@@ -151,7 +151,7 @@ export default function PricingSection({
             <article
               key={plan.id}
               className={[
-                "relative rounded-2xl border p-6 bg-[var(--c-surface)] transition-all duration-300 hover:-translate-y-1",
+                "relative flex h-full flex-col rounded-2xl border bg-[var(--c-surface)] p-6 transition-all duration-300 hover:-translate-y-1",
                 plan.highlighted
                   ? "border-[var(--c-brand)]/40 shadow-[0_8px_32px_rgba(67,85,232,0.15)]"
                   : "border-[var(--c-border)]/70 hover:shadow-[0_12px_32px_rgba(0,0,0,0.06)]",
@@ -192,7 +192,7 @@ export default function PricingSection({
 
               <div className="my-5 h-px bg-[var(--c-border)]/50" />
 
-              <ul className="mb-6 space-y-2.5">
+              <ul className="mb-6 flex-1 space-y-2.5">
                 {plan.features.map((feature) => (
                   <li
                     key={feature}
@@ -216,9 +216,9 @@ export default function PricingSection({
               </ul>
 
               <Link
-                href={withLocale(compact ? "/pricing" : "/signup", locale)}
+                href={withLocale(compact ? "/pricing" : "/plans", locale)}
                 className={[
-                  "block w-full rounded-xl px-4 py-2.5 text-center text-[0.82rem] font-semibold transition-all",
+                  "mt-auto block w-full rounded-xl px-4 py-2.5 text-center text-[0.82rem] font-semibold transition-all",
                   plan.highlighted
                     ? "bg-[var(--c-brand)] text-white shadow-[0_2px_8px_rgba(67,85,232,0.25)] hover:bg-[var(--c-brand-dark)] hover:shadow-[0_4px_16px_rgba(67,85,232,0.3)]"
                     : "border border-[var(--c-border)] text-[var(--c-text)]/80 hover:border-[var(--c-brand)]/30 hover:text-[var(--c-brand)]",

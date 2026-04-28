@@ -8,6 +8,7 @@ import {
   normalizeInterviewWorkMode,
   type InterviewWorkMode,
 } from "@/lib/interview-meta";
+import type { CompanyPlan } from "@/lib/queries/companies";
 
 type Mode = "create" | "edit";
 
@@ -21,6 +22,7 @@ type Props = {
   initialWorkMode?: InterviewWorkMode;
   initialStatus?: "draft" | "published" | "archived";
   initialQuestionsText?: string;
+  companyPlan?: CompanyPlan;
   locale?: string;
 };
 
@@ -38,9 +40,9 @@ function parseQuestionsText(value: string): string[] {
     .filter(Boolean);
 }
 
-function clampQuestionCount(value: number): number {
+function clampQuestionCount(value: number, max: number): number {
   if (!Number.isFinite(value)) return 1;
-  return Math.max(1, Math.min(20, Math.floor(value)));
+  return Math.max(1, Math.min(max, Math.floor(value)));
 }
 
 export default function AdminInterviewForm({
@@ -53,8 +55,10 @@ export default function AdminInterviewForm({
   initialWorkMode = "unspecified",
   initialStatus = "draft",
   initialQuestionsText = "",
+  companyPlan = "basic",
   locale = "en",
 }: Props) {
+  const maxQuestionsByPlan = companyPlan === "free" ? 5 : 20;
   const router = useRouter();
   const initialQuestions = parseQuestionsText(initialQuestionsText);
   const [title, setTitle] = useState(initialTitle);
@@ -75,7 +79,7 @@ export default function AdminInterviewForm({
   >(null);
   const [desiredQuestionCount, setDesiredQuestionCount] = useState<number>(
     initialQuestions.length > 0
-      ? clampQuestionCount(initialQuestions.length)
+      ? clampQuestionCount(initialQuestions.length, maxQuestionsByPlan)
       : 5,
   );
   const [loading, setLoading] = useState(false);
@@ -181,33 +185,53 @@ export default function AdminInterviewForm({
     setDragOverQuestionIndex(null);
   }
 
-  async function generateQuestionsWithAIPlaceholder() {
+  async function generateQuestionsWithAI() {
     setGenerating(true);
     setError("");
 
-    const count = clampQuestionCount(desiredQuestionCount);
-    const role = title.trim() || tAdmin(locale, "interviewForm.aiFallbackRole");
+    const count = clampQuestionCount(desiredQuestionCount, maxQuestionsByPlan);
+    if (!title.trim()) {
+      setError(tAdmin(locale, "interviewForm.aiTitleRequired"));
+      setGenerating(false);
+      return;
+    }
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 900));
-
-      const templates = [
-        tAdmin(locale, "interviewForm.aiTemplate1", { role }),
-        tAdmin(locale, "interviewForm.aiTemplate2"),
-        tAdmin(locale, "interviewForm.aiTemplate3"),
-        tAdmin(locale, "interviewForm.aiTemplate4", { role }),
-        tAdmin(locale, "interviewForm.aiTemplate5"),
-        tAdmin(locale, "interviewForm.aiTemplate6"),
-        tAdmin(locale, "interviewForm.aiTemplate7"),
-        tAdmin(locale, "interviewForm.aiTemplate8"),
-      ];
-
-      const generated = Array.from({ length: count }).map((_, index) => {
-        const template = templates[index % templates.length];
-        return template;
+      const response = await fetch(withBasePath("/api/ai/generate-questions"), {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          companySlug: slug,
+          jobTitle: title,
+          jobDescription: description,
+          interviewContext,
+          questionCount: count,
+        }),
       });
 
-      setQuestions(generated);
+      const data = await response.json();
+      if (!response.ok) {
+        setError(data?.error || tAdmin(locale, "interviewForm.aiGenerateError"));
+        return;
+      }
+
+      const nextQuestions = Array.isArray(data?.questions)
+        ? data.questions
+            .map((item: any) => String(item?.question || "").trim())
+            .filter(Boolean)
+        : [];
+
+      if (nextQuestions.length === 0) {
+        setError(tAdmin(locale, "interviewForm.aiGenerateEmpty"));
+        return;
+      }
+
+      setQuestions(nextQuestions.slice(0, count));
+    } catch (requestError) {
+      console.error("Erro ao gerar perguntas com IA:", requestError);
+      setError(tAdmin(locale, "interviewForm.aiGenerateError"));
     } finally {
       setGenerating(false);
     }
@@ -331,11 +355,11 @@ export default function AdminInterviewForm({
             id="desired-questions"
             type="number"
             min={1}
-            max={20}
+            max={maxQuestionsByPlan}
             value={desiredQuestionCount}
             onChange={(event) =>
               setDesiredQuestionCount(
-                clampQuestionCount(Number(event.target.value || 1)),
+                clampQuestionCount(Number(event.target.value || 1), maxQuestionsByPlan),
               )
             }
             className="input-base w-32 border-[var(--c-border)] bg-[var(--c-bg)]"
@@ -343,7 +367,7 @@ export default function AdminInterviewForm({
 
           <button
             type="button"
-            onClick={generateQuestionsWithAIPlaceholder}
+            onClick={generateQuestionsWithAI}
             disabled={generating}
             className="rounded-md border border-[var(--c-brand)]/20 bg-[var(--c-brand-soft)] px-4 py-2 text-xs font-semibold uppercase tracking-[0.05em] text-[var(--c-brand-dark)] transition-colors hover:brightness-[0.98] disabled:opacity-60"
           >

@@ -56,6 +56,7 @@ export async function POST(
     const statusRaw = String(body?.status || "draft").trim().toLowerCase();
     const questionsText = String(body?.questionsText || "");
     const questionsArray = normalizeQuestionsFromArray(body?.questions);
+    const maxQuestionsByPlan = membership.company.plan === "free" ? 5 : 20;
 
     if (!title) {
       return NextResponse.json({ error: "Título é obrigatório" }, { status: 400 });
@@ -63,6 +64,12 @@ export async function POST(
 
     const status =
       statusRaw === "published" || statusRaw === "archived" ? statusRaw : "draft";
+
+    const normalizedQuestions = (
+      questionsArray.length > 0
+        ? questionsArray
+        : normalizeQuestionsFromText(questionsText)
+    ).slice(0, maxQuestionsByPlan);
 
     const interview = await createInterviewForCompany(membership.company.id, {
       title,
@@ -73,10 +80,7 @@ export async function POST(
       ),
       workMode,
       status,
-      questions:
-        questionsArray.length > 0
-          ? questionsArray
-          : normalizeQuestionsFromText(questionsText),
+      questions: normalizedQuestions,
     });
 
     return NextResponse.json({ success: true, interview }, { status: 201 });

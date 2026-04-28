@@ -10,6 +10,7 @@ import {
   createCompanyWithOwner,
   isSlugAvailable,
   listUserCompanies,
+  type CompanyPlan,
 } from "@/lib/queries/companies";
 import { ensureUserByEmail } from "@/lib/queries/users";
 import { slugify } from "@/lib/slug";
@@ -52,6 +53,11 @@ export async function POST(request: NextRequest) {
     const slugInput = String(body?.slug || "").trim();
     const description = String(body?.description || "").trim() || null;
     const logoUrl = String(body?.logoUrl || "").trim() || null;
+    const rawPlan = String(body?.plan || "basic").trim().toLowerCase();
+    const plan: CompanyPlan =
+      rawPlan === "free" || rawPlan === "basic" || rawPlan === "pro" || rawPlan === "enterprise"
+        ? (rawPlan as CompanyPlan)
+        : "basic";
 
     if (!name) {
       return NextResponse.json(
@@ -82,6 +88,7 @@ export async function POST(request: NextRequest) {
       slug,
       description,
       logoUrl,
+      plan,
     });
 
     const response = NextResponse.json({

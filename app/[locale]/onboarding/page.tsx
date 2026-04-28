@@ -11,9 +11,10 @@ export const dynamic = "force-dynamic";
 
 type Props = {
   params: { locale: string };
+  searchParams?: { plan?: string };
 };
 
-export default async function OnboardingPage({ params }: Props) {
+export default async function OnboardingPage({ params, searchParams }: Props) {
   const cookieStore = cookies();
   const token = cookieStore.get(ADMIN_SESSION_COOKIE)?.value;
   const session = parseAdminToken(token);
@@ -27,6 +28,15 @@ export default async function OnboardingPage({ params }: Props) {
     redirect(`/${params.locale}/admin/${company.slug}/dashboard`);
   }
 
+  const requestedPlan = String(searchParams?.plan || "basic").trim().toLowerCase();
+  const initialPlan =
+    requestedPlan === "free" ||
+    requestedPlan === "basic" ||
+    requestedPlan === "pro" ||
+    requestedPlan === "enterprise"
+      ? (requestedPlan as "free" | "basic" | "pro" | "enterprise")
+      : "basic";
+
   return (
     <main className="relative flex min-h-screen items-center justify-center bg-[var(--c-bg)] px-4 py-10">
       <GridBackgroundPattern />
@@ -39,7 +49,7 @@ export default async function OnboardingPage({ params }: Props) {
           </p>
         </div>
 
-        <OnboardingCompanyForm />
+        <OnboardingCompanyForm initialPlan={initialPlan} />
       </div>
     </main>
   );

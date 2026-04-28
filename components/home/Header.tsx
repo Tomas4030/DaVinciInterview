@@ -95,7 +95,7 @@ export default async function Header({ locale = "en" }: HeaderProps) {
                 {login}
               </Link>
               <Link
-                href={withLocale("/signup", locale)}
+                href={withLocale("/plans", locale)}
                 className="rounded-lg bg-[var(--c-brand)] px-4 py-2 text-[0.78rem] font-semibold text-white shadow-[0_1px_3px_rgba(67,85,232,0.2)] transition-all hover:bg-[var(--c-brand-dark)] hover:shadow-[0_2px_8px_rgba(67,85,232,0.3)] active:scale-[0.97]"
               >
                 {startFree}

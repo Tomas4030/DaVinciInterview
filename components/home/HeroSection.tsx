@@ -89,7 +89,7 @@ export default function HeroSection({ locale = "en" }: HeroSectionProps) {
             style={{ animationDelay: "200ms" }}
           >
             <Link
-              href={withLocale("/signup", locale)}
+              href={withLocale("/plans", locale)}
               className="inline-flex items-center gap-2 rounded-xl bg-[var(--c-brand)] px-6 py-3 text-[0.85rem] font-semibold text-white
                          shadow-[0_2px_4px_rgba(67,85,232,0.15),0_6px_24px_rgba(67,85,232,0.2)]
                          transition-all duration-200 hover:-translate-y-[2px] hover:shadow-[0_4px_8px_rgba(67,85,232,0.15),0_12px_36px_rgba(67,85,232,0.28)]

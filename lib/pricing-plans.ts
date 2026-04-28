@@ -1,5 +1,5 @@
 export type PricingPlan = {
-  id: "basic" | "pro" | "enterprise";
+  id: "free" | "basic" | "pro";
   name: string;
   monthlyPriceEur?: number;
   priceLabel?: string;
@@ -10,6 +10,19 @@ export type PricingPlan = {
 
 export const PRICING_PLANS: PricingPlan[] = [
   {
+    id: "free",
+    name: "Free",
+    monthlyPriceEur: 0,
+    description: "Ideal para testar a plataforma com limites de uso.",
+    features: [
+      "1 empresa",
+      "Ate 1 entrevista ativa",
+      "Ate 5 perguntas por entrevista",
+      "Sem geracao de perguntas por IA",
+      "Sem exportacao PDF",
+    ],
+  },
+  {
     id: "basic",
     name: "Basic",
     monthlyPriceEur: 49,
@@ -17,6 +30,7 @@ export const PRICING_PLANS: PricingPlan[] = [
     features: [
       "1 empresa",
       "Ate 5 entrevistas ativas",
+      "Perguntas ilimitadas",
       "Dashboard base",
       "Suporte por email",
     ],
@@ -28,22 +42,11 @@ export const PRICING_PLANS: PricingPlan[] = [
     description: "Escala com mais volume e mais controlo operacional.",
     features: [
       "Ate 3 empresas",
-      "Entrevistas ilimitadas",
+      "Entrevistas ativas ilimitadas",
+      "Perguntas ilimitadas",
       "Insights de desempenho",
       "Prioridade no suporte",
     ],
     highlighted: true,
-  },
-  {
-    id: "enterprise",
-    name: "Enterprise",
-    priceLabel: "Personalizado",
-    description: "Para equipas com requisitos avancados de seguranca e escala.",
-    features: [
-      "Multi-empresa avancado",
-      "SLA dedicado",
-      "Apoio tecnico e onboarding",
-      "Integracoes customizadas",
-    ],
   },
 ];

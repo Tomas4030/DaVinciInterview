@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
     const company = await resolveDefaultCompanyForUser(user.id, user.email);
     const redirectTo = company
       ? `/admin/${company.slug}/dashboard`
-      : "/onboarding";
+      : "/plans";
 
     const response = NextResponse.json({
       success: true,

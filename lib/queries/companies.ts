@@ -8,7 +8,7 @@ export type CompanySubscriptionStatus =
   | "past_due"
   | "canceled";
 
-export type CompanyPlan = "basic" | "pro" | "enterprise";
+export type CompanyPlan = "free" | "basic" | "pro" | "enterprise";
 
 export type CompanyRole = "owner" | "admin" | "viewer";
 
@@ -56,6 +56,12 @@ type UpdateCompanyProfileInput = {
   name: string;
   description?: string | null;
   logoUrl?: string | null;
+};
+
+type UpdateCompanyBillingInput = {
+  stripeCustomerId?: string | null;
+  subscriptionStatus?: CompanySubscriptionStatus;
+  plan?: CompanyPlan;
 };
 
 export async function isSlugAvailable(slug: string): Promise<boolean> {
@@ -521,4 +527,48 @@ export async function deleteCompanyMember(
   );
 
   return true;
+}
+
+export async function updateCompanyBillingById(
+  companyId: string,
+  input: UpdateCompanyBillingInput,
+): Promise<CompanyRecord | null> {
+  const normalizedCompanyId = String(companyId || "").trim();
+  if (!normalizedCompanyId) return null;
+
+  const current = await getCompanyById(normalizedCompanyId);
+  if (!current) return null;
+
+  const subscriptionStatus =
+    input.subscriptionStatus ?? current.subscription_status ?? "trialing";
+  const plan = input.plan ?? current.plan ?? "basic";
+  const stripeCustomerId =
+    input.stripeCustomerId === undefined
+      ? current.stripe_customer_id
+      : input.stripeCustomerId;
+
+  await query(
+    `
+    UPDATE companies
+    SET stripe_customer_id = ?, subscription_status = ?, plan = ?
+    WHERE id = ?
+    `,
+    [stripeCustomerId, subscriptionStatus, plan, normalizedCompanyId],
+  );
+
+  return await getCompanyById(normalizedCompanyId);
+}
+
+export async function getCompanyByStripeCustomerId(
+  stripeCustomerId: string,
+): Promise<CompanyRecord | null> {
+  const normalizedCustomerId = String(stripeCustomerId || "").trim();
+  if (!normalizedCustomerId) return null;
+
+  const [rows] = await query<CompanyRecord>(
+    `SELECT * FROM companies WHERE stripe_customer_id = ? LIMIT 1`,
+    [normalizedCustomerId],
+  );
+
+  return rows[0] || null;
 }

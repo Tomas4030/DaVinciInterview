@@ -137,7 +137,7 @@
     "description": "Start with a base plan and scale without complex migrations. Cancel anytime.",
     "monthly": "Monthly",
     "yearly": "Yearly",
-    "custom": "Custom",
+    "custom": "Free",
     "year": "/year",
     "month": "/month",
     "save": "Save {{percent}}%",
@@ -150,15 +150,15 @@
     "plans": {
       "basic": {
         "description": "For small teams that want faster early screening.",
-        "features": ["1 company", "Up to 5 active interviews", "Base dashboard", "Email support"]
+        "features": ["1 company", "Up to 5 active interviews", "Unlimited questions", "Base dashboard", "Email support"]
+      },
+      "free": {
+        "description": "Ideal to test the platform with usage limits.",
+        "features": ["1 company", "Up to 1 active interview", "Up to 5 questions per interview", "No AI question generation", "No PDF export"]
       },
       "pro": {
         "description": "Scale with more volume and more operational control.",
-        "features": ["Up to 3 companies", "Unlimited interviews", "Performance insights", "Priority support"]
-      },
-      "enterprise": {
-        "description": "For teams with advanced security and scale requirements.",
-        "features": ["Advanced multi-company", "Dedicated SLA", "Technical support and onboarding", "Custom integrations"]
+        "features": ["Up to 3 companies", "Unlimited active interviews", "Unlimited questions", "Performance insights", "Priority support"]
       }
     }
   },

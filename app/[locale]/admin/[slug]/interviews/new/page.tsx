@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
+import { notFound } from "next/navigation";
 import { AdminInterviewForm } from "@/components/admin";
+import { ADMIN_SESSION_COOKIE, parseAdminToken } from "@/lib/admin-auth";
 import { tAdmin } from "@/lib/i18n/admin";
+import { getCompanyMembershipBySlug } from "@/lib/queries/companies";
 
 export const dynamic = "force-dynamic";
 
@@ -14,7 +18,15 @@ export function generateMetadata({ params }: Props): Metadata {
   };
 }
 
-export default function AdminCompanyInterviewNewPage({ params }: Props) {
+export default async function AdminCompanyInterviewNewPage({ params }: Props) {
+  const cookieStore = cookies();
+  const token = cookieStore.get(ADMIN_SESSION_COOKIE)?.value;
+  const session = parseAdminToken(token);
+  if (!session) notFound();
+
+  const membership = await getCompanyMembershipBySlug(session.userId, params.slug);
+  if (!membership) notFound();
+
   return (
     <section className="space-y-5">
       <header>
@@ -27,7 +39,12 @@ export default function AdminCompanyInterviewNewPage({ params }: Props) {
       </header>
 
       <div className="rounded-xl border border-[var(--c-border)]/70 bg-[var(--c-surface)] p-5">
-        <AdminInterviewForm slug={params.slug} mode="create" locale={params.locale} />
+        <AdminInterviewForm
+          slug={params.slug}
+          mode="create"
+          locale={params.locale}
+          companyPlan={membership.company.plan}
+        />
       </div>
     </section>
   );

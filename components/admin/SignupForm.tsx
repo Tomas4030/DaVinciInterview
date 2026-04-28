@@ -50,7 +50,7 @@ export default function SignupForm({ locale = "en" }: SignupFormProps) {
         return;
       }
 
-      router.push(data.redirectTo || withLocale("/onboarding", locale));
+      router.push(data.redirectTo || withLocale("/plans", locale));
       router.refresh();
     } catch (error) {
       setErro(tAuth(locale, "signupForm.networkError"));

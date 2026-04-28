@@ -16,7 +16,13 @@ function slugify(value: string): string {
     .slice(0, 120);
 }
 
-export default function OnboardingCompanyForm() {
+type OnboardingCompanyFormProps = {
+  initialPlan?: "free" | "basic" | "pro" | "enterprise";
+};
+
+export default function OnboardingCompanyForm({
+  initialPlan = "basic",
+}: OnboardingCompanyFormProps) {
   const router = useRouter();
   const pathname = usePathname();
 
@@ -132,6 +138,7 @@ export default function OnboardingCompanyForm() {
           slug: effectiveSlug,
           description,
           logoUrl: normalizedLogoUrl,
+          plan: initialPlan,
         }),
       });
 
