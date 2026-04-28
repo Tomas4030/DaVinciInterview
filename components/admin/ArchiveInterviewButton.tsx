@@ -9,49 +9,31 @@ import { tAdmin } from "@/lib/i18n/admin";
 type Props = {
   slug: string;
   interviewId: string;
+  currentStatus?: string;
   locale?: string;
 };
 
-function TrashIcon() {
+function ArchiveIcon() {
   return (
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden>
-      <path
-        d="M3 6h18"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-      />
-      <path
-        d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-      />
-      <path
-        d="M19 6l-1 14a1 1 0 0 1-1 .93H7a1 1 0 0 1-1-.93L5 6"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-      />
-      <path
-        d="M10 11v6M14 11v6"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-      />
+      <rect x="3" y="4" width="18" height="5" rx="1" stroke="currentColor" strokeWidth="2" />
+      <path d="M5 9v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V9" stroke="currentColor" strokeWidth="2" />
+      <path d="M10 13h4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
     </svg>
   );
 }
 
-export default function DeleteInterviewButton({
+export default function ArchiveInterviewButton({
   slug,
   interviewId,
+  currentStatus = "draft",
   locale = "en",
 }: Props) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const isArchived = currentStatus === "archived";
 
   useEffect(() => {
     setMounted(true);
@@ -70,27 +52,38 @@ export default function DeleteInterviewButton({
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [showConfirmModal, loading]);
 
-  async function handleConfirmDelete() {
+  async function handleArchive() {
     setLoading(true);
-
     try {
-      const response = await fetch(
-        withBasePath(`/api/companies/${slug}/interviews/${interviewId}`),
-        {
-          method: "DELETE",
-        },
-      );
-
+      const response = await fetch(withBasePath(`/api/companies/${slug}/interviews/${interviewId}`), {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: isArchived ? "draft" : "archived" }),
+      });
       const data = await response.json().catch(() => ({}));
       if (!response.ok) {
-        window.alert(data?.error || tAdmin(locale, "deleteInterview.defaultError"));
+        window.alert(
+          data?.error ||
+            tAdmin(
+              locale,
+              isArchived
+                ? "interviews.listCard.unarchiveError"
+                : "interviews.listCard.archiveError",
+            ),
+        );
         return;
       }
-
       setShowConfirmModal(false);
       router.refresh();
     } catch {
-      window.alert(tAdmin(locale, "deleteInterview.networkError"));
+      window.alert(
+        tAdmin(
+          locale,
+          isArchived
+            ? "interviews.listCard.unarchiveError"
+            : "interviews.listCard.archiveError",
+        ),
+      );
     } finally {
       setLoading(false);
     }
@@ -102,12 +95,22 @@ export default function DeleteInterviewButton({
         type="button"
         onClick={() => setShowConfirmModal(true)}
         disabled={loading}
-        className="inline-flex w-full items-center justify-center gap-1.5 rounded-md border border-red-200 bg-red-50 px-3 py-2.5 text-xs font-semibold uppercase tracking-[0.05em] text-red-700 transition-colors hover:bg-red-100 disabled:opacity-50"
+        className="inline-flex items-center justify-center gap-2 rounded-xl border border-amber-200 bg-amber-50 px-4 py-2.5 text-xs font-bold text-amber-800 transition hover:bg-amber-100 disabled:opacity-50"
       >
-        <TrashIcon />
+        <ArchiveIcon />
         {loading
-          ? tAdmin(locale, "deleteInterview.loading")
-          : tAdmin(locale, "deleteInterview.trigger")}
+          ? tAdmin(
+              locale,
+              isArchived
+                ? "interviews.listCard.unarchiving"
+                : "interviews.listCard.archiving",
+            )
+          : tAdmin(
+              locale,
+              isArchived
+                ? "interviews.listCard.unarchive"
+                : "interviews.listCard.archive",
+            )}
       </button>
 
       {showConfirmModal && mounted
@@ -125,11 +128,18 @@ export default function DeleteInterviewButton({
             onClick={(event) => event.stopPropagation()}
           >
             <h3 className="text-base font-semibold text-[var(--c-text)]">
-              {tAdmin(locale, "deleteInterview.confirmTitle")}
+              {tAdmin(
+                locale,
+                isArchived
+                  ? "archiveInterview.unarchiveConfirmTitle"
+                  : "archiveInterview.confirmTitle",
+              )}
             </h3>
 
             <p className="mt-3 text-sm leading-6 text-[var(--c-muted)]">
-              {tAdmin(locale, "deleteInterview.confirmBody")}
+              {isArchived
+                ? tAdmin(locale, "archiveInterview.unarchiveConfirmBody")
+                : tAdmin(locale, "archiveInterview.confirmBody")}
             </p>
 
             <div className="mt-5 flex items-center justify-end gap-2">
@@ -139,18 +149,28 @@ export default function DeleteInterviewButton({
                 disabled={loading}
                 className="rounded-lg border border-[var(--c-border)] px-4 py-2 text-sm font-medium text-[var(--c-text)] transition-colors hover:bg-[var(--c-bg)] disabled:opacity-50"
               >
-                {tAdmin(locale, "deleteInterview.cancel")}
+                {tAdmin(locale, "archiveInterview.cancel")}
               </button>
 
               <button
                 type="button"
-                onClick={handleConfirmDelete}
+                onClick={handleArchive}
                 disabled={loading}
-                className="rounded-lg border border-red-200 bg-red-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-red-700 disabled:opacity-50"
+                className="rounded-lg border border-amber-200 bg-amber-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-amber-700 disabled:opacity-50"
               >
                 {loading
-                  ? tAdmin(locale, "deleteInterview.loading")
-                  : tAdmin(locale, "deleteInterview.confirm")}
+                  ? tAdmin(
+                      locale,
+                      isArchived
+                        ? "interviews.listCard.unarchiving"
+                        : "interviews.listCard.archiving",
+                    )
+                  : tAdmin(
+                      locale,
+                      isArchived
+                        ? "archiveInterview.unarchiveConfirm"
+                        : "archiveInterview.confirm",
+                    )}
               </button>
             </div>
           </div>
