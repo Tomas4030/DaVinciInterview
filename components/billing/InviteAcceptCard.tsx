@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { withBasePath } from "@/lib/base-path";
+import { tAuth } from "@/lib/i18n/auth";
 
 type Props = {
   locale: string;
@@ -27,7 +28,7 @@ export default function InviteAcceptCard({ locale, token, isAuthenticated }: Pro
       });
       const data = await response.json();
       if (!response.ok) {
-        setError(data?.error || "Nao foi possivel aceitar o convite.");
+        setError(data?.error || tAuth(locale, "invite.acceptError"));
         return;
       }
 
@@ -36,7 +37,7 @@ export default function InviteAcceptCard({ locale, token, isAuthenticated }: Pro
       router.refresh();
     } catch (requestError) {
       console.error(requestError);
-      setError("Erro de rede ao aceitar convite.");
+      setError(tAuth(locale, "invite.networkError"));
     } finally {
       setLoading(false);
     }
@@ -54,9 +55,11 @@ export default function InviteAcceptCard({ locale, token, isAuthenticated }: Pro
         </svg>
       </div>
 
-      <h1 className="text-center text-2xl font-semibold text-[var(--c-text)] sm:text-3xl">Convite para empresa</h1>
+      <h1 className="text-center text-2xl font-semibold text-[var(--c-text)] sm:text-3xl">
+        {tAuth(locale, "invite.title")}
+      </h1>
       <p className="mx-auto mt-2 max-w-xl text-center text-sm leading-relaxed text-[var(--c-muted)] sm:text-[0.95rem]">
-        Foste convidado para entrar numa empresa. Aceita o convite para aceder ao dashboard.
+        {tAuth(locale, "invite.description")}
       </p>
 
       {error ? (
@@ -72,7 +75,7 @@ export default function InviteAcceptCard({ locale, token, isAuthenticated }: Pro
           disabled={loading}
           className="mt-6 inline-flex w-full items-center justify-center rounded-xl bg-[var(--c-brand)] px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-[var(--c-brand-dark)] disabled:opacity-60"
         >
-          {loading ? "A aceitar..." : "Aceitar convite"}
+          {loading ? tAuth(locale, "invite.accepting") : tAuth(locale, "invite.acceptAction")}
         </button>
       ) : (
         <div className="mt-6 grid gap-3 sm:grid-cols-2">
@@ -80,13 +83,13 @@ export default function InviteAcceptCard({ locale, token, isAuthenticated }: Pro
             href={`/${locale}/admin/login?next=${next}`}
             className="inline-flex items-center justify-center rounded-xl bg-[var(--c-brand)] px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-[var(--c-brand-dark)]"
           >
-            Fazer login para aceitar
+            {tAuth(locale, "invite.loginAction")}
           </Link>
           <Link
             href={`/${locale}/signup?next=${next}`}
             className="inline-flex items-center justify-center rounded-xl border border-[var(--c-border)] px-5 py-3 text-sm font-semibold text-[var(--c-text)] transition-colors hover:bg-[var(--c-bg)]"
           >
-            Criar conta
+            {tAuth(locale, "invite.signupAction")}
           </Link>
         </div>
       )}

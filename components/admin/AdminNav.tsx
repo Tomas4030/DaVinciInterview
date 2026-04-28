@@ -29,10 +29,18 @@ export default function AdminNav({
     : `/${locale}/admin`;
 
   const NAV_LINKS = companySlug
-    ? [{ href: `${adminBasePath}/dashboard`, label: tAdmin(locale, "nav.dashboard") }]
+    ? [
+        {
+          href: `${adminBasePath}/dashboard`,
+          label: tAdmin(locale, "nav.dashboard"),
+        },
+      ]
     : [
         { href: adminBasePath, label: tAdmin(locale, "nav.dashboard") },
-        { href: `${adminBasePath}/respostas`, label: tAdmin(locale, "nav.responses") },
+        {
+          href: `${adminBasePath}/respostas`,
+          label: tAdmin(locale, "nav.responses"),
+        },
       ];
 
   const companyInitial = useMemo(() => {
@@ -78,43 +86,20 @@ export default function AdminNav({
               </p>
             </div>
           </Link>
-
-          <span aria-hidden="true" className="h-4 w-px bg-[var(--c-border)]" />
-
-          <div
-            className="flex items-center gap-0.5"
-            aria-label={tAdmin(locale, "nav.navigationLabel")}
-          >
-            {NAV_LINKS.map((link) => {
-              const active = isActive(link.href);
-
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  aria-current={active ? "page" : undefined}
-                  className={[
-                    "rounded-lg px-3 py-1.5 text-[0.8rem] font-medium transition-colors duration-150",
-                    active
-                      ? "bg-[var(--c-bg)] text-[var(--c-text)]"
-                      : "text-[var(--c-muted)] hover:bg-[var(--c-bg)]/60 hover:text-[var(--c-text)]",
-                  ].join(" ")}
-                >
-                  {link.label}
-                </Link>
-              );
-            })}
-          </div>
         </div>
 
         <div className="flex items-center gap-2">
           <LocaleSelect
             locale={locale}
-            ariaLabel={locale === "pt" ? "Selecionar idioma" : "Select language"}
+            ariaLabel={
+              locale === "pt" ? "Selecionar idioma" : "Select language"
+            }
           />
           <AdminAccountMenu
             userEmail={userEmail}
-            publicHref={companySlug ? `/${locale}/${companySlug}` : `/${locale}`}
+            publicHref={
+              companySlug ? `/${locale}/${companySlug}` : `/${locale}`
+            }
             locale={locale}
           />
         </div>
