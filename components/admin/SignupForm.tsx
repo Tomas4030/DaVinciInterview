@@ -8,6 +8,7 @@ import { tAuth } from "@/lib/i18n/auth";
 
 type SignupFormProps = {
   locale?: string;
+  nextPath?: string;
 };
 
 const supportedLocales = new Set(["pt", "en"]);
@@ -20,7 +21,7 @@ function withLocale(path: string, locale: string): string {
   return `/${safeLocale}${path}`;
 }
 
-export default function SignupForm({ locale = "en" }: SignupFormProps) {
+export default function SignupForm({ locale = "en", nextPath = "" }: SignupFormProps) {
   const router = useRouter();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -41,6 +42,7 @@ export default function SignupForm({ locale = "en" }: SignupFormProps) {
           name,
           email,
           password,
+          next: nextPath,
         }),
       });
 

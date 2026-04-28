@@ -7,6 +7,7 @@ import { tAdmin } from "@/lib/i18n/admin";
 
 type Props = {
   slug: string;
+  role?: "owner" | "admin" | "viewer";
   locale?: string;
 };
 
@@ -130,10 +131,17 @@ const ITEMS: Item[] = [
   },
 ];
 
-export default function AdminCompanySidebar({ slug, locale = "en" }: Props) {
+export default function AdminCompanySidebar({
+  slug,
+  role = "viewer",
+  locale = "en",
+}: Props) {
   const pathname = usePathname();
   const base = `/${locale}/admin/${slug}`;
-  const items = ITEMS.map((item) => {
+  const items = ITEMS.filter((item) => {
+    if (item.key === "billing" && role === "viewer") return false;
+    return true;
+  }).map((item) => {
     if (item.key === "interviews") {
       return { ...item, label: tAdmin(locale, "sidebar.interviews") };
     }

@@ -8,6 +8,7 @@ import { tAuth } from "@/lib/i18n/auth";
 
 type LoginFormProps = {
   locale?: string;
+  nextPath?: string;
 };
 
 const supportedLocales = new Set(["pt", "en"]);
@@ -20,7 +21,7 @@ function withLocale(path: string, locale: string): string {
   return `/${safeLocale}${path}`;
 }
 
-export default function LoginForm({ locale = "en" }: LoginFormProps) {
+export default function LoginForm({ locale = "en", nextPath = "" }: LoginFormProps) {
   const router = useRouter();
 
   const [email, setEmail] = useState("");
@@ -37,7 +38,7 @@ export default function LoginForm({ locale = "en" }: LoginFormProps) {
       const response = await fetch(withBasePath("/api/auth/login-admin"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, next: nextPath }),
       });
 
       if (!response.ok) {

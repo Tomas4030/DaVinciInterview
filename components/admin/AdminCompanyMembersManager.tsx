@@ -12,6 +12,14 @@ type CompanyMember = {
   user_name: string | null;
 };
 
+type PendingInvite = {
+  id: string;
+  email: string;
+  role: "admin" | "viewer";
+  token: string;
+  expires_at: string;
+};
+
 type Props = {
   slug: string;
   locale?: string;
@@ -26,6 +34,7 @@ export default function AdminCompanyMembersManager({
   locale = "en",
 }: Props) {
   const [members, setMembers] = useState<CompanyMember[]>([]);
+  const [invites, setInvites] = useState<PendingInvite[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -54,6 +63,14 @@ export default function AdminCompanyMembersManager({
 
       const nextMembers = Array.isArray(data?.members) ? data.members : [];
       setMembers(nextMembers);
+
+      const invitesResponse = await fetch(withBasePath(`/api/companies/${slug}/invites`), {
+        method: "GET",
+      });
+      const invitesData = await invitesResponse.json();
+      if (invitesResponse.ok) {
+        setInvites(Array.isArray(invitesData?.invites) ? invitesData.invites : []);
+      }
     } catch (requestError) {
       console.error("Erro ao carregar membros:", requestError);
       setError(tAdmin(locale, "members.networkError"));
@@ -74,7 +91,7 @@ export default function AdminCompanyMembersManager({
     setAdding(true);
 
     try {
-      const response = await fetch(withBasePath(`/api/companies/${slug}/members`), {
+      const response = await fetch(withBasePath(`/api/companies/${slug}/invites`), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -89,16 +106,41 @@ export default function AdminCompanyMembersManager({
         return;
       }
 
-      const nextMembers = Array.isArray(data?.members) ? data.members : [];
-      setMembers(nextMembers);
+      const nextInvites = Array.isArray(data?.invites) ? data.invites : [];
+      setInvites(nextInvites);
       setNewEmail("");
       setNewRole("viewer");
-      setSuccess(tAdmin(locale, "members.added"));
+      setSuccess(tAdmin(locale, "members.inviteSent"));
     } catch (requestError) {
       console.error("Erro ao adicionar membro:", requestError);
       setError(tAdmin(locale, "members.networkError"));
     } finally {
       setAdding(false);
+    }
+  }
+
+  async function handleRevokeInvite(inviteId: string) {
+    setError("");
+    setSuccess("");
+
+    try {
+      const response = await fetch(withBasePath(`/api/companies/${slug}/invites`), {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ inviteId }),
+      });
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data?.error || tAdmin(locale, "members.defaultError"));
+        return;
+      }
+
+      setInvites(Array.isArray(data?.invites) ? data.invites : []);
+      setSuccess(tAdmin(locale, "members.inviteRevoked"));
+    } catch (requestError) {
+      console.error("Erro ao revogar convite:", requestError);
+      setError(tAdmin(locale, "members.networkError"));
     }
   }
 
@@ -307,6 +349,40 @@ export default function AdminCompanyMembersManager({
           })}
         </ul>
       )}
+
+      <section className="rounded-xl border border-[var(--c-border)]/70 bg-[var(--c-surface)] p-4">
+        <p className="text-sm font-semibold text-[var(--c-text)]">
+          {tAdmin(locale, "members.pendingInvites")}
+        </p>
+
+        {invites.length === 0 ? (
+          <p className="mt-2 text-xs text-[var(--c-muted)]">
+            {tAdmin(locale, "members.noPendingInvites")}
+          </p>
+        ) : (
+          <ul className="mt-3 space-y-2">
+            {invites.map((invite) => (
+              <li
+                key={invite.id}
+                className="flex items-center justify-between rounded-lg border border-[var(--c-border)] px-3 py-2"
+              >
+                <div className="min-w-0">
+                  <p className="truncate text-sm text-[var(--c-text)]">{invite.email}</p>
+                  <p className="text-xs text-[var(--c-muted)]">Role: {invite.role}</p>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => handleRevokeInvite(invite.id)}
+                  className="rounded-md border border-red-200 bg-red-50 px-2 py-1 text-xs font-semibold text-red-700 hover:bg-red-100"
+                >
+                  {tAdmin(locale, "members.revokeInvite")}
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
     </div>
   );
 }
