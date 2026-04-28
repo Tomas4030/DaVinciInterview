@@ -5,8 +5,12 @@ import { AdminInterviewForm } from "@/components/admin";
 import { ADMIN_SESSION_COOKIE, parseAdminToken } from "@/lib/admin-auth";
 import { tAdmin } from "@/lib/i18n/admin";
 import {
+  normalizeInterviewCardTheme,
+  extractInterviewCardEmojiFromDescription,
+  extractInterviewCardThemeFromDescription,
   extractInterviewContextFromDescription,
   extractInterviewEmploymentTypeFromDescription,
+  extractInterviewExperienceLevelFromDescription,
   extractInterviewWorkModeFromDescription,
   normalizeInterviewEmploymentType,
   stripInterviewMetaFromDescription,
@@ -85,6 +89,18 @@ export default async function AdminCompanyInterviewEditPage({ params }: Props) {
           initialWorkMode={
             interview.work_mode ||
             extractInterviewWorkModeFromDescription(interview.description)
+          }
+          initialExperienceLevel={extractInterviewExperienceLevelFromDescription(
+            interview.experience_level || interview.description,
+          )}
+          initialCardEmoji={
+            String(interview.card_emoji || "").trim() ||
+            extractInterviewCardEmojiFromDescription(interview.description)
+          }
+          initialCardTheme={
+            interview.card_theme
+              ? normalizeInterviewCardTheme(interview.card_theme)
+              : extractInterviewCardThemeFromDescription(interview.description)
           }
           initialStatus={interview.status}
           initialQuestionsText={questionsToText(interview.questions)}

@@ -2,7 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { ADMIN_SESSION_COOKIE, parseAdminToken } from "@/lib/admin-auth";
 import {
   buildInterviewDescriptionWithMeta,
+  normalizeInterviewCardTheme,
   normalizeInterviewEmploymentType,
+  normalizeInterviewExperienceLevel,
   normalizeInterviewWorkMode,
 } from "@/lib/interview-meta";
 import { getCompanyMembershipBySlug } from "@/lib/queries/companies";
@@ -88,6 +90,9 @@ export async function PUT(
     const interviewContext = String(body?.interviewContext || "").trim();
     const workMode = normalizeInterviewWorkMode(body?.workMode);
     const employmentType = normalizeInterviewEmploymentType(body?.employmentType);
+    const experienceLevel = normalizeInterviewExperienceLevel(body?.experienceLevel);
+    const cardEmoji = String(body?.cardEmoji || "").trim();
+    const cardTheme = normalizeInterviewCardTheme(body?.cardTheme);
     const statusRaw = String(body?.status || "draft").trim().toLowerCase();
     const questionsText = String(body?.questionsText || "");
     const questionsArray = normalizeQuestionsFromArray(body?.questions);
@@ -144,9 +149,15 @@ export async function PUT(
         workMode,
         employmentType,
         interviewContext,
+        experienceLevel,
+        cardEmoji,
+        cardTheme,
       ),
       workMode,
       employmentType,
+      experienceLevel,
+      cardEmoji,
+      cardTheme,
       status,
       questions: normalizedQuestions,
     });
