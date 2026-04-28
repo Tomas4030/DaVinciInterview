@@ -308,6 +308,12 @@ export default function AdminInterviewForm({
     }
   }
 
+  const sectionCardClass =
+    "rounded-[22px] border border-slate-200 bg-white p-6 shadow-[0_18px_55px_rgba(15,23,42,0.05)]";
+  const fieldLabelClass = "mb-2 block text-xs font-semibold text-slate-500";
+  const emeraldFieldClass =
+    "h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-950 outline-none transition focus:border-emerald-400 focus:ring-4 focus:ring-emerald-100";
+
   return (
     <form onSubmit={handleSubmit} className="space-y-6 pb-0">
       {error ? (
@@ -317,7 +323,7 @@ export default function AdminInterviewForm({
       ) : null}
 
       <div className="grid grid-cols-1 gap-5 xl:grid-cols-2">
-        <section className="rounded-[22px] border border-slate-200 bg-white p-6 shadow-[0_18px_55px_rgba(15,23,42,0.05)]">
+        <section className={sectionCardClass}>
           <div className="mb-6 flex items-center gap-3">
             <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
               📋
@@ -329,10 +335,7 @@ export default function AdminInterviewForm({
 
           <div className="space-y-5">
             <div>
-              <label
-                htmlFor="interview-title"
-                className="mb-2 block text-xs font-semibold text-slate-500"
-              >
+              <label htmlFor="interview-title" className={fieldLabelClass}>
                 {tAdmin(locale, "interviewForm.titleLabel")}
               </label>
               <input
@@ -349,7 +352,7 @@ export default function AdminInterviewForm({
             <div>
               <label
                 htmlFor="interview-description"
-                className="mb-2 block text-xs font-semibold text-slate-500"
+                className={fieldLabelClass}
               >
                 {tAdmin(locale, "interviewForm.descriptionLabel")}
               </label>
@@ -367,7 +370,7 @@ export default function AdminInterviewForm({
           </div>
         </section>
 
-        <section className="rounded-[22px] border border-slate-200 bg-white p-6 shadow-[0_18px_55px_rgba(15,23,42,0.05)]">
+        <section className={sectionCardClass}>
           <div className="mb-6 flex items-center gap-3">
             <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
               💼
@@ -545,7 +548,7 @@ export default function AdminInterviewForm({
         </section>
       </div>
 
-      <section className="rounded-[22px] border border-slate-200 bg-white p-6 shadow-[0_18px_55px_rgba(15,23,42,0.05)]">
+      <section className={sectionCardClass}>
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_1fr] lg:items-center">
           <div>
             <div className="mb-5 flex items-center gap-3">
@@ -614,7 +617,7 @@ export default function AdminInterviewForm({
         </div>
       </section>
 
-      <section className="rounded-[22px] border border-slate-200 bg-white p-6 shadow-[0_18px_55px_rgba(15,23,42,0.05)]">
+      <section className={sectionCardClass}>
         <div className="mb-5 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
