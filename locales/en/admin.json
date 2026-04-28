@@ -22,7 +22,15 @@
       "questionPlural": "{{count}} questions",
       "viewResponses": "View responses",
       "edit": "Edit",
-      "editLegacy": "Edit (legacy)"
+      "editLegacy": "Edit (legacy)",
+      "archive": "Archive",
+      "archiving": "Archiving...",
+      "archiveError": "Could not archive the interview.",
+      "unarchive": "Unarchive",
+      "unarchiving": "Unarchiving...",
+      "unarchiveError": "Could not unarchive the interview.",
+      "experienceDesired": "Experience desired",
+      "experienceNotRequired": "Experience not required"
     },
     "filters": {
       "searchPlaceholder": "Search by title or description",
@@ -195,6 +203,15 @@
     "confirmBody": "By confirming, you will delete this role/interview and all associated responses and AI analyses. This action is permanent.",
     "cancel": "Cancel",
     "confirm": "Confirm and delete"
+  },
+  "archiveInterview": {
+    "confirmTitle": "Confirm archive",
+    "confirmBody": "By confirming, this interview will be archived and no longer public for candidates.",
+    "unarchiveConfirmTitle": "Confirm unarchive",
+    "unarchiveConfirmBody": "By confirming, this interview returns to draft and can be published again.",
+    "cancel": "Cancel",
+    "confirm": "Confirm and archive",
+    "unarchiveConfirm": "Confirm and unarchive"
   },
   "interviewForm": {
     "defaultError": "Could not save the interview",

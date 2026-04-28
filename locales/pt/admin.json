@@ -22,7 +22,15 @@
       "questionPlural": "{{count}} perguntas",
       "viewResponses": "Ver respostas",
       "edit": "Editar",
-      "editLegacy": "Editar (legado)"
+      "editLegacy": "Editar (legado)",
+      "archive": "Arquivar",
+      "archiving": "A arquivar...",
+      "archiveError": "Nao foi possivel arquivar a entrevista.",
+      "unarchive": "Desarquivar",
+      "unarchiving": "A desarquivar...",
+      "unarchiveError": "Nao foi possivel desarquivar a entrevista.",
+      "experienceDesired": "Experiencia desejada",
+      "experienceNotRequired": "Experiencia nao exigida"
     },
     "filters": {
       "searchPlaceholder": "Pesquisar por titulo ou descricao",
@@ -195,6 +203,15 @@
     "confirmBody": "Ao confirmar, vais apagar esta vaga/entrevista e tambem todas as respostas e analises IA associadas. Esta acao e permanente.",
     "cancel": "Cancelar",
     "confirm": "Confirmar e apagar"
+  },
+  "archiveInterview": {
+    "confirmTitle": "Confirmar arquivo",
+    "confirmBody": "Ao confirmar, esta entrevista sera arquivada e deixara de estar publica para candidatos.",
+    "unarchiveConfirmTitle": "Confirmar desarquivo",
+    "unarchiveConfirmBody": "Ao confirmar, esta entrevista volta para rascunho e pode ser publicada novamente.",
+    "cancel": "Cancelar",
+    "confirm": "Confirmar e arquivar",
+    "unarchiveConfirm": "Confirmar e desarquivar"
   },
   "interviewForm": {
     "defaultError": "Nao foi possivel guardar a entrevista",
