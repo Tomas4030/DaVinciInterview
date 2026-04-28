@@ -100,7 +100,9 @@
       "employmentTypeContract": "Contract",
       "employmentTypeInternship": "Internship",
       "employmentTypeFallback": "Not defined",
-      "contextLabel": "Context"
+      "contextLabel": "Context",
+      "experienceDesired": "Experience desired",
+      "experienceNotRequired": "Experience not required"
     },
     "howItWorks": {
       "ariaLabel": "How the process works",
