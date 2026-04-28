@@ -45,9 +45,17 @@ export default function InviteAcceptCard({ locale, token, isAuthenticated }: Pro
   const next = encodeURIComponent(`/${locale}/invite/${token}`);
 
   return (
-    <div className="mx-auto max-w-xl rounded-2xl border border-[var(--c-border)] bg-[var(--c-surface)] p-6">
-      <h1 className="text-2xl font-semibold text-[var(--c-text)]">Convite para empresa</h1>
-      <p className="mt-2 text-sm text-[var(--c-muted)]">
+    <section className="mx-auto w-full rounded-3xl border border-[var(--c-border)]/70 bg-[var(--c-surface)] p-7 shadow-[0_12px_40px_rgba(0,0,0,0.08)] sm:p-9">
+      <div className="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--c-brand)]/10 text-[var(--c-brand)]">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" className="h-6 w-6">
+          <path d="M7 10h10" />
+          <path d="M7 14h6" />
+          <rect x="3" y="4" width="18" height="16" rx="3" />
+        </svg>
+      </div>
+
+      <h1 className="text-center text-2xl font-semibold text-[var(--c-text)] sm:text-3xl">Convite para empresa</h1>
+      <p className="mx-auto mt-2 max-w-xl text-center text-sm leading-relaxed text-[var(--c-muted)] sm:text-[0.95rem]">
         Foste convidado para entrar numa empresa. Aceita o convite para aceder ao dashboard.
       </p>
 
@@ -62,26 +70,26 @@ export default function InviteAcceptCard({ locale, token, isAuthenticated }: Pro
           type="button"
           onClick={acceptInvite}
           disabled={loading}
-          className="mt-5 inline-flex rounded-lg bg-[var(--c-brand)] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[var(--c-brand-dark)] disabled:opacity-60"
+          className="mt-6 inline-flex w-full items-center justify-center rounded-xl bg-[var(--c-brand)] px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-[var(--c-brand-dark)] disabled:opacity-60"
         >
           {loading ? "A aceitar..." : "Aceitar convite"}
         </button>
       ) : (
-        <div className="mt-5 flex flex-wrap gap-3">
+        <div className="mt-6 grid gap-3 sm:grid-cols-2">
           <Link
             href={`/${locale}/admin/login?next=${next}`}
-            className="inline-flex rounded-lg bg-[var(--c-brand)] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[var(--c-brand-dark)]"
+            className="inline-flex items-center justify-center rounded-xl bg-[var(--c-brand)] px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-[var(--c-brand-dark)]"
           >
             Fazer login para aceitar
           </Link>
           <Link
             href={`/${locale}/signup?next=${next}`}
-            className="inline-flex rounded-lg border border-[var(--c-border)] px-5 py-2.5 text-sm font-semibold text-[var(--c-text)] hover:bg-[var(--c-bg)]"
+            className="inline-flex items-center justify-center rounded-xl border border-[var(--c-border)] px-5 py-3 text-sm font-semibold text-[var(--c-text)] transition-colors hover:bg-[var(--c-bg)]"
           >
             Criar conta
           </Link>
         </div>
       )}
-    </div>
+    </section>
   );
 }

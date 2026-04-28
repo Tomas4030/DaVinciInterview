@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ADMIN_SESSION_COOKIE, parseAdminToken } from "@/lib/admin-auth";
+import { sendCompanyInviteEmail } from "@/lib/email";
 import { getCompanyMembershipBySlug } from "@/lib/queries/companies";
 import {
   createCompanyInvite,
@@ -47,6 +48,7 @@ export async function POST(
     const body = await request.json();
     const email = String(body?.email || "").trim().toLowerCase();
     const role = normalizeRole(body?.role);
+    const locale = String(body?.locale || "").trim().toLowerCase() === "en" ? "en" : "pt";
     if (!email) return NextResponse.json({ error: "Email é obrigatório" }, { status: 400 });
 
     const invite = await createCompanyInvite({
@@ -57,7 +59,15 @@ export async function POST(
     });
 
     const appUrl = String(process.env.NEXT_PUBLIC_APP_URL || "").trim() || request.nextUrl.origin;
-    const inviteUrl = `${appUrl}/invite/${invite.token}`;
+    const inviteUrl = `${appUrl}/${locale}/invite/${invite.token}`;
+
+    await sendCompanyInviteEmail({
+      to: email,
+      companyName: membership.company.name,
+      role,
+      inviteUrl,
+      locale,
+    });
 
     const invites = await listPendingInvitesByCompany(membership.company.id);
     return NextResponse.json({ invite, inviteUrl, invites }, { status: 201 });

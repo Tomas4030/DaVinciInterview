@@ -97,6 +97,7 @@ export default function AdminCompanyMembersManager({
         body: JSON.stringify({
           email: newEmail,
           role: newRole,
+          locale,
         }),
       });
       const data = await response.json();
