@@ -5,11 +5,23 @@ export type InterviewEmploymentType =
   | "contract"
   | "internship"
   | "unspecified";
+export type InterviewExperienceLevel = "desired" | "not_required";
+export type InterviewCardTheme =
+  | "sky"
+  | "mint"
+  | "violet"
+  | "amber"
+  | "slate";
 
 const WORK_MODE_MARKER_REGEX = /\[\[work_mode:(remote|hybrid|onsite)\]\]/i;
 const INTERVIEW_CONTEXT_MARKER_REGEX = /\[\[interview_context:([\s\S]*?)\]\]/i;
 const EMPLOYMENT_TYPE_MARKER_REGEX =
   /\[\[employment_type:(full_time|part_time|contract|internship)\]\]/i;
+const EXPERIENCE_LEVEL_MARKER_REGEX =
+  /\[\[experience_level:(desired|not_required)\]\]/i;
+const CARD_EMOJI_MARKER_REGEX = /\[\[card_emoji:([^\]]{1,8})\]\]/i;
+const CARD_THEME_MARKER_REGEX =
+  /\[\[card_theme:(sky|mint|violet|amber|slate)\]\]/i;
 
 export function normalizeInterviewWorkMode(value: unknown): InterviewWorkMode {
   const normalized = String(value || "")
@@ -65,6 +77,9 @@ export function stripInterviewMetaFromDescription(
   return source
     .replace(WORK_MODE_MARKER_REGEX, "")
     .replace(EMPLOYMENT_TYPE_MARKER_REGEX, "")
+    .replace(EXPERIENCE_LEVEL_MARKER_REGEX, "")
+    .replace(CARD_EMOJI_MARKER_REGEX, "")
+    .replace(CARD_THEME_MARKER_REGEX, "")
     .replace(INTERVIEW_CONTEXT_MARKER_REGEX, "")
     .trim();
 }
@@ -87,11 +102,61 @@ export function extractInterviewEmploymentTypeFromDescription(
   return normalizeInterviewEmploymentType(match[1]);
 }
 
+export function normalizeInterviewExperienceLevel(
+  value: unknown,
+): InterviewExperienceLevel {
+  const normalized = String(value || "")
+    .trim()
+    .toLowerCase();
+  return normalized === "desired" ? "desired" : "not_required";
+}
+
+export function extractInterviewExperienceLevelFromDescription(
+  description: string | null | undefined,
+): InterviewExperienceLevel {
+  const source = String(description || "");
+  const match = source.match(EXPERIENCE_LEVEL_MARKER_REGEX);
+  if (!match?.[1]) return "not_required";
+  return normalizeInterviewExperienceLevel(match[1]);
+}
+
+export function normalizeInterviewCardTheme(value: unknown): InterviewCardTheme {
+  const normalized = String(value || "")
+    .trim()
+    .toLowerCase();
+  if (normalized === "sky") return "sky";
+  if (normalized === "mint") return "mint";
+  if (normalized === "violet") return "violet";
+  if (normalized === "amber") return "amber";
+  return "slate";
+}
+
+export function extractInterviewCardThemeFromDescription(
+  description: string | null | undefined,
+): InterviewCardTheme {
+  const source = String(description || "");
+  const match = source.match(CARD_THEME_MARKER_REGEX);
+  if (!match?.[1]) return "slate";
+  return normalizeInterviewCardTheme(match[1]);
+}
+
+export function extractInterviewCardEmojiFromDescription(
+  description: string | null | undefined,
+): string {
+  const source = String(description || "");
+  const match = source.match(CARD_EMOJI_MARKER_REGEX);
+  if (!match?.[1]) return "✨";
+  return String(match[1]).trim() || "✨";
+}
+
 export function buildInterviewDescriptionWithMeta(
   baseDescription: string | null | undefined,
   workMode: InterviewWorkMode,
   employmentType: InterviewEmploymentType,
   interviewContext: string | null | undefined,
+  experienceLevel: InterviewExperienceLevel,
+  cardEmoji: string | null | undefined,
+  cardTheme: InterviewCardTheme,
 ): string | null {
   const cleanBase = stripInterviewMetaFromDescription(baseDescription);
   const parts: string[] = [];
@@ -112,6 +177,15 @@ export function buildInterviewDescriptionWithMeta(
   if (cleanContext) {
     parts.push(`[[interview_context:${cleanContext}]]`);
   }
+
+  parts.push(`[[experience_level:${normalizeInterviewExperienceLevel(experienceLevel)}]]`);
+
+  const cleanEmoji = String(cardEmoji || "").trim();
+  if (cleanEmoji) {
+    parts.push(`[[card_emoji:${cleanEmoji.slice(0, 8)}]]`);
+  }
+
+  parts.push(`[[card_theme:${normalizeInterviewCardTheme(cardTheme)}]]`);
 
   return parts.length > 0 ? parts.join("\n") : null;
 }

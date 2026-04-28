@@ -14,6 +14,9 @@ export interface InterviewRecord {
     | "internship"
     | "unspecified"
     | null;
+  experience_level?: "desired" | "not_required" | null;
+  card_emoji?: string | null;
+  card_theme?: "sky" | "mint" | "violet" | "amber" | "slate" | null;
   title: string;
   description: string | null;
   status: "draft" | "published" | "archived";
@@ -30,6 +33,9 @@ function mapInterview(row: any): InterviewRecord {
     legacy_modalidade: row.legacy_modalidade ?? null,
     work_mode: row.work_mode ?? null,
     employment_type: row.employment_type ?? null,
+    experience_level: row.experience_level ?? null,
+    card_emoji: row.card_emoji ?? null,
+    card_theme: row.card_theme ?? null,
     title: row.title,
     description: row.description ?? null,
     status: row.status,
@@ -201,6 +207,9 @@ type SaveInterviewInput = {
     | "contract"
     | "internship"
     | "unspecified";
+  experienceLevel?: "desired" | "not_required";
+  cardEmoji?: string;
+  cardTheme?: "sky" | "mint" | "violet" | "amber" | "slate";
   status?: "draft" | "published" | "archived";
   questions?: any[];
 };
@@ -213,8 +222,8 @@ export async function createInterviewForCompany(
 
   await query(
     `
-    INSERT INTO interviews (id, company_id, title, description, work_mode, employment_type, status, questions)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO interviews (id, company_id, title, description, work_mode, employment_type, experience_level, card_emoji, card_theme, status, questions)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `,
     [
       interviewId,
@@ -223,6 +232,9 @@ export async function createInterviewForCompany(
       input.description ?? null,
       input.workMode || "unspecified",
       input.employmentType || "unspecified",
+      input.experienceLevel || "not_required",
+      String(input.cardEmoji || "").trim() || null,
+      input.cardTheme || "slate",
       input.status || "draft",
       JSON.stringify(input.questions || []),
     ],
@@ -247,7 +259,7 @@ export async function updateInterviewForCompany(
   await query(
     `
     UPDATE interviews
-    SET title = ?, description = ?, work_mode = ?, employment_type = ?, status = ?, questions = ?
+    SET title = ?, description = ?, work_mode = ?, employment_type = ?, experience_level = ?, card_emoji = ?, card_theme = ?, status = ?, questions = ?
     WHERE id = ? AND company_id = ?
     `,
     [
@@ -255,6 +267,9 @@ export async function updateInterviewForCompany(
       input.description ?? null,
       input.workMode || "unspecified",
       input.employmentType || "unspecified",
+      input.experienceLevel || "not_required",
+      String(input.cardEmoji || "").trim() || null,
+      input.cardTheme || "slate",
       input.status || "draft",
       JSON.stringify(input.questions || []),
       interviewId,
