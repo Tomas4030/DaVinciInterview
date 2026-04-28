@@ -16,7 +16,7 @@ import { resolveDefaultCompanyForUser } from "@/lib/queries/companies";
 
 export async function POST(request: NextRequest) {
   try {
-    const { email, password } = await request.json();
+    const { email, password, next } = await request.json();
 
     if (!email) {
       return NextResponse.json(
@@ -27,6 +27,11 @@ export async function POST(request: NextRequest) {
 
     const normalizedEmail = String(email).trim().toLowerCase();
     const normalizedPassword = String(password || "");
+    const normalizedNext = String(next || "").trim();
+    const safeNext =
+      normalizedNext.startsWith("/") && !normalizedNext.startsWith("//")
+        ? normalizedNext
+        : "";
     const maxAge = getSessionMaxAgeSeconds();
 
     let user = normalizedPassword
@@ -57,9 +62,10 @@ export async function POST(request: NextRequest) {
     }
 
     const token = createAdminToken(user.email, user.id);
-    const redirectTo = company
+    const defaultRedirect = company
       ? `/admin/${company.slug}/dashboard`
       : "/onboarding";
+    const redirectTo = safeNext || defaultRedirect;
 
     const response = NextResponse.json({
       success: true,

@@ -5,6 +5,7 @@ import { AdminCompanySidebar, AdminNav } from "@/components/admin";
 import { ADMIN_SESSION_COOKIE, parseAdminToken } from "@/lib/admin-auth";
 import { tAdmin } from "@/lib/i18n/admin";
 import { getCompanyMembershipBySlug } from "@/lib/queries/companies";
+import { countPublishedInterviewsByCompany } from "@/lib/queries/interviews";
 
 type Props = {
   children: ReactNode;
@@ -40,6 +41,20 @@ export default async function AdminCompanyLayout({ children, params }: Props) {
     notFound();
   }
 
+  const activeInterviews = await countPublishedInterviewsByCompany(
+    membership.company.id,
+  );
+  const roleCanManageBilling =
+    membership.role === "owner" || membership.role === "admin";
+  const plan = membership.company.plan || "free";
+  const hasPlan = plan !== "free";
+  const planName = plan === "basic" ? "Basic" : plan === "pro" ? "Pro" : "Free";
+  const interviewsLimit =
+    plan === "free" ? 1 : plan === "basic" ? 5 : null;
+  const usageLabel = interviewsLimit
+    ? `${activeInterviews}/${interviewsLimit} entrevistas ativas`
+    : `${activeInterviews} entrevistas ativas (ilimitado)`;
+
   return (
     <div className="min-h-screen bg-[var(--c-bg)]">
       <AdminNav
@@ -53,7 +68,11 @@ export default async function AdminCompanyLayout({ children, params }: Props) {
       <div className="mx-auto max-w-[1540px] px-4 py-6 sm:px-6 lg:px-8">
         <div className="grid gap-5 lg:grid-cols-[250px,1fr]">
           <div className="space-y-4">
-            <AdminCompanySidebar slug={membership.company.slug} locale={params.locale} />
+            <AdminCompanySidebar
+              slug={membership.company.slug}
+              locale={params.locale}
+              role={membership.role}
+            />
 
             <section className="rounded-[20px] border border-[var(--c-border)]/70 bg-[var(--c-surface)] p-4">
                 <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--c-muted)]">
@@ -67,6 +86,47 @@ export default async function AdminCompanyLayout({ children, params }: Props) {
               <p className="mt-2 text-sm text-[var(--c-muted)]">
                 {tAdmin(params.locale, "layout.roleLabel")}: {membership.role}
               </p>
+
+              <div className="mt-3 rounded-xl border border-[var(--c-border)]/70 bg-[var(--c-bg)]/50 p-3">
+                <p className="text-xs font-semibold uppercase tracking-[0.08em] text-[var(--c-muted)]">
+                  Plano
+                </p>
+                <p className="mt-1 text-sm font-semibold text-[var(--c-text)]">
+                  {hasPlan ? planName : "Nenhum"}
+                </p>
+                <p className="mt-1 text-xs text-[var(--c-muted)]">{usageLabel}</p>
+                <p className="mt-1 text-xs text-[var(--c-muted)]">
+                  Estado: {hasPlan ? "Ativo" : "Inexistente"}
+                </p>
+
+                {roleCanManageBilling ? (
+                  <div className="mt-3 flex gap-2">
+                    {!hasPlan ? (
+                      <a
+                        href={`/${params.locale}/plans`}
+                        className="inline-flex rounded-lg bg-[var(--c-brand)] px-3 py-2 text-xs font-semibold text-white hover:bg-[var(--c-brand-dark)]"
+                      >
+                        Escolher plano
+                      </a>
+                    ) : (
+                      <>
+                        <a
+                          href={`/${params.locale}/plans`}
+                          className="inline-flex rounded-lg bg-[var(--c-brand)] px-3 py-2 text-xs font-semibold text-white hover:bg-[var(--c-brand-dark)]"
+                        >
+                          Upgrade
+                        </a>
+                        <a
+                          href={`/${params.locale}/admin/${membership.company.slug}/billing`}
+                          className="inline-flex rounded-lg border border-[var(--c-border)] px-3 py-2 text-xs font-semibold text-[var(--c-text)] hover:bg-[var(--c-bg)]"
+                        >
+                          Gerir plano
+                        </a>
+                      </>
+                    )}
+                  </div>
+                ) : null}
+              </div>
             </section>
 
             <section className="rounded-[20px] border border-[#CFE0FF] bg-[#F5F9FF] p-4">

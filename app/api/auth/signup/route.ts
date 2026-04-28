@@ -17,6 +17,8 @@ export async function POST(request: NextRequest) {
     const email = String(body?.email || "").trim().toLowerCase();
     const password = String(body?.password || "");
     const name = String(body?.name || "").trim() || null;
+    const rawNext = String(body?.next || "").trim();
+    const safeNext = rawNext.startsWith("/") && !rawNext.startsWith("//") ? rawNext : "";
 
     if (!email || !password) {
       return NextResponse.json(
@@ -49,9 +51,10 @@ export async function POST(request: NextRequest) {
     const token = createAdminToken(user.email, user.id);
     const maxAge = getSessionMaxAgeSeconds();
     const company = await resolveDefaultCompanyForUser(user.id, user.email);
-    const redirectTo = company
+    const defaultRedirect = company
       ? `/admin/${company.slug}/dashboard`
       : "/plans";
+    const redirectTo = safeNext || defaultRedirect;
 
     const response = NextResponse.json({
       success: true,

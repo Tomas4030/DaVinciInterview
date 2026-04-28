@@ -5,13 +5,14 @@ import { tAuth } from "@/lib/i18n/auth";
 
 type Props = {
   params: { locale: string };
+  searchParams?: { next?: string };
 };
 
 export function generateMetadata({ params }: Props): Metadata {
   return { title: tAuth(params.locale, "signupPage.metaTitle") };
 }
 
-export default function SignupPage({ params }: Props) {
+export default function SignupPage({ params, searchParams }: Props) {
   return (
     <main className="relative min-h-screen flex items-center justify-center px-4 bg-[var(--c-bg)]">
       <GridBackgroundPattern />
@@ -29,7 +30,7 @@ export default function SignupPage({ params }: Props) {
           </p>
         </div>
 
-        <SignupForm locale={params.locale} />
+        <SignupForm locale={params.locale} nextPath={searchParams?.next || ""} />
       </div>
     </main>
   );

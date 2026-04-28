@@ -1,10 +1,14 @@
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
+import { notFound } from "next/navigation";
+import { ADMIN_SESSION_COOKIE, parseAdminToken } from "@/lib/admin-auth";
 import { tAdmin } from "@/lib/i18n/admin";
+import { getCompanyMembershipBySlug } from "@/lib/queries/companies";
 
 export const dynamic = "force-dynamic";
 
 type Props = {
-  params: { locale: string };
+  params: { locale: string; slug: string };
 };
 
 export function generateMetadata({ params }: Props): Metadata {
@@ -13,7 +17,15 @@ export function generateMetadata({ params }: Props): Metadata {
   };
 }
 
-export default function AdminCompanyBillingPage({ params }: Props) {
+export default async function AdminCompanyBillingPage({ params }: Props) {
+  const token = cookies().get(ADMIN_SESSION_COOKIE)?.value;
+  const session = parseAdminToken(token);
+  if (!session) notFound();
+
+  const membership = await getCompanyMembershipBySlug(session.userId, params.slug);
+  if (!membership) notFound();
+  if (membership.role === "viewer") notFound();
+
   return (
     <section className="space-y-5">
       <header>
