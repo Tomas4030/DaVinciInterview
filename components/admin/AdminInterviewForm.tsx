@@ -5,8 +5,12 @@ import { useRouter } from "next/navigation";
 import { withBasePath } from "@/lib/base-path";
 import { tAdmin } from "@/lib/i18n/admin";
 import {
+  normalizeInterviewCardTheme,
   normalizeInterviewEmploymentType,
+  normalizeInterviewExperienceLevel,
   type InterviewEmploymentType,
+  type InterviewCardTheme,
+  type InterviewExperienceLevel,
   normalizeInterviewWorkMode,
   type InterviewWorkMode,
 } from "@/lib/interview-meta";
@@ -23,6 +27,9 @@ type Props = {
   initialInterviewContext?: string;
   initialEmploymentType?: InterviewEmploymentType;
   initialWorkMode?: InterviewWorkMode;
+  initialExperienceLevel?: InterviewExperienceLevel;
+  initialCardEmoji?: string;
+  initialCardTheme?: InterviewCardTheme;
   initialStatus?: "draft" | "published" | "archived";
   initialQuestionsText?: string;
   companyPlan?: CompanyPlan;
@@ -57,6 +64,9 @@ export default function AdminInterviewForm({
   initialInterviewContext = "",
   initialEmploymentType = "unspecified",
   initialWorkMode = "unspecified",
+  initialExperienceLevel = "not_required",
+  initialCardEmoji = "✨",
+  initialCardTheme = "slate",
   initialStatus = "draft",
   initialQuestionsText = "",
   companyPlan = "basic",
@@ -90,6 +100,16 @@ export default function AdminInterviewForm({
   );
   const [workMode, setWorkMode] = useState<"remote" | "hybrid" | "onsite">(
     resolveInitialWorkMode(normalizeInterviewWorkMode(initialWorkMode)),
+  );
+  const [experienceLevel, setExperienceLevel] =
+    useState<InterviewExperienceLevel>(
+      normalizeInterviewExperienceLevel(initialExperienceLevel),
+    );
+  const [cardEmoji, setCardEmoji] = useState(
+    String(initialCardEmoji || "✨").trim() || "✨",
+  );
+  const [cardTheme, setCardTheme] = useState<InterviewCardTheme>(
+    normalizeInterviewCardTheme(initialCardTheme),
   );
   const [status, setStatus] = useState(initialStatus);
   const [questions, setQuestions] = useState<string[]>(
@@ -138,6 +158,9 @@ export default function AdminInterviewForm({
           interviewContext,
           employmentType,
           workMode,
+          experienceLevel,
+          cardEmoji,
+          cardTheme,
           status: statusToSave,
           questions: normalizedQuestions,
           questionsText: normalizedQuestions.join("\n"),
@@ -388,6 +411,68 @@ export default function AdminInterviewForm({
             className="input-base border-[var(--c-border)] bg-[var(--c-bg)]"
             placeholder={tAdmin(locale, "interviewForm.contextPlaceholder")}
           />
+        </div>
+
+        <div>
+          <label
+            htmlFor="interview-experience-level"
+            className="mb-1.5 block text-xs font-medium text-[var(--c-muted)]"
+          >
+            {tAdmin(locale, "interviewForm.experienceLevelLabel")}
+          </label>
+          <select
+            id="interview-experience-level"
+            value={experienceLevel}
+            onChange={(event) =>
+              setExperienceLevel(normalizeInterviewExperienceLevel(event.target.value))
+            }
+            className="input-base border-[var(--c-border)] bg-[var(--c-bg)]"
+          >
+            <option value="desired">
+              {tAdmin(locale, "interviewForm.experienceLevelDesired")}
+            </option>
+            <option value="not_required">
+              {tAdmin(locale, "interviewForm.experienceLevelNotRequired")}
+            </option>
+          </select>
+        </div>
+
+        <div>
+          <label
+            htmlFor="interview-card-emoji"
+            className="mb-1.5 block text-xs font-medium text-[var(--c-muted)]"
+          >
+            {tAdmin(locale, "interviewForm.cardEmojiLabel")}
+          </label>
+          <input
+            id="interview-card-emoji"
+            type="text"
+            value={cardEmoji}
+            onChange={(event) => setCardEmoji(event.target.value.slice(0, 8))}
+            className="input-base border-[var(--c-border)] bg-[var(--c-bg)]"
+            placeholder={tAdmin(locale, "interviewForm.cardEmojiPlaceholder")}
+          />
+        </div>
+
+        <div>
+          <label
+            htmlFor="interview-card-theme"
+            className="mb-1.5 block text-xs font-medium text-[var(--c-muted)]"
+          >
+            {tAdmin(locale, "interviewForm.cardThemeLabel")}
+          </label>
+          <select
+            id="interview-card-theme"
+            value={cardTheme}
+            onChange={(event) => setCardTheme(normalizeInterviewCardTheme(event.target.value))}
+            className="input-base border-[var(--c-border)] bg-[var(--c-bg)]"
+          >
+            <option value="sky">{tAdmin(locale, "interviewForm.cardThemeSky")}</option>
+            <option value="mint">{tAdmin(locale, "interviewForm.cardThemeMint")}</option>
+            <option value="violet">{tAdmin(locale, "interviewForm.cardThemeViolet")}</option>
+            <option value="amber">{tAdmin(locale, "interviewForm.cardThemeAmber")}</option>
+            <option value="slate">{tAdmin(locale, "interviewForm.cardThemeSlate")}</option>
+          </select>
         </div>
 
         <div>
