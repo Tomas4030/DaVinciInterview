@@ -48,12 +48,22 @@ export default async function AdminCompanyLayout({ children, params }: Props) {
     membership.role === "owner" || membership.role === "admin";
   const plan = membership.company.plan || "free";
   const hasPlan = plan !== "free";
-  const planName = plan === "basic" ? "Basic" : plan === "pro" ? "Pro" : "Free";
+  const planName =
+    plan === "basic"
+      ? tAdmin(params.locale, "layout.planBasic")
+      : plan === "pro"
+        ? tAdmin(params.locale, "layout.planPro")
+        : tAdmin(params.locale, "layout.planFree");
   const interviewsLimit =
     plan === "free" ? 1 : plan === "basic" ? 5 : null;
   const usageLabel = interviewsLimit
-    ? `${activeInterviews}/${interviewsLimit} entrevistas ativas`
-    : `${activeInterviews} entrevistas ativas (ilimitado)`;
+    ? tAdmin(params.locale, "layout.activeInterviewsLimited", {
+        active: activeInterviews,
+        limit: interviewsLimit,
+      })
+    : tAdmin(params.locale, "layout.activeInterviewsUnlimited", {
+        active: activeInterviews,
+      });
 
   return (
     <div className="min-h-screen bg-[var(--c-bg)]">
@@ -89,14 +99,16 @@ export default async function AdminCompanyLayout({ children, params }: Props) {
 
               <div className="mt-3 rounded-xl border border-[var(--c-border)]/70 bg-[var(--c-bg)]/50 p-3">
                 <p className="text-xs font-semibold uppercase tracking-[0.08em] text-[var(--c-muted)]">
-                  Plano
+                  {tAdmin(params.locale, "layout.planLabel")}
                 </p>
                 <p className="mt-1 text-sm font-semibold text-[var(--c-text)]">
-                  {hasPlan ? planName : "Nenhum"}
+                  {hasPlan ? planName : tAdmin(params.locale, "layout.planNone")}
                 </p>
                 <p className="mt-1 text-xs text-[var(--c-muted)]">{usageLabel}</p>
                 <p className="mt-1 text-xs text-[var(--c-muted)]">
-                  Estado: {hasPlan ? "Ativo" : "Inexistente"}
+                  {tAdmin(params.locale, "layout.planState")}: {hasPlan
+                    ? tAdmin(params.locale, "layout.planActive")
+                    : tAdmin(params.locale, "layout.planMissing")}
                 </p>
 
                 {roleCanManageBilling ? (
@@ -105,22 +117,22 @@ export default async function AdminCompanyLayout({ children, params }: Props) {
                       <a
                         href={`/${params.locale}/plans`}
                         className="inline-flex rounded-lg bg-[var(--c-brand)] px-3 py-2 text-xs font-semibold text-white hover:bg-[var(--c-brand-dark)]"
-                      >
-                        Escolher plano
-                      </a>
+                        >
+                          {tAdmin(params.locale, "layout.choosePlan")}
+                        </a>
                     ) : (
                       <>
                         <a
                           href={`/${params.locale}/plans`}
                           className="inline-flex rounded-lg bg-[var(--c-brand)] px-3 py-2 text-xs font-semibold text-white hover:bg-[var(--c-brand-dark)]"
                         >
-                          Upgrade
+                          {tAdmin(params.locale, "layout.upgrade")}
                         </a>
                         <a
                           href={`/${params.locale}/admin/${membership.company.slug}/billing`}
                           className="inline-flex rounded-lg border border-[var(--c-border)] px-3 py-2 text-xs font-semibold text-[var(--c-text)] hover:bg-[var(--c-bg)]"
                         >
-                          Gerir plano
+                          {tAdmin(params.locale, "layout.managePlan")}
                         </a>
                       </>
                     )}

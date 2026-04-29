@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import {
   CompanyHowItWorksSection,
@@ -7,8 +8,10 @@ import {
   CompanyPublicHero,
 } from "@/components/company-public";
 import { Footer } from "@/components/home";
+import { ADMIN_SESSION_COOKIE, parseAdminToken } from "@/lib/admin-auth";
 import { tInterview } from "@/lib/i18n/interview";
-import { getCompanyBySlug } from "@/lib/queries/companies";
+import { hasPendingInviteForCompanyAndEmail } from "@/lib/queries/company-invites";
+import { getCompanyBySlug, getCompanyMembershipBySlug } from "@/lib/queries/companies";
 import { listPublishedInterviewsByCompany } from "@/lib/queries/interviews";
 
 type Props = {
@@ -73,11 +76,30 @@ export default async function CompanyPublicPage({ params }: Props) {
     notFound();
   }
 
+  const token = cookies().get(ADMIN_SESSION_COOKIE)?.value;
+  const session = parseAdminToken(token);
+
+  let adminEmailForCompany: string | undefined;
+  if (session) {
+    const [membership, hasPendingInvite] = await Promise.all([
+      getCompanyMembershipBySlug(session.userId, params.slug),
+      hasPendingInviteForCompanyAndEmail(company.id, session.email),
+    ]);
+
+    if (membership || hasPendingInvite) {
+      adminEmailForCompany = session.email;
+    }
+  }
+
   const interviews = await listPublishedInterviewsByCompany(company.id);
 
   return (
     <main className="min-h-screen bg-[var(--c-bg)]">
-      <CompanyPublicHeader company={company} locale={params.locale} />
+      <CompanyPublicHeader
+        company={company}
+        locale={params.locale}
+        adminEmail={adminEmailForCompany}
+      />
       <CompanyPublicHero
         company={company}
         interviewsCount={interviews.length}

@@ -162,20 +162,20 @@ function MetricCard({
 }
 
 function timeAgo(dateValue?: string | Date | null) {
-  if (!dateValue) return "Atualizada recentemente";
+  if (!dateValue) return null;
 
   const date = new Date(dateValue);
   const diff = Date.now() - date.getTime();
 
-  if (!Number.isFinite(diff)) return "Atualizada recentemente";
+  if (!Number.isFinite(diff)) return null;
 
   const days = Math.max(1, Math.floor(diff / (1000 * 60 * 60 * 24)));
 
-  if (days === 1) return "Atualizada há 1 dia";
-  if (days < 7) return `Atualizada há ${days} dias`;
-  if (days < 30) return `Atualizada há ${Math.floor(days / 7)} semana`;
+  if (days === 1) return { unit: "day", value: 1 } as const;
+  if (days < 7) return { unit: "days", value: days } as const;
+  if (days < 30) return { unit: "weeks", value: Math.floor(days / 7) } as const;
 
-  return `Atualizada há ${Math.floor(days / 30)} mês`;
+  return { unit: "months", value: Math.floor(days / 30) } as const;
 }
 
 export function generateMetadata({ params }: Props): Metadata {
@@ -291,32 +291,37 @@ export default async function AdminCompanyDashboardPage({ params }: Props) {
             {membership.company.name}
           </h1>
           <p className="mt-2 text-sm font-medium text-slate-500">
-            Bem-vindo de volta! Veja o resumo da sua atividade.
+            {tAdmin(params.locale, "dashboardPage.welcome")}
           </p>
         </div>
       </header>
 
       <div className="grid gap-5 md:grid-cols-3">
         <MetricCard
-          label="Entrevistas"
+          label={tAdmin(params.locale, "dashboardStats.interviews")}
           value={interviews.length}
-          description={`${interviewsWeek} na semana, ${interviewsMonth} no mês`}
+          description={tAdmin(params.locale, "dashboardStats.period", {
+            week: interviewsWeek,
+            month: interviewsMonth,
+          })}
           icon="chat"
           tone="blue"
         />
 
         <MetricCard
-          label="Publicadas"
+          label={tAdmin(params.locale, "dashboardStats.published")}
           value={totalPublished}
-          description="Total publicadas"
+          description={tAdmin(params.locale, "dashboardStats.totalPublished")}
           icon="send"
           tone="green"
         />
 
         <MetricCard
-          label="Respostas"
+          label={tAdmin(params.locale, "dashboardStats.responses")}
           value={totalResponses}
-          description={`Taxa de conclusão: ${completionRate}%`}
+          description={tAdmin(params.locale, "dashboardStats.completionRate", {
+            rate: completionRate,
+          })}
           icon="check"
           tone="orange"
         />
@@ -325,23 +330,23 @@ export default async function AdminCompanyDashboardPage({ params }: Props) {
       <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_10px_30px_rgba(15,23,42,0.04)]">
         <div className="mb-5 flex items-center justify-between gap-4">
           <h2 className="text-xl font-semibold tracking-[-0.03em] text-slate-950">
-            Entrevistas recentes
+            {tAdmin(params.locale, "recentInterviews.title")}
           </h2>
 
           <a
             href={`/${params.locale}/admin/${params.slug}/interviews`}
             className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
           >
-            Ver todas
+            {tAdmin(params.locale, "recentInterviews.viewAll")}
             <span aria-hidden>›</span>
           </a>
         </div>
 
         {recentInterviews.length === 0 ? (
           <div className="rounded-3xl border border-dashed border-slate-200 bg-slate-50 p-8 text-center">
-            <p className="text-sm font-medium text-slate-500">
-              Sem entrevistas criadas nesta empresa.
-            </p>
+              <p className="text-sm font-medium text-slate-500">
+                {tAdmin(params.locale, "recentInterviews.empty")}
+              </p>
           </div>
         ) : (
           <div className="divide-y divide-slate-100">
@@ -368,21 +373,48 @@ export default async function AdminCompanyDashboardPage({ params }: Props) {
                         {item.title}
                       </p>
                       <p className="mt-1 text-sm font-medium text-slate-500">
-                        Criada por si • {timeAgo(updatedAt)}
+                        {tAdmin(params.locale, "recentInterviews.createdByYou")} • {(() => {
+                          const relative = timeAgo(updatedAt);
+                          if (!relative) return tAdmin(params.locale, "recentInterviews.updatedRecently");
+                          if (relative.unit === "day") {
+                            return tAdmin(params.locale, "recentInterviews.updatedDays", {
+                              count: relative.value,
+                            });
+                          }
+                          if (relative.unit === "days") {
+                            return tAdmin(params.locale, "recentInterviews.updatedDays", {
+                              count: relative.value,
+                            });
+                          }
+                          if (relative.unit === "weeks") {
+                            return tAdmin(params.locale, "recentInterviews.updatedWeeks", {
+                              count: relative.value,
+                            });
+                          }
+                          return tAdmin(params.locale, "recentInterviews.updatedMonths", {
+                            count: relative.value,
+                          });
+                        })()}
                       </p>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-3 md:justify-end">
                     <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold lowercase text-emerald-600">
-                      {item.status === "published" ? "publicada" : item.status}
+                      {item.status === "published"
+                        ? tAdmin(params.locale, "interviews.filters.statusPublished")
+                        : item.status === "draft"
+                          ? tAdmin(params.locale, "interviews.filters.statusDraft")
+                          : item.status === "archived"
+                            ? tAdmin(params.locale, "interviews.filters.statusArchived")
+                            : item.status}
                     </span>
 
                     <a
                       href={`/${params.locale}/admin/${params.slug}/responses?interviewId=${item.id}`}
                       className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
                     >
-                      Ver respostas
+                      {tAdmin(params.locale, "recentInterviews.viewResponses")}
                       <span aria-hidden>›</span>
                     </a>
                   </div>
@@ -397,23 +429,22 @@ export default async function AdminCompanyDashboardPage({ params }: Props) {
         <div className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.18em] text-violet-500">
-              Obtenha mais com o plano Pro
+              {tAdmin(params.locale, "dashboardPromo.eyebrow")}
             </p>
 
             <h2 className="mt-2 text-2xl font-semibold tracking-[-0.03em] text-slate-950">
-              Desbloqueie recursos avançados
+              {tAdmin(params.locale, "dashboardPromo.title")}
             </h2>
 
             <p className="mt-3 max-w-xl text-sm leading-6 text-slate-500">
-              Aumente o limite de entrevistas, obtenha relatórios avançados e
-              muito mais.
+              {tAdmin(params.locale, "dashboardPromo.description")}
             </p>
 
             <div className="mt-6 grid gap-3 sm:grid-cols-3">
               {[
-                "Entrevistas ilimitadas",
-                "Relatórios avançados",
-                "Suporte prioritário",
+                tAdmin(params.locale, "dashboardPromo.feature1"),
+                tAdmin(params.locale, "dashboardPromo.feature2"),
+                tAdmin(params.locale, "dashboardPromo.feature3"),
               ].map((feature) => (
                 <div
                   key={feature}
@@ -428,7 +459,7 @@ export default async function AdminCompanyDashboardPage({ params }: Props) {
               href={`/${params.locale}/admin/${params.slug}/billing`}
               className="mt-6 inline-flex items-center justify-center rounded-lg bg-indigo-600 px-6 py-2.5 text-sm font-bold text-white shadow-[0_10px_24px_rgba(79,70,229,0.24)] hover:bg-indigo-700"
             >
-              Fazer Upgrade
+              {tAdmin(params.locale, "dashboardPromo.action")}
             </a>
           </div>
 

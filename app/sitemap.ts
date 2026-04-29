@@ -1,13 +1,13 @@
 import type { MetadataRoute } from "next";
+import { SUPPORTED_LOCALES } from "@/lib/i18n/locales";
 
 const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-const locales = ["pt", "en"];
 const localizedStaticPaths = ["", "/pricing", "/termos", "/privacidade", "/sobre", "/contacto", "/signup"];
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
 
-  return locales.flatMap((locale) =>
+  return SUPPORTED_LOCALES.flatMap((locale) =>
     localizedStaticPaths.map((path) => {
       const url = path ? `${appUrl}/${locale}${path}` : `${appUrl}/${locale}`;
       const isHome = path === "";

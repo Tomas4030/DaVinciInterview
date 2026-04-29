@@ -1,6 +1,5 @@
 import { notFound } from "next/navigation";
-
-const locales = ["pt", "en"];
+import { isSupportedLocale } from "@/lib/i18n/locales";
 
 export default function LocaleLayout({
   children,
@@ -9,7 +8,7 @@ export default function LocaleLayout({
   children: React.ReactNode;
   params: { locale: string };
 }) {
-  if (!locales.includes(params.locale)) {
+  if (!isSupportedLocale(params.locale)) {
     notFound();
   }
 
