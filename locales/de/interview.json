@@ -1,0 +1,120 @@
+{
+  "verificationForm": {
+    "nameRequired": "Name ist erforderlich.",
+    "emailRequired": "E-Mail ist erforderlich.",
+    "emailInvalid": "Ungültige E-Mail.",
+    "phoneRequired": "Telefonnummer ist erforderlich.",
+    "phoneInvalid": "Ungültige Telefonnummer.",
+    "sendCodeError": "Der Code konnte nicht gesendet werden.",
+    "devCode": "Entwicklungscode: {{code}}",
+    "serverConnectionError": "Serververbindungsfehler.",
+    "intro": "Bestätige deine Daten, um den Verifizierungscode zu erhalten.",
+    "nameLabel": "Vollständiger Name",
+    "namePlaceholder": "Dein Name",
+    "emailLabel": "E-Mail",
+    "emailPlaceholder": "name@email.com",
+    "phoneLabel": "Telefonnummer",
+    "phonePlaceholder": "+351 912 345 678",
+    "sending": "Code wird gesendet...",
+    "continue": "Weiter",
+    "secure": "Deine Daten sind geschützt und werden niemals weitergegeben."
+  },
+  "verifyCodeForm": {
+    "enterCodeError": "Gib den an deine E-Mail gesendeten Code ein.",
+    "invalidCodeError": "Ungültiger oder abgelaufener Code.",
+    "serverConnectionError": "Serververbindungsfehler.",
+    "resendError": "Fehler beim erneuten Senden des Codes.",
+    "resendConnectionError": "Serververbindungsfehler beim erneuten Senden.",
+    "resendSuccess": "Code erneut gesendet. Prüfe deinen Posteingang.",
+    "title": "Code-Verifizierung",
+    "description": "Gib den an deine E-Mail gesendeten Code ein.",
+    "codeLabel": "Verifizierungscode",
+    "validating": "Wird überprüft...",
+    "continue": "Weiter",
+    "back": "Zurück",
+    "resending": "Wird erneut gesendet...",
+    "resendIn": "Erneut senden in {{seconds}}s",
+    "resendCode": "Code erneut senden",
+    "secure": "Der Code läuft schnell ab, um deinen Zugriff zu schützen."
+  },
+  "chat": {
+    "introSingular": "Willkommen zum Interview für {{title}}. Dieses Interview hat {{count}} Frage. Wenn du bereit bist, klicke auf Start.",
+    "introPlural": "Willkommen zum Interview für {{title}}. Dieses Interview hat {{count}} Fragen. Wenn du bereit bist, klicke auf Start.",
+    "continueInterviewError": "Interview konnte nicht fortgesetzt werden",
+    "continueFallback": "Lass uns fortfahren.",
+    "sendError": "Deine Antwort konnte nicht gesendet werden. Bitte versuche es erneut.",
+    "noQuestions": "Für dieses Interview sind noch keine Fragen konfiguriert.",
+    "confirmInterview": "Interview bestätigen",
+    "interviewDescription": "Rollenbeschreibung",
+    "interviewDescriptionFallback": "Keine zusätzliche Rollenbeschreibung verfügbar.",
+    "back": "Zurück",
+    "continue": "Weiter",
+    "statusDone": "Abgeschlossen",
+    "statusStarting": "Startet",
+    "statusProgress": "{{current}} / {{total}}",
+    "startInterview": "Interview starten",
+    "answerPlaceholder": "Schreibe deine Antwort...",
+    "sendAria": "Senden",
+    "inputHint": "Enter zum Senden · Shift+Enter für neue Zeile"
+  },
+  "companyPublic": {
+    "meta": {
+      "notFound": "Unternehmen nicht gefunden",
+      "title": "{{companyName}} - Interviews",
+      "descriptionFallback": "Entdecke offene Interviews bei {{companyName}}."
+    },
+    "header": {
+      "publicPageAria": "Öffentliche Seite von {{companyName}}",
+      "interviews": "Interviews",
+      "howItWorks": "So funktioniert's",
+      "viewInterviews": "Interviews ansehen"
+    },
+    "hero": {
+      "interviewsNone": "Derzeit keine offenen Interviews",
+      "interviewsOpenSingular": "{{count}} Interview offen",
+      "interviewsOpenPlural": "{{count}} Interviews offen",
+      "titlePrefix": "Baue deine Zukunft mit",
+      "descriptionFallback": "Entdecke offene Möglichkeiten bei {{companyName}}, antworte in deinem Tempo und sende deine Bewerbung in wenigen Minuten.",
+      "viewOpenRoles": "Offene Rollen ansehen",
+      "howItWorks": "So funktioniert's"
+    },
+    "interviews": {
+      "sectionTitle": "Offene Rollen",
+      "countNone": "Zurzeit keine Positionen verfügbar",
+      "countSingular": "{{count}} Position verfügbar",
+      "countPlural": "{{count}} Positionen verfügbar",
+      "emptyTitle": "Zurzeit keine offene Rolle.",
+      "emptyDescription": "Schau bald wieder vorbei oder kontaktiere den Recruiter.",
+      "fallbackDescription": "Keine Beschreibung verfügbar.",
+      "questionSingular": "{{count}} Frage",
+      "questionPlural": "{{count}} Fragen",
+      "start": "Start",
+      "startAria": "Interview starten: {{title}}",
+      "workModeRemote": "Remote",
+      "workModeHybrid": "Hybrid",
+      "workModeOnsite": "Vor Ort",
+      "workModeFallback": "Interview",
+      "employmentTypeLabel": "Beschäftigung",
+      "employmentTypeFullTime": "Vollzeit",
+      "employmentTypePartTime": "Teilzeit",
+      "employmentTypeContract": "Vertrag",
+      "employmentTypeInternship": "Praktikum",
+      "employmentTypeFallback": "Nicht definiert",
+      "contextLabel": "Kontext",
+      "experienceDesired": "Erfahrung erwünscht",
+      "experienceNotRequired": "Erfahrung nicht erforderlich"
+    },
+    "howItWorks": {
+      "ariaLabel": "So funktioniert der Prozess",
+      "badge": "Einfacher und schneller Prozess",
+      "title": "So funktioniert's",
+      "description": "In drei Schritten wählst du eine Rolle, antwortest in deinem Tempo und sendest deine Bewerbung ohne Reibung.",
+      "stepLabel": "Schritt",
+      "steps": [
+        { "num": "1", "title": "Rolle wählen", "desc": "Sieh dir die offenen Möglichkeiten dieses Unternehmens an und wähle die Rolle, die am besten zu deinem Profil passt.", "highlight": "Alles zentral an einem Ort" },
+        { "num": "2", "title": "In deinem Tempo antworten", "desc": "Die Bewerbung läuft im Konversationsformat, wodurch die Erfahrung einfach, natürlich und klar wird.", "highlight": "Einfache und geführte Erfahrung" },
+        { "num": "3", "title": "Bewerbung absenden", "desc": "Nach Abschluss sind deine Antworten bereit, damit das Recruiting-Team sie prüfen kann.", "highlight": "Schnelle und klare Einreichung" }
+      ]
+    }
+  }
+}

@@ -1,0 +1,135 @@
+{
+  "verificationForm": {
+    "nameRequired": "Nome obrigatório.",
+    "emailRequired": "E-mail obrigatorio.",
+    "emailInvalid": "E-mail invalido.",
+    "phoneRequired": "Celular obrigatório.",
+    "phoneInvalid": "Número de celular inválido.",
+    "sendCodeError": "Não foi possível enviar o código.",
+    "devCode": "Código de desenvolvimento: {{code}}",
+    "serverConnectionError": "Erro de ligação ao servidor.",
+    "intro": "Confirme seus dados para receber o codigo de verificacao.",
+    "nameLabel": "Nome completo",
+    "namePlaceholder": "O seu nome",
+    "emailLabel": "E-mail",
+    "emailPlaceholder": "nome@email.com",
+    "phoneLabel": "Celular",
+    "phonePlaceholder": "+351 912 345 678",
+    "sending": "A enviar código…",
+    "continue": "Continuar",
+    "secure": "Os seus dados estão protegidos e nunca serão compartilhados."
+  },
+  "verifyCodeForm": {
+    "enterCodeError": "Introduz o código recebido no email.",
+    "invalidCodeError": "Código inválido ou expirado.",
+    "serverConnectionError": "Erro de ligação ao servidor.",
+    "resendError": "Erro ao reenviar código.",
+    "resendConnectionError": "Erro de ligação ao servidor ao reenviar o código.",
+    "resendSuccess": "Codigo reenviado. Verifique sua caixa de entrada.",
+    "title": "Verificação por código",
+    "description": "Digite o codigo enviado para o seu e-mail.",
+    "codeLabel": "Código de verificação",
+    "validating": "A validar…",
+    "continue": "Continuar",
+    "back": "Voltar",
+    "resending": "A reenviar…",
+    "resendIn": "Reenviar em {{seconds}}s",
+    "resendCode": "Reenviar código",
+    "secure": "O código expira em pouco tempo para proteger o seu acesso."
+  },
+  "chat": {
+    "introSingular": "Bem-vindo a entrevista para {{title}}. Esta entrevista tem {{count}} pergunta. Quando voce estiver pronto, clique em Comecar.",
+    "introPlural": "Bem-vindo a entrevista para {{title}}. Esta entrevista tem {{count}} perguntas. Quando voce estiver pronto, clique em Comecar.",
+    "continueInterviewError": "Não foi possível continuar a entrevista",
+    "continueFallback": "Vamos continuar.",
+    "sendError": "Não foi possível enviar a sua resposta. Tente novamente.",
+    "noQuestions": "Esta entrevista ainda não tem perguntas configuradas.",
+    "confirmInterview": "Confirmar entrevista",
+    "interviewDescription": "Descrição da vaga",
+    "interviewDescriptionFallback": "Sem descrição adicional disponível para esta vaga.",
+    "back": "Voltar",
+    "continue": "Continuar",
+    "statusDone": "Concluída",
+    "statusStarting": "A iniciar",
+    "statusProgress": "{{current}} / {{total}}",
+    "startInterview": "Começar entrevista",
+    "answerPlaceholder": "Escreva sua resposta...",
+    "sendAria": "Enviar",
+    "inputHint": "Enter para enviar · Shift+Enter para nova linha"
+  },
+  "companyPublic": {
+    "meta": {
+      "notFound": "Empresa nao encontrada",
+      "title": "{{companyName}} - Entrevistas",
+      "descriptionFallback": "Conhece as entrevistas abertas da {{companyName}}."
+    },
+    "header": {
+      "publicPageAria": "Pagina publica de {{companyName}}",
+      "interviews": "Entrevistas",
+      "howItWorks": "Como funciona",
+      "viewInterviews": "Ver entrevistas"
+    },
+    "hero": {
+      "interviewsNone": "Sem entrevistas abertas neste momento",
+      "interviewsOpenSingular": "{{count}} entrevista aberta",
+      "interviewsOpenPlural": "{{count}} entrevistas abertas",
+      "titlePrefix": "Construa seu futuro com a",
+      "descriptionFallback": "Explore as oportunidades abertas na {{companyName}}, responda no seu ritmo e envie sua inscricao em poucos minutos.",
+      "viewOpenRoles": "Ver vagas disponiveis",
+      "howItWorks": "Como funciona"
+    },
+    "interviews": {
+      "sectionTitle": "Vagas abertas",
+      "countNone": "Sem posicoes disponiveis de momento",
+      "countSingular": "{{count}} posicao disponivel",
+      "countPlural": "{{count}} posicoes disponiveis",
+      "emptyTitle": "Nenhuma vaga disponivel de momento.",
+      "emptyDescription": "Volta em breve ou contacta o recrutador.",
+      "fallbackDescription": "Sem descricao disponivel.",
+      "questionSingular": "{{count}} pergunta",
+      "questionPlural": "{{count}} perguntas",
+      "start": "Iniciar",
+      "startAria": "Iniciar entrevista: {{title}}",
+      "workModeRemote": "Remoto",
+      "workModeHybrid": "Hibrido",
+      "workModeOnsite": "Presencial",
+      "workModeFallback": "Entrevista",
+      "employmentTypeLabel": "Contrato",
+      "employmentTypeFullTime": "Full-time",
+      "employmentTypePartTime": "Part-time",
+      "employmentTypeContract": "Contrato",
+      "employmentTypeInternship": "Estagio",
+      "employmentTypeFallback": "Nao definido",
+      "contextLabel": "Contexto",
+      "experienceDesired": "Experiencia desejada",
+      "experienceNotRequired": "Experiencia nao exigida"
+    },
+    "howItWorks": {
+      "ariaLabel": "Como funciona o processo",
+      "badge": "Processo simples e rapido",
+      "title": "Como funciona",
+      "description": "Em tres passos, voce escolhe uma vaga, responde no seu ritmo e envia a inscricao sem complicacoes.",
+      "stepLabel": "Passo",
+      "steps": [
+        {
+          "num": "1",
+          "title": "Escolha a vaga",
+          "desc": "Veja as oportunidades abertas desta empresa e selecione a que melhor combina com seu perfil.",
+          "highlight": "Tudo centralizado num so sitio"
+        },
+        {
+          "num": "2",
+          "title": "Responda no seu ritmo",
+          "desc": "A inscricao acontece em formato conversacional, de forma simples, natural e sem complicacoes.",
+          "highlight": "Experiencia simples e guiada"
+        },
+        {
+          "num": "3",
+          "title": "Envie sua inscricao",
+          "desc": "Depois de concluir, suas respostas ficam prontas para o time de recrutamento analisar.",
+          "highlight": "Envio rapido e claro"
+        }
+      ]
+    }
+  }
+}

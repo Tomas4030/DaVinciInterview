@@ -1,0 +1,137 @@
+{
+  "meta": {
+    "title": "MatchWorky — Colloqui AI per team di recruiting",
+    "description": "Automatizza lo screening dei candidati con colloqui conversazionali. Definisci le domande, condividi il link e analizza le risposte in un'unica piattaforma.",
+    "ogTitle": "MatchWorky — Colloqui AI per aziende",
+    "ogDescription": "Automatizza lo screening iniziale e migliora l'esperienza dei candidati con colloqui conversazionali intelligenti."
+  },
+  "header": {
+    "ariaHome": "Home page — MatchWorky",
+    "languageAria": "Seleziona lingua",
+    "features": "Funzionalità",
+    "howItWorks": "Come funziona",
+    "pricing": "Prezzi",
+    "login": "Accedi",
+    "startFree": "Inizia gratis"
+  },
+  "hero": {
+    "badge": "Automatizza il tuo processo di assunzione",
+    "titleLine1": "Colloqui con AI.",
+    "titleHighlight": "Screening",
+    "titleLine2": "senza fatica.",
+    "description": "MatchWorky gestisce colloqui conversazionali automatizzati per la tua azienda. Definisci le domande, condividi il link con i candidati e analizza le risposte in un unico posto.",
+    "cta": "Inizia gratis",
+    "stats": [
+      { "value": "3×", "label": "più veloce dello screening manuale" },
+      { "value": "80%", "label": "riduzione dei tempi di assunzione" },
+      { "value": "100%", "label": "candidature strutturate" }
+    ],
+    "preview": {
+      "label": "Colloquio automatizzato",
+      "conversation": [
+        { "from": "bot", "text": "Ciao! Sono l'assistente recruiting di Acme. Pronto a iniziare?" },
+        { "from": "user", "text": "Sì, iniziamo." },
+        { "from": "bot", "text": "Domanda 1: Quanti anni di esperienza hai con React?" },
+        { "from": "user", "text": "Circa 4 anni in team di prodotto." },
+        { "from": "bot", "text": "Domanda 2: Quali pattern TypeScript usi ogni giorno?" },
+        { "from": "user", "text": "Tipizzazione rigorosa, unioni discriminate e interfacce riutilizzabili." },
+        { "from": "bot", "text": "Domanda 3: Raccontami un'ottimizzazione di performance recente." },
+        { "from": "user", "text": "Ho ridotto i costi di rendering con memoizzazione e virtualizzazione delle liste." },
+        { "from": "bot", "text": "Domanda 4: Come organizzi i componenti per la manutenibilità nel lungo periodo?" },
+        { "from": "user", "text": "Separando UI, logica di stato e dominio con confini chiari." },
+        { "from": "bot", "text": "Domanda 5: Come validi l'accessibilità prima del rilascio?" },
+        { "from": "user", "text": "Controlli tastiera, HTML semantico e test rapidi con screen reader." },
+        { "from": "bot", "text": "Domanda 6: Descrivi la collaborazione con prodotto e design." },
+        { "from": "user", "text": "Pianificazione settimanale, prototipi anticipati e feedback frequenti." },
+        { "from": "bot", "text": "Domanda 7: Come affronti i test nei progetti frontend?" },
+        { "from": "user", "text": "Test unitari per la logica e test di integrazione per i flussi critici." },
+        { "from": "bot", "text": "Domanda 8: Fai un esempio in cui hai migliorato la developer experience." },
+        { "from": "user", "text": "Ho creato regole lint condivise e template che hanno ridotto il rework nelle PR." },
+        { "from": "bot", "text": "Domanda 9: Come monitori i problemi dopo il rilascio?" },
+        { "from": "user", "text": "Con error tracking, dashboard e controlli post-release." },
+        { "from": "bot", "text": "Domanda 10: Perché ti interessa questo ruolo adesso?" },
+        { "from": "user", "text": "Perché la sfida di prodotto è in linea con la mia esperienza e i miei obiettivi." },
+        { "from": "bot", "text": "Ottimo, grazie. Colloquio completato con successo." }
+      ]
+    }
+  },
+  "features": {
+    "eyebrow": "Funzionalità",
+    "title": "Tutto ciò che ti serve per assumere meglio",
+    "description": "Una piattaforma completa dalla creazione della posizione all'analisi delle risposte. Nessuno strumento esterno. Nessuna complessità.",
+    "items": [
+      { "title": "Colloqui conversazionali", "desc": "I candidati rispondono in una chat semplice: niente moduli confusi, niente PDF, niente attrito." },
+      { "title": "Verifica automatica", "desc": "Email e telefono verificati con codici OTP, per garantire candidati unici e autentici." },
+      { "title": "Dashboard candidati", "desc": "Visualizza tutte le risposte in un'interfaccia pulita. Filtra, cerca ed esporta con un clic." },
+      { "title": "Questionari personalizzati", "desc": "Crea domande specifiche per ruolo. Aggiungi, riordina e rimuovi con facilità." },
+      { "title": "Analisi AI", "desc": "Analisi automatica delle risposte con punteggio e riepilogo AI per ogni candidato." },
+      { "title": "Esportazione report", "desc": "Esporta candidature in PDF o CSV per condividerle con il tuo team o integrarle con altri sistemi." }
+    ]
+  },
+  "howItWorks": {
+    "ariaLabel": "Come funziona MatchWorky",
+    "eyebrow": "Come funziona",
+    "title": "Dalla posizione all'assunzione in 3 passaggi",
+    "description": "Il processo è pensato per essere semplice per il tuo team e fluido per i candidati.",
+    "stepLabel": "Passaggio",
+    "steps": [
+      { "title": "Crea il ruolo", "desc": "Definisci titolo, descrizione e domande per i candidati. Puoi gestire più ruoli attivi contemporaneamente.", "highlight": "Setup in pochi minuti" },
+      { "title": "Condividi il link", "desc": "Ogni ruolo ha una URL unica. Condividila su social, sito web o via email; i candidati accedono senza account.", "highlight": "Zero attrito per i candidati" },
+      { "title": "Analizza le risposte", "desc": "Tutte le candidature sono centralizzate nella dashboard. L'AI genera riepilogo e punteggio per concentrarti sui migliori candidati.", "highlight": "Decisioni guidate dai dati" }
+    ]
+  },
+  "testimonials": {
+    "eyebrow": "Testimonianze",
+    "title": "Cosa dicono i team HR",
+    "items": [
+      { "quote": "Prima impiegavamo settimane a rivedere CV. Con MatchWorky, in due giorni avevamo già i 5 migliori candidati pronti per il colloquio in presenza.", "author": "Ana Rodrigues", "role": "Head of People, TechStartup Lisbon" },
+      { "quote": "L'esperienza candidato è fantastica. Zero frustrazione, zero moduli infiniti. Le persone amano rispondere così.", "author": "Miguel Santos", "role": "Talent Acquisition, Scale-up Porto" },
+      { "quote": "Il riepilogo AI ci fa risparmiare almeno 2 ore per candidato. Per noi è stato un game changer nel recruiting tecnico.", "author": "Sofia Mendes", "role": "CTO, Digital Product" }
+    ]
+  },
+  "pricing": {
+    "eyebrow": "Piani",
+    "title": "Scegli il piano migliore per il tuo team",
+    "description": "Inizia con un piano base e scala senza migrazioni complesse. Annulla quando vuoi.",
+    "monthly": "Mensile",
+    "yearly": "Annuale",
+    "custom": "Gratis",
+    "year": "/anno",
+    "month": "/mese",
+    "save": "Risparmia {{percent}}%",
+    "annualBilling": "Disponibile con fatturazione annuale",
+    "monthlyEquivalent": "Equivalente a {{value}} EUR/mese",
+    "mostPopular": "Più popolare",
+    "viewDetails": "Vedi dettagli",
+    "startNow": "Inizia ora",
+    "trial": "Tutti i piani includono 14 giorni di prova gratuita. Nessuna carta richiesta.",
+    "plans": {
+      "basic": { "description": "Per team piccoli che vogliono accelerare lo screening iniziale.", "features": ["1 azienda", "Fino a 5 colloqui attivi", "Domande illimitate", "Dashboard base", "Supporto email"] },
+      "free": { "description": "Ideale per testare la piattaforma con limiti di utilizzo.", "features": ["1 azienda", "Fino a 1 colloquio attivo", "Fino a 5 domande per colloquio", "Nessuna generazione domande AI", "Nessuna esportazione PDF"] },
+      "pro": { "description": "Scala con più volume e maggior controllo operativo.", "features": ["Fino a 3 aziende", "Colloqui attivi illimitati", "Domande illimitate", "Insight di performance", "Supporto prioritario"] }
+    }
+  },
+  "cta": {
+    "eyebrow": "Inizia oggi",
+    "title": "Pronto ad assumere più velocemente?",
+    "description": "Unisciti ai team che hanno già automatizzato lo screening candidati. Configura il tuo primo ruolo in meno di 5 minuti.",
+    "primary": "Inizia gratis — 14 giorni",
+    "secondary": "Vedi tutti i piani",
+    "footnote": "Nessuna carta di credito richiesta. Annulla quando vuoi."
+  },
+  "footer": {
+    "description": "Piattaforma SaaS per colloqui conversazionali con AI. Automatizza lo screening iniziale e migliora l'esperienza candidato.",
+    "product": "Prodotto",
+    "features": "Funzionalità",
+    "howItWorks": "Come funziona",
+    "pricing": "Prezzi",
+    "startFree": "Inizia gratis",
+    "company": "Azienda",
+    "about": "Chi siamo",
+    "contact": "Contatti",
+    "legal": "Legale",
+    "terms": "Termini di servizio",
+    "privacy": "Informativa privacy",
+    "rights": "Tutti i diritti riservati."
+  }
+}

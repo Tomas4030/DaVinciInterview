@@ -1,0 +1,120 @@
+{
+  "verificationForm": {
+    "nameRequired": "姓名为必填项。",
+    "emailRequired": "邮箱为必填项。",
+    "emailInvalid": "邮箱无效。",
+    "phoneRequired": "手机号为必填项。",
+    "phoneInvalid": "手机号无效。",
+    "sendCodeError": "无法发送验证码。",
+    "devCode": "开发验证码：{{code}}",
+    "serverConnectionError": "服务器连接错误。",
+    "intro": "请确认你的信息以接收验证码。",
+    "nameLabel": "姓名",
+    "namePlaceholder": "你的姓名",
+    "emailLabel": "邮箱",
+    "emailPlaceholder": "name@email.com",
+    "phoneLabel": "手机号",
+    "phonePlaceholder": "+351 912 345 678",
+    "sending": "正在发送验证码...",
+    "continue": "继续",
+    "secure": "你的数据受保护，绝不会被分享。"
+  },
+  "verifyCodeForm": {
+    "enterCodeError": "请输入发送到你邮箱的验证码。",
+    "invalidCodeError": "验证码无效或已过期。",
+    "serverConnectionError": "服务器连接错误。",
+    "resendError": "重新发送验证码时出错。",
+    "resendConnectionError": "重新发送验证码时服务器连接错误。",
+    "resendSuccess": "验证码已重发。请检查收件箱。",
+    "title": "验证码验证",
+    "description": "请输入发送到你邮箱的验证码。",
+    "codeLabel": "验证码",
+    "validating": "验证中...",
+    "continue": "继续",
+    "back": "返回",
+    "resending": "正在重发...",
+    "resendIn": "{{seconds}} 秒后可重发",
+    "resendCode": "重发验证码",
+    "secure": "验证码很快过期，以确保你的访问安全。"
+  },
+  "chat": {
+    "introSingular": "欢迎参加 {{title}} 的面试。本次面试有 {{count}} 个问题。准备好后，请点击开始。",
+    "introPlural": "欢迎参加 {{title}} 的面试。本次面试有 {{count}} 个问题。准备好后，请点击开始。",
+    "continueInterviewError": "无法继续该面试",
+    "continueFallback": "我们继续。",
+    "sendError": "无法发送你的回答，请重试。",
+    "noQuestions": "此面试尚未配置问题。",
+    "confirmInterview": "确认面试",
+    "interviewDescription": "岗位描述",
+    "interviewDescriptionFallback": "暂无更多岗位描述信息。",
+    "back": "返回",
+    "continue": "继续",
+    "statusDone": "已完成",
+    "statusStarting": "开始中",
+    "statusProgress": "{{current}} / {{total}}",
+    "startInterview": "开始面试",
+    "answerPlaceholder": "输入你的回答...",
+    "sendAria": "发送",
+    "inputHint": "按 Enter 发送 · Shift+Enter 换行"
+  },
+  "companyPublic": {
+    "meta": {
+      "notFound": "未找到公司",
+      "title": "{{companyName}} - 面试",
+      "descriptionFallback": "查看 {{companyName}} 的开放面试机会。"
+    },
+    "header": {
+      "publicPageAria": "{{companyName}} 的公开页面",
+      "interviews": "面试",
+      "howItWorks": "工作原理",
+      "viewInterviews": "查看面试"
+    },
+    "hero": {
+      "interviewsNone": "当前没有开放面试",
+      "interviewsOpenSingular": "{{count}} 个开放面试",
+      "interviewsOpenPlural": "{{count}} 个开放面试",
+      "titlePrefix": "与以下公司共创未来：",
+      "descriptionFallback": "查看 {{companyName}} 的开放机会，按你的节奏作答，并在几分钟内提交申请。",
+      "viewOpenRoles": "查看开放岗位",
+      "howItWorks": "工作原理"
+    },
+    "interviews": {
+      "sectionTitle": "开放岗位",
+      "countNone": "当前暂无可用岗位",
+      "countSingular": "{{count}} 个可用岗位",
+      "countPlural": "{{count}} 个可用岗位",
+      "emptyTitle": "当前没有开放岗位。",
+      "emptyDescription": "请稍后再来，或联系招聘负责人。",
+      "fallbackDescription": "暂无描述。",
+      "questionSingular": "{{count}} 个问题",
+      "questionPlural": "{{count}} 个问题",
+      "start": "开始",
+      "startAria": "开始面试：{{title}}",
+      "workModeRemote": "远程",
+      "workModeHybrid": "混合",
+      "workModeOnsite": "现场",
+      "workModeFallback": "面试",
+      "employmentTypeLabel": "雇佣类型",
+      "employmentTypeFullTime": "全职",
+      "employmentTypePartTime": "兼职",
+      "employmentTypeContract": "合同",
+      "employmentTypeInternship": "实习",
+      "employmentTypeFallback": "未定义",
+      "contextLabel": "背景",
+      "experienceDesired": "期望经验",
+      "experienceNotRequired": "无需经验"
+    },
+    "howItWorks": {
+      "ariaLabel": "流程说明",
+      "badge": "简单快速的流程",
+      "title": "工作原理",
+      "description": "三步完成：选择岗位、按节奏作答、无摩擦提交申请。",
+      "stepLabel": "步骤",
+      "steps": [
+        { "num": "1", "title": "选择岗位", "desc": "查看该公司的开放机会，选择最符合你背景的岗位。", "highlight": "信息集中在一个地方" },
+        { "num": "2", "title": "按你的节奏作答", "desc": "申请采用对话式流程，让体验更简单、自然、直接。", "highlight": "简单且有引导的体验" },
+        { "num": "3", "title": "提交申请", "desc": "完成后，你的回答将可供招聘团队立即评估。", "highlight": "提交快速且清晰" }
+      ]
+    }
+  }
+}

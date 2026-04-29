@@ -1,0 +1,137 @@
+{
+  "meta": {
+    "title": "MatchWorky — KI-Interviews für Recruiting-Teams",
+    "description": "Automatisiere das Kandidaten-Screening mit konversationellen Interviews. Definiere Fragen, teile den Link und analysiere Antworten auf einer Plattform.",
+    "ogTitle": "MatchWorky — KI-Interviews für Unternehmen",
+    "ogDescription": "Automatisiere das frühe Screening und verbessere die Candidate Experience mit intelligenten, konversationellen Interviews."
+  },
+  "header": {
+    "ariaHome": "Startseite — MatchWorky",
+    "languageAria": "Sprache auswählen",
+    "features": "Funktionen",
+    "howItWorks": "So funktioniert's",
+    "pricing": "Preise",
+    "login": "Anmelden",
+    "startFree": "Kostenlos starten"
+  },
+  "hero": {
+    "badge": "Automatisiere deinen Einstellungsprozess",
+    "titleLine1": "KI-gestützte Interviews.",
+    "titleHighlight": "Screening",
+    "titleLine2": "ohne Aufwand.",
+    "description": "MatchWorky führt automatisierte, konversationelle Interviews im Namen deines Unternehmens durch. Definiere Fragen, teile den Link mit Kandidaten und analysiere Antworten an einem Ort.",
+    "cta": "Kostenlos starten",
+    "stats": [
+      { "value": "3×", "label": "schneller als manuelles Screening" },
+      { "value": "80%", "label": "weniger Einstellungszeit" },
+      { "value": "100%", "label": "strukturierte Bewerbungen" }
+    ],
+    "preview": {
+      "label": "Automatisiertes Interview",
+      "conversation": [
+        { "from": "bot", "text": "Hi! Ich bin Acmes Recruiting-Assistent. Bereit zu starten?" },
+        { "from": "user", "text": "Ja, legen wir los." },
+        { "from": "bot", "text": "Frage 1: Wie viele Jahre Erfahrung hast du mit React?" },
+        { "from": "user", "text": "Etwa 4 Jahre in Produktteams." },
+        { "from": "bot", "text": "Frage 2: Welche TypeScript-Patterns nutzt du täglich?" },
+        { "from": "user", "text": "Striktes Typing, discriminated unions und wiederverwendbare Interfaces." },
+        { "from": "bot", "text": "Frage 3: Erzähl mir von einer aktuellen Performance-Optimierung." },
+        { "from": "user", "text": "Ich habe Render-Kosten mit Memoization und List-Virtualisierung reduziert." },
+        { "from": "bot", "text": "Frage 4: Wie strukturierst du Komponenten für langfristige Wartbarkeit?" },
+        { "from": "user", "text": "Durch klare Trennung von UI, State-Logik und Domäne." },
+        { "from": "bot", "text": "Frage 5: Wie prüfst du Barrierefreiheit vor dem Release?" },
+        { "from": "user", "text": "Keyboard-Checks, semantisches HTML und kurze Screenreader-Tests." },
+        { "from": "bot", "text": "Frage 6: Beschreibe die Zusammenarbeit mit Produkt und Design." },
+        { "from": "user", "text": "Wöchentliche Planung, frühe Prototypen und häufige Feedback-Loops." },
+        { "from": "bot", "text": "Frage 7: Wie gehst du Testing in Frontend-Projekten an?" },
+        { "from": "user", "text": "Unit-Tests für Logik und Integrations-Tests für kritische Journeys." },
+        { "from": "bot", "text": "Frage 8: Nenne ein Beispiel für bessere Developer Experience." },
+        { "from": "user", "text": "Ich habe gemeinsame Lint-Regeln und Templates erstellt, die PR-Nacharbeit reduziert haben." },
+        { "from": "bot", "text": "Frage 9: Wie überwachst du Probleme nach dem Release?" },
+        { "from": "user", "text": "Mit Error-Tracking, Dashboards und Post-Release-Checks." },
+        { "from": "bot", "text": "Frage 10: Warum interessiert dich diese Rolle gerade jetzt?" },
+        { "from": "user", "text": "Weil die Produkt-Herausforderung zu meiner Erfahrung und meinen Zielen passt." },
+        { "from": "bot", "text": "Super, danke. Interview erfolgreich abgeschlossen." }
+      ]
+    }
+  },
+  "features": {
+    "eyebrow": "Funktionen",
+    "title": "Alles, was du für bessere Einstellungen brauchst",
+    "description": "Eine vollständige Plattform von der Stellenerstellung bis zur Antwortanalyse. Keine externen Tools. Keine Komplexität.",
+    "items": [
+      { "title": "Konversationelle Interviews", "desc": "Kandidaten antworten in einer einfachen Chat-Oberfläche - keine verwirrenden Formulare, keine PDFs, keine Reibung." },
+      { "title": "Automatische Verifizierung", "desc": "E-Mail und Telefon per OTP verifiziert - so ist jeder Kandidat eindeutig und authentisch." },
+      { "title": "Kandidaten-Dashboard", "desc": "Alle Antworten in einer klaren Oberfläche. Filtern, suchen und mit einem Klick exportieren." },
+      { "title": "Individuelle Fragebögen", "desc": "Erstelle rollenbezogene Fragen. Elemente einfach hinzufügen, sortieren und entfernen." },
+      { "title": "KI-Analyse", "desc": "Automatische Antwortanalyse mit Score und KI-Zusammenfassung für jeden Kandidaten." },
+      { "title": "Berichts-Export", "desc": "Exportiere Bewerbungen als PDF oder CSV zum Teilen im Team oder zur Integration in andere Systeme." }
+    ]
+  },
+  "howItWorks": {
+    "ariaLabel": "So funktioniert MatchWorky",
+    "eyebrow": "So funktioniert's",
+    "title": "Von der Stelle zur Einstellung in 3 Schritten",
+    "description": "Der Prozess ist einfach für dein Team und reibungslos für Kandidaten.",
+    "stepLabel": "Schritt",
+    "steps": [
+      { "title": "Rolle erstellen", "desc": "Definiere Titel, Beschreibung und Fragen. Du kannst mehrere aktive Rollen gleichzeitig verwalten.", "highlight": "Setup in Minuten" },
+      { "title": "Link teilen", "desc": "Jede Rolle hat eine eindeutige URL. Teile sie über Social Media, Website oder E-Mail - ohne Account für Kandidaten.", "highlight": "Keine Kandidaten-Reibung" },
+      { "title": "Antworten analysieren", "desc": "Alle Bewerbungen sind im Dashboard zentralisiert. KI liefert Zusammenfassung und Score für Fokus auf Top-Kandidaten.", "highlight": "Datenbasierte Entscheidungen" }
+    ]
+  },
+  "testimonials": {
+    "eyebrow": "Referenzen",
+    "title": "Was HR-Teams sagen",
+    "items": [
+      { "quote": "Früher brauchten wir Wochen für CV-Reviews. Mit MatchWorky hatten wir in zwei Tagen die Top 5 Kandidaten für persönliche Interviews.", "author": "Ana Rodrigues", "role": "Head of People, TechStartup Lisbon" },
+      { "quote": "Die Candidate Experience ist großartig. Keine Frustration, keine endlosen Formulare. Leute antworten gerne auf diese Weise.", "author": "Miguel Santos", "role": "Talent Acquisition, Scale-up Porto" },
+      { "quote": "Die KI-Zusammenfassung spart uns mindestens 2 Stunden pro Kandidat. Für uns ein echter Game Changer im Tech-Recruiting.", "author": "Sofia Mendes", "role": "CTO, Digital Product" }
+    ]
+  },
+  "pricing": {
+    "eyebrow": "Pläne",
+    "title": "Wähle den besten Plan für dein Team",
+    "description": "Starte mit einem Basisplan und skaliere ohne komplexe Migrationen. Jederzeit kündbar.",
+    "monthly": "Monatlich",
+    "yearly": "Jährlich",
+    "custom": "Kostenlos",
+    "year": "/Jahr",
+    "month": "/Monat",
+    "save": "Spare {{percent}}%",
+    "annualBilling": "Verfügbar mit jährlicher Abrechnung",
+    "monthlyEquivalent": "Entspricht {{value}} EUR/Monat",
+    "mostPopular": "Am beliebtesten",
+    "viewDetails": "Details ansehen",
+    "startNow": "Jetzt starten",
+    "trial": "Alle Pläne enthalten 14 Tage kostenlose Testphase. Keine Kreditkarte nötig.",
+    "plans": {
+      "basic": { "description": "Für kleine Teams, die das frühe Screening beschleunigen möchten.", "features": ["1 Unternehmen", "Bis zu 5 aktive Interviews", "Unbegrenzte Fragen", "Basis-Dashboard", "E-Mail-Support"] },
+      "free": { "description": "Ideal zum Testen der Plattform mit Limits.", "features": ["1 Unternehmen", "Bis zu 1 aktives Interview", "Bis zu 5 Fragen pro Interview", "Keine KI-Fragengenerierung", "Kein PDF-Export"] },
+      "pro": { "description": "Skaliere mit mehr Volumen und mehr operativer Kontrolle.", "features": ["Bis zu 3 Unternehmen", "Unbegrenzte aktive Interviews", "Unbegrenzte Fragen", "Performance-Insights", "Prioritäts-Support"] }
+    }
+  },
+  "cta": {
+    "eyebrow": "Starte heute",
+    "title": "Bereit, schneller einzustellen?",
+    "description": "Schließe dich Teams an, die ihr Kandidaten-Screening bereits automatisiert haben. Richte deine erste Rolle in unter 5 Minuten ein.",
+    "primary": "Kostenlos starten — 14 Tage",
+    "secondary": "Alle Pläne ansehen",
+    "footnote": "Keine Kreditkarte nötig. Jederzeit kündbar."
+  },
+  "footer": {
+    "description": "SaaS-Plattform für KI-gestützte konversationelle Interviews. Automatisiere das frühe Screening und verbessere die Candidate Experience.",
+    "product": "Produkt",
+    "features": "Funktionen",
+    "howItWorks": "So funktioniert's",
+    "pricing": "Preise",
+    "startFree": "Kostenlos starten",
+    "company": "Unternehmen",
+    "about": "Über uns",
+    "contact": "Kontakt",
+    "legal": "Rechtliches",
+    "terms": "Nutzungsbedingungen",
+    "privacy": "Datenschutz",
+    "rights": "Alle Rechte vorbehalten."
+  }
+}

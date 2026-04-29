@@ -1,0 +1,120 @@
+{
+  "verificationForm": {
+    "nameRequired": "Il nome è obbligatorio.",
+    "emailRequired": "L'email è obbligatoria.",
+    "emailInvalid": "Email non valida.",
+    "phoneRequired": "Il numero di telefono è obbligatorio.",
+    "phoneInvalid": "Numero di telefono non valido.",
+    "sendCodeError": "Impossibile inviare il codice.",
+    "devCode": "Codice di sviluppo: {{code}}",
+    "serverConnectionError": "Errore di connessione al server.",
+    "intro": "Conferma i tuoi dati per ricevere il codice di verifica.",
+    "nameLabel": "Nome completo",
+    "namePlaceholder": "Il tuo nome",
+    "emailLabel": "Email",
+    "emailPlaceholder": "nome@email.com",
+    "phoneLabel": "Numero di telefono",
+    "phonePlaceholder": "+351 912 345 678",
+    "sending": "Invio del codice...",
+    "continue": "Continua",
+    "secure": "I tuoi dati sono protetti e non verranno mai condivisi."
+  },
+  "verifyCodeForm": {
+    "enterCodeError": "Inserisci il codice inviato alla tua email.",
+    "invalidCodeError": "Codice non valido o scaduto.",
+    "serverConnectionError": "Errore di connessione al server.",
+    "resendError": "Errore durante il reinvio del codice.",
+    "resendConnectionError": "Errore di connessione durante il reinvio del codice.",
+    "resendSuccess": "Codice reinviato. Controlla la tua casella di posta.",
+    "title": "Verifica codice",
+    "description": "Inserisci il codice inviato alla tua email.",
+    "codeLabel": "Codice di verifica",
+    "validating": "Verifica in corso...",
+    "continue": "Continua",
+    "back": "Indietro",
+    "resending": "Reinvio in corso...",
+    "resendIn": "Reinvia tra {{seconds}}s",
+    "resendCode": "Reinvia codice",
+    "secure": "Il codice scade rapidamente per mantenere sicuro il tuo accesso."
+  },
+  "chat": {
+    "introSingular": "Benvenuto al colloquio per {{title}}. Questo colloquio ha {{count}} domanda. Quando sei pronto, fai clic su Inizia.",
+    "introPlural": "Benvenuto al colloquio per {{title}}. Questo colloquio ha {{count}} domande. Quando sei pronto, fai clic su Inizia.",
+    "continueInterviewError": "Impossibile continuare il colloquio",
+    "continueFallback": "Continuiamo.",
+    "sendError": "Impossibile inviare la tua risposta. Riprova.",
+    "noQuestions": "Questo colloquio non ha ancora domande configurate.",
+    "confirmInterview": "Conferma colloquio",
+    "interviewDescription": "Descrizione del ruolo",
+    "interviewDescriptionFallback": "Nessuna descrizione aggiuntiva del ruolo disponibile.",
+    "back": "Indietro",
+    "continue": "Continua",
+    "statusDone": "Completato",
+    "statusStarting": "Avvio",
+    "statusProgress": "{{current}} / {{total}}",
+    "startInterview": "Inizia colloquio",
+    "answerPlaceholder": "Scrivi la tua risposta...",
+    "sendAria": "Invia",
+    "inputHint": "Invio per mandare · Shift+Invio per nuova riga"
+  },
+  "companyPublic": {
+    "meta": {
+      "notFound": "Azienda non trovata",
+      "title": "{{companyName}} - Colloqui",
+      "descriptionFallback": "Scopri i colloqui aperti in {{companyName}}."
+    },
+    "header": {
+      "publicPageAria": "Pagina pubblica di {{companyName}}",
+      "interviews": "Colloqui",
+      "howItWorks": "Come funziona",
+      "viewInterviews": "Vedi colloqui"
+    },
+    "hero": {
+      "interviewsNone": "Nessun colloquio aperto al momento",
+      "interviewsOpenSingular": "{{count}} colloquio aperto",
+      "interviewsOpenPlural": "{{count}} colloqui aperti",
+      "titlePrefix": "Costruisci il tuo futuro con",
+      "descriptionFallback": "Scopri le opportunità aperte in {{companyName}}, rispondi con i tuoi tempi e invia la candidatura in pochi minuti.",
+      "viewOpenRoles": "Vedi ruoli aperti",
+      "howItWorks": "Come funziona"
+    },
+    "interviews": {
+      "sectionTitle": "Ruoli aperti",
+      "countNone": "Nessuna posizione disponibile al momento",
+      "countSingular": "{{count}} posizione disponibile",
+      "countPlural": "{{count}} posizioni disponibili",
+      "emptyTitle": "Nessun ruolo aperto al momento.",
+      "emptyDescription": "Torna presto o contatta il recruiter.",
+      "fallbackDescription": "Nessuna descrizione disponibile.",
+      "questionSingular": "{{count}} domanda",
+      "questionPlural": "{{count}} domande",
+      "start": "Inizia",
+      "startAria": "Inizia colloquio: {{title}}",
+      "workModeRemote": "Remoto",
+      "workModeHybrid": "Ibrido",
+      "workModeOnsite": "In sede",
+      "workModeFallback": "Colloquio",
+      "employmentTypeLabel": "Tipo di impiego",
+      "employmentTypeFullTime": "Tempo pieno",
+      "employmentTypePartTime": "Part-time",
+      "employmentTypeContract": "Contratto",
+      "employmentTypeInternship": "Stage",
+      "employmentTypeFallback": "Non definito",
+      "contextLabel": "Contesto",
+      "experienceDesired": "Esperienza desiderata",
+      "experienceNotRequired": "Esperienza non richiesta"
+    },
+    "howItWorks": {
+      "ariaLabel": "Come funziona il processo",
+      "badge": "Processo semplice e veloce",
+      "title": "Come funziona",
+      "description": "In tre passaggi scegli un ruolo, rispondi con i tuoi tempi e invii la candidatura senza attrito.",
+      "stepLabel": "Passaggio",
+      "steps": [
+        { "num": "1", "title": "Scegli il ruolo", "desc": "Rivedi le opportunità aperte di questa azienda e scegli quella che meglio si adatta al tuo profilo.", "highlight": "Tutto centralizzato in un unico posto" },
+        { "num": "2", "title": "Rispondi con i tuoi tempi", "desc": "La candidatura avviene in formato conversazionale, rendendo l'esperienza semplice, naturale e chiara.", "highlight": "Esperienza semplice e guidata" },
+        { "num": "3", "title": "Invia candidatura", "desc": "Dopo aver finito, le tue risposte sono pronte per la revisione del team di recruiting.", "highlight": "Invio rapido e chiaro" }
+      ]
+    }
+  }
+}

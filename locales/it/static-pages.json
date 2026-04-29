@@ -1,0 +1,170 @@
+{
+  "contact": {
+    "meta": {
+      "title": "Contact",
+      "description": "Reach the MatchWorky team for support, commercial questions, and privacy-related requests."
+    },
+    "eyebrow": "Contact",
+    "title": "Talk to us",
+    "description": "If you need help with setup, billing, or privacy, our team replies through direct and practical channels.",
+    "sideNoteLabel": "Note",
+    "sideNoteTitle": "Response time",
+    "sideNoteBody": "Operational requests are answered on business days. Urgent access and security issues are prioritized the same day.",
+    "sections": [
+      {
+        "title": "Technical support",
+        "body": [
+          "Email: suporte@matchworky.pt",
+          "Include your company slug and a short description of the issue whenever possible."
+        ],
+        "tone": "blue"
+      },
+      {
+        "title": "Sales and partnerships",
+        "body": [
+          "Email: hello@matchworky.pt",
+          "Share your expected hiring volume and current workflow so we can prepare a proposal aligned with your context."
+        ],
+        "tone": "yellow"
+      },
+      {
+        "title": "Privacy and data",
+        "body": [
+          "Email: privacidade@matchworky.pt",
+          "Requests for access, correction, or deletion should reference the company responsible for the recruiting process."
+        ],
+        "tone": "green"
+      }
+    ]
+  },
+  "about": {
+    "meta": {
+      "title": "About",
+      "description": "Learn MatchWorky's mission and how we design clearer interview experiences for teams and candidates."
+    },
+    "eyebrow": "Company",
+    "title": "About us",
+    "description": "MatchWorky was created to reduce friction in early-stage hiring with consistent interviews and objective response insights.",
+    "sideNoteLabel": "Note",
+    "sideNoteTitle": "Focus",
+    "sideNoteBody": "We build a product that is simple to run daily: create a role, share a link, review responses, and decide with context.",
+    "sections": [
+      {
+        "title": "1. Why we exist",
+        "body": [
+          "Many teams lose time with manual screening and unstructured first interviews.",
+          "We created a conversational layer to standardize this stage while preserving human judgment in final decisions."
+        ],
+        "tone": "neutral"
+      },
+      {
+        "title": "2. How we work",
+        "body": [
+          "The product prioritizes clarity: objective interface, comparable outcomes, and lean setup for each role.",
+          "Every improvement is validated by real usage from hiring teams, not short-term visual trends."
+        ],
+        "tone": "blue"
+      },
+      {
+        "title": "3. Product principles",
+        "body": [
+          "Respect for candidate experience, with transparent flows and direct communication.",
+          "Privacy by default, with company-controlled data and only the minimum required audit trail."
+        ],
+        "tone": "green"
+      }
+    ]
+  },
+  "privacy": {
+    "meta": {
+      "title": "Privacy Policy",
+      "description": "How personal data is collected, used, and protected in MatchWorky."
+    },
+    "eyebrow": "Privacy",
+    "title": "Privacy policy",
+    "description": "We explain clearly what data we process, why we process it, and how you can exercise your rights at any time.",
+    "sideNoteLabel": "Note",
+    "sideNoteTitle": "Responsibility",
+    "sideNoteBody": "Each customer company defines the legal basis for recruiting. MatchWorky acts as a data processor to operate interviews and analysis.",
+    "sections": [
+      {
+        "title": "1. Data collected",
+        "body": [
+          "We may collect identification and contact data, interview responses, and session technical metadata to ensure operation and basic auditing.",
+          "We do not collect sensitive information unless there is an objective need for the candidate process configured by the customer."
+        ],
+        "tone": "neutral"
+      },
+      {
+        "title": "2. Processing purposes",
+        "body": [
+          "Data is used to run interviews, show results in the admin dashboard, and enable structured candidate comparison.",
+          "We also use technical data for security, abuse prevention, and platform stability improvements."
+        ],
+        "tone": "blue"
+      },
+      {
+        "title": "3. Retention and deletion",
+        "body": [
+          "Data remains available for the period defined by each customer, respecting legal obligations and legitimate hiring needs.",
+          "On request, records can be deleted or historical data can be anonymized when no longer needed for hiring decisions."
+        ],
+        "tone": "green"
+      },
+      {
+        "title": "4. Data subject rights",
+        "body": [
+          "You may request access, correction, deletion, restriction of processing, and portability under applicable law.",
+          "Privacy requests can be submitted through the contact page and are routed for response within a reasonable timeframe."
+        ],
+        "tone": "red"
+      }
+    ]
+  },
+  "terms": {
+    "meta": {
+      "title": "Terms of Service",
+      "description": "Terms of use for MatchWorky for hiring teams and candidates."
+    },
+    "eyebrow": "Legal",
+    "title": "Terms of service",
+    "description": "By using MatchWorky, you accept these terms to ensure clear, safe, and predictable usage for companies and candidates.",
+    "sideNoteLabel": "Note",
+    "sideNoteTitle": "Current version",
+    "sideNoteBody": "These terms apply to all use of the web platform. When updated, the revision date will be published on this page.",
+    "sections": [
+      {
+        "title": "1. Platform usage",
+        "body": [
+          "The platform is intended for hiring teams that want to structure initial interviews with AI support.",
+          "It is not allowed to use the service for data collection without legal basis, abusive content, or any activity violating applicable law."
+        ],
+        "tone": "neutral"
+      },
+      {
+        "title": "2. Accounts and access",
+        "body": [
+          "Each company account is responsible for managing admin access and credential security.",
+          "We recommend regular review of panel users and immediate revocation of access that is no longer required."
+        ],
+        "tone": "blue"
+      },
+      {
+        "title": "3. Interview data",
+        "body": [
+          "Data collected during interviews belongs to the customer creating the role and should follow their internal hiring policy.",
+          "MatchWorky processes data to provide screening, analysis, and reporting features, without parallel commercial use of that data."
+        ],
+        "tone": "green"
+      },
+      {
+        "title": "4. Availability and support",
+        "body": [
+          "We work to ensure high availability, but occasional interruptions may happen for maintenance, updates, or incident mitigation.",
+          "Operational issues can be reported through the contact page for technical follow-up."
+        ],
+        "tone": "yellow"
+      }
+    ]
+  }
+}

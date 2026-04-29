@@ -1,0 +1,137 @@
+{
+  "meta": {
+    "title": "MatchWorky — Entrevistas con IA para equipos de reclutamiento",
+    "description": "Automatiza el filtrado de candidatos con entrevistas conversacionales. Define preguntas, comparte el enlace y analiza respuestas en una sola plataforma.",
+    "ogTitle": "MatchWorky — Entrevistas con IA para empresas",
+    "ogDescription": "Automatiza el filtrado inicial y mejora la experiencia del candidato con entrevistas conversacionales inteligentes."
+  },
+  "header": {
+    "ariaHome": "Página de inicio — MatchWorky",
+    "languageAria": "Seleccionar idioma",
+    "features": "Funciones",
+    "howItWorks": "Cómo funciona",
+    "pricing": "Precios",
+    "login": "Iniciar sesión",
+    "startFree": "Empieza gratis"
+  },
+  "hero": {
+    "badge": "Automatiza tu proceso de contratación",
+    "titleLine1": "Entrevistas con IA.",
+    "titleHighlight": "Filtrado",
+    "titleLine2": "sin esfuerzo.",
+    "description": "MatchWorky realiza entrevistas conversacionales automatizadas para tu empresa. Define tus preguntas, comparte el enlace con candidatos y analiza respuestas en un solo lugar.",
+    "cta": "Empieza gratis",
+    "stats": [
+      { "value": "3×", "label": "más rápido que el filtrado manual" },
+      { "value": "80%", "label": "menos tiempo de contratación" },
+      { "value": "100%", "label": "candidaturas estructuradas" }
+    ],
+    "preview": {
+      "label": "Entrevista automatizada",
+      "conversation": [
+        { "from": "bot", "text": "¡Hola! Soy el asistente de reclutamiento de Acme. ¿Listo para empezar?" },
+        { "from": "user", "text": "Sí, vamos." },
+        { "from": "bot", "text": "Pregunta 1: ¿Cuántos años de experiencia tienes con React?" },
+        { "from": "user", "text": "Unos 4 años en equipos de producto." },
+        { "from": "bot", "text": "Pregunta 2: ¿Qué patrones de TypeScript usas a diario?" },
+        { "from": "user", "text": "Tipado estricto, uniones discriminadas e interfaces reutilizables." },
+        { "from": "bot", "text": "Pregunta 3: Cuéntame una optimización de rendimiento reciente." },
+        { "from": "user", "text": "Reduje costes de renderizado con memoización y virtualización de listas." },
+        { "from": "bot", "text": "Pregunta 4: ¿Cómo estructuras componentes para mantenerlos a largo plazo?" },
+        { "from": "user", "text": "Separando UI, lógica de estado y dominio con límites claros." },
+        { "from": "bot", "text": "Pregunta 5: ¿Cómo validas accesibilidad antes de publicar?" },
+        { "from": "user", "text": "Pruebas de teclado, HTML semántico y pruebas rápidas con lector de pantalla." },
+        { "from": "bot", "text": "Pregunta 6: Describe tu colaboración con producto y diseño." },
+        { "from": "user", "text": "Planificación semanal, prototipos tempranos y feedback frecuente." },
+        { "from": "bot", "text": "Pregunta 7: ¿Cómo abordas testing en frontend?" },
+        { "from": "user", "text": "Tests unitarios para lógica y de integración para flujos críticos." },
+        { "from": "bot", "text": "Pregunta 8: Comparte un ejemplo donde mejoraste la developer experience." },
+        { "from": "user", "text": "Creé reglas de lint compartidas y plantillas que redujeron retrabajo en PRs." },
+        { "from": "bot", "text": "Pregunta 9: ¿Cómo monitorizas problemas después del release?" },
+        { "from": "user", "text": "Con seguimiento de errores, dashboards y revisiones post-lanzamiento." },
+        { "from": "bot", "text": "Pregunta 10: ¿Por qué te interesa este puesto ahora?" },
+        { "from": "user", "text": "Porque el reto del producto encaja con mi experiencia y objetivos de crecimiento." },
+        { "from": "bot", "text": "Genial, gracias. Entrevista completada con éxito." }
+      ]
+    }
+  },
+  "features": {
+    "eyebrow": "Funciones",
+    "title": "Todo lo que necesitas para contratar mejor",
+    "description": "Una plataforma completa desde la creación de vacantes hasta el análisis de respuestas. Sin herramientas externas. Sin complejidad.",
+    "items": [
+      { "title": "Entrevistas conversacionales", "desc": "Los candidatos responden en un chat simple: sin formularios confusos, sin PDFs y sin fricción." },
+      { "title": "Verificación automática", "desc": "Email y teléfono verificados con códigos OTP para asegurar que cada candidato sea único y auténtico." },
+      { "title": "Panel de candidatos", "desc": "Visualiza todas las respuestas en una interfaz limpia. Filtra, busca y exporta con un clic." },
+      { "title": "Cuestionarios personalizados", "desc": "Crea preguntas específicas por vacante. Añade, reordena y elimina fácilmente." },
+      { "title": "Análisis con IA", "desc": "Análisis automático con puntuación y resúmenes generados por IA para cada candidato." },
+      { "title": "Exportación de informes", "desc": "Exporta candidaturas en PDF o CSV para compartir con tu equipo o integrar con otros sistemas." }
+    ]
+  },
+  "howItWorks": {
+    "ariaLabel": "Cómo funciona MatchWorky",
+    "eyebrow": "Cómo funciona",
+    "title": "De vacante a contratación en 3 pasos",
+    "description": "El proceso está diseñado para ser simple para tu equipo y fluido para candidatos.",
+    "stepLabel": "Paso",
+    "steps": [
+      { "title": "Crea tu vacante", "desc": "Define título, descripción y preguntas. Puedes tener múltiples vacantes activas al mismo tiempo.", "highlight": "Configura en minutos" },
+      { "title": "Comparte el enlace", "desc": "Cada vacante tiene una URL única. Compártela por redes, web o email; los candidatos acceden sin crear cuenta.", "highlight": "Sin fricción para candidatos" },
+      { "title": "Analiza respuestas", "desc": "Todas las candidaturas se centralizan en tu panel. La IA genera resumen y puntuación para enfocarte en los mejores.", "highlight": "Decisiones con datos" }
+    ]
+  },
+  "testimonials": {
+    "eyebrow": "Testimonios",
+    "title": "Lo que dicen los equipos de RR. HH.",
+    "items": [
+      { "quote": "Antes pasábamos semanas revisando CVs. Con MatchWorky, en dos días ya teníamos los 5 mejores candidatos listos para entrevista presencial.", "author": "Ana Rodrigues", "role": "Head of People, TechStartup Lisbon" },
+      { "quote": "La experiencia para candidatos es increíble. Cero frustración, cero formularios enormes. Les encanta responder así.", "author": "Miguel Santos", "role": "Talent Acquisition, Scale-up Porto" },
+      { "quote": "El resumen con IA nos ahorra al menos 2 horas por candidato. Para nosotros, ha sido un cambio total en contratación técnica.", "author": "Sofia Mendes", "role": "CTO, Digital Product" }
+    ]
+  },
+  "pricing": {
+    "eyebrow": "Planes",
+    "title": "Elige el mejor plan para tu equipo",
+    "description": "Empieza con un plan base y escala sin migraciones complejas. Cancela cuando quieras.",
+    "monthly": "Mensual",
+    "yearly": "Anual",
+    "custom": "Gratis",
+    "year": "/año",
+    "month": "/mes",
+    "save": "Ahorra {{percent}}%",
+    "annualBilling": "Disponible con facturación anual",
+    "monthlyEquivalent": "Equivale a {{value}} EUR/mes",
+    "mostPopular": "Más popular",
+    "viewDetails": "Ver detalles",
+    "startNow": "Empezar",
+    "trial": "Todos los planes incluyen 14 días de prueba gratis. No requiere tarjeta.",
+    "plans": {
+      "basic": { "description": "Para equipos pequeños que quieren acelerar el filtrado inicial.", "features": ["1 empresa", "Hasta 5 entrevistas activas", "Preguntas ilimitadas", "Panel base", "Soporte por email"] },
+      "free": { "description": "Ideal para probar la plataforma con límites de uso.", "features": ["1 empresa", "Hasta 1 entrevista activa", "Hasta 5 preguntas por entrevista", "Sin generación de preguntas por IA", "Sin exportación PDF"] },
+      "pro": { "description": "Escala con mayor volumen y más control operativo.", "features": ["Hasta 3 empresas", "Entrevistas activas ilimitadas", "Preguntas ilimitadas", "Insights de rendimiento", "Soporte prioritario"] }
+    }
+  },
+  "cta": {
+    "eyebrow": "Empieza hoy",
+    "title": "¿Listo para contratar más rápido?",
+    "description": "Únete a equipos que ya automatizaron el filtrado de candidatos. Configura tu primera vacante en menos de 5 minutos.",
+    "primary": "Empieza gratis — 14 días",
+    "secondary": "Ver todos los planes",
+    "footnote": "Sin tarjeta de crédito. Cancela cuando quieras."
+  },
+  "footer": {
+    "description": "Plataforma SaaS de entrevistas conversacionales con IA. Automatiza el filtrado inicial y mejora la experiencia del candidato.",
+    "product": "Producto",
+    "features": "Funciones",
+    "howItWorks": "Cómo funciona",
+    "pricing": "Precios",
+    "startFree": "Empieza gratis",
+    "company": "Empresa",
+    "about": "Sobre nosotros",
+    "contact": "Contacto",
+    "legal": "Legal",
+    "terms": "Términos del servicio",
+    "privacy": "Política de privacidad",
+    "rights": "Todos los derechos reservados."
+  }
+}
