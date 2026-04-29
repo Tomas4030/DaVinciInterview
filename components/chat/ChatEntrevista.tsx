@@ -4,11 +4,10 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
 import type { Vaga } from "@/lib/api";
 import { withBasePath } from "@/lib/base-path";
-
-const supportedLocales = new Set(["pt", "en"]);
+import { normalizeLocale } from "@/lib/i18n/locales";
 
 function withLocale(path: string, locale: string): string {
-  const safeLocale = supportedLocales.has(locale) ? locale : "en";
+  const safeLocale = normalizeLocale(locale);
   if (path === "/") {
     return `/${safeLocale}`;
   }

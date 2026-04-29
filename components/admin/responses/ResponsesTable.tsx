@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { tAdmin } from "@/lib/i18n/admin";
+import { normalizeLocale } from "@/lib/i18n/locales";
 import ResponseStatusBadge from "./ResponseStatusBadge";
 import type { ResponseRow } from "./types";
 
@@ -10,6 +11,10 @@ type Props = {
 };
 
 export default function ResponsesTable({ slug, rows, locale = "en" }: Props) {
+  const safeLocale = normalizeLocale(locale);
+  const dateLocale =
+    safeLocale === "pt" || safeLocale === "br" ? "pt-BR" : safeLocale;
+
   return (
     <div className="rounded-xl border border-[var(--c-border)]/70 bg-[var(--c-surface)]">
       <div className="flex items-center justify-between border-b border-[var(--c-border)]/60 px-5 py-3">
@@ -68,9 +73,7 @@ export default function ResponsesTable({ slug, rows, locale = "en" }: Props) {
                     <ResponseStatusBadge status={row.status} locale={locale} />
                   </td>
                   <td className="px-5 py-3 text-[var(--c-muted)]">
-                    {new Date(row.created_at).toLocaleString(
-                      locale === "pt" ? "pt-PT" : "en-US",
-                    )}
+                    {new Date(row.created_at).toLocaleString(dateLocale)}
                   </td>
                   <td className="px-5 py-3">
                     <Link

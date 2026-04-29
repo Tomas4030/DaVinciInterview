@@ -2,13 +2,12 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { normalizeLocale, SUPPORTED_LOCALES } from "@/lib/i18n/locales";
 
 type LocaleSelectProps = {
   locale: string;
   ariaLabel: string;
 };
-
-const SUPPORTED_LOCALES = new Set(["pt", "en"]);
 
 const LOCALE_META: Record<string, { label: string; flagSrc: string; flagAlt: string }> = {
   pt: {
@@ -21,6 +20,31 @@ const LOCALE_META: Record<string, { label: string; flagSrc: string; flagAlt: str
     flagSrc: "https://flagcdn.com/w40/gb.png",
     flagAlt: "English",
   },
+  br: {
+    label: "BR",
+    flagSrc: "https://flagcdn.com/w40/br.png",
+    flagAlt: "Brazil",
+  },
+  es: {
+    label: "ES",
+    flagSrc: "https://flagcdn.com/w40/es.png",
+    flagAlt: "Espanol",
+  },
+  de: {
+    label: "DE",
+    flagSrc: "https://flagcdn.com/w40/de.png",
+    flagAlt: "Deutsch",
+  },
+  it: {
+    label: "IT",
+    flagSrc: "https://flagcdn.com/w40/it.png",
+    flagAlt: "Italiano",
+  },
+  zh: {
+    label: "ZH",
+    flagSrc: "https://flagcdn.com/w40/cn.png",
+    flagAlt: "Chinese",
+  },
 };
 
 function toLocalizedPath(pathname: string, targetLocale: string): string {
@@ -30,7 +54,7 @@ function toLocalizedPath(pathname: string, targetLocale: string): string {
     return `/${targetLocale}`;
   }
 
-  if (SUPPORTED_LOCALES.has(parts[0])) {
+  if ((SUPPORTED_LOCALES as readonly string[]).includes(parts[0])) {
     parts[0] = targetLocale;
     return `/${parts.join("/")}`;
   }
@@ -45,7 +69,7 @@ export default function LocaleSelect({ locale, ariaLabel }: LocaleSelectProps) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement | null>(null);
 
-  const currentLocale = SUPPORTED_LOCALES.has(locale) ? locale : "en";
+  const currentLocale = normalizeLocale(locale);
 
   const queryString = useMemo(() => {
     const query = searchParams.toString();
@@ -76,7 +100,7 @@ export default function LocaleSelect({ locale, ariaLabel }: LocaleSelectProps) {
   }, []);
 
   function changeLocale(nextLocale: string) {
-    if (!SUPPORTED_LOCALES.has(nextLocale) || nextLocale === currentLocale) {
+    if (!(SUPPORTED_LOCALES as readonly string[]).includes(nextLocale) || nextLocale === currentLocale) {
       setOpen(false);
       return;
     }

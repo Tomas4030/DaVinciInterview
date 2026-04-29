@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { withBasePath } from "@/lib/base-path";
+import { normalizeLocale } from "@/lib/i18n/locales";
 
 type Props = {
   locale: string;
@@ -86,7 +87,8 @@ export default function PlanSelection({ locale, userId }: Props) {
   const router = useRouter();
   const [loadingPlan, setLoadingPlan] = useState<PlanId | null>(null);
   const [error, setError] = useState("");
-  const safeLocale = locale === "pt" ? "pt" : "en";
+  const normalizedLocale = normalizeLocale(locale);
+  const safeLocale = normalizedLocale === "pt" || normalizedLocale === "br" ? "pt" : "en";
   const copy = PLAN_COPY[safeLocale];
 
   async function selectPlan(plan: PlanId) {

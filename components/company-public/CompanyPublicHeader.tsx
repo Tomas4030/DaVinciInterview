@@ -1,17 +1,18 @@
 import Link from "next/link";
+import AdminAccountMenu from "@/components/admin/AdminAccountMenu";
 import LocaleSelect from "@/components/home/LocaleSelect";
 import { tInterview } from "@/lib/i18n/interview";
+import { normalizeLocale } from "@/lib/i18n/locales";
 import type { CompanyRecord } from "@/lib/queries/companies";
 
 type CompanyPublicHeaderProps = {
   company: CompanyRecord;
   locale?: string;
+  adminEmail?: string;
 };
 
-const supportedLocales = new Set(["pt", "en"]);
-
 function withLocale(path: string, locale: string): string {
-  const safeLocale = supportedLocales.has(locale) ? locale : "en";
+  const safeLocale = normalizeLocale(locale);
   if (path === "/") {
     return `/${safeLocale}`;
   }
@@ -19,7 +20,11 @@ function withLocale(path: string, locale: string): string {
   return `/${safeLocale}${path}`;
 }
 
-export default function CompanyPublicHeader({ company, locale = "en" }: CompanyPublicHeaderProps) {
+export default function CompanyPublicHeader({
+  company,
+  locale = "en",
+  adminEmail,
+}: CompanyPublicHeaderProps) {
   const publicPageAria = tInterview(locale, "companyPublic.header.publicPageAria", {
     companyName: company.name,
   });
@@ -71,10 +76,21 @@ export default function CompanyPublicHeader({ company, locale = "en" }: CompanyP
           </Link>
         </nav>
 
-        <LocaleSelect
-          locale={locale}
-          ariaLabel={locale === "pt" ? "Selecionar idioma" : "Select language"}
-        />
+        <div className="flex items-center gap-2">
+          <LocaleSelect
+            locale={locale}
+            ariaLabel={normalizeLocale(locale) === "pt" || normalizeLocale(locale) === "br" ? "Selecionar idioma" : "Select language"}
+          />
+
+          {adminEmail ? (
+            <AdminAccountMenu
+              userEmail={adminEmail}
+              publicHref={withLocale(`/${company.slug}`, locale)}
+              adminHref={withLocale(`/admin/${company.slug}/dashboard`, locale)}
+              locale={locale}
+            />
+          ) : null}
+        </div>
       </div>
     </header>
   );

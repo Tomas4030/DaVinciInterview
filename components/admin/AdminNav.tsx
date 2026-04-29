@@ -6,6 +6,7 @@ import { useMemo } from "react";
 import AdminAccountMenu from "@/components/admin/AdminAccountMenu";
 import LocaleSelect from "@/components/home/LocaleSelect";
 import { tAdmin } from "@/lib/i18n/admin";
+import { normalizeLocale } from "@/lib/i18n/locales";
 
 type AdminNavProps = {
   userEmail: string;
@@ -91,9 +92,7 @@ export default function AdminNav({
         <div className="flex items-center gap-2">
           <LocaleSelect
             locale={locale}
-            ariaLabel={
-              locale === "pt" ? "Selecionar idioma" : "Select language"
-            }
+            ariaLabel={tAdmin(locale, "nav.navigationLabel")}
           />
           <AdminAccountMenu
             userEmail={userEmail}

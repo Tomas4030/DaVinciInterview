@@ -1,14 +1,13 @@
 import Link from "next/link";
+import { normalizeLocale } from "@/lib/i18n/locales";
 import { tLanding } from "@/lib/i18n/landing";
 
 type FooterProps = {
   locale?: string;
 };
 
-const supportedLocales = new Set(["pt", "en"]);
-
 function withLocale(path: string, locale: string): string {
-  const safeLocale = supportedLocales.has(locale) ? locale : "en";
+  const safeLocale = normalizeLocale(locale);
   if (path === "/") {
     return `/${safeLocale}`;
   }

@@ -2,6 +2,7 @@ import Link from "next/link";
 import GridPattern from "./GridPattern";
 import HeroChatPreview from "./HeroChatPreview";
 import { tLanding, tLandingObject } from "@/lib/i18n/landing";
+import { normalizeLocale } from "@/lib/i18n/locales";
 
 type HeroSectionProps = {
   locale?: string;
@@ -12,10 +13,8 @@ type PreviewMessage = {
   text: string;
 };
 
-const supportedLocales = new Set(["pt", "en"]);
-
 function withLocale(path: string, locale: string): string {
-  const safeLocale = supportedLocales.has(locale) ? locale : "en";
+  const safeLocale = normalizeLocale(locale);
   if (path === "/") {
     return `/${safeLocale}`;
   }

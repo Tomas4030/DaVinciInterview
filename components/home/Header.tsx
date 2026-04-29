@@ -3,16 +3,15 @@ import Image from "next/image";
 import AdminAccountMenu from "@/components/admin/AdminAccountMenu";
 import LocaleSelect from "@/components/home/LocaleSelect";
 import { getAdminCompanyContextFromServerCookies } from "@/lib/admin-context";
+import { normalizeLocale } from "@/lib/i18n/locales";
 import { tLanding } from "@/lib/i18n/landing";
 
 type HeaderProps = {
   locale?: string;
 };
 
-const supportedLocales = new Set(["pt", "en"]);
-
 function withLocale(path: string, locale: string): string {
-  const safeLocale = supportedLocales.has(locale) ? locale : "en";
+  const safeLocale = normalizeLocale(locale);
   if (path === "/") {
     return `/${safeLocale}`;
   }
