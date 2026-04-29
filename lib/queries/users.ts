@@ -61,6 +61,52 @@ export async function ensureUserByEmail(email: string): Promise<UserRecord> {
   return created;
 }
 
+export async function ensureUserByEmailAndName(
+  email: string,
+  name?: string | null,
+): Promise<UserRecord> {
+  const normalizedEmail = String(email || "").trim().toLowerCase();
+  const normalizedName = String(name || "").trim() || null;
+  if (!normalizedEmail) {
+    throw new Error("Email de utilizador inválido");
+  }
+
+  const existing = await getUserByEmail(normalizedEmail);
+  if (existing) {
+    if (!existing.name && normalizedName) {
+      await query(
+        `
+        UPDATE users
+        SET name = ?
+        WHERE id = ?
+        `,
+        [normalizedName, existing.id],
+      );
+
+      const updated = await getUserByEmail(normalizedEmail);
+      if (updated) return updated;
+    }
+
+    return existing;
+  }
+
+  const id = uuidv4();
+  await query(
+    `
+    INSERT INTO users (id, email, name)
+    VALUES (?, ?, ?)
+    `,
+    [id, normalizedEmail, normalizedName || normalizedEmail],
+  );
+
+  const created = await getUserByEmail(normalizedEmail);
+  if (!created) {
+    throw new Error("Utilizador criado mas não encontrado");
+  }
+
+  return created;
+}
+
 export async function setUserPasswordHash(
   userId: string,
   passwordHash: string,

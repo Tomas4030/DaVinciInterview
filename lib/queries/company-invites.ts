@@ -75,6 +75,30 @@ export async function listPendingInvitesByCompany(
   return rows;
 }
 
+export async function hasPendingInviteForCompanyAndEmail(
+  companyId: string,
+  email: string,
+): Promise<boolean> {
+  const normalizedCompanyId = String(companyId || "").trim();
+  const normalizedEmail = String(email || "").trim().toLowerCase();
+  if (!normalizedCompanyId || !normalizedEmail) return false;
+
+  const [rows] = await query<{ id: string }>(
+    `
+    SELECT id
+    FROM company_invites
+    WHERE company_id = ?
+      AND LOWER(email) = ?
+      AND status = 'pending'
+      AND expires_at > NOW()
+    LIMIT 1
+    `,
+    [normalizedCompanyId, normalizedEmail],
+  );
+
+  return rows.length > 0;
+}
+
 export async function getInviteByToken(
   token: string,
 ): Promise<CompanyInviteRecord | null> {
