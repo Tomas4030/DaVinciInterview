@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { normalizeBasePath } from "@/lib/base-path-utils";
 import { ADMIN_COMPANY_COOKIE } from "@/lib/admin-auth-shared";
+import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from "@/lib/i18n/locales";
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -42,8 +43,8 @@ export async function middleware(request: NextRequest) {
   }
 
   // 🌍 i18n logic
-  const locales = ["pt", "en"];
-  const defaultLocale = "en";
+  const locales = [...SUPPORTED_LOCALES];
+  const defaultLocale = DEFAULT_LOCALE;
 
   const hasLocale = locales.some(
     (locale) =>
