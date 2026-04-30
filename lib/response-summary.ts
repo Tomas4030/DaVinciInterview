@@ -174,7 +174,7 @@ export async function summarizeInterviewResponses(
       .join("\n\n");
 
     const completion = await client.chat.completions.create({
-      model: "gpt-4o-mini-mini",
+      model: "gpt-4o-mini",
       temperature: 0.2,
       max_tokens: 420,
       messages: [

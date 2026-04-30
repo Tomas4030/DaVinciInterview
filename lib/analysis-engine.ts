@@ -8,6 +8,7 @@
  */
 
 import { OpenAI } from "openai";
+import { logAiUsage } from "@/lib/ai-usage";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -96,6 +97,12 @@ Sempre em JSON estruturado.`;
 async function analisarRespostasComIA(
   respostas: RespostaAnalisada[],
   vagaTitulo: string,
+  context?: {
+    companyId?: string;
+    userId?: string;
+    interviewId?: string;
+    sessionId?: string;
+  },
 ): Promise<AnalisisResultado | null> {
   if (!process.env.OPENAI_API_KEY) {
     console.warn("OPENAI_API_KEY não configurada");
@@ -103,6 +110,8 @@ async function analisarRespostasComIA(
   }
 
   try {
+    const startedAt = Date.now();
+    const model = "gpt-4o-mini";
     const respostaFormatada = respostas
       .map(
         (r, idx) =>
@@ -115,7 +124,7 @@ async function analisarRespostasComIA(
       .join("\n");
 
     const response = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
+      model,
       temperature: 0.5,
       max_tokens: 800,
       messages: [
@@ -156,6 +165,21 @@ Responde APENAS em JSON válido.
           `.trim(),
         },
       ],
+    });
+
+    await logAiUsage({
+      companyId: context?.companyId || null,
+      userId: context?.userId || null,
+      interviewId: context?.interviewId || null,
+      sessionId: context?.sessionId || null,
+      feature: "analysis_summary",
+      model,
+      usage: response.usage,
+      latencyMs: Date.now() - startedAt,
+      metadata: {
+        vagaTitulo,
+        totalPerguntas: respostas.length,
+      },
     });
 
     const content = response.choices[0]?.message?.content?.trim() || "";
@@ -208,6 +232,12 @@ export async function analisarSessao(
   respostas: RespostaAnalisada[],
   vagaTitulo: string,
   emailCandidato?: string,
+  context?: {
+    companyId?: string;
+    userId?: string;
+    interviewId?: string;
+    sessionId?: string;
+  },
 ): Promise<{
   sucesso: boolean;
   dados?: AnalisisResultado;
@@ -220,7 +250,7 @@ export async function analisarSessao(
     };
   }
 
-  const analisis = await analisarRespostasComIA(respostas, vagaTitulo);
+  const analisis = await analisarRespostasComIA(respostas, vagaTitulo, context);
 
   if (!analisis) {
     return {

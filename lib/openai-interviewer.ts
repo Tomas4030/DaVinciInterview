@@ -1,4 +1,5 @@
 import { OpenAI } from "openai";
+import { logAiUsage } from "@/lib/ai-usage";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -24,6 +25,10 @@ interface NextQuestionParams {
   interviewDescription?: string;
   interviewContext?: string;
   interviewQuestions?: any[];
+  companyId?: string;
+  sessionId?: string;
+  interviewId?: string;
+  userId?: string;
 }
 
 function ehRuidoPuro(resposta: string): boolean {
@@ -145,6 +150,10 @@ export async function obterProximaPergunta(
     interviewDescription = "",
     interviewContext = "",
     interviewQuestions = [],
+    companyId = "",
+    sessionId = "",
+    interviewId = "",
+    userId = "",
   } = params;
 
   const isUltimaPergunta = !proximaPerguntaBase?.trim();
@@ -174,8 +183,10 @@ export async function obterProximaPergunta(
   }
 
   try {
+    const startedAt = Date.now();
+    const model = "gpt-4o-mini";
     const response = await openai.chat.completions.create({
-      model: "gpt-4o-mini-mini",
+      model,
       temperature: 0.4,
       max_tokens: 400,
       response_format: { type: "json_object" },
@@ -195,6 +206,21 @@ Próxima pergunta base (reformula com as tuas palavras): "${proximaPerguntaBase}
 Iteração atual nesta pergunta: ${iteracaoAtual}`,
         },
       ],
+    });
+
+    await logAiUsage({
+      companyId: companyId || null,
+      userId: userId || null,
+      interviewId: interviewId || null,
+      sessionId: sessionId || null,
+      feature: "interview_next_question",
+      model,
+      usage: response.usage,
+      latencyMs: Date.now() - startedAt,
+      metadata: {
+        vagaTitulo,
+        iteracaoAtual,
+      },
     });
 
     const content = response.choices[0]?.message?.content?.trim() || "";

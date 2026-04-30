@@ -155,7 +155,7 @@ async function compareCandidatesForInterview(
     }));
 
     const completion = await client.chat.completions.create({
-      model: "gpt-4o-mini-mini",
+      model: "gpt-4o-mini",
       temperature: 0.2,
       max_tokens: 700,
       messages: [

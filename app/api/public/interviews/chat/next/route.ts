@@ -71,6 +71,9 @@ export async function POST(request: NextRequest) {
       iteracaoAtual,
       companyName: company.name,
       companyDescription: company.description || "",
+      companyId: company.id,
+      sessionId: sessionToken,
+      interviewId: interview.id,
       interviewDescription: stripInterviewMetaFromDescription(
         interview.description || "",
       ),

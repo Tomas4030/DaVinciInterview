@@ -2,6 +2,10 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { normalizeBasePath } from "@/lib/base-path-utils";
 import { ADMIN_COMPANY_COOKIE } from "@/lib/admin-auth-shared";
+import {
+  parseSuperAdminTokenForMiddleware,
+  SUPER_ADMIN_SESSION_COOKIE,
+} from "@/lib/super-admin-auth-middleware";
 import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from "@/lib/i18n/locales";
 
 export async function middleware(request: NextRequest) {
@@ -53,6 +57,19 @@ export async function middleware(request: NextRequest) {
   );
 
   const isAdminRoute = pathnameWithoutBasePath.startsWith("/admin");
+  const isSuperAdminRoute = pathnameWithoutBasePath.startsWith("/super-admin");
+  const isSuperAdminLoginRoute = pathnameWithoutBasePath === "/super-admin/login";
+
+  if (isSuperAdminRoute && !isSuperAdminLoginRoute) {
+    const token = request.cookies.get(SUPER_ADMIN_SESSION_COOKIE)?.value;
+    const session = await parseSuperAdminTokenForMiddleware(token);
+
+    if (!session) {
+      const loginUrl = request.nextUrl.clone();
+      loginUrl.pathname = `${basePath}/super-admin/login`.replace(/\/+/g, "/");
+      return NextResponse.redirect(loginUrl);
+    }
+  }
 
   if (isAdminRoute) {
     const localizedAdminUrl = request.nextUrl.clone();
@@ -64,7 +81,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(localizedAdminUrl);
   }
 
-  if (!hasLocale && !isAdminRoute) {
+  if (!hasLocale && !isAdminRoute && !isSuperAdminRoute) {
     const redirectUrl = request.nextUrl.clone();
     redirectUrl.pathname =
       `${basePath}/${defaultLocale}${pathnameWithoutBasePath}`.replace(

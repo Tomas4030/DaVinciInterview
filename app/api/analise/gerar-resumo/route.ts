@@ -60,6 +60,10 @@ export async function POST(request: NextRequest) {
       respostasParaAnalise,
       vagaTitulo,
       emailCandidato,
+      {
+        interviewId: vaga_id,
+        sessionId: sessao_id,
+      },
     );
 
     if (!resultado.sucesso) {
