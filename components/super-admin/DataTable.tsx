@@ -1,7 +1,7 @@
 type Column = {
   key: string;
   label: string;
-  align?: "left" | "right";
+  align?: "left" | "right" | "center";
 };
 
 type Props = {
@@ -12,25 +12,36 @@ type Props = {
 
 export default function DataTable({ columns, children, footer }: Props) {
   return (
-    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+    <div className="overflow-hidden rounded-2xl border border-[#eaeaea] bg-white shadow-[0_2px_8px_rgba(0,0,0,0.03)]">
       <div className="overflow-x-auto">
         <table className="min-w-full text-sm">
-          <thead className="bg-slate-50">
+          <thead className="bg-[#fbfbfa]">
             <tr>
               {columns.map((column) => (
                 <th
                   key={column.key}
-                  className={`px-4 py-3 text-xs font-semibold uppercase tracking-[0.08em] text-slate-500 ${column.align === "right" ? "text-right" : "text-left"}`}
+                  className={`whitespace-nowrap px-5 py-4 text-xs font-semibold uppercase tracking-[0.08em] text-[#787774] ${
+                    column.align === "right"
+                      ? "text-right"
+                      : column.align === "center"
+                        ? "text-center"
+                        : "text-left"
+                  }`}
                 >
                   {column.label}
                 </th>
               ))}
             </tr>
           </thead>
-          <tbody>{children}</tbody>
+          <tbody className="divide-y divide-[#f1f1ef]">{children}</tbody>
         </table>
       </div>
-      {footer ? <div className="border-t border-slate-200 px-4 py-3">{footer}</div> : null}
+
+      {footer ? (
+        <div className="flex items-center justify-between border-t border-[#f1f1ef] px-5 py-4">
+          {footer}
+        </div>
+      ) : null}
     </div>
   );
 }

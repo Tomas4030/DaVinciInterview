@@ -32,7 +32,11 @@ function formatDate(value: string | null): string {
   if (!value) return "-";
   const date = new Date(value);
   if (!Number.isFinite(date.getTime())) return value;
-  return new Intl.DateTimeFormat("pt-PT", { dateStyle: "short", timeStyle: "short" }).format(date);
+
+  return new Intl.DateTimeFormat("pt-PT", {
+    dateStyle: "short",
+    timeStyle: "short",
+  }).format(date);
 }
 
 export default function SuperAdminsManager({ initialAdmins }: Props) {
@@ -49,12 +53,20 @@ export default function SuperAdminsManager({ initialAdmins }: Props) {
   const adminsFiltered = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return admins;
-    return admins.filter((admin) => admin.name.toLowerCase().includes(q) || admin.email.toLowerCase().includes(q));
+
+    return admins.filter(
+      (admin) =>
+        admin.name.toLowerCase().includes(q) ||
+        admin.email.toLowerCase().includes(q),
+    );
   }, [admins, query]);
 
   async function refresh() {
-    const response = await fetch(withBasePath("/api/super-admin/admins"), { cache: "no-store" });
+    const response = await fetch(withBasePath("/api/super-admin/admins"), {
+      cache: "no-store",
+    });
     const data = await response.json();
+
     if (response.ok) {
       setAdmins(data.admins || []);
     }
@@ -72,6 +84,7 @@ export default function SuperAdminsManager({ initialAdmins }: Props) {
     });
 
     const data = await response.json();
+
     if (!response.ok) {
       setError(String(data?.error || "Falha ao criar super admin"));
       setLoading(false);
@@ -82,6 +95,7 @@ export default function SuperAdminsManager({ initialAdmins }: Props) {
     setEmail("");
     setPassword("");
     setShowCreate(false);
+
     await refresh();
     router.refresh();
     setLoading(false);
@@ -89,6 +103,7 @@ export default function SuperAdminsManager({ initialAdmins }: Props) {
 
   async function toggleActive(id: string, isActive: boolean) {
     setError("");
+
     const response = await fetch(withBasePath("/api/super-admin/admins"), {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
@@ -96,6 +111,7 @@ export default function SuperAdminsManager({ initialAdmins }: Props) {
     });
 
     const data = await response.json();
+
     if (!response.ok) {
       setError(String(data?.error || "Falha ao atualizar estado"));
       return;
@@ -107,61 +123,120 @@ export default function SuperAdminsManager({ initialAdmins }: Props) {
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap items-center justify-between gap-2">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <input
           value={query}
           onChange={(event) => setQuery(event.target.value)}
-          placeholder="Pesquisar por nome ou email"
-          className="w-full max-w-md rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm"
+          placeholder="Pesquisar por nome ou email..."
+          className="h-11 w-full max-w-xl rounded-xl border border-slate-200 bg-white px-4 text-sm shadow-sm outline-none placeholder:text-slate-400"
         />
-        <button onClick={() => setShowCreate((value) => !value)} className="rounded-xl bg-indigo-600 px-4 py-2 text-sm font-medium text-white">
+
+        <button
+          onClick={() => setShowCreate((value) => !value)}
+          className="h-11 rounded-xl bg-indigo-600 px-5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700"
+        >
           + Novo Super Admin
         </button>
       </div>
 
       {showCreate ? (
-        <form onSubmit={handleCreate} className="grid gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm md:grid-cols-4">
-          <input className="input-base" placeholder="Nome" value={name} onChange={(event) => setName(event.target.value)} required />
-          <input className="input-base" placeholder="Email" type="email" value={email} onChange={(event) => setEmail(event.target.value)} required />
-          <input className="input-base" placeholder="Password" type="password" value={password} onChange={(event) => setPassword(event.target.value)} minLength={8} required />
-          <button className="rounded-xl bg-indigo-600 px-3 py-2 text-sm font-medium text-white" type="submit" disabled={loading}>
+        <form
+          onSubmit={handleCreate}
+          className="grid gap-3 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-[0_8px_30px_rgba(15,23,42,0.04)] md:grid-cols-4"
+        >
+          <input
+            className="h-11 rounded-xl border border-slate-200 px-4 text-sm outline-none"
+            placeholder="Nome"
+            value={name}
+            onChange={(event) => setName(event.target.value)}
+            required
+          />
+          <input
+            className="h-11 rounded-xl border border-slate-200 px-4 text-sm outline-none"
+            placeholder="Email"
+            type="email"
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+            required
+          />
+          <input
+            className="h-11 rounded-xl border border-slate-200 px-4 text-sm outline-none"
+            placeholder="Password"
+            type="password"
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
+            minLength={8}
+            required
+          />
+          <button
+            className="h-11 rounded-xl bg-indigo-600 px-4 text-sm font-semibold text-white disabled:opacity-60"
+            type="submit"
+            disabled={loading}
+          >
             {loading ? "A criar..." : "Criar"}
           </button>
         </form>
       ) : null}
 
-      {error ? <div className="rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-700">{error}</div> : null}
+      {error ? (
+        <div className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+          {error}
+        </div>
+      ) : null}
 
       <DataTable
         columns={[
           { key: "name", label: "Nome" },
           { key: "email", label: "Email" },
           { key: "status", label: "Status" },
-          { key: "last", label: "Último login" },
+          { key: "last", label: "Último Login" },
           { key: "actions", label: "Ações", align: "right" },
         ]}
-        footer={<span className="text-sm text-slate-600">Mostrando {adminsFiltered.length} super admins</span>}
+        footer={
+          <>
+            <span className="text-sm text-slate-500">
+              Mostrando {adminsFiltered.length} super admins
+            </span>
+            <div className="flex items-center gap-2 text-sm">
+              <button className="rounded-lg bg-slate-100 px-3 py-1 text-slate-400">
+                ‹
+              </button>
+              <button className="rounded-lg bg-indigo-600 px-3 py-1 text-white">
+                1
+              </button>
+              <button className="rounded-lg bg-slate-100 px-3 py-1 text-slate-400">
+                ›
+              </button>
+            </div>
+          </>
+        }
       >
         {adminsFiltered.map((admin) => (
-          <tr key={admin.id} className="border-t border-slate-100">
-            <td className="px-4 py-3">
+          <tr key={admin.id}>
+            <td className="px-5 py-4">
               <div className="flex items-center gap-3">
-                <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-indigo-100 text-xs font-semibold text-indigo-700">
+                <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-indigo-100 text-xs font-bold text-indigo-700">
                   {initials(admin.name)}
                 </span>
-                <span className="font-medium text-slate-900">{admin.name}</span>
+                <span className="font-semibold text-slate-900">
+                  {admin.name}
+                </span>
               </div>
             </td>
-            <td className="px-4 py-3 text-slate-700">{admin.email}</td>
-            <td className="px-4 py-3">
-              <StatusBadge tone={admin.is_active ? "green" : "default"}>{admin.is_active ? "Ativo" : "Inativo"}</StatusBadge>
+            <td className="px-5 py-4 text-slate-700">{admin.email}</td>
+            <td className="px-5 py-4">
+              <StatusBadge tone={admin.is_active ? "green" : "red"}>
+                {admin.is_active ? "Ativo" : "Inativo"}
+              </StatusBadge>
             </td>
-            <td className="px-4 py-3 text-slate-700">{formatDate(admin.last_login_at)}</td>
-            <td className="px-4 py-3 text-right">
+            <td className="px-5 py-4 text-slate-700">
+              {formatDate(admin.last_login_at)}
+            </td>
+            <td className="px-5 py-4 text-right">
               <button
                 type="button"
                 onClick={() => toggleActive(admin.id, Boolean(admin.is_active))}
-                className="rounded-lg border border-slate-200 px-2 py-1 text-xs text-slate-700"
+                className="rounded-xl border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50"
               >
                 {admin.is_active ? "Desativar" : "Ativar"}
               </button>

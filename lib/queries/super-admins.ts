@@ -1,6 +1,7 @@
 import "server-only";
 import { query } from "@/lib/db";
 import { hashPassword } from "@/lib/password";
+import { usdToEur } from "@/lib/currency";
 
 export type SuperAdminRecord = {
   id: string;
@@ -13,12 +14,12 @@ export type SuperAdminRecord = {
   last_login_at: string | null;
 };
 
-function monthStartSql(): string {
-  return "DATE_FORMAT(NOW(), '%Y-%m-01 00:00:00')";
-}
-
-export async function findSuperAdminByEmail(email: string): Promise<SuperAdminRecord | null> {
-  const normalizedEmail = String(email || "").trim().toLowerCase();
+export async function findSuperAdminByEmail(
+  email: string,
+): Promise<SuperAdminRecord | null> {
+  const normalizedEmail = String(email || "")
+    .trim()
+    .toLowerCase();
   if (!normalizedEmail) return null;
 
   const [rows] = await query<SuperAdminRecord>(
@@ -60,7 +61,9 @@ export async function createSuperAdmin(input: {
   password: string;
   createdBySuperAdminId?: string | null;
 }): Promise<SuperAdminRecord> {
-  const normalizedEmail = String(input.email || "").trim().toLowerCase();
+  const normalizedEmail = String(input.email || "")
+    .trim()
+    .toLowerCase();
   const normalizedName = String(input.name || "").trim();
   const passwordHash = hashPassword(input.password);
 
@@ -79,12 +82,70 @@ export async function createSuperAdmin(input: {
       UUID(), ?, ?, ?, 1, ?, NOW(), NOW()
     )
     `,
-    [normalizedEmail, normalizedName, passwordHash, input.createdBySuperAdminId || null],
+    [
+      normalizedEmail,
+      normalizedName,
+      passwordHash,
+      input.createdBySuperAdminId || null,
+    ],
   );
 
   const created = await findSuperAdminByEmail(normalizedEmail);
   if (!created) throw new Error("Falha ao criar super admin");
+
   return created;
+}
+
+export async function getSuperAdminDashboardStats(): Promise<{
+  totalCompanies: number;
+  activeCompanies: number;
+  totalCompanyAdmins: number;
+  aiCallsLast30d: number;
+  aiCostLast30dUsd: number;
+  aiCostLast30dEur: number;
+  totalTokensLast30d: number;
+}> {
+  const [[companies]] = await query<{ total: number; active: number }>(
+    `
+    SELECT
+      COUNT(*) AS total,
+      SUM(CASE WHEN subscription_status IN ('trialing', 'active') THEN 1 ELSE 0 END) AS active
+    FROM companies
+    `,
+  );
+
+  const [[companyAdmins]] = await query<{ total: number }>(
+    `
+    SELECT COUNT(*) AS total
+    FROM company_members
+    WHERE role IN ('owner', 'admin')
+    `,
+  );
+
+  const [[usage]] = await query<{
+    totalCalls: number;
+    totalCost: number;
+    totalTokens: number;
+  }>(
+    `
+    SELECT
+      COUNT(*) AS totalCalls,
+      COALESCE(SUM(cost_usd), 0) AS totalCost,
+      COALESCE(SUM(total_tokens), 0) AS totalTokens
+    FROM ai_usage_logs
+    WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+    `,
+  );
+
+  return {
+    totalCompanies: Number(companies?.total || 0),
+    activeCompanies: Number(companies?.active || 0),
+    totalCompanyAdmins: Number(companyAdmins?.total || 0),
+    aiCallsLast30d: Number(usage?.totalCalls || 0),
+    aiCostLast30dUsd: Number(usage?.totalCost || 0),
+    aiCostLast30dEur: usdToEur(Number(usage?.totalCost || 0)),
+    totalTokensLast30d: Number(usage?.totalTokens || 0),
+  };
 }
 
 export async function listSuperAdmins(): Promise<
@@ -121,7 +182,10 @@ export async function listSuperAdmins(): Promise<
   return rows;
 }
 
-export async function updateSuperAdminActiveState(id: string, isActive: boolean): Promise<void> {
+export async function updateSuperAdminActiveState(
+  id: string,
+  isActive: boolean,
+): Promise<void> {
   if (!isActive) {
     const activeCount = await countActiveSuperAdmins();
     if (activeCount <= 1) {
@@ -140,140 +204,30 @@ export async function updateSuperAdminActiveState(id: string, isActive: boolean)
   );
 }
 
-export async function getSuperAdminDashboardStats(): Promise<{
-  totalCompanies: number;
-  activeCompanies: number;
-  totalCompanyAdmins: number;
-  aiCallsThisMonth: number;
-  aiCostThisMonthUsd: number;
-  totalTokensThisMonth: number;
-}> {
-  const [[companies]] = await query<{ total: number; active: number }>(
-    `
-    SELECT
-      COUNT(*) AS total,
-      SUM(CASE WHEN subscription_status IN ('active','trialing','past_due') THEN 1 ELSE 0 END) AS active
-    FROM companies
-    `,
-  );
-
-  const [[companyAdmins]] = await query<{ total: number }>(
-    `SELECT COUNT(*) AS total FROM company_members WHERE role = 'admin'`,
-  );
-
-  const [[usage]] = await query<{ totalCalls: number; totalCost: number; totalTokens: number }>(
-    `
-    SELECT
-      COUNT(*) AS totalCalls,
-      COALESCE(SUM(cost_usd), 0) AS totalCost,
-      COALESCE(SUM(total_tokens), 0) AS totalTokens
-    FROM ai_usage_logs
-    WHERE created_at >= ${monthStartSql()}
-    `,
-  );
-
-  return {
-    totalCompanies: Number(companies?.total || 0),
-    activeCompanies: Number(companies?.active || 0),
-    totalCompanyAdmins: Number(companyAdmins?.total || 0),
-    aiCallsThisMonth: Number(usage?.totalCalls || 0),
-    aiCostThisMonthUsd: Number(usage?.totalCost || 0),
-    totalTokensThisMonth: Number(usage?.totalTokens || 0),
-  };
-}
-
-export async function getDailyAiCost(): Promise<Array<{ day: string; cost_usd: number }>> {
-  const [rows] = await query<{ day: string; cost_usd: number }>(
-    `
-    SELECT
-      DATE_FORMAT(created_at, '%d/%m') AS day,
-      COALESCE(SUM(cost_usd), 0) AS cost_usd
-    FROM ai_usage_logs
-    WHERE created_at >= ${monthStartSql()}
-    GROUP BY DATE(created_at)
-    ORDER BY DATE(created_at) ASC
-    `,
-  );
-  return rows;
-}
-
-export async function getAiCostByFeature(): Promise<Array<{ feature: string; cost_usd: number }>> {
-  const [rows] = await query<{ feature: string; cost_usd: number }>(
-    `
-    SELECT
-      feature,
-      COALESCE(SUM(cost_usd), 0) AS cost_usd
-    FROM ai_usage_logs
-    WHERE created_at >= ${monthStartSql()}
-    GROUP BY feature
-    ORDER BY cost_usd DESC
-    `,
-  );
-  return rows;
-}
-
-export async function getTopCompaniesByAiCost(limit = 5): Promise<Array<{ company_name: string; cost_usd: number }>> {
-  const safeLimit = Math.min(Math.max(limit, 1), 20);
-  const [rows] = await query<{ company_name: string; cost_usd: number }>(
-    `
-    SELECT
-      COALESCE(c.name, 'Sem empresa') AS company_name,
-      COALESCE(SUM(l.cost_usd), 0) AS cost_usd
-    FROM ai_usage_logs l
-    LEFT JOIN companies c ON c.id = l.company_id
-    WHERE l.created_at >= ${monthStartSql()}
-    GROUP BY l.company_id, c.name
-    ORDER BY cost_usd DESC
-    LIMIT ${safeLimit}
-    `,
-  );
-  return rows;
-}
-
-export async function getTokenBreakdown(): Promise<{ input_tokens: number; output_tokens: number; total_tokens: number }> {
-  const [[row]] = await query<{ input_tokens: number; output_tokens: number; total_tokens: number }>(
-    `
-    SELECT
-      COALESCE(SUM(prompt_tokens), 0) AS input_tokens,
-      COALESCE(SUM(completion_tokens), 0) AS output_tokens,
-      COALESCE(SUM(total_tokens), 0) AS total_tokens
-    FROM ai_usage_logs
-    WHERE created_at >= ${monthStartSql()}
-    `,
-  );
-
-  return {
-    input_tokens: Number(row?.input_tokens || 0),
-    output_tokens: Number(row?.output_tokens || 0),
-    total_tokens: Number(row?.total_tokens || 0),
-  };
-}
-
 export async function listCompaniesUsageSummary(): Promise<
   Array<{
     company_id: string;
     company_name: string;
     company_slug: string;
-    plan: string;
-    subscription_status: string;
+    plan: string | null;
+    subscription_status: string | null;
     interviews_count: number;
     total_calls_30d: number;
     total_tokens_30d: number;
     total_cost_30d_usd: number;
-    estimated_margin_pct: number;
+    total_cost_30d_eur: number;
   }>
 > {
   const [rows] = await query<{
     company_id: string;
     company_name: string;
     company_slug: string;
-    plan: string;
-    subscription_status: string;
+    plan: string | null;
+    subscription_status: string | null;
     interviews_count: number;
     total_calls_30d: number;
     total_tokens_30d: number;
     total_cost_30d_usd: number;
-    estimated_margin_pct: number;
   }>(
     `
     SELECT
@@ -285,14 +239,7 @@ export async function listCompaniesUsageSummary(): Promise<
       COALESCE(i.interviews_count, 0) AS interviews_count,
       COALESCE(u.total_calls_30d, 0) AS total_calls_30d,
       COALESCE(u.total_tokens_30d, 0) AS total_tokens_30d,
-      COALESCE(u.total_cost_30d_usd, 0) AS total_cost_30d_usd,
-      CASE
-        WHEN COALESCE(u.total_cost_30d_usd, 0) = 0 THEN 0
-        WHEN c.plan = 'basic' THEN 55
-        WHEN c.plan = 'pro' THEN 68
-        WHEN c.plan = 'enterprise' THEN 76
-        ELSE 50
-      END AS estimated_margin_pct
+      COALESCE(u.total_cost_30d_usd, 0) AS total_cost_30d_usd
     FROM companies c
     LEFT JOIN (
       SELECT company_id, COUNT(*) AS interviews_count
@@ -313,7 +260,10 @@ export async function listCompaniesUsageSummary(): Promise<
     `,
   );
 
-  return rows;
+  return rows.map((row) => ({
+    ...row,
+    total_cost_30d_eur: usdToEur(Number(row.total_cost_30d_usd || 0)),
+  }));
 }
 
 export async function listAiUsageLogs(filters?: {
@@ -337,6 +287,7 @@ export async function listAiUsageLogs(filters?: {
     completion_tokens: number;
     total_tokens: number;
     cost_usd: number;
+    cost_eur: number;
     latency_ms: number | null;
   }>;
   total: number;
@@ -348,40 +299,43 @@ export async function listAiUsageLogs(filters?: {
     where.push("l.company_id = ?");
     values.push(filters.companyId);
   }
+
   if (filters?.model) {
     where.push("l.model = ?");
     values.push(filters.model);
   }
+
   if (filters?.feature) {
     where.push("l.feature = ?");
     values.push(filters.feature);
   }
+
   if (filters?.from) {
     where.push("l.created_at >= ?");
     values.push(filters.from);
   }
+
   if (filters?.to) {
     where.push("l.created_at <= ?");
     values.push(filters.to);
   }
+
   if (filters?.q) {
     where.push("(c.name LIKE ? OR l.feature LIKE ? OR l.model LIKE ?)");
-    const q = `%${filters.q}%`;
-    values.push(q, q, q);
+    const queryLike = `%${filters.q}%`;
+    values.push(queryLike, queryLike, queryLike);
   }
 
-  const pageSize = Math.min(Math.max(Number(filters?.pageSize || 20), 5), 100);
+  const pageSize = Math.min(Math.max(Number(filters?.pageSize || 20), 1), 200);
   const page = Math.max(Number(filters?.page || 1), 1);
   const offset = (page - 1) * pageSize;
-
-  const whereSql = where.join(" AND ");
 
   const [[countRow]] = await query<{ total: number }>(
     `
     SELECT COUNT(*) AS total
     FROM ai_usage_logs l
     LEFT JOIN companies c ON c.id = l.company_id
-    WHERE ${whereSql}
+    WHERE ${where.join(" AND ")}
     `,
     values,
   );
@@ -414,7 +368,7 @@ export async function listAiUsageLogs(filters?: {
       l.latency_ms
     FROM ai_usage_logs l
     LEFT JOIN companies c ON c.id = l.company_id
-    WHERE ${whereSql}
+    WHERE ${where.join(" AND ")}
     ORDER BY l.created_at DESC
     LIMIT ${pageSize} OFFSET ${offset}
     `,
@@ -422,7 +376,10 @@ export async function listAiUsageLogs(filters?: {
   );
 
   return {
-    rows,
+    rows: rows.map((row) => ({
+      ...row,
+      cost_eur: usdToEur(Number(row.cost_usd || 0)),
+    })),
     total: Number(countRow?.total || 0),
   };
 }
@@ -449,4 +406,80 @@ export async function listAiUsageFilterOptions(): Promise<{
     features: features.map((item) => item.feature),
     models: models.map((item) => item.model),
   };
+}
+
+export async function getDailyAiCostLast30d(): Promise<
+  Array<{
+    day: string;
+    cost_eur: number;
+  }>
+> {
+  const [rows] = await query<{ day: string; cost_usd: number }>(
+    `
+    SELECT
+      DATE_FORMAT(created_at, '%d %b') AS day,
+      DATE(created_at) AS raw_day,
+      COALESCE(SUM(cost_usd), 0) AS cost_usd
+    FROM ai_usage_logs
+    WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+    GROUP BY DATE(created_at), DATE_FORMAT(created_at, '%d %b')
+    ORDER BY raw_day ASC
+    `,
+  );
+
+  return rows.map((row) => ({
+    day: row.day,
+    cost_eur: usdToEur(Number(row.cost_usd || 0)),
+  }));
+}
+
+export async function getAiCostByFeatureLast30d(): Promise<
+  Array<{
+    feature: string;
+    cost_eur: number;
+  }>
+> {
+  const [rows] = await query<{ feature: string; cost_usd: number }>(
+    `
+    SELECT
+      feature,
+      COALESCE(SUM(cost_usd), 0) AS cost_usd
+    FROM ai_usage_logs
+    WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+    GROUP BY feature
+    ORDER BY cost_usd DESC
+    LIMIT 5
+    `,
+  );
+
+  return rows.map((row) => ({
+    feature: row.feature || "other",
+    cost_eur: usdToEur(Number(row.cost_usd || 0)),
+  }));
+}
+
+export async function getTopCompaniesByAiCostLast30d(): Promise<
+  Array<{
+    company_name: string;
+    cost_eur: number;
+  }>
+> {
+  const [rows] = await query<{ company_name: string; cost_usd: number }>(
+    `
+    SELECT
+      COALESCE(c.name, 'Sem empresa') AS company_name,
+      COALESCE(SUM(l.cost_usd), 0) AS cost_usd
+    FROM ai_usage_logs l
+    LEFT JOIN companies c ON c.id = l.company_id
+    WHERE l.created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+    GROUP BY COALESCE(c.name, 'Sem empresa')
+    ORDER BY cost_usd DESC
+    LIMIT 5
+    `,
+  );
+
+  return rows.map((row) => ({
+    company_name: row.company_name,
+    cost_eur: usdToEur(Number(row.cost_usd || 0)),
+  }));
 }

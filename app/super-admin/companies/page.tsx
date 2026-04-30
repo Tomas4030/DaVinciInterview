@@ -1,83 +1,93 @@
 import { redirect } from "next/navigation";
-import DataTable from "@/components/super-admin/DataTable";
-import MetricCard from "@/components/super-admin/MetricCard";
-import StatusBadge from "@/components/super-admin/StatusBadge";
 import SuperAdminShell from "@/components/super-admin/SuperAdminShell";
-import { formatEur, usdToEur } from "@/lib/currency";
+import MetricCard from "@/components/super-admin/MetricCard";
+import DataTable from "@/components/super-admin/DataTable";
+import StatusBadge from "@/components/super-admin/StatusBadge";
 import { getSuperAdminSessionFromServerCookies } from "@/lib/super-admin-context";
 import { listCompaniesUsageSummary } from "@/lib/queries/super-admins";
+import { formatEur, formatNumber } from "@/lib/currency";
 
-type Props = {
-  searchParams?: {
-    q?: string;
-    page?: string;
-  };
+const PLAN_PRICE: Record<string, number> = {
+  basic: 49,
+  pro: 149,
+  enterprise: 499,
 };
 
-function getStatusTone(status: string): "green" | "amber" | "red" | "default" {
-  if (status === "active" || status === "trialing") return "green";
-  if (status === "past_due") return "amber";
-  if (status === "canceled") return "red";
-  return "default";
-}
-
-function getPlanTone(plan: string): "blue" | "purple" | "default" {
+function planTone(plan?: string | null) {
   if (plan === "pro") return "purple";
   if (plan === "enterprise") return "blue";
+  if (plan === "basic") return "blue";
   return "default";
 }
 
-export default async function SuperAdminCompaniesPage({ searchParams }: Props) {
+function statusTone(status?: string | null) {
+  if (status === "active" || status === "trialing") return "green";
+  if (status === "canceled" || status === "past_due") return "red";
+  return "default";
+}
+
+export default async function SuperAdminCompaniesPage() {
   const session = getSuperAdminSessionFromServerCookies();
   if (!session) redirect("/super-admin/login");
 
-  const allRows = await listCompaniesUsageSummary();
-  const q = String(searchParams?.q || "").trim().toLowerCase();
-  const page = Math.max(Number(searchParams?.page || 1), 1);
-  const pageSize = 10;
+  const rows = await listCompaniesUsageSummary();
 
-  const rowsFiltered = q
-    ? allRows.filter(
-        (row) =>
-          row.company_name.toLowerCase().includes(q) || row.company_slug.toLowerCase().includes(q),
-      )
-    : allRows;
+  const totalCost = rows.reduce(
+    (sum, row) => sum + Number(row.total_cost_30d_eur || 0),
+    0,
+  );
+  const activeCompanies = rows.filter((row) =>
+    ["active", "trialing"].includes(String(row.subscription_status)),
+  ).length;
 
-  const totalPages = Math.max(Math.ceil(rowsFiltered.length / pageSize), 1);
-  const safePage = Math.min(page, totalPages);
-  const offset = (safePage - 1) * pageSize;
-  const rows = rowsFiltered.slice(offset, offset + pageSize);
-
-  const totalCostEur = rowsFiltered.reduce((acc, row) => acc + usdToEur(row.total_cost_30d_usd), 0);
-  const activeCount = rowsFiltered.filter((row) => row.subscription_status === "active" || row.subscription_status === "trialing").length;
-  const avgCostPerCompany = rowsFiltered.length > 0 ? totalCostEur / rowsFiltered.length : 0;
+  const avgCost = rows.length ? totalCost / rows.length : 0;
 
   return (
     <SuperAdminShell active="companies">
       <div className="space-y-6">
-        <header className="flex flex-wrap items-end justify-between gap-3">
+        <header className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-semibold text-slate-900">Companies</h1>
-            <p className="text-sm text-slate-500">Consumo e custo de IA por empresa.</p>
+            <h1 className="text-2xl font-bold tracking-tight text-slate-950">
+              Empresas
+            </h1>
+            <p className="mt-1 text-sm text-slate-500">
+              Consumo de IA por empresa
+            </p>
           </div>
-          <div className="flex gap-2">
-            <form className="flex">
-              <input
-                name="q"
-                defaultValue={q}
-                placeholder="Pesquisar empresa"
-                className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm"
-              />
-            </form>
-            <button className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm">Exportar</button>
+
+          <div className="flex flex-wrap items-center gap-2">
+            <input
+              placeholder="Pesquisar empresa..."
+              className="h-10 rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400"
+            />
+            <button className="h-10 rounded-xl border border-slate-200 bg-white px-4 text-sm font-medium text-slate-700 shadow-sm">
+              30 Apr - 30 May 2026
+            </button>
+            <button className="h-10 rounded-xl border border-slate-200 bg-white px-4 text-sm font-medium text-slate-700 shadow-sm">
+              Exportar
+            </button>
           </div>
         </header>
 
         <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          <MetricCard title="Total empresas" value={rowsFiltered.length.toLocaleString("pt-PT")} />
-          <MetricCard title="Empresas ativas" value={activeCount.toLocaleString("pt-PT")} />
-          <MetricCard title="Custo total IA" value={formatEur(totalCostEur, 2, 4)} />
-          <MetricCard title="Custo médio/empresa" value={formatEur(avgCostPerCompany, 2, 4)} />
+          <MetricCard
+            title="Total empresas"
+            value={formatNumber(rows.length)}
+          />
+          <MetricCard
+            title="Empresas ativas"
+            value={formatNumber(activeCompanies)}
+          />
+          <MetricCard
+            title="Custo total IA"
+            value={formatEur(totalCost)}
+            subtitle="Este mês"
+          />
+          <MetricCard
+            title="Custo médio/empresa"
+            value={formatEur(avgCost)}
+            subtitle="Por empresa"
+          />
         </section>
 
         <DataTable
@@ -85,38 +95,76 @@ export default async function SuperAdminCompaniesPage({ searchParams }: Props) {
             { key: "company", label: "Empresa" },
             { key: "plan", label: "Plano" },
             { key: "status", label: "Status" },
-            { key: "calls", label: "Entrevistas/Chamadas", align: "right" },
-            { key: "cost", label: "Custo IA" , align: "right"},
+            { key: "calls", label: "Chamadas", align: "center" },
+            { key: "cost", label: "Custo IA", align: "right" },
             { key: "tokens", label: "Tokens", align: "right" },
             { key: "margin", label: "Margem IA", align: "right" },
             { key: "actions", label: "Ações", align: "right" },
           ]}
           footer={
-            <div className="flex items-center justify-between text-sm text-slate-600">
-              <span>Mostrando {rows.length} de {rowsFiltered.length} empresas</span>
-              <div className="flex items-center gap-2">
-                <span>Página {safePage} de {totalPages}</span>
-                <a className="rounded-lg border border-slate-200 px-2 py-1" href={`/super-admin/companies?page=${Math.max(safePage - 1, 1)}&q=${encodeURIComponent(q)}`}>‹</a>
-                <a className="rounded-lg border border-slate-200 px-2 py-1" href={`/super-admin/companies?page=${Math.min(safePage + 1, totalPages)}&q=${encodeURIComponent(q)}`}>›</a>
+            <>
+              <span className="text-sm text-slate-500">
+                Mostrando 1 a {rows.length} de {rows.length} empresas
+              </span>
+              <div className="flex items-center gap-2 text-sm">
+                <button className="rounded-lg bg-slate-100 px-3 py-1 text-slate-400">
+                  ‹
+                </button>
+                <button className="rounded-lg bg-indigo-600 px-3 py-1 text-white">
+                  1
+                </button>
+                <button className="rounded-lg bg-slate-100 px-3 py-1 text-slate-400">
+                  ›
+                </button>
               </div>
-            </div>
+            </>
           }
         >
-          {rows.map((row) => (
-            <tr key={row.company_id} className="border-t border-slate-100">
-              <td className="px-4 py-3">
-                <p className="font-medium text-slate-900">{row.company_name}</p>
-                <p className="text-xs text-slate-500">{row.company_slug}</p>
-              </td>
-              <td className="px-4 py-3"><StatusBadge tone={getPlanTone(row.plan)}>{row.plan}</StatusBadge></td>
-              <td className="px-4 py-3"><StatusBadge tone={getStatusTone(row.subscription_status)}>{row.subscription_status}</StatusBadge></td>
-              <td className="px-4 py-3 text-right text-slate-700">{row.interviews_count} / {row.total_calls_30d}</td>
-              <td className="px-4 py-3 text-right font-medium text-slate-900">{formatEur(usdToEur(row.total_cost_30d_usd), 2, 4)}</td>
-              <td className="px-4 py-3 text-right text-slate-700">{row.total_tokens_30d.toLocaleString("pt-PT")}</td>
-              <td className="px-4 py-3 text-right text-emerald-600">+{row.estimated_margin_pct}%</td>
-              <td className="px-4 py-3 text-right"><button className="rounded-lg border border-slate-200 px-2 py-1 text-xs">Ver</button></td>
-            </tr>
-          ))}
+          {rows.map((row) => {
+            const planPrice = PLAN_PRICE[String(row.plan || "")] || 0;
+            const margin = planPrice ? planPrice - row.total_cost_30d_eur : 0;
+            const marginPercent = planPrice
+              ? Math.round((margin / planPrice) * 100)
+              : 0;
+
+            return (
+              <tr key={row.company_id}>
+                <td className="px-5 py-4">
+                  <p className="font-semibold text-slate-900">
+                    {row.company_name}
+                  </p>
+                  <p className="text-xs text-slate-500">{row.company_slug}</p>
+                </td>
+                <td className="px-5 py-4">
+                  <StatusBadge tone={planTone(row.plan)}>
+                    {row.plan || "-"}
+                  </StatusBadge>
+                </td>
+                <td className="px-5 py-4">
+                  <StatusBadge tone={statusTone(row.subscription_status)}>
+                    {row.subscription_status || "-"}
+                  </StatusBadge>
+                </td>
+                <td className="px-5 py-4 text-center text-slate-700">
+                  {row.total_calls_30d}
+                </td>
+                <td className="px-5 py-4 text-right font-semibold text-slate-900">
+                  {formatEur(row.total_cost_30d_eur)}
+                </td>
+                <td className="px-5 py-4 text-right text-slate-700">
+                  {formatNumber(row.total_tokens_30d)}
+                </td>
+                <td className="px-5 py-4 text-right font-semibold text-emerald-600">
+                  {planPrice ? `+${marginPercent}%` : "-"}
+                </td>
+                <td className="px-5 py-4 text-right">
+                  <button className="rounded-xl border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50">
+                    ›
+                  </button>
+                </td>
+              </tr>
+            );
+          })}
         </DataTable>
       </div>
     </SuperAdminShell>

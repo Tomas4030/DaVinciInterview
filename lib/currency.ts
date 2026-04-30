@@ -1,19 +1,22 @@
 const DEFAULT_USD_TO_EUR_RATE = 0.92;
 
-export const USD_TO_EUR_RATE = Number(process.env.USD_TO_EUR_RATE || DEFAULT_USD_TO_EUR_RATE);
+export const USD_TO_EUR_RATE = Number(
+  process.env.USD_TO_EUR_RATE || DEFAULT_USD_TO_EUR_RATE,
+);
 
 export function usdToEur(valueUsd: number): number {
-  const numeric = Number(valueUsd || 0);
-  if (!Number.isFinite(numeric)) return 0;
-  return numeric * USD_TO_EUR_RATE;
+  return Number(valueUsd || 0) * USD_TO_EUR_RATE;
 }
 
-export function formatEur(valueEur: number, minimumFractionDigits = 2, maximumFractionDigits = 2): string {
-  const numeric = Number(valueEur || 0);
+export function formatEur(value: number, options?: { maxDecimals?: number }): string {
   return new Intl.NumberFormat("pt-PT", {
     style: "currency",
     currency: "EUR",
-    minimumFractionDigits,
-    maximumFractionDigits,
-  }).format(numeric);
+    minimumFractionDigits: 2,
+    maximumFractionDigits: options?.maxDecimals ?? 4,
+  }).format(value || 0);
+}
+
+export function formatNumber(value: number): string {
+  return new Intl.NumberFormat("pt-PT").format(value || 0);
 }

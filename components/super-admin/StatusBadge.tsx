@@ -3,18 +3,20 @@ type Props = {
   children: React.ReactNode;
 };
 
-const TONE_CLASS: Record<NonNullable<Props["tone"]>, string> = {
-  default: "bg-gray-100 text-gray-700",
-  blue: "bg-indigo-100 text-indigo-700",
-  green: "bg-emerald-100 text-emerald-700",
-  red: "bg-rose-100 text-rose-700",
-  purple: "bg-violet-100 text-violet-700",
-  amber: "bg-amber-100 text-amber-700",
+const TONES: Record<NonNullable<Props["tone"]>, string> = {
+  default: "bg-[#f3f3f2] text-[#787774]",
+  blue: "bg-[#e1f3fe] text-[#1f6c9f]",
+  green: "bg-[#edf3ec] text-[#346538]",
+  red: "bg-[#fdebec] text-[#9f2f2d]",
+  purple: "bg-[#ece8ff] text-[#5b46c5]",
+  amber: "bg-[#fbf3db] text-[#956400]",
 };
 
 export default function StatusBadge({ tone = "default", children }: Props) {
   return (
-    <span className={`inline-flex rounded-full px-2 py-1 text-xs font-medium ${TONE_CLASS[tone]}`}>
+    <span
+      className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-medium uppercase tracking-[0.05em] ${TONES[tone]}`}
+    >
       {children}
     </span>
   );

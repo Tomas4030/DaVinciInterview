@@ -9,10 +9,12 @@ type Props = {
 
 export default function SuperAdminShell({ active, children }: Props) {
   return (
-    <main className="min-h-screen bg-[#f7f8fc] p-4 md:p-0">
-      <div className="mx-auto grid min-h-screen w-full max-w-[1600px] gap-4 md:grid-cols-[240px,1fr] md:gap-0">
+    <main className="min-h-screen w-full bg-[#f7f8fc]">
+      <div className="grid min-h-screen w-full grid-cols-1 lg:grid-cols-[260px,1fr]">
         <SuperAdminSidebar active={active} />
-        <section className="p-2 md:p-8">{children}</section>
+        <section className="min-w-0 px-4 py-6 md:px-8 lg:px-10 xl:px-12">
+          {children}
+        </section>
       </div>
     </main>
   );

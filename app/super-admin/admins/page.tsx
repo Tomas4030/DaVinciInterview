@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
-import SuperAdminsManager from "@/components/super-admin/SuperAdminsManager";
 import SuperAdminShell from "@/components/super-admin/SuperAdminShell";
+import SuperAdminsManager from "@/components/super-admin/SuperAdminsManager";
 import { getSuperAdminSessionFromServerCookies } from "@/lib/super-admin-context";
 import { listSuperAdmins } from "@/lib/queries/super-admins";
 
@@ -12,13 +12,18 @@ export default async function SuperAdminAdminsPage() {
 
   return (
     <SuperAdminShell active="admins">
-      <section className="space-y-4">
+      <div className="space-y-6">
         <header>
-          <h1 className="text-2xl font-semibold text-slate-900">Super Admins</h1>
-          <p className="text-sm text-slate-500">Gerir contas de super administradores.</p>
+          <h1 className="text-2xl font-bold tracking-tight text-slate-950">
+            Super Admins
+          </h1>
+          <p className="mt-1 text-sm text-slate-500">
+            Gerir contas de super administradores
+          </p>
         </header>
+
         <SuperAdminsManager initialAdmins={admins} />
-      </section>
+      </div>
     </SuperAdminShell>
   );
 }
