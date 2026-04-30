@@ -21,7 +21,7 @@
     "emailPlaceholder": "name@email.com",
     "phoneLabel": "手机号",
     "phonePlaceholder": "+351 912 345 678",
-    "sending": "正在发送验证码...",
+    "sending": "正在发送验证码…",
     "continue": "继续",
     "secure": "你的数据受保护，绝不会被分享。"
   },
@@ -35,10 +35,10 @@
     "title": "验证码验证",
     "description": "请输入发送到你邮箱的验证码。",
     "codeLabel": "验证码",
-    "validating": "验证中...",
+    "validating": "验证中…",
     "continue": "继续",
     "back": "返回",
-    "resending": "正在重发...",
+    "resending": "正在重发…",
     "resendIn": "{{seconds}} 秒后可重发",
     "resendCode": "重发验证码",
     "secure": "验证码很快过期，以确保你的访问安全。"
@@ -59,7 +59,7 @@
     "statusStarting": "开始中",
     "statusProgress": "{{current}} / {{total}}",
     "startInterview": "开始面试",
-    "answerPlaceholder": "输入你的回答...",
+    "answerPlaceholder": "输入你的回答…",
     "sendAria": "发送",
     "inputHint": "按 Enter 发送 · Shift+Enter 换行"
   },

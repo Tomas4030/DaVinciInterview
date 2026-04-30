@@ -1,37 +1,37 @@
 {
   "contact": {
     "meta": {
-      "title": "Contact",
-      "description": "Reach the MatchWorky team for support, commercial questions, and privacy-related requests."
+      "title": "联系我们",
+      "description": "如需技术支持、商务咨询或隐私相关帮助，请联系 MatchWorky 团队。"
     },
-    "eyebrow": "Contact",
-    "title": "Talk to us",
-    "description": "If you need help with setup, billing, or privacy, our team replies through direct and practical channels.",
-    "sideNoteLabel": "Note",
-    "sideNoteTitle": "Response time",
-    "sideNoteBody": "Operational requests are answered on business days. Urgent access and security issues are prioritized the same day.",
+    "eyebrow": "联系",
+    "title": "欢迎联系",
+    "description": "如果你在配置、计费或隐私方面需要帮助，我们会通过直接且高效的渠道回复你。",
+    "sideNoteLabel": "说明",
+    "sideNoteTitle": "响应时间",
+    "sideNoteBody": "运营类请求在工作日处理。涉及访问与安全的紧急问题将于当天优先处理。",
     "sections": [
       {
-        "title": "Technical support",
+        "title": "技术支持",
         "body": [
-          "Email: suporte@matchworky.pt",
-          "Include your company slug and a short description of the issue whenever possible."
+          "邮箱：suporte@matchworky.pt",
+          "请尽量提供公司 slug 及问题简要描述，便于我们更快定位。"
         ],
         "tone": "blue"
       },
       {
-        "title": "Sales and partnerships",
+        "title": "销售与合作",
         "body": [
-          "Email: hello@matchworky.pt",
-          "Share your expected hiring volume and current workflow so we can prepare a proposal aligned with your context."
+          "邮箱：hello@matchworky.pt",
+          "请提供预计招聘规模和当前流程，我们将据此准备更贴合你需求的方案。"
         ],
         "tone": "yellow"
       },
       {
-        "title": "Privacy and data",
+        "title": "隐私与数据",
         "body": [
-          "Email: privacidade@matchworky.pt",
-          "Requests for access, correction, or deletion should reference the company responsible for the recruiting process."
+          "邮箱：privacidade@matchworky.pt",
+          "如需访问、更正或删除数据，请说明负责该招聘流程的企业主体。"
         ],
         "tone": "green"
       }
@@ -39,37 +39,37 @@
   },
   "about": {
     "meta": {
-      "title": "About",
-      "description": "Learn MatchWorky's mission and how we design clearer interview experiences for teams and candidates."
+      "title": "关于我们",
+      "description": "了解 MatchWorky 的使命，以及我们如何为团队与候选人打造更清晰的面试体验。"
     },
-    "eyebrow": "Company",
-    "title": "About us",
-    "description": "MatchWorky was created to reduce friction in early-stage hiring with consistent interviews and objective response insights.",
-    "sideNoteLabel": "Note",
-    "sideNoteTitle": "Focus",
-    "sideNoteBody": "We build a product that is simple to run daily: create a role, share a link, review responses, and decide with context.",
+    "eyebrow": "公司",
+    "title": "关于我们",
+    "description": "MatchWorky 的目标是降低招聘早期流程中的摩擦，通过一致的面试流程和客观的答复洞察提升决策效率。",
+    "sideNoteLabel": "说明",
+    "sideNoteTitle": "核心关注",
+    "sideNoteBody": "我们打造的是一款日常可高效使用的产品：创建岗位、分享链接、审阅答复，并在上下文中做出判断。",
     "sections": [
       {
-        "title": "1. Why we exist",
+        "title": "1. 我们为何存在",
         "body": [
-          "Many teams lose time with manual screening and unstructured first interviews.",
-          "We created a conversational layer to standardize this stage while preserving human judgment in final decisions."
+          "许多团队在人工筛选和无结构的首轮面试中耗费大量时间。",
+          "我们通过对话层标准化这一阶段，同时保留最终决策中的人工判断。"
         ],
         "tone": "neutral"
       },
       {
-        "title": "2. How we work",
+        "title": "2. 我们如何工作",
         "body": [
-          "The product prioritizes clarity: objective interface, comparable outcomes, and lean setup for each role.",
-          "Every improvement is validated by real usage from hiring teams, not short-term visual trends."
+          "产品设计强调清晰：界面直观、结果可比较、每个岗位都能快速配置。",
+          "每一次改进都基于真实招聘团队的使用反馈，而非短期视觉趋势。"
         ],
         "tone": "blue"
       },
       {
-        "title": "3. Product principles",
+        "title": "3. 产品原则",
         "body": [
-          "Respect for candidate experience, with transparent flows and direct communication.",
-          "Privacy by default, with company-controlled data and only the minimum required audit trail."
+          "尊重候选人体验，确保流程透明、沟通直接。",
+          "默认重视隐私，数据由企业控制，并仅保留必要的审计轨迹。"
         ],
         "tone": "green"
       }
@@ -77,45 +77,45 @@
   },
   "privacy": {
     "meta": {
-      "title": "Privacy Policy",
-      "description": "How personal data is collected, used, and protected in MatchWorky."
+      "title": "隐私政策",
+      "description": "MatchWorky 如何收集、使用和保护个人数据。"
     },
-    "eyebrow": "Privacy",
-    "title": "Privacy policy",
-    "description": "We explain clearly what data we process, why we process it, and how you can exercise your rights at any time.",
-    "sideNoteLabel": "Note",
-    "sideNoteTitle": "Responsibility",
-    "sideNoteBody": "Each customer company defines the legal basis for recruiting. MatchWorky acts as a data processor to operate interviews and analysis.",
+    "eyebrow": "隐私",
+    "title": "隐私政策",
+    "description": "我们会清晰说明处理哪些数据、为何处理，以及你可如何在任何时候行使自己的权利。",
+    "sideNoteLabel": "说明",
+    "sideNoteTitle": "责任分工",
+    "sideNoteBody": "每个客户企业决定招聘流程的法律依据。MatchWorky 作为数据处理方，负责面试与分析能力的运行。",
     "sections": [
       {
-        "title": "1. Data collected",
+        "title": "1. 收集的数据",
         "body": [
-          "We may collect identification and contact data, interview responses, and session technical metadata to ensure operation and basic auditing.",
-          "We do not collect sensitive information unless there is an objective need for the candidate process configured by the customer."
+          "我们可能收集身份与联系方式、面试答复，以及会话技术元数据，以保障系统运行与基础审计。",
+          "除非客户配置的招聘流程存在客观必要，我们不会收集敏感信息。"
         ],
         "tone": "neutral"
       },
       {
-        "title": "2. Processing purposes",
+        "title": "2. 处理目的",
         "body": [
-          "Data is used to run interviews, show results in the admin dashboard, and enable structured candidate comparison.",
-          "We also use technical data for security, abuse prevention, and platform stability improvements."
+          "数据用于执行面试、在管理面板展示结果，并支持结构化候选人对比。",
+          "我们也会使用技术数据用于安全防护、滥用防控和平台稳定性优化。"
         ],
         "tone": "blue"
       },
       {
-        "title": "3. Retention and deletion",
+        "title": "3. 保留与删除",
         "body": [
-          "Data remains available for the period defined by each customer, respecting legal obligations and legitimate hiring needs.",
-          "On request, records can be deleted or historical data can be anonymized when no longer needed for hiring decisions."
+          "数据将按各客户定义的周期保留，并遵循法律义务与合理招聘需求。",
+          "在提出请求后，若数据已不再用于招聘决策，可执行删除或历史匿名化处理。"
         ],
         "tone": "green"
       },
       {
-        "title": "4. Data subject rights",
+        "title": "4. 数据主体权利",
         "body": [
-          "You may request access, correction, deletion, restriction of processing, and portability under applicable law.",
-          "Privacy requests can be submitted through the contact page and are routed for response within a reasonable timeframe."
+          "根据适用法律，你可请求访问、更正、删除、限制处理及数据可携带。",
+          "隐私请求可通过联系页面提交，我们会在合理时限内完成处理与回复。"
         ],
         "tone": "red"
       }
@@ -123,45 +123,45 @@
   },
   "terms": {
     "meta": {
-      "title": "Terms of Service",
-      "description": "Terms of use for MatchWorky for hiring teams and candidates."
+      "title": "服务条款",
+      "description": "面向招聘团队和候选人的 MatchWorky 使用条款。"
     },
-    "eyebrow": "Legal",
-    "title": "Terms of service",
-    "description": "By using MatchWorky, you accept these terms to ensure clear, safe, and predictable usage for companies and candidates.",
-    "sideNoteLabel": "Note",
-    "sideNoteTitle": "Current version",
-    "sideNoteBody": "These terms apply to all use of the web platform. When updated, the revision date will be published on this page.",
+    "eyebrow": "法律",
+    "title": "服务条款",
+    "description": "使用 MatchWorky 即表示你接受以下条款，以确保企业与候选人都能获得清晰、安全、可预期的使用体验。",
+    "sideNoteLabel": "说明",
+    "sideNoteTitle": "当前版本",
+    "sideNoteBody": "本条款适用于平台的全部使用场景。若有更新，修订日期将公布于本页。",
     "sections": [
       {
-        "title": "1. Platform usage",
+        "title": "1. 平台使用",
         "body": [
-          "The platform is intended for hiring teams that want to structure initial interviews with AI support.",
-          "It is not allowed to use the service for data collection without legal basis, abusive content, or any activity violating applicable law."
+          "本平台面向希望借助 AI 支持来结构化初筛面试的招聘团队。",
+          "禁止将服务用于无合法依据的数据采集、发布滥用内容或其他违反适用法律的活动。"
         ],
         "tone": "neutral"
       },
       {
-        "title": "2. Accounts and access",
+        "title": "2. 账户与访问",
         "body": [
-          "Each company account is responsible for managing admin access and credential security.",
-          "We recommend regular review of panel users and immediate revocation of access that is no longer required."
+          "每个企业账户需自行负责管理后台访问权限与凭据安全。",
+          "建议定期审查后台用户，并及时撤销不再需要的访问权限。"
         ],
         "tone": "blue"
       },
       {
-        "title": "3. Interview data",
+        "title": "3. 面试数据",
         "body": [
-          "Data collected during interviews belongs to the customer creating the role and should follow their internal hiring policy.",
-          "MatchWorky processes data to provide screening, analysis, and reporting features, without parallel commercial use of that data."
+          "面试过程中产生的数据归创建岗位的客户企业所有，并应遵循其内部招聘政策。",
+          "MatchWorky 仅为提供筛选、分析与报告功能而处理相关数据，不进行平行商业化使用。"
         ],
         "tone": "green"
       },
       {
-        "title": "4. Availability and support",
+        "title": "4. 可用性与支持",
         "body": [
-          "We work to ensure high availability, but occasional interruptions may happen for maintenance, updates, or incident mitigation.",
-          "Operational issues can be reported through the contact page for technical follow-up."
+          "我们持续保障高可用性，但在维护、更新或事故处置期间可能出现短时中断。",
+          "运营问题可通过联系页面提交，我们会进行技术跟进。"
         ],
         "tone": "yellow"
       }
