@@ -33,7 +33,7 @@
     "resendConnectionError": "Server connection error while resending the code.",
     "resendSuccess": "Code resent. Check your inbox.",
     "title": "Code verification",
-    "description": "Enter the code sent to your email.",
+    "description": "Enter the code we sent to your email.",
     "codeLabel": "Verification code",
     "validating": "Validating…",
     "continue": "Continue",
@@ -47,9 +47,9 @@
     "introSingular": "Welcome to the interview for {{title}}. This interview has {{count}} question. When you are ready, click Start.",
     "introPlural": "Welcome to the interview for {{title}}. This interview has {{count}} questions. When you are ready, click Start.",
     "continueInterviewError": "Could not continue the interview",
-    "continueFallback": "Let us continue.",
+    "continueFallback": "Let’s continue.",
     "sendError": "Could not send your response. Please try again.",
-    "noQuestions": "This interview does not have questions configured yet.",
+    "noQuestions": "No questions have been configured for this interview yet.",
     "confirmInterview": "Confirm interview",
     "interviewDescription": "Role description",
     "interviewDescriptionFallback": "No additional role description available.",
@@ -76,7 +76,7 @@
       "viewInterviews": "View interviews"
     },
     "hero": {
-      "interviewsNone": "No interviews open right now",
+    "interviewsNone": "There are no open interviews right now",
       "interviewsOpenSingular": "{{count}} interview open",
       "interviewsOpenPlural": "{{count}} interviews open",
       "titlePrefix": "Build your future with",
@@ -86,10 +86,10 @@
     },
     "interviews": {
       "sectionTitle": "Open roles",
-      "countNone": "No positions available at the moment",
+      "countNone": "No positions are currently available",
       "countSingular": "{{count}} position available",
       "countPlural": "{{count}} positions available",
-      "emptyTitle": "No open role at the moment.",
+      "emptyTitle": "There are no open roles at the moment.",
       "emptyDescription": "Check back soon or contact the recruiter.",
       "fallbackDescription": "No description available.",
       "questionSingular": "{{count}} question",
@@ -114,7 +114,7 @@
       "ariaLabel": "How the process works",
       "badge": "Simple and fast process",
       "title": "How it works",
-      "description": "In three steps, pick a role, answer at your pace, and submit your application without friction.",
+      "description": "In three steps, choose a role, answer at your own pace, and submit your application with no friction.",
       "stepLabel": "Step",
       "steps": [
         {

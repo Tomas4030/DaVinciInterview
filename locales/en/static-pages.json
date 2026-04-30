@@ -2,11 +2,11 @@
   "contact": {
     "meta": {
       "title": "Contact",
-      "description": "Reach the MatchWorky team for support, commercial questions, and privacy-related requests."
+      "description": "Contact the MatchWorky team for support, sales questions, and privacy-related requests."
     },
     "eyebrow": "Contact",
     "title": "Talk to us",
-    "description": "If you need help with setup, billing, or privacy, our team replies through direct and practical channels.",
+    "description": "If you need help with setup, billing, or privacy, our team responds through clear and practical channels.",
     "sideNoteLabel": "Note",
     "sideNoteTitle": "Response time",
     "sideNoteBody": "Operational requests are answered on business days. Urgent access and security issues are prioritized the same day.",
@@ -23,7 +23,7 @@
         "title": "Sales and partnerships",
         "body": [
           "Email: hello@matchworky.pt",
-          "Share your expected hiring volume and current workflow so we can prepare a proposal aligned with your context."
+          "Share your expected hiring volume and current workflow so we can prepare a proposal tailored to your context."
         ],
         "tone": "yellow"
       },
@@ -40,7 +40,7 @@
   "about": {
     "meta": {
       "title": "About",
-      "description": "Learn MatchWorky's mission and how we design clearer interview experiences for teams and candidates."
+      "description": "Learn about MatchWorky's mission and how we design clearer interview experiences for teams and candidates."
     },
     "eyebrow": "Company",
     "title": "About us",

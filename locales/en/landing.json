@@ -1,7 +1,7 @@
 {
   "meta": {
     "title": "MatchWorky — AI interviews for recruiting teams",
-    "description": "Automate candidate screening with conversational interviews. Define questions, share the link, and analyze answers in one platform.",
+    "description": "Automate candidate screening with conversational interviews. Define your questions, share the link, and analyze responses in one platform.",
     "ogTitle": "MatchWorky — AI interviews for companies",
     "ogDescription": "Automate early-stage screening and improve the candidate experience with intelligent conversational interviews."
   },
@@ -18,7 +18,7 @@
     "badge": "Automate your hiring process",
     "titleLine1": "AI-powered interviews.",
     "titleHighlight": "Screening",
-    "titleLine2": "without the effort.",
+    "titleLine2": "without the overhead.",
     "description": "MatchWorky runs automated conversational interviews on behalf of your company. Define your questions, share the link with candidates, and analyze responses in one place.",
     "cta": "Start free",
     "stats": [
@@ -58,7 +58,7 @@
   "features": {
     "eyebrow": "Features",
     "title": "Everything you need to hire better",
-    "description": "A complete platform from job creation to response analysis. No external tools. No complexity.",
+    "description": "A complete platform, from role creation to response analysis. No external tools. No unnecessary complexity.",
     "items": [
       {
         "title": "Conversational interviews",
@@ -66,11 +66,11 @@
       },
       {
         "title": "Automatic verification",
-        "desc": "Email and phone verified with OTP codes — ensuring each candidate is unique and authentic."
+        "desc": "Email and phone are verified with OTP codes, ensuring every candidate is unique and authentic."
       },
       {
         "title": "Candidate dashboard",
-        "desc": "View all responses in a clean interface. Filter, search, and export in one click."
+        "desc": "View all responses in a clean interface. Filter, search, and export with a single click."
       },
       {
         "title": "Custom questionnaires",
@@ -78,7 +78,7 @@
       },
       {
         "title": "AI analysis",
-        "desc": "Automatic answer analysis with scoring and AI-generated summaries for every candidate."
+        "desc": "Automatically analyze responses with scoring and AI-generated summaries for every candidate."
       },
       {
         "title": "Report exports",
@@ -134,7 +134,7 @@
   "pricing": {
     "eyebrow": "Plans",
     "title": "Choose the best plan for your team",
-    "description": "Start with a base plan and scale without complex migrations. Cancel anytime.",
+    "description": "Start with a basic plan and scale without complex migrations. Cancel anytime.",
     "monthly": "Monthly",
     "yearly": "Yearly",
     "custom": "Free",
@@ -151,7 +151,7 @@
     "plans": {
       "basic": {
         "description": "For small teams that want faster early screening.",
-        "features": ["1 company", "Up to 5 active interviews", "Unlimited questions", "Base dashboard", "Email support"]
+        "features": ["1 company", "Up to 5 active interviews", "Unlimited questions", "Basic dashboard", "Email support"]
       },
       "free": {
         "description": "Ideal to test the platform with usage limits.",
