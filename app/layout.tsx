@@ -69,6 +69,15 @@ export const metadata: Metadata = {
     description:
       "Automatize a pré-seleção de candidatos com entrevistas em chat. O chatbot entrevista, a IA analisa respostas e gera relatórios com insights e ranking para RH.",
   },
+  icons: {
+    icon: [
+      { url: "/favicon.ico" },
+      { url: "/favicon-32.png", sizes: "32x32", type: "image/png" },
+      { url: "/favicon-16.png", sizes: "16x16", type: "image/png" },
+    ],
+    shortcut: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
+  },
 };
 
 const jsonLd = {
