@@ -96,7 +96,28 @@ export async function createSuperAdmin(input: {
   return created;
 }
 
-export async function getSuperAdminDashboardStats(): Promise<{
+type PeriodFilter = {
+  from?: string;
+  to?: string;
+};
+
+function normalizePeriod(period?: PeriodFilter): { from: string; to: string } {
+  const fallbackTo = new Date();
+  const fallbackFrom = new Date();
+  fallbackFrom.setDate(fallbackTo.getDate() - 30);
+
+  const toDate = period?.to ? new Date(period.to) : fallbackTo;
+  const fromDate = period?.from ? new Date(period.from) : fallbackFrom;
+
+  const safeTo = Number.isFinite(toDate.getTime()) ? toDate : fallbackTo;
+  const safeFrom = Number.isFinite(fromDate.getTime()) ? fromDate : fallbackFrom;
+
+  const from = safeFrom.toISOString().slice(0, 10);
+  const to = safeTo.toISOString().slice(0, 10);
+  return { from, to };
+}
+
+export async function getSuperAdminDashboardStats(period?: PeriodFilter): Promise<{
   totalCompanies: number;
   activeCompanies: number;
   totalCompanyAdmins: number;
@@ -105,6 +126,7 @@ export async function getSuperAdminDashboardStats(): Promise<{
   aiCostLast30dEur: number;
   totalTokensLast30d: number;
 }> {
+  const { from, to } = normalizePeriod(period);
   const [[companies]] = await query<{ total: number; active: number }>(
     `
     SELECT
@@ -133,8 +155,9 @@ export async function getSuperAdminDashboardStats(): Promise<{
       COALESCE(SUM(cost_usd), 0) AS totalCost,
       COALESCE(SUM(total_tokens), 0) AS totalTokens
     FROM ai_usage_logs
-    WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+    WHERE DATE(created_at) BETWEEN ? AND ?
     `,
+    [from, to],
   );
 
   return {
@@ -204,8 +227,14 @@ export async function updateSuperAdminActiveState(
   );
 }
 
-export async function listCompaniesUsageSummary(): Promise<
-  Array<{
+export async function listCompaniesUsageSummary(filters?: {
+  from?: string;
+  to?: string;
+  q?: string;
+  page?: number;
+  pageSize?: number;
+}): Promise<{
+  rows: Array<{
     company_id: string;
     company_name: string;
     company_slug: string;
@@ -216,8 +245,32 @@ export async function listCompaniesUsageSummary(): Promise<
     total_tokens_30d: number;
     total_cost_30d_usd: number;
     total_cost_30d_eur: number;
-  }>
-> {
+  }>;
+  total: number;
+}> {
+  const { from, to } = normalizePeriod({ from: filters?.from, to: filters?.to });
+  const whereCompanies: string[] = ["1=1"];
+  const companyValues: Array<string | number> = [];
+
+  if (filters?.q) {
+    whereCompanies.push("(c.name LIKE ? OR c.slug LIKE ?)");
+    const like = `%${filters.q}%`;
+    companyValues.push(like, like);
+  }
+
+  const pageSize = Math.min(Math.max(Number(filters?.pageSize || 10), 1), 500);
+  const page = Math.max(Number(filters?.page || 1), 1);
+  const offset = (page - 1) * pageSize;
+
+  const [[countRow]] = await query<{ total: number }>(
+    `
+    SELECT COUNT(*) AS total
+    FROM companies c
+    WHERE ${whereCompanies.join(" AND ")}
+    `,
+    companyValues,
+  );
+
   const [rows] = await query<{
     company_id: string;
     company_name: string;
@@ -253,17 +306,23 @@ export async function listCompaniesUsageSummary(): Promise<
         COALESCE(SUM(total_tokens), 0) AS total_tokens_30d,
         COALESCE(SUM(cost_usd), 0) AS total_cost_30d_usd
       FROM ai_usage_logs
-      WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+      WHERE DATE(created_at) BETWEEN ? AND ?
       GROUP BY company_id
     ) u ON u.company_id = c.id
+    WHERE ${whereCompanies.join(" AND ")}
     ORDER BY total_cost_30d_usd DESC, c.name ASC
+    LIMIT ${pageSize} OFFSET ${offset}
     `,
+    [from, to, ...companyValues],
   );
 
-  return rows.map((row) => ({
-    ...row,
-    total_cost_30d_eur: usdToEur(Number(row.total_cost_30d_usd || 0)),
-  }));
+  return {
+    rows: rows.map((row) => ({
+      ...row,
+      total_cost_30d_eur: usdToEur(Number(row.total_cost_30d_usd || 0)),
+    })),
+    total: Number(countRow?.total || 0),
+  };
 }
 
 export async function listAiUsageLogs(filters?: {
@@ -408,23 +467,42 @@ export async function listAiUsageFilterOptions(): Promise<{
   };
 }
 
-export async function getDailyAiCostLast30d(): Promise<
+export async function getDailyAiCostLast30d(
+  period?: PeriodFilter,
+  granularity: "daily" | "monthly" | "yearly" = "daily",
+): Promise<
   Array<{
     day: string;
     cost_eur: number;
   }>
 > {
+  const { from, to } = normalizePeriod(period);
+  const labelExpr =
+    granularity === "yearly"
+      ? "DATE_FORMAT(created_at, '%Y')"
+      : granularity === "monthly"
+        ? "DATE_FORMAT(created_at, '%m/%Y')"
+        : "DATE_FORMAT(created_at, '%d/%m')";
+
+  const groupExpr =
+    granularity === "yearly"
+      ? "YEAR(created_at)"
+      : granularity === "monthly"
+        ? "DATE_FORMAT(created_at, '%Y-%m')"
+        : "DATE(created_at)";
+
   const [rows] = await query<{ day: string; cost_usd: number }>(
     `
     SELECT
-      DATE_FORMAT(created_at, '%d %b') AS day,
-      DATE(created_at) AS raw_day,
+      ${labelExpr} AS day,
+      ${groupExpr} AS raw_day,
       COALESCE(SUM(cost_usd), 0) AS cost_usd
     FROM ai_usage_logs
-    WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
-    GROUP BY DATE(created_at), DATE_FORMAT(created_at, '%d %b')
+    WHERE DATE(created_at) BETWEEN ? AND ?
+    GROUP BY ${groupExpr}, ${labelExpr}
     ORDER BY raw_day ASC
     `,
+    [from, to],
   );
 
   return rows.map((row) => ({
@@ -433,23 +511,25 @@ export async function getDailyAiCostLast30d(): Promise<
   }));
 }
 
-export async function getAiCostByFeatureLast30d(): Promise<
+export async function getAiCostByFeatureLast30d(period?: PeriodFilter): Promise<
   Array<{
     feature: string;
     cost_eur: number;
   }>
 > {
+  const { from, to } = normalizePeriod(period);
   const [rows] = await query<{ feature: string; cost_usd: number }>(
     `
     SELECT
       feature,
       COALESCE(SUM(cost_usd), 0) AS cost_usd
     FROM ai_usage_logs
-    WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+    WHERE DATE(created_at) BETWEEN ? AND ?
     GROUP BY feature
     ORDER BY cost_usd DESC
     LIMIT 5
     `,
+    [from, to],
   );
 
   return rows.map((row) => ({
@@ -458,12 +538,13 @@ export async function getAiCostByFeatureLast30d(): Promise<
   }));
 }
 
-export async function getTopCompaniesByAiCostLast30d(): Promise<
+export async function getTopCompaniesByAiCostLast30d(period?: PeriodFilter): Promise<
   Array<{
     company_name: string;
     cost_eur: number;
   }>
 > {
+  const { from, to } = normalizePeriod(period);
   const [rows] = await query<{ company_name: string; cost_usd: number }>(
     `
     SELECT
@@ -471,15 +552,39 @@ export async function getTopCompaniesByAiCostLast30d(): Promise<
       COALESCE(SUM(l.cost_usd), 0) AS cost_usd
     FROM ai_usage_logs l
     LEFT JOIN companies c ON c.id = l.company_id
-    WHERE l.created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+    WHERE DATE(l.created_at) BETWEEN ? AND ?
     GROUP BY COALESCE(c.name, 'Sem empresa')
     ORDER BY cost_usd DESC
     LIMIT 5
     `,
+    [from, to],
   );
 
   return rows.map((row) => ({
     company_name: row.company_name,
     cost_eur: usdToEur(Number(row.cost_usd || 0)),
   }));
+}
+
+export async function getTokenBreakdownByPeriod(period?: PeriodFilter): Promise<{
+  input_tokens: number;
+  output_tokens: number;
+}> {
+  const { from, to } = normalizePeriod(period);
+
+  const [[row]] = await query<{ input_tokens: number; output_tokens: number }>(
+    `
+    SELECT
+      COALESCE(SUM(prompt_tokens), 0) AS input_tokens,
+      COALESCE(SUM(completion_tokens), 0) AS output_tokens
+    FROM ai_usage_logs
+    WHERE DATE(created_at) BETWEEN ? AND ?
+    `,
+    [from, to],
+  );
+
+  return {
+    input_tokens: Number(row?.input_tokens || 0),
+    output_tokens: Number(row?.output_tokens || 0),
+  };
 }

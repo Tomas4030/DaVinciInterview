@@ -3,8 +3,9 @@ import SuperAdminShell from "@/components/super-admin/SuperAdminShell";
 import MetricCard from "@/components/super-admin/MetricCard";
 import DataTable from "@/components/super-admin/DataTable";
 import StatusBadge from "@/components/super-admin/StatusBadge";
+import AiUsageFilters from "@/components/super-admin/AiUsageFilters";
 import { getSuperAdminSessionFromServerCookies } from "@/lib/super-admin-context";
-import { listAiUsageLogs } from "@/lib/queries/super-admins";
+import { listAiUsageFilterOptions, listAiUsageLogs } from "@/lib/queries/super-admins";
 import { formatEur, formatNumber } from "@/lib/currency";
 
 function formatDateTime(value: string | Date | null | undefined): string {
@@ -34,20 +35,30 @@ export default async function SuperAdminAiUsagePage({ searchParams }: Props) {
   const session = getSuperAdminSessionFromServerCookies();
   if (!session) redirect("/super-admin/login");
 
+  const companyId = String(searchParams?.companyId || "");
+  const feature = String(searchParams?.feature || "");
+  const model = String(searchParams?.model || "");
+  const q = String(searchParams?.q || "");
+  const from = String(searchParams?.from || "");
+  const to = String(searchParams?.to || "");
   const page = Math.max(Number(searchParams?.page || 1), 1);
 
-  const result = await listAiUsageLogs({
-    companyId: searchParams?.companyId,
-    model: searchParams?.model,
-    feature: searchParams?.feature,
-    from: searchParams?.from,
-    to: searchParams?.to,
-    q: searchParams?.q,
-    page,
-    pageSize: 20,
-  });
+  const [result, options] = await Promise.all([
+    listAiUsageLogs({
+      companyId,
+      model,
+      feature,
+      from,
+      to,
+      q,
+      page,
+      pageSize: 20,
+    }),
+    listAiUsageFilterOptions(),
+  ]);
 
   const rows = result.rows;
+  const totalPages = Math.max(Math.ceil(result.total / 20), 1);
 
   const totals = rows.reduce(
     (acc, row) => {
@@ -75,38 +86,26 @@ export default async function SuperAdminAiUsagePage({ searchParams }: Props) {
           </div>
 
           <div className="flex items-center gap-2">
-            <button className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm">
-              30 Apr - 30 May 2026
-            </button>
-            <button className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm">
-              Filtros
-            </button>
-            <button className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm">
+            <a
+              href={`/api/super-admin/ai-usage/export?${new URLSearchParams({ companyId, feature, model, from, to, q }).toString()}`}
+              className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm"
+            >
               Exportar
-            </button>
+            </a>
           </div>
         </header>
 
-        <section className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-[0_8px_30px_rgba(15,23,42,0.04)]">
-          <div className="grid gap-3 lg:grid-cols-[1fr,1fr,1fr,1fr,160px]">
-            <select className="h-11 rounded-xl border border-slate-200 px-4 text-sm">
-              <option>Todas as empresas</option>
-            </select>
-            <select className="h-11 rounded-xl border border-slate-200 px-4 text-sm">
-              <option>Todas as features</option>
-            </select>
-            <select className="h-11 rounded-xl border border-slate-200 px-4 text-sm">
-              <option>Todos os modelos</option>
-            </select>
-            <input
-              placeholder="Pesquisar..."
-              className="h-11 rounded-xl border border-slate-200 px-4 text-sm outline-none"
-            />
-            <button className="h-11 rounded-xl bg-indigo-600 px-4 text-sm font-semibold text-white">
-              Aplicar
-            </button>
-          </div>
-        </section>
+        <AiUsageFilters
+          companyId={companyId}
+          feature={feature}
+          model={model}
+          q={q}
+          from={from}
+          to={to}
+          companies={options.companies}
+          features={options.features}
+          models={options.models}
+        />
 
         <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
           <MetricCard
@@ -149,22 +148,22 @@ export default async function SuperAdminAiUsagePage({ searchParams }: Props) {
           ]}
           footer={
             <>
-              <span className="text-sm text-slate-500">
-                Mostrando 1 a {rows.length} de {rows.length} logs
-              </span>
-              <div className="flex items-center gap-2 text-sm">
-                <button className="rounded-lg bg-slate-100 px-3 py-1 text-slate-400">
-                  ‹
-                </button>
-                <button className="rounded-lg bg-indigo-600 px-3 py-1 text-white">
-                  1
-                </button>
-                <button className="rounded-lg bg-slate-100 px-3 py-1 text-slate-400">
-                  ›
-                </button>
-              </div>
-            </>
-          }
+                <span className="text-sm text-slate-500">
+                  Mostrando {rows.length} de {result.total} logs
+                </span>
+                <div className="flex items-center gap-2 text-sm">
+                  <a href={`/super-admin/ai-usage?${new URLSearchParams({ companyId, feature, model, from, to, q, page: String(Math.max(page - 1, 1)) }).toString()}`} className="rounded-lg bg-slate-100 px-3 py-1 text-slate-500">
+                    ‹
+                  </a>
+                  <span className="rounded-lg bg-indigo-600 px-3 py-1 text-white">
+                    {page}
+                  </span>
+                  <a href={`/super-admin/ai-usage?${new URLSearchParams({ companyId, feature, model, from, to, q, page: String(Math.min(page + 1, totalPages)) }).toString()}`} className="rounded-lg bg-slate-100 px-3 py-1 text-slate-500">
+                    ›
+                  </a>
+                </div>
+              </>
+            }
         >
           {rows.map((row) => (
             <tr key={row.id}>

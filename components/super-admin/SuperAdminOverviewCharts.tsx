@@ -14,7 +14,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { formatEur } from "@/lib/currency";
+import { formatEur, formatNumber } from "@/lib/currency";
 
 type DailyCost = {
   day: string;
@@ -35,80 +35,126 @@ type Props = {
   dailyCost: DailyCost[];
   featureCost: FeatureCost[];
   topCompanies: CompanyCost[];
+  totalCost: number;
+  costPerCall: number;
+  totalInputTokens: number;
+  totalOutputTokens: number;
+  granularity: "daily" | "monthly" | "yearly";
 };
 
-const COLORS = ["#4f46e5", "#22c55e", "#f59e0b", "#ef4444", "#06b6d4"];
+const COLORS = ["#5B4DF3", "#2CCF91", "#FFCB66", "#EF5DA8", "#9CA3AF"];
 
 export default function SuperAdminOverviewCharts({
   dailyCost,
   featureCost,
   topCompanies,
+  totalCost,
+  costPerCall,
+  totalInputTokens,
+  totalOutputTokens,
+  granularity,
 }: Props) {
-  const totalFeatureCost = featureCost.reduce(
-    (sum, item) => sum + Number(item.cost_eur || 0),
-    0,
-  );
+  const chartDaily = dailyCost;
+  const chartFeatures = featureCost;
+  const chartCompanies = topCompanies;
+
+  const featureTotal =
+    chartFeatures.reduce((sum, item) => sum + Number(item.cost_eur || 0), 0) ||
+    1;
+
+  const totalTokens = totalInputTokens + totalOutputTokens;
+  const inputPercentage = totalTokens
+    ? Math.round((totalInputTokens / totalTokens) * 100)
+    : 0;
+  const outputPercentage = totalTokens ? 100 - inputPercentage : 0;
 
   return (
-    <>
-      <section className="grid gap-5 xl:grid-cols-[1.4fr,0.9fr]">
-        <article className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-[0_8px_30px_rgba(15,23,42,0.04)]">
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-sm font-bold text-slate-900">
-              Custo de IA (€)
-            </h2>
-            <span className="rounded-lg border border-slate-200 px-3 py-1 text-xs text-slate-500">
-              Diário
-            </span>
+    <div className="space-y-6">
+      <section className="grid gap-6 2xl:grid-cols-[1.45fr,1fr]">
+        <article className="rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_8px_24px_rgba(15,23,42,0.035)]">
+          <div className="mb-3 flex items-center justify-between">
+            <h2 className="text-sm font-bold text-slate-950">Custo de IA</h2>
           </div>
 
-          <div className="h-72">
+          <div className="h-[320px]">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={dailyCost}>
+              <AreaChart
+                data={chartDaily}
+                margin={{ top: 8, right: 12, left: 14, bottom: 0 }}
+              >
                 <defs>
-                  <linearGradient id="costGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#4f46e5" stopOpacity={0.25} />
-                    <stop offset="95%" stopColor="#4f46e5" stopOpacity={0} />
+                  <linearGradient id="costFill" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#5B4DF3" stopOpacity={0.28} />
+                    <stop
+                      offset="100%"
+                      stopColor="#5B4DF3"
+                      stopOpacity={0.03}
+                    />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                <XAxis dataKey="day" tick={{ fontSize: 11 }} stroke="#94a3b8" />
-                <YAxis tick={{ fontSize: 11 }} stroke="#94a3b8" />
+
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke="#e8edf5"
+                  vertical={false}
+                />
+                <XAxis
+                  dataKey="day"
+                  axisLine={false}
+                  tickLine={false}
+                  width={90}
+                  tick={{ fontSize: 11, fill: "#8A97AD" }}
+                />
+                <YAxis
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fontSize: 11, fill: "#8A97AD" }}
+                  tickFormatter={(v) => `${Number(v).toFixed(4)} €`}
+                />
                 <Tooltip
                   formatter={(value) =>
                     formatEur(Number(value), { maxDecimals: 4 })
                   }
+                  contentStyle={{
+                    borderRadius: 12,
+                    border: "1px solid #e2e8f0",
+                    boxShadow: "0 10px 30px rgba(15,23,42,.08)",
+                  }}
                 />
                 <Area
                   type="monotone"
                   dataKey="cost_eur"
-                  stroke="#4f46e5"
-                  strokeWidth={2}
-                  fill="url(#costGradient)"
+                  stroke="#5B4DF3"
+                  strokeWidth={2.2}
+                  fill="url(#costFill)"
+                  dot={false}
+                  activeDot={{ r: 5, strokeWidth: 2, stroke: "#fff" }}
                 />
               </AreaChart>
             </ResponsiveContainer>
           </div>
         </article>
 
-        <article className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-[0_8px_30px_rgba(15,23,42,0.04)]">
-          <h2 className="mb-4 text-sm font-bold text-slate-900">
+        <article className="rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_8px_24px_rgba(15,23,42,0.035)]">
+          <h2 className="mb-3 text-sm font-bold text-slate-950">
             Custo por Feature (30d)
           </h2>
 
-          <div className="grid items-center gap-4 md:grid-cols-[180px,1fr] xl:grid-cols-1">
-            <div className="relative h-52">
+          <div className="grid items-center gap-4 md:grid-cols-[220px,1fr] xl:grid-cols-[210px,1fr]">
+            <div className="relative h-[250px]">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
-                    data={featureCost}
+                    data={chartFeatures}
                     dataKey="cost_eur"
                     nameKey="feature"
-                    innerRadius={60}
-                    outerRadius={85}
-                    paddingAngle={3}
+                    innerRadius={58}
+                    outerRadius={84}
+                    paddingAngle={2}
+                    startAngle={90}
+                    endAngle={-270}
                   >
-                    {featureCost.map((_, index) => (
+                    {chartFeatures.map((_, index) => (
                       <Cell key={index} fill={COLORS[index % COLORS.length]} />
                     ))}
                   </Pie>
@@ -122,24 +168,22 @@ export default function SuperAdminOverviewCharts({
 
               <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
                 <p className="text-lg font-bold text-slate-950">
-                  {formatEur(totalFeatureCost, { maxDecimals: 2 })}
+                  {formatEur(totalCost, { maxDecimals: 2 })}
                 </p>
                 <p className="text-xs text-slate-500">Total</p>
               </div>
             </div>
 
             <div className="space-y-3">
-              {featureCost.map((item, index) => {
-                const percentage = totalFeatureCost
-                  ? Math.round(
-                      (Number(item.cost_eur || 0) / totalFeatureCost) * 100,
-                    )
-                  : 0;
+              {chartFeatures.map((item, index) => {
+                const percentage = Math.round(
+                  (Number(item.cost_eur || 0) / featureTotal) * 100,
+                );
 
                 return (
                   <div
                     key={item.feature}
-                    className="flex items-center justify-between gap-3 text-sm"
+                    className="flex items-center justify-between gap-3 text-xs"
                   >
                     <div className="flex min-w-0 items-center gap-2">
                       <span
@@ -152,7 +196,7 @@ export default function SuperAdminOverviewCharts({
                         {item.feature}
                       </span>
                     </div>
-                    <span className="font-semibold text-slate-900">
+                    <span className="font-bold text-slate-900">
                       {percentage}%
                     </span>
                   </div>
@@ -163,65 +207,85 @@ export default function SuperAdminOverviewCharts({
         </article>
       </section>
 
-      <section className="grid gap-5 xl:grid-cols-[0.9fr,1.1fr]">
-        <article className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-[0_8px_30px_rgba(15,23,42,0.04)]">
-          <h2 className="mb-4 text-sm font-bold text-slate-900">
-            Top Empresas por Custo (30d)
+      <section className="grid gap-6 2xl:grid-cols-[0.95fr,1fr,1.25fr]">
+        <article className="rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_8px_24px_rgba(15,23,42,0.035)]">
+          <h2 className="mb-4 text-sm font-bold text-slate-950">
+            Top Empresa por Custo (30d)
           </h2>
 
-          <div className="h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={topCompanies} layout="vertical">
-                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                <XAxis type="number" hide />
-                <YAxis
-                  dataKey="company_name"
-                  type="category"
-                  width={120}
-                  tick={{ fontSize: 11 }}
-                  stroke="#94a3b8"
-                />
-                <Tooltip
-                  formatter={(value) =>
-                    formatEur(Number(value), { maxDecimals: 4 })
-                  }
-                />
-                <Bar dataKey="cost_eur" fill="#4f46e5" radius={[0, 8, 8, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </article>
-
-        <article className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-[0_8px_30px_rgba(15,23,42,0.04)]">
-          <h2 className="mb-4 text-sm font-bold text-slate-900">
-            Resumo Operacional
-          </h2>
-
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="rounded-xl bg-slate-50 p-4">
-              <p className="text-xs text-slate-500">
-                Empresa com maior consumo
+          <div className="flex items-center justify-between gap-4 rounded-xl bg-slate-50 p-4">
+            <div>
+              <p className="text-sm font-semibold text-slate-900">
+                {chartCompanies[0]?.company_name || "-"}
               </p>
-              <p className="mt-2 text-sm font-bold text-slate-900">
-                {topCompanies[0]?.company_name || "-"}
-              </p>
-              <p className="mt-1 text-lg font-bold text-slate-950">
-                {formatEur(topCompanies[0]?.cost_eur || 0, { maxDecimals: 4 })}
+              <p className="mt-1 text-xs font-semibold text-emerald-600">
+                Maior consumo no período selecionado
               </p>
             </div>
 
-            <div className="rounded-xl bg-slate-50 p-4">
-              <p className="text-xs text-slate-500">Features monitorizadas</p>
-              <p className="mt-2 text-2xl font-bold text-slate-950">
-                {featureCost.length}
+            <p className="text-lg font-bold text-slate-950">
+              {formatEur(chartCompanies[0]?.cost_eur || 0, { maxDecimals: 2 })}
+            </p>
+          </div>
+        </article>
+
+        <article className="rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_8px_24px_rgba(15,23,42,0.035)]">
+          <h2 className="mb-4 text-sm font-bold text-slate-950">
+            Custo Médio por Chamada
+          </h2>
+
+          <div className="flex items-center justify-between gap-4 rounded-xl bg-slate-50 p-4">
+            <div>
+              <p className="text-xl font-bold text-slate-950">
+                {formatEur(costPerCall, { maxDecimals: 4 })}
               </p>
-              <p className="mt-1 text-xs text-emerald-600">
-                Com dados reais de uso
+              <p className="mt-1 text-xs font-semibold text-emerald-600">
+                Baseado em chamadas reais
               </p>
+            </div>
+
+            <div className="h-10 w-10 rounded-lg bg-indigo-50" />
+          </div>
+        </article>
+
+        <article className="rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_8px_24px_rgba(15,23,42,0.035)]">
+          <h2 className="mb-4 text-sm font-bold text-slate-950">
+            Tokens por Tipo (30d)
+          </h2>
+
+          <div className="space-y-4">
+            <div>
+              <div className="mb-1 flex justify-between text-xs">
+                <span className="text-slate-500">Input</span>
+                <span className="font-bold text-slate-900">
+                  {formatNumber(totalInputTokens)} ({inputPercentage}%)
+                </span>
+              </div>
+              <div className="h-3 overflow-hidden rounded-full bg-slate-100">
+                <div
+                  className="h-full rounded-full bg-indigo-600"
+                  style={{ width: `${inputPercentage}%` }}
+                />
+              </div>
+            </div>
+
+            <div>
+              <div className="mb-1 flex justify-between text-xs">
+                <span className="text-slate-500">Output</span>
+                <span className="font-bold text-slate-900">
+                  {formatNumber(totalOutputTokens)} ({outputPercentage}%)
+                </span>
+              </div>
+              <div className="h-3 overflow-hidden rounded-full bg-slate-100">
+                <div
+                  className="h-full rounded-full bg-emerald-500"
+                  style={{ width: `${outputPercentage}%` }}
+                />
+              </div>
             </div>
           </div>
         </article>
       </section>
-    </>
+    </div>
   );
 }

@@ -24,7 +24,7 @@ export default function SuperAdminSidebar({ active }: Props) {
           </span>
           <div>
             <p className="text-sm font-semibold tracking-tight text-[#111111]">
-              DaVinci Interview
+              MatchWorky
             </p>
             <p className="mt-1 inline-flex rounded-full bg-[#e1f3fe] px-2 py-0.5 text-[11px] font-medium uppercase tracking-[0.05em] text-[#1f6c9f]">
               Super Admin

@@ -3,6 +3,7 @@ import SuperAdminShell from "@/components/super-admin/SuperAdminShell";
 import MetricCard from "@/components/super-admin/MetricCard";
 import DataTable from "@/components/super-admin/DataTable";
 import StatusBadge from "@/components/super-admin/StatusBadge";
+import CompaniesFilters from "@/components/super-admin/CompaniesFilters";
 import { getSuperAdminSessionFromServerCookies } from "@/lib/super-admin-context";
 import { listCompaniesUsageSummary } from "@/lib/queries/super-admins";
 import { formatEur, formatNumber } from "@/lib/currency";
@@ -26,11 +27,44 @@ function statusTone(status?: string | null) {
   return "default";
 }
 
-export default async function SuperAdminCompaniesPage() {
+type Props = {
+  searchParams?: {
+    q?: string;
+    from?: string;
+    to?: string;
+    page?: string;
+  };
+};
+
+function defaultFromDate(): string {
+  const date = new Date();
+  date.setDate(date.getDate() - 30);
+  return date.toISOString().slice(0, 10);
+}
+
+function defaultToDate(): string {
+  return new Date().toISOString().slice(0, 10);
+}
+
+export default async function SuperAdminCompaniesPage({ searchParams }: Props) {
   const session = getSuperAdminSessionFromServerCookies();
   if (!session) redirect("/super-admin/login");
 
-  const rows = await listCompaniesUsageSummary();
+  const q = String(searchParams?.q || "");
+  const from = searchParams?.from || defaultFromDate();
+  const to = searchParams?.to || defaultToDate();
+  const page = Math.max(Number(searchParams?.page || 1), 1);
+
+  const result = await listCompaniesUsageSummary({
+    q,
+    from,
+    to,
+    page,
+    pageSize: 10,
+  });
+
+  const rows = result.rows;
+  const totalPages = Math.max(Math.ceil(result.total / 10), 1);
 
   const totalCost = rows.reduce(
     (sum, row) => sum + Number(row.total_cost_30d_eur || 0),
@@ -56,16 +90,13 @@ export default async function SuperAdminCompaniesPage() {
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <input
-              placeholder="Pesquisar empresa..."
-              className="h-10 rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400"
-            />
-            <button className="h-10 rounded-xl border border-slate-200 bg-white px-4 text-sm font-medium text-slate-700 shadow-sm">
-              30 Apr - 30 May 2026
-            </button>
-            <button className="h-10 rounded-xl border border-slate-200 bg-white px-4 text-sm font-medium text-slate-700 shadow-sm">
+            <CompaniesFilters q={q} from={from} to={to} />
+            <a
+              href={`/api/super-admin/companies/export?${new URLSearchParams({ q, from, to }).toString()}`}
+              className="inline-flex h-10 items-center rounded-xl border border-slate-200 bg-white px-4 text-sm font-medium text-slate-700 shadow-sm"
+            >
               Exportar
-            </button>
+            </a>
           </div>
         </header>
 
@@ -103,22 +134,22 @@ export default async function SuperAdminCompaniesPage() {
           ]}
           footer={
             <>
-              <span className="text-sm text-slate-500">
-                Mostrando 1 a {rows.length} de {rows.length} empresas
-              </span>
-              <div className="flex items-center gap-2 text-sm">
-                <button className="rounded-lg bg-slate-100 px-3 py-1 text-slate-400">
-                  ‹
-                </button>
-                <button className="rounded-lg bg-indigo-600 px-3 py-1 text-white">
-                  1
-                </button>
-                <button className="rounded-lg bg-slate-100 px-3 py-1 text-slate-400">
-                  ›
-                </button>
-              </div>
-            </>
-          }
+                <span className="text-sm text-slate-500">
+                  Mostrando {rows.length} de {result.total} empresas
+                </span>
+                <div className="flex items-center gap-2 text-sm">
+                  <a href={`/super-admin/companies?${new URLSearchParams({ q, from, to, page: String(Math.max(page - 1, 1)) }).toString()}`} className="rounded-lg bg-slate-100 px-3 py-1 text-slate-500">
+                    ‹
+                  </a>
+                  <span className="rounded-lg bg-indigo-600 px-3 py-1 text-white">
+                    {page}
+                  </span>
+                  <a href={`/super-admin/companies?${new URLSearchParams({ q, from, to, page: String(Math.min(page + 1, totalPages)) }).toString()}`} className="rounded-lg bg-slate-100 px-3 py-1 text-slate-500">
+                    ›
+                  </a>
+                </div>
+              </>
+            }
         >
           {rows.map((row) => {
             const planPrice = PLAN_PRICE[String(row.plan || "")] || 0;
