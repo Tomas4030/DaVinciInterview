@@ -35,7 +35,7 @@ export default function OverviewCharts({ dailyCost, featureCost, topCompanies }:
               <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
               <XAxis dataKey="day" tick={{ fill: "#64748b", fontSize: 12 }} />
               <YAxis tick={{ fill: "#64748b", fontSize: 12 }} />
-              <Tooltip formatter={(value: any) => formatEur(Number(value || 0), 2, 4)} />
+              <Tooltip formatter={(value: any) => formatEur(Number(value || 0), { maxDecimals: 4 })} />
               <Line type="monotone" dataKey="cost_eur" stroke="#4f46e5" strokeWidth={2} dot={false} />
             </LineChart>
           </ResponsiveContainer>
@@ -51,7 +51,7 @@ export default function OverviewCharts({ dailyCost, featureCost, topCompanies }:
                   <Cell key={`${entry.feature}-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>
-              <Tooltip formatter={(value: any) => formatEur(Number(value || 0), 2, 4)} />
+              <Tooltip formatter={(value: any) => formatEur(Number(value || 0), { maxDecimals: 4 })} />
             </PieChart>
           </ResponsiveContainer>
         </div>
@@ -65,7 +65,7 @@ export default function OverviewCharts({ dailyCost, featureCost, topCompanies }:
                 <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                 <XAxis type="number" tick={{ fill: "#64748b", fontSize: 12 }} />
                 <YAxis type="category" dataKey="company_name" width={150} tick={{ fill: "#64748b", fontSize: 12 }} />
-                <Tooltip formatter={(value: any) => formatEur(Number(value || 0), 2, 4)} />
+                <Tooltip formatter={(value: any) => formatEur(Number(value || 0), { maxDecimals: 4 })} />
                 <Bar dataKey="cost_eur" fill="#6366f1" radius={[8, 8, 8, 8]} />
               </BarChart>
             </ResponsiveContainer>
