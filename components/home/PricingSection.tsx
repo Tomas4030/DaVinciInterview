@@ -2,13 +2,16 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { PRICING_PLANS } from "@/lib/pricing-plans";
+import { PRICING_PLANS, type PricingPlan } from "@/lib/pricing-plans";
 import { tLanding, tLandingObject } from "@/lib/i18n/landing";
 import { normalizeLocale } from "@/lib/i18n/locales";
 
 type PricingSectionProps = {
   compact?: boolean;
   locale?: string;
+  ctaMode?: "link" | "button";
+  onSelectPlan?: (planId: PricingPlan["id"]) => void;
+  loadingPlanId?: PricingPlan["id"] | null;
 };
 
 function withLocale(path: string, locale: string): string {
@@ -23,6 +26,9 @@ function withLocale(path: string, locale: string): string {
 export default function PricingSection({
   compact = false,
   locale = "en",
+  ctaMode = "link",
+  onSelectPlan,
+  loadingPlanId = null,
 }: PricingSectionProps) {
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">(
     "monthly",
@@ -214,19 +220,37 @@ export default function PricingSection({
                 ))}
               </ul>
 
-              <Link
-                href={withLocale(compact ? "/pricing" : "/plans", locale)}
-                className={[
-                  "mt-auto block w-full rounded-xl px-4 py-2.5 text-center text-[0.82rem] font-semibold transition-all",
-                  plan.highlighted
-                    ? "bg-[var(--c-brand)] text-white shadow-[0_2px_8px_rgba(67,85,232,0.25)] hover:bg-[var(--c-brand-dark)] hover:shadow-[0_4px_16px_rgba(67,85,232,0.3)]"
-                    : "border border-[var(--c-border)] text-[var(--c-text)]/80 hover:border-[var(--c-brand)]/30 hover:text-[var(--c-brand)]",
-                ].join(" ")}
-              >
-                {compact
-                  ? tLanding(locale, "pricing.viewDetails")
-                  : tLanding(locale, "pricing.startNow")}
-              </Link>
+              {ctaMode === "button" && onSelectPlan ? (
+                <button
+                  type="button"
+                  onClick={() => onSelectPlan(plan.id)}
+                  disabled={loadingPlanId !== null}
+                  className={[
+                    "mt-auto w-full rounded-xl px-4 py-2.5 text-center text-[0.82rem] font-semibold transition-all disabled:opacity-60",
+                    plan.highlighted
+                      ? "bg-[var(--c-brand)] text-white shadow-[0_2px_8px_rgba(67,85,232,0.25)] hover:bg-[var(--c-brand-dark)] hover:shadow-[0_4px_16px_rgba(67,85,232,0.3)]"
+                      : "border border-[var(--c-border)] text-[var(--c-text)]/80 hover:border-[var(--c-brand)]/30 hover:text-[var(--c-brand)]",
+                  ].join(" ")}
+                >
+                  {loadingPlanId === plan.id
+                    ? tLanding(locale, "pricing.processing")
+                    : tLanding(locale, "pricing.startNow")}
+                </button>
+              ) : (
+                <Link
+                  href={withLocale(compact ? "/pricing" : "/plans", locale)}
+                  className={[
+                    "mt-auto block w-full rounded-xl px-4 py-2.5 text-center text-[0.82rem] font-semibold transition-all",
+                    plan.highlighted
+                      ? "bg-[var(--c-brand)] text-white shadow-[0_2px_8px_rgba(67,85,232,0.25)] hover:bg-[var(--c-brand-dark)] hover:shadow-[0_4px_16px_rgba(67,85,232,0.3)]"
+                      : "border border-[var(--c-border)] text-[var(--c-text)]/80 hover:border-[var(--c-brand)]/30 hover:text-[var(--c-brand)]",
+                  ].join(" ")}
+                >
+                  {compact
+                    ? tLanding(locale, "pricing.viewDetails")
+                    : tLanding(locale, "pricing.startNow")}
+                </Link>
+              )}
             </article>
           ))}
         </div>

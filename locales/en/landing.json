@@ -146,6 +146,7 @@
     "mostPopular": "Most popular",
     "viewDetails": "View details",
     "startNow": "Get started",
+    "processing": "Processing...",
     "trial": "All plans include a 14-day free trial. No credit card required.",
     "plans": {
       "basic": {

@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
       mode: "subscription",
       line_items: [{ price: priceId, quantity: 1 }],
       success_url: `${appUrl}/${locale}/onboarding?session_id={CHECKOUT_SESSION_ID}&plan=${plan}`,
-      cancel_url: `${appUrl}/${locale}/plans`,
+      cancel_url: `${appUrl}/${locale}/plans?manage=1`,
       customer: membership?.company?.stripe_customer_id || undefined,
       customer_email: undefined,
       metadata: {

@@ -1,5 +1,5 @@
 meter login com Google
-meter tbm br, espanhol, alemão, italiano, chinês
+
 https://www.matchworky.com/en/plans melhorar pagina de plans 
 
 no registo acho que deves meter no e sobrenome
@@ -23,3 +23,7 @@ posso tentar fazer isso
  
 
  pagina de super admin so para ver o consumo de tokens 
+
+
+
+ criar dados de aceso para contas do cpanel esqueci dos ddos!

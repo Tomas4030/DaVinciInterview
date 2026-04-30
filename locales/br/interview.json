@@ -1,23 +1,23 @@
 {
   "verificationForm": {
     "nameRequired": "Nome obrigatório.",
-    "emailRequired": "E-mail obrigatorio.",
-    "emailInvalid": "E-mail invalido.",
-    "phoneRequired": "Celular obrigatório.",
-    "phoneInvalid": "Número de celular inválido.",
+    "emailRequired": "Email obrigatório.",
+    "emailInvalid": "Email inválido.",
+    "phoneRequired": "Telemóvel obrigatório.",
+    "phoneInvalid": "Número de telemóvel inválido.",
     "sendCodeError": "Não foi possível enviar o código.",
     "devCode": "Código de desenvolvimento: {{code}}",
     "serverConnectionError": "Erro de ligação ao servidor.",
-    "intro": "Confirme seus dados para receber o codigo de verificacao.",
+    "intro": "Confirma os teus dados para receberes o código de verificação.",
     "nameLabel": "Nome completo",
-    "namePlaceholder": "O seu nome",
-    "emailLabel": "E-mail",
+    "namePlaceholder": "O teu nome",
+    "emailLabel": "Email",
     "emailPlaceholder": "nome@email.com",
-    "phoneLabel": "Celular",
+    "phoneLabel": "Telemóvel",
     "phonePlaceholder": "+351 912 345 678",
     "sending": "A enviar código…",
     "continue": "Continuar",
-    "secure": "Os seus dados estão protegidos e nunca serão compartilhados."
+    "secure": "Os teus dados estão protegidos e nunca serão partilhados."
   },
   "verifyCodeForm": {
     "enterCodeError": "Introduz o código recebido no email.",
@@ -25,9 +25,9 @@
     "serverConnectionError": "Erro de ligação ao servidor.",
     "resendError": "Erro ao reenviar código.",
     "resendConnectionError": "Erro de ligação ao servidor ao reenviar o código.",
-    "resendSuccess": "Codigo reenviado. Verifique sua caixa de entrada.",
+    "resendSuccess": "Código reenviado. Verifica a tua caixa de entrada.",
     "title": "Verificação por código",
-    "description": "Digite o codigo enviado para o seu e-mail.",
+    "description": "Introduz o código enviado para o teu email.",
     "codeLabel": "Código de verificação",
     "validating": "A validar…",
     "continue": "Continuar",
@@ -35,14 +35,14 @@
     "resending": "A reenviar…",
     "resendIn": "Reenviar em {{seconds}}s",
     "resendCode": "Reenviar código",
-    "secure": "O código expira em pouco tempo para proteger o seu acesso."
+    "secure": "O código expira em pouco tempo para proteger o teu acesso."
   },
   "chat": {
-    "introSingular": "Bem-vindo a entrevista para {{title}}. Esta entrevista tem {{count}} pergunta. Quando voce estiver pronto, clique em Comecar.",
-    "introPlural": "Bem-vindo a entrevista para {{title}}. Esta entrevista tem {{count}} perguntas. Quando voce estiver pronto, clique em Comecar.",
+    "introSingular": "Bem-vindo à entrevista para {{title}}. Esta entrevista tem {{count}} pergunta. Quando estiveres pronto, clica em Começar.",
+    "introPlural": "Bem-vindo à entrevista para {{title}}. Esta entrevista tem {{count}} perguntas. Quando estiveres pronto, clica em Começar.",
     "continueInterviewError": "Não foi possível continuar a entrevista",
     "continueFallback": "Vamos continuar.",
-    "sendError": "Não foi possível enviar a sua resposta. Tente novamente.",
+    "sendError": "Não foi possível enviar a tua resposta. Tenta novamente.",
     "noQuestions": "Esta entrevista ainda não tem perguntas configuradas.",
     "confirmInterview": "Confirmar entrevista",
     "interviewDescription": "Descrição da vaga",
@@ -53,13 +53,13 @@
     "statusStarting": "A iniciar",
     "statusProgress": "{{current}} / {{total}}",
     "startInterview": "Começar entrevista",
-    "answerPlaceholder": "Escreva sua resposta...",
+    "answerPlaceholder": "Escreve a tua resposta…",
     "sendAria": "Enviar",
     "inputHint": "Enter para enviar · Shift+Enter para nova linha"
   },
   "companyPublic": {
     "meta": {
-      "notFound": "Empresa nao encontrada",
+      "notFound": "Empresa n�o encontrada",
       "title": "{{companyName}} - Entrevistas",
       "descriptionFallback": "Conhece as entrevistas abertas da {{companyName}}."
     },
@@ -73,8 +73,8 @@
       "interviewsNone": "Sem entrevistas abertas neste momento",
       "interviewsOpenSingular": "{{count}} entrevista aberta",
       "interviewsOpenPlural": "{{count}} entrevistas abertas",
-      "titlePrefix": "Construa seu futuro com a",
-      "descriptionFallback": "Explore as oportunidades abertas na {{companyName}}, responda no seu ritmo e envie sua inscricao em poucos minutos.",
+      "titlePrefix": "Constroi o teu futuro com a",
+      "descriptionFallback": "Explora as oportunidades abertas na {{companyName}}, responde ao teu ritmo e submete a tua candidatura em poucos minutos.",
       "viewOpenRoles": "Ver vagas disponiveis",
       "howItWorks": "Como funciona"
     },
@@ -85,7 +85,7 @@
       "countPlural": "{{count}} posicoes disponiveis",
       "emptyTitle": "Nenhuma vaga disponivel de momento.",
       "emptyDescription": "Volta em breve ou contacta o recrutador.",
-      "fallbackDescription": "Sem descricao disponivel.",
+      "fallbackDescription": "Sem descri��o disponivel.",
       "questionSingular": "{{count}} pergunta",
       "questionPlural": "{{count}} perguntas",
       "start": "Iniciar",
@@ -99,35 +99,35 @@
       "employmentTypePartTime": "Part-time",
       "employmentTypeContract": "Contrato",
       "employmentTypeInternship": "Estagio",
-      "employmentTypeFallback": "Nao definido",
+      "employmentTypeFallback": "N�o definido",
       "contextLabel": "Contexto",
-      "experienceDesired": "Experiencia desejada",
-      "experienceNotRequired": "Experiencia nao exigida"
+      "experienceDesired": "Experi�ncia desejada",
+      "experienceNotRequired": "Experi�ncia n�o exigida"
     },
     "howItWorks": {
       "ariaLabel": "Como funciona o processo",
-      "badge": "Processo simples e rapido",
+      "badge": "Processo simples e r�pido",
       "title": "Como funciona",
-      "description": "Em tres passos, voce escolhe uma vaga, responde no seu ritmo e envia a inscricao sem complicacoes.",
+      "description": "Em tres passos, escolhes uma vaga, respondes ao teu ritmo e submetes a candidatura sem complicacoes.",
       "stepLabel": "Passo",
       "steps": [
         {
           "num": "1",
-          "title": "Escolha a vaga",
-          "desc": "Veja as oportunidades abertas desta empresa e selecione a que melhor combina com seu perfil.",
+          "title": "Escolhe a vaga",
+          "desc": "Ve as oportunidades abertas desta empresa e seleciona a que melhor combina com o teu perfil.",
           "highlight": "Tudo centralizado num so sitio"
         },
         {
           "num": "2",
-          "title": "Responda no seu ritmo",
-          "desc": "A inscricao acontece em formato conversacional, de forma simples, natural e sem complicacoes.",
-          "highlight": "Experiencia simples e guiada"
+          "title": "Responde ao teu ritmo",
+          "desc": "A candidatura acontece em formato conversacional, de forma mais simples, natural e sem complicacoes.",
+          "highlight": "Experi�ncia simples e guiada"
         },
         {
           "num": "3",
-          "title": "Envie sua inscricao",
-          "desc": "Depois de concluir, suas respostas ficam prontas para o time de recrutamento analisar.",
-          "highlight": "Envio rapido e claro"
+          "title": "Submete a candidatura",
+          "desc": "Depois de concluires, as tuas respostas ficam prontas para a equipa de recrutamento analisar.",
+          "highlight": "Envio r�pido e claro"
         }
       ]
     }

@@ -1,7 +1,7 @@
 {
   "meta": {
-    "title": "MatchWorky — Entrevistas com IA para times de recrutamento",
-    "description": "Automatiza a triagem de candidatos com entrevistas conversacionais. Defina as perguntas, compartilhe o link e analise as respostas em uma unica plataforma.",
+    "title": "MatchWorky — Entrevistas com IA para equipas de recrutamento",
+    "description": "Automatiza a triagem de candidatos com entrevistas conversacionais. Define as perguntas, partilha o link e analisa as respostas tudo numa plataforma.",
     "ogTitle": "MatchWorky — Entrevistas com IA para empresas",
     "ogDescription": "Automatiza a triagem inicial e melhora a experiência de candidatura com entrevistas conversacionais inteligentes."
   },
@@ -15,11 +15,11 @@
     "startFree": "Começar grátis"
   },
   "hero": {
-    "badge": "Automatiza o seu processo de recrutamento",
+    "badge": "Automatiza o teu processo de recrutamento",
     "titleLine1": "Entrevistas com IA.",
     "titleHighlight": "Triagem",
     "titleLine2": "sem esforço.",
-    "description": "O MatchWorky conduz entrevistas conversacionais automatizadas em nome da sua empresa. Defina as perguntas, compartilhe o link com os candidatos e analise as respostas em uma unica plataforma.",
+    "description": "O MatchWorky conduz entrevistas conversacionais automatizadas em nome da tua empresa. Define as perguntas, partilha o link com os candidatos e analisa as respostas tudo numa plataforma.",
     "cta": "Começar grátis",
     "stats": [
       { "value": "3×", "label": "mais rápido do que triagem manual" },
@@ -31,25 +31,25 @@
       "conversation": [
         { "from": "bot", "text": "Olá! Sou o assistente de recrutamento da Acme. Pronto para começar?" },
         { "from": "user", "text": "Sim, vamos a isso." },
-        { "from": "bot", "text": "Pergunta 1: Quantos anos de experiencia voce tem com React?" },
-        { "from": "user", "text": "Cerca de 4 anos em equipes de produto." },
-        { "from": "bot", "text": "Pergunta 2: Quais padroes de TypeScript voce usa no dia a dia?" },
+        { "from": "bot", "text": "Pergunta 1: Quantos anos de experiência tens com React?" },
+        { "from": "user", "text": "Cerca de 4 anos em equipas de produto." },
+        { "from": "bot", "text": "Pergunta 2: Que padrões de TypeScript usas no dia a dia?" },
         { "from": "user", "text": "Tipagem estrita, unions discriminadas e interfaces reutilizáveis." },
-        { "from": "bot", "text": "Pergunta 3: Conte uma otimização de performance que entregaste recentemente." },
+        { "from": "bot", "text": "Pergunta 3: Conta-me uma otimização de performance que entregaste recentemente." },
         { "from": "user", "text": "Reduzi custos de render com memoização e virtualização de listas." },
         { "from": "bot", "text": "Pergunta 4: Como estruturas componentes para manter manutenção a longo prazo?" },
         { "from": "user", "text": "Separando UI, lógica de estado e domínio com fronteiras claras." },
-        { "from": "bot", "text": "Pergunta 5: Como voce valida acessibilidade antes de publicar?" },
+        { "from": "bot", "text": "Pergunta 5: Como validas acessibilidade antes de publicar?" },
         { "from": "user", "text": "Testes de teclado, HTML semântico e validação rápida com leitor de ecrã." },
-        { "from": "bot", "text": "Pergunta 6: Como voce colabora com produto e design?" },
+        { "from": "bot", "text": "Pergunta 6: Como colaboras com produto e design?" },
         { "from": "user", "text": "Planeamento semanal, protótipos cedo e feedback frequente." },
-        { "from": "bot", "text": "Pergunta 7: Qual é a sua abordagem de testes em frontend?" },
+        { "from": "bot", "text": "Pergunta 7: Qual é a tua abordagem de testes em frontend?" },
         { "from": "user", "text": "Unitários para lógica e integração para jornadas críticas." },
-        { "from": "bot", "text": "Pergunta 8: De um exemplo em que melhoraste developer experience." },
-        { "from": "user", "text": "Criei regras compartilhadas de lint e templates que reduziram retrabalho em PRs." },
-        { "from": "bot", "text": "Pergunta 9: Como voce monitora problemas após release?" },
+        { "from": "bot", "text": "Pergunta 8: Dá um exemplo em que melhoraste developer experience." },
+        { "from": "user", "text": "Criei regras partilhadas de lint e templates que reduziram retrabalho em PRs." },
+        { "from": "bot", "text": "Pergunta 9: Como monitorizas problemas após release?" },
         { "from": "user", "text": "Com tracking de erros, dashboards e checks pós-release." },
-        { "from": "bot", "text": "Pergunta 10: Por que voce quer esta vaga neste momento?" },
+        { "from": "bot", "text": "Pergunta 10: Porque queres esta vaga neste momento?" },
         { "from": "user", "text": "Porque o desafio do produto encaixa no meu perfil e objetivo de crescimento." },
         { "from": "bot", "text": "Excelente, obrigado. Entrevista concluída com sucesso." }
       ]
@@ -66,7 +66,7 @@
       },
       {
         "title": "Verificação automática",
-        "desc": "E-mail e celular validados por codigo OTP - garantindo que cada candidato e unico e autentico."
+        "desc": "Email e telemóvel validados por código OTP — garantes que cada candidato é único e autêntico."
       },
       {
         "title": "Dashboard de candidaturas",
@@ -82,7 +82,7 @@
       },
       {
         "title": "Exportação de relatórios",
-        "desc": "Exporte inscricoes em PDF ou CSV para compartilhar com seu time ou integrar com outros sistemas."
+        "desc": "Exporta candidaturas em PDF ou CSV para partilhar com a tua equipa ou integrar com outros sistemas."
       }
     ]
   },
@@ -90,29 +90,29 @@
     "ariaLabel": "Como funciona o MatchWorky",
     "eyebrow": "Como funciona",
     "title": "Da vaga à contratação em 3 passos",
-    "description": "O processo foi desenhado para ser simples para voce e agradavel para os candidatos.",
+    "description": "O processo foi desenhado para ser simples para ti e agradável para os candidatos.",
     "stepLabel": "Passo",
     "steps": [
       {
-        "title": "Crie sua vaga",
-        "desc": "Defina o titulo, a descricao e as perguntas que voce quer fazer aos candidatos. Voce pode ter varias vagas ativas ao mesmo tempo.",
+        "title": "Cria a tua vaga",
+        "desc": "Define o título, a descrição e as perguntas que queres fazer aos candidatos. Podes ter múltiplas vagas ativas em simultâneo.",
         "highlight": "Configuração em minutos"
       },
       {
-        "title": "Compartilhe o link",
-        "desc": "Cada vaga tem uma URL unica. Compartilhe nas redes sociais, no seu site ou por e-mail - os candidatos acessam sem criar conta.",
+        "title": "Partilha o link",
+        "desc": "Cada vaga tem um URL único. Partilha-o nas redes sociais, no teu site ou por email — os candidatos acedem sem criar conta.",
         "highlight": "Sem fricção para o candidato"
       },
       {
         "title": "Analisa as respostas",
-        "desc": "Todas as inscricoes ficam no seu painel. A IA gera um resumo e uma pontuacao de cada candidato para voce focar nos melhores.",
+        "desc": "Todas as candidaturas ficam no teu dashboard. A IA gera um resumo e scoring de cada candidato para que te foques nos melhores.",
         "highlight": "Decisões baseadas em dados"
       }
     ]
   },
   "testimonials": {
     "eyebrow": "Testemunhos",
-    "title": "O que dizem os times de RH",
+    "title": "O que dizem as equipas de RH",
     "items": [
       {
         "quote": "Reduziamos semanas a rever CVs. Com o MatchWorky, em dois dias já tínhamos os 5 melhores candidatos prontos para entrevista presencial.",
@@ -125,7 +125,7 @@
         "role": "Talent Acquisition, Scale-up Porto"
       },
       {
-        "quote": "O resumo automatico da IA nos poupa pelo menos 2 horas por candidato. Para nos, foi um divisor de aguas no recrutamento tecnico.",
+        "quote": "O resumo automático da IA poupa-nos pelo menos 2 horas por candidato. Para nós, foi um game changer no recrutamento técnico.",
         "author": "Sofia Mendes",
         "role": "CTO, Produto Digital"
       }
@@ -133,8 +133,8 @@
   },
   "pricing": {
     "eyebrow": "Planos",
-    "title": "Escolha o plano ideal para seu time",
-    "description": "Comece com um plano basico e evolua sem migracoes complexas. Cancele quando quiser.",
+    "title": "Escolhe o plano ideal para a tua equipa",
+    "description": "Começa com um plano base e evolui sem migrações complexas. Cancela quando quiseres.",
     "monthly": "Mensal",
     "yearly": "Anual",
     "custom": "Grátis",
@@ -146,10 +146,11 @@
     "mostPopular": "Mais popular",
     "viewDetails": "Ver detalhes",
     "startNow": "Começar agora",
+    "processing": "A processar...",
     "trial": "Todos os planos incluem 14 dias de trial gratuito. Sem cartão de crédito.",
     "plans": {
       "basic": {
-        "description": "Para times pequenos que querem acelerar triagem inicial.",
+        "description": "Para equipas pequenas que querem acelerar triagem inicial.",
         "features": ["1 empresa", "Até 5 entrevistas ativas", "Perguntas ilimitadas", "Dashboard base", "Suporte por email"]
       },
       "free": {
@@ -157,7 +158,7 @@
         "features": ["1 empresa", "Até 1 entrevista ativa", "Até 5 perguntas por entrevista", "Sem geração de perguntas por IA", "Sem exportação PDF"]
       },
       "pro": {
-        "description": "Escala com mais volume e mais controle operacional.",
+        "description": "Escala com mais volume e mais controlo operacional.",
         "features": ["Até 3 empresas", "Entrevistas ativas ilimitadas", "Perguntas ilimitadas", "Insights de desempenho", "Prioridade no suporte"]
       }
     }
@@ -165,7 +166,7 @@
   "cta": {
     "eyebrow": "Começa hoje",
     "title": "Pronto para recrutar mais rápido?",
-    "description": "Junte-se aos times que ja automatizaram sua triagem de candidatos. Configure sua primeira vaga em menos de 5 minutos.",
+    "description": "Junta-te às equipas que já automatizaram a sua triagem de candidatos. Configura a tua primeira vaga em menos de 5 minutos.",
     "primary": "Começar grátis — 14 dias",
     "secondary": "Ver todos os planos",
     "footnote": "Sem cartão de crédito. Cancela quando quiseres."
@@ -179,7 +180,7 @@
     "startFree": "Começar grátis",
     "company": "Empresa",
     "about": "Sobre nós",
-    "contact": "Contato",
+    "contact": "Contacto",
     "legal": "Legal",
     "terms": "Termos de Serviço",
     "privacy": "Política de Privacidade",

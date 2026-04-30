@@ -115,7 +115,7 @@ export default async function AdminCompanyLayout({ children, params }: Props) {
                   <div className="mt-3 flex gap-2">
                     {!hasPlan ? (
                       <a
-                        href={`/${params.locale}/plans`}
+                        href={`/${params.locale}/plans?manage=1`}
                         className="inline-flex rounded-lg bg-[var(--c-brand)] px-3 py-2 text-xs font-semibold text-white hover:bg-[var(--c-brand-dark)]"
                         >
                           {tAdmin(params.locale, "layout.choosePlan")}
@@ -123,7 +123,7 @@ export default async function AdminCompanyLayout({ children, params }: Props) {
                     ) : (
                       <>
                         <a
-                          href={`/${params.locale}/plans`}
+                          href={`/${params.locale}/plans?manage=1`}
                           className="inline-flex rounded-lg bg-[var(--c-brand)] px-3 py-2 text-xs font-semibold text-white hover:bg-[var(--c-brand-dark)]"
                         >
                           {tAdmin(params.locale, "layout.upgrade")}

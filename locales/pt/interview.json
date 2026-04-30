@@ -59,7 +59,7 @@
   },
   "companyPublic": {
     "meta": {
-      "notFound": "Empresa nao encontrada",
+      "notFound": "Empresa não encontrada",
       "title": "{{companyName}} - Entrevistas",
       "descriptionFallback": "Conhece as entrevistas abertas da {{companyName}}."
     },
@@ -85,7 +85,7 @@
       "countPlural": "{{count}} posicoes disponiveis",
       "emptyTitle": "Nenhuma vaga disponivel de momento.",
       "emptyDescription": "Volta em breve ou contacta o recrutador.",
-      "fallbackDescription": "Sem descricao disponivel.",
+      "fallbackDescription": "Sem descrição disponivel.",
       "questionSingular": "{{count}} pergunta",
       "questionPlural": "{{count}} perguntas",
       "start": "Iniciar",
@@ -99,14 +99,14 @@
       "employmentTypePartTime": "Part-time",
       "employmentTypeContract": "Contrato",
       "employmentTypeInternship": "Estagio",
-      "employmentTypeFallback": "Nao definido",
+      "employmentTypeFallback": "Não definido",
       "contextLabel": "Contexto",
-      "experienceDesired": "Experiencia desejada",
-      "experienceNotRequired": "Experiencia nao exigida"
+      "experienceDesired": "Experiência desejada",
+      "experienceNotRequired": "Experiência não exigida"
     },
     "howItWorks": {
       "ariaLabel": "Como funciona o processo",
-      "badge": "Processo simples e rapido",
+      "badge": "Processo simples e rápido",
       "title": "Como funciona",
       "description": "Em tres passos, escolhes uma vaga, respondes ao teu ritmo e submetes a candidatura sem complicacoes.",
       "stepLabel": "Passo",
@@ -121,13 +121,13 @@
           "num": "2",
           "title": "Responde ao teu ritmo",
           "desc": "A candidatura acontece em formato conversacional, de forma mais simples, natural e sem complicacoes.",
-          "highlight": "Experiencia simples e guiada"
+          "highlight": "Experiência simples e guiada"
         },
         {
           "num": "3",
           "title": "Submete a candidatura",
           "desc": "Depois de concluires, as tuas respostas ficam prontas para a equipa de recrutamento analisar.",
-          "highlight": "Envio rapido e claro"
+          "highlight": "Envio rápido e claro"
         }
       ]
     }

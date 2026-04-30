@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { withBasePath } from "@/lib/base-path";
 import { normalizeLocale } from "@/lib/i18n/locales";
+import PricingSection from "@/components/home/PricingSection";
+import type { PricingPlan } from "@/lib/pricing-plans";
 
 type Props = {
   locale: string;
@@ -11,77 +13,7 @@ type Props = {
 };
 
 type PlanId = "free" | "basic" | "pro";
-
-const PLAN_COPY: Record<string, Record<PlanId, { title: string; price: string; features: string[] }>> = {
-  pt: {
-    free: {
-      title: "Free",
-      price: "0 EUR",
-      features: [
-        "1 empresa",
-        "Ate 1 entrevista ativa",
-        "Ate 5 perguntas por entrevista",
-        "Sem geracao IA de perguntas",
-      ],
-    },
-    basic: {
-      title: "Basic",
-      price: "49 EUR/mes",
-      features: [
-        "1 empresa",
-        "Ate 5 entrevistas ativas",
-        "Perguntas ilimitadas",
-        "Geracao IA de perguntas",
-        "Exportacao PDF",
-      ],
-    },
-    pro: {
-      title: "Pro",
-      price: "149 EUR/mes",
-      features: [
-        "Ate 3 empresas",
-        "Entrevistas ativas ilimitadas",
-        "Perguntas ilimitadas",
-        "Comparacao IA",
-        "Prioridade no suporte",
-      ],
-    },
-  },
-  en: {
-    free: {
-      title: "Free",
-      price: "0 EUR",
-      features: [
-        "1 company",
-        "Up to 1 active interview",
-        "Up to 5 questions per interview",
-        "No AI question generation",
-      ],
-    },
-    basic: {
-      title: "Basic",
-      price: "49 EUR/month",
-      features: [
-        "1 company",
-        "Up to 5 active interviews",
-        "Unlimited questions",
-        "AI question generation",
-        "PDF export",
-      ],
-    },
-    pro: {
-      title: "Pro",
-      price: "149 EUR/month",
-      features: [
-        "Up to 3 companies",
-        "Unlimited active interviews",
-        "Unlimited questions",
-        "AI comparison",
-        "Priority support",
-      ],
-    },
-  },
-};
+const PLAN_ORDER: PlanId[] = ["free", "basic", "pro"];
 
 export default function PlanSelection({ locale, userId }: Props) {
   const router = useRouter();
@@ -89,7 +21,6 @@ export default function PlanSelection({ locale, userId }: Props) {
   const [error, setError] = useState("");
   const normalizedLocale = normalizeLocale(locale);
   const safeLocale = normalizedLocale === "pt" || normalizedLocale === "br" ? "pt" : "en";
-  const copy = PLAN_COPY[safeLocale];
 
   async function selectPlan(plan: PlanId) {
     setError("");
@@ -132,36 +63,19 @@ export default function PlanSelection({ locale, userId }: Props) {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {error ? (
-        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
           {error}
         </div>
       ) : null}
 
-      <div className="grid gap-4 md:grid-cols-3">
-        {(["free", "basic", "pro"] as PlanId[]).map((plan) => (
-          <article key={plan} className="rounded-xl border border-[var(--c-border)]/70 bg-[var(--c-surface)] p-5">
-            <p className="text-xs font-bold uppercase tracking-[0.08em] text-[var(--c-text)]/60">
-              {copy[plan].title}
-            </p>
-            <p className="mt-2 text-2xl font-semibold text-[var(--c-text)]">{copy[plan].price}</p>
-            <ul className="mt-3 space-y-1.5 text-sm text-[var(--c-text)]/75">
-              {copy[plan].features.map((feature) => (
-                <li key={feature}>- {feature}</li>
-              ))}
-            </ul>
-            <button
-              type="button"
-              onClick={() => selectPlan(plan)}
-              disabled={loadingPlan !== null}
-              className="mt-4 w-full rounded-lg bg-[var(--c-brand)] px-4 py-2 text-sm font-semibold text-white hover:bg-[var(--c-brand-dark)] disabled:opacity-60"
-            >
-              {loadingPlan === plan ? "A processar..." : "Escolher plano"}
-            </button>
-          </article>
-        ))}
-      </div>
+      <PricingSection
+        locale={safeLocale}
+        ctaMode="button"
+        onSelectPlan={(planId) => selectPlan(planId as PricingPlan["id"])}
+        loadingPlanId={loadingPlan}
+      />
     </div>
   );
 }

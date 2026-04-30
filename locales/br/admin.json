@@ -10,14 +10,14 @@
     "interviews": "Entrevistas",
     "responses": "Respostas",
     "settings": "DefiniÃ§Ãµes",
-    "team": "Usuarioes",
+    "team": "Utilizadores",
     "billing": "FaturaÃ§Ã£o",
     "navigation": "NavegaÃ§Ã£o",
     "companyNavigation": "NavegaÃ§Ã£o da empresa"
   },
   "interviews": {
     "listCard": {
-      "noDescription": "Sem descricao.",
+      "noDescription": "Sem descrição.",
       "questionSingular": "{{count}} pergunta",
       "questionPlural": "{{count}} perguntas",
       "viewResponses": "Ver respostas",
@@ -25,15 +25,15 @@
       "editLegacy": "Editar (legado)",
       "archive": "Arquivar",
       "archiving": "A arquivar...",
-      "archiveError": "Nao foi possivel arquivar a entrevista.",
+      "archiveError": "Não foi possivel arquivar a entrevista.",
       "unarchive": "Desarquivar",
       "unarchiving": "A desarquivar...",
-      "unarchiveError": "Nao foi possivel desarquivar a entrevista.",
-      "experienceDesired": "Experiencia desejada",
-      "experienceNotRequired": "Experiencia nao exigida"
+      "unarchiveError": "Não foi possivel desarquivar a entrevista.",
+      "experienceDesired": "Experiência desejada",
+      "experienceNotRequired": "Experiência não exigida"
     },
     "filters": {
-      "searchPlaceholder": "Pesquisar por titulo ou descricao",
+      "searchPlaceholder": "Pesquisar por título ou descrição",
       "statusAll": "Todos os estados",
       "statusDraft": "Rascunho",
       "statusPublished": "Publicada",
@@ -52,12 +52,12 @@
       "status": "Estado",
       "date": "Data",
       "actions": "AÃ§Ãµes",
-      "untitledInterview": "Entrevista sem titulo",
+      "untitledInterview": "Entrevista sem título",
       "viewAnswers": "Ver respostas"
     },
     "summary": {
       "candidate": "Candidato",
-      "phone": "Celular",
+      "phone": "TelemÃ³vel",
       "status": "Estado",
       "dateTime": "Data/Hora"
     },
@@ -69,12 +69,12 @@
     },
     "stats": {
       "completed": "Concluidas",
-      "inAnalysis": "Em analise",
+      "inAnalysis": "Em análise",
       "inProgress": "Em progresso"
     },
     "status": {
       "concluida": "Concluida",
-      "em_analise": "Em analise",
+      "em_analise": "Em análise",
       "rejeitada": "Rejeitada",
       "em_progresso": "Em progresso"
     },
@@ -84,7 +84,7 @@
       "statusInProgress": "Em progresso",
       "statusDone": "Concluida",
       "allInterviews": "Todas as entrevistas",
-      "aiAnalysis": "Analise com IA"
+      "aiAnalysis": "Análise com IA"
     }
   },
   "aiComparison": {
@@ -92,8 +92,8 @@
     "title": "ComparaÃ§Ã£o de candidatos por vaga",
     "role": "Vaga",
     "backToResponses": "Voltar Ã s respostas",
-    "refreshConfirm": "Deseja mesmo substituir os dados atuais da analise IA e recriar as estatisticas?",
-    "refreshError": "Nao foi possivel recriar os dados da analise IA.",
+    "refreshConfirm": "Deseja mesmo substituir os dados atuais da análise IA e recriar as estatisticas?",
+    "refreshError": "Não foi possivel recriar os dados da análise IA.",
     "refreshLoading": "A recriar...",
     "refreshAction": "Recriar dados IA",
     "limitProOnly": "Comparacao IA disponivel apenas no plano Pro.",
@@ -132,7 +132,7 @@
     "planMissing": "Inexistente",
     "choosePlan": "Escolher plano",
     "upgrade": "Upgrade",
-    "managePlan": "Gerenciar plano",
+    "managePlan": "Gerir plano",
     "activeInterviewsLimited": "{{active}}/{{limit}} entrevistas ativas",
     "activeInterviewsUnlimited": "{{active}} entrevistas ativas (ilimitado)",
     "helpTitle": "Precisa de ajuda?",
@@ -158,7 +158,7 @@
     "empty": "Sem entrevistas criadas nesta empresa.",
     "status": "status: {{status}}",
     "viewResponses": "Ver respostas",
-    "createdByYou": "Criada por voce",
+    "createdByYou": "Criada por si",
     "updatedRecently": "Atualizada recentemente",
     "updatedDays": "Atualizada ha {{count}} dia(s)",
     "updatedWeeks": "Atualizada ha {{count}} semana(s)",
@@ -167,9 +167,9 @@
   "dashboardPromo": {
     "eyebrow": "Obtenha mais com o plano Pro",
     "title": "Desbloqueie recursos avancados",
-    "description": "Aumente o limite de entrevistas, obtenha relatorios avancados e muito mais.",
+    "description": "Aumente o limite de entrevistas, obtenha relatórios avancados e muito mais.",
     "feature1": "Entrevistas ilimitadas",
-    "feature2": "Relatorios avancados",
+    "feature2": "Relatórios avancados",
     "feature3": "Suporte prioritario",
     "action": "Fazer upgrade"
   },
@@ -177,24 +177,24 @@
     "metaTitle": "Admin â€” Respostas",
     "eyebrow": "Respostas",
     "title": "Sessoes de candidatos",
-    "description": "Consulta as respostas por entrevista e abre a analise global por vaga para comparar candidatos com apoio de IA."
+    "description": "Consulta as respostas por entrevista e abre a análise global por vaga para comparar candidatos com apoio de IA."
   },
   "responseDetailPage": {
-    "metaTitle": "Admin â€” Detalhe da Sessao",
-    "eyebrow": "Sessao",
+    "metaTitle": "Admin â€” Detalhe da Sessão",
+    "eyebrow": "Sessão",
     "fallbackInterviewTitle": "Entrevista",
     "exportPdf": "Exportar PDF",
     "exportPdfLocked": "Exportar PDF (disponivel no Basic/Pro)",
     "backToResponses": "Voltar as respostas"
   },
   "settingsPage": {
-    "metaTitle": "Admin â€” Definicoes",
-    "eyebrow": "Definicoes",
-    "title": "Definicoes da empresa"
+    "metaTitle": "Admin â€” Definições",
+    "eyebrow": "Definições",
+    "title": "Definições da empresa"
   },
   "teamPage": {
-    "metaTitle": "Admin â€” Usuarioes",
-    "eyebrow": "Usuarioes",
+    "metaTitle": "Admin â€” Utilizadores",
+    "eyebrow": "Utilizadores",
     "title": "Equipa da empresa"
   },
   "interviewsPage": {
@@ -218,18 +218,18 @@
     "title": "Editar entrevista"
   },
   "billingPage": {
-    "metaTitle": "Admin â€” Faturacao",
-    "eyebrow": "Faturacao",
-    "title": "Conta e faturacao",
+    "metaTitle": "Admin â€” Faturação",
+    "eyebrow": "Faturação",
+    "title": "Conta e faturação",
     "description": "Placeholder da Fase 4 para integracao Stripe e gestao de plano da empresa."
   },
   "deleteInterview": {
-    "defaultError": "Nao foi possivel apagar a entrevista.",
+    "defaultError": "Não foi possivel apagar a entrevista.",
     "networkError": "Erro ao apagar entrevista.",
     "loading": "A apagar...",
     "trigger": "Apagar",
     "confirmTitle": "Confirmar remocao",
-    "confirmBody": "Ao confirmar, vais apagar esta vaga/entrevista e tambem todas as respostas e analises IA associadas. Esta acao e permanente.",
+    "confirmBody": "Ao confirmar, vais apagar esta vaga/entrevista e tambem todas as respostas e analises IA associadas. Esta ação e permanente.",
     "cancel": "Cancelar",
     "confirm": "Confirmar e apagar"
   },
@@ -243,28 +243,28 @@
     "unarchiveConfirm": "Confirmar e desarquivar"
   },
   "interviewForm": {
-    "defaultError": "Nao foi possivel guardar a entrevista",
+    "defaultError": "Não foi possivel guardar a entrevista",
     "networkError": "Erro ao guardar entrevista",
-    "titleLabel": "Titulo",
+    "titleLabel": "Título",
     "titlePlaceholder": "Ex: Frontend Developer",
-    "descriptionLabel": "Descricao",
+    "descriptionLabel": "Descrição",
     "descriptionPlaceholder": "Resumo da vaga",
     "workModeLabel": "Regime de trabalho",
-    "workModeUnspecified": "Nao definido",
+    "workModeUnspecified": "Não definido",
     "workModeRemote": "Remoto",
     "workModeHybrid": "Hibrido",
     "workModeOnsite": "Presencial",
     "employmentTypeLabel": "Tipo de contrato",
-    "employmentTypeUnspecified": "Nao definido",
+    "employmentTypeUnspecified": "Não definido",
     "employmentTypeFullTime": "Full-time",
     "employmentTypePartTime": "Part-time",
     "employmentTypeContract": "Contrato",
     "employmentTypeInternship": "Estagio",
     "contextLabel": "Contexto",
     "contextPlaceholder": "Ex: Entrevista em francÃªs ",
-    "experienceLevelLabel": "Experiencia",
-    "experienceLevelDesired": "Experiencia desejada",
-    "experienceLevelNotRequired": "Experiencia nao exigida",
+    "experienceLevelLabel": "Experiência",
+    "experienceLevelDesired": "Experiência desejada",
+    "experienceLevelNotRequired": "Experiência não exigida",
     "cardEmojiLabel": "Emoji do card",
     "cardEmojiPlaceholder": "Ex: ðŸ§½",
     "cardThemeLabel": "Cor de fundo do card",
@@ -290,11 +290,11 @@
     "save": "Guardar alteracoes",
     "createAndPublish": "Criar e publicar",
     "saveAndPublish": "Guardar e publicar",
-    "aiTitleRequired": "Preenche o titulo da vaga antes de gerar perguntas.",
-    "aiGenerateError": "Nao foi possivel gerar perguntas com IA.",
-    "aiGenerateEmpty": "A IA nao devolveu perguntas validas. Tente novamente.",
-    "limitFreeActiveInterview": "Plano Free: voce so pode ter 1 entrevista ativa/publicada. Faca upgrade para Basic para desbloquear mais.",
-    "limitBasicActiveInterviews": "Plano Basic: voce pode ter ate 5 entrevistas ativas/publicadas. Faca upgrade para Pro para ilimitado.",
+    "aiTitleRequired": "Preenche o título da vaga antes de gerar perguntas.",
+    "aiGenerateError": "Não foi possivel gerar perguntas com IA.",
+    "aiGenerateEmpty": "A IA não devolveu perguntas validas. Tenta novamente.",
+    "limitFreeActiveInterview": "Plano Free: so podes ter 1 entrevista ativa/publicada. Faz upgrade para Basic para desbloquear mais.",
+    "limitBasicActiveInterviews": "Plano Basic: podes ter até 5 entrevistas ativas/publicadas. Faz upgrade para Pro para ilimitado.",
     "limitFreeAiGeneration": "Plano Free: a geracao de perguntas com IA esta bloqueada. Faz upgrade para Basic.",
     "aiFallbackRole": "a vaga",
     "sectionMainInfo": "Informacoes principais",
@@ -304,34 +304,34 @@
     "aiInfoDescription": "A IA gera automaticamente perguntas relevantes com base no tÃ­tulo, na descriÃ§Ã£o e no contexto da entrevista.",
     "reorderHint": "â“˜ Arraste para reordenar as perguntas",
     "cancel": "Cancelar",
-    "aiTemplate1": "Fala sobre a sua experiencia mais relevante para {{role}}.",
+    "aiTemplate1": "Fala sobre a tua experiência mais relevante para {{role}}.",
     "aiTemplate2": "Como organizas prioridades e entregas quando tens prazos curtos?",
-    "aiTemplate3": "Descreve um desafio tecnico/profissional recente e como o resolveste.",
+    "aiTemplate3": "Descreve um desafio técnico/profissional recente e como o resolveste.",
     "aiTemplate4": "Que competencias consideras essenciais para ter sucesso em {{role}}?",
-    "aiTemplate5": "Como voce colabora com equipes multidisciplinares em projetos complexos?",
+    "aiTemplate5": "Como colaboras com equipas multidisciplinares em projetos complexos?",
     "aiTemplate6": "Que resultados concretos ja alcancaste em funcoes semelhantes?",
-    "aiTemplate7": "Como lidas com feedback e iteracao continua no seu trabalho?",
-    "aiTemplate8": "Que ferramentas e praticas usas para garantir qualidade no seu trabalho?"
+    "aiTemplate7": "Como lidas com feedback e iteracao continua no teu trabalho?",
+    "aiTemplate8": "Que ferramentas e praticas usas para garantir qualidade no teu trabalho?"
   },
   "settingsForm": {
-    "defaultError": "Nao foi possivel guardar alteracoes",
-    "success": "Definicoes atualizadas com sucesso.",
-    "networkError": "Erro ao guardar alteracoes. Tente novamente.",
+    "defaultError": "Não foi possivel guardar alteracoes",
+    "success": "Definições atualizadas com sucesso.",
+    "networkError": "Erro ao guardar alteracoes. Tenta novamente.",
     "nameLabel": "Nome da empresa",
-    "descriptionLabel": "Descricao",
-    "descriptionPlaceholder": "Descricao curta da empresa",
+    "descriptionLabel": "Descrição",
+    "descriptionPlaceholder": "Descrição curta da empresa",
     "logoUrlLabel": "URL do logo",
     "save": "Guardar alteracoes",
     "saving": "A guardar..."
   },
   "members": {
-    "title": "Usuarioes da empresa",
-    "description": "Adiciona, altera o papel ou remove usuarios com acesso a esta empresa.",
-    "defaultError": "Nao foi possivel processar o usuario.",
-    "networkError": "Erro de rede ao processar usuarios.",
-    "loading": "Carregando usuarios...",
-    "empty": "Ainda nao existem usuarios nesta empresa.",
-    "emailLabel": "Email do usuario",
+    "title": "Utilizadores da empresa",
+    "description": "Adiciona, altera o papel ou remove utilizadores com acesso a esta empresa.",
+    "defaultError": "Não foi possivel processar o utilizador.",
+    "networkError": "Erro de rede ao processar utilizadores.",
+    "loading": "A carregar utilizadores...",
+    "empty": "Ainda não existem utilizadores nesta empresa.",
+    "emailLabel": "Email do utilizador",
     "emailPlaceholder": "exemplo@empresa.com",
     "roleLabel": "Papel",
     "roleOwner": "Owner",
@@ -345,10 +345,10 @@
     "removing": "A remover...",
     "tableEmail": "Email",
     "tableRole": "Papel",
-    "tableActions": "Acoes",
-    "added": "Usuario adicionado com sucesso.",
-    "updated": "Usuario atualizado com sucesso.",
-    "removed": "Usuario removido com sucesso.",
+    "tableActions": "Ações",
+    "added": "Utilizador adicionado com sucesso.",
+    "updated": "Utilizador atualizado com sucesso.",
+    "removed": "Utilizador removido com sucesso.",
     "inviteSent": "Convite enviado com sucesso.",
     "inviteRevoked": "Convite revogado com sucesso.",
     "pendingInvites": "Convites pendentes",
@@ -356,15 +356,15 @@
     "revokeInvite": "Revogar"
   },
   "accountMenu": {
-    "ariaLabel": "Menu do usuario",
+    "ariaLabel": "Menu do utilizador",
     "adminRole": "Administrador",
     "viewAdmin": "Ver pagina de admin",
     "viewPublic": "Ver site publico",
-    "logout": "Terminar sessao",
-    "logoutError": "Erro ao terminar sessao:"
+    "logout": "Terminar sessão",
+    "logoutError": "Erro ao terminar sessão:"
   },
   "aiComparisonPage": {
-    "metaTitle": "Admin - Analise IA",
-    "empty": "Ainda nao existem candidatos suficientes para analise."
+    "metaTitle": "Admin - Análise IA",
+    "empty": "Ainda não existem candidatos suficientes para análise."
   }
 }

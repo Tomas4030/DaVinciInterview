@@ -8,9 +8,18 @@ export const dynamic = "force-dynamic";
 
 type Props = {
   params: { locale: string };
+  searchParams?: Record<string, string | string[] | undefined>;
 };
 
-export default async function PlansPage({ params }: Props) {
+function isTruthyParam(value?: string | string[]) {
+  if (Array.isArray(value)) {
+    return value[0] === "1" || value[0] === "true" || value[0] === "yes";
+  }
+
+  return value === "1" || value === "true" || value === "yes";
+}
+
+export default async function PlansPage({ params, searchParams }: Props) {
   const cookieStore = cookies();
   const token = cookieStore.get(ADMIN_SESSION_COOKIE)?.value;
   const session = parseAdminToken(token);
@@ -20,18 +29,17 @@ export default async function PlansPage({ params }: Props) {
   }
 
   const company = await resolveDefaultCompanyForUser(session.userId, session.email);
-  if (company) {
+  const allowManagePlans =
+    isTruthyParam(searchParams?.manage) ||
+    isTruthyParam(searchParams?.upgrade) ||
+    isTruthyParam(searchParams?.from);
+
+  if (company && !allowManagePlans) {
     redirect(`/${params.locale}/admin/${company.slug}/dashboard`);
   }
 
   return (
-    <main className="mx-auto max-w-6xl px-6 py-12">
-      <div className="mb-8">
-        <h1 className="text-3xl font-semibold text-[var(--c-text)]">Escolhe o teu plano</h1>
-        <p className="mt-2 text-sm text-[var(--c-muted)]">
-          Antes de criar a empresa, escolhe um plano para ativar a tua conta.
-        </p>
-      </div>
+    <main className="min-h-screen bg-[var(--c-bg)]">
       <PlanSelection locale={params.locale} userId={session.userId} />
     </main>
   );
