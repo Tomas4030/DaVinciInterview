@@ -29,29 +29,92 @@
     "preview": {
       "label": "Entrevista Automática",
       "conversation": [
-        { "from": "bot", "text": "Olá! Sou o assistente de recrutamento da Acme. Pronto para começar?" },
+        {
+          "from": "bot",
+          "text": "Olá! Sou o assistente de recrutamento da MatchWorky. Pronto para começar?"
+        },
         { "from": "user", "text": "Sim, vamos a isso." },
-        { "from": "bot", "text": "Pergunta 1: Quantos anos de experiência tens com React?" },
+        {
+          "from": "bot",
+          "text": "Pergunta 1: Quantos anos de experiência tens com React?"
+        },
         { "from": "user", "text": "Cerca de 4 anos em equipas de produto." },
-        { "from": "bot", "text": "Pergunta 2: Que padrões de TypeScript usas no dia a dia?" },
-        { "from": "user", "text": "Tipagem estrita, unions discriminadas e interfaces reutilizáveis." },
-        { "from": "bot", "text": "Pergunta 3: Conta-me uma otimização de performance que entregaste recentemente." },
-        { "from": "user", "text": "Reduzi custos de render com memoização e virtualização de listas." },
-        { "from": "bot", "text": "Pergunta 4: Como estruturas componentes para manter manutenção a longo prazo?" },
-        { "from": "user", "text": "Separando UI, lógica de estado e domínio com fronteiras claras." },
-        { "from": "bot", "text": "Pergunta 5: Como validas acessibilidade antes de publicar?" },
-        { "from": "user", "text": "Testes de teclado, HTML semântico e validação rápida com leitor de ecrã." },
-        { "from": "bot", "text": "Pergunta 6: Como colaboras com produto e design?" },
-        { "from": "user", "text": "Planeamento semanal, protótipos cedo e feedback frequente." },
-        { "from": "bot", "text": "Pergunta 7: Qual é a tua abordagem de testes em frontend?" },
-        { "from": "user", "text": "Unitários para lógica e integração para jornadas críticas." },
-         { "from": "bot", "text": "Pergunta 8: Dá um exemplo em que melhoraste a experiência de desenvolvimento." },
-        { "from": "user", "text": "Criei regras partilhadas de lint e templates que reduziram retrabalho em PRs." },
-         { "from": "bot", "text": "Pergunta 9: Como monitorizas problemas após o lançamento?" },
-        { "from": "user", "text": "Com monitorização de erros, painéis e verificações pós-lançamento." },
-        { "from": "bot", "text": "Pergunta 10: Porque queres esta vaga neste momento?" },
-        { "from": "user", "text": "Porque o desafio do produto encaixa no meu perfil e objetivo de crescimento." },
-        { "from": "bot", "text": "Excelente, obrigado. Entrevista concluída com sucesso." }
+        {
+          "from": "bot",
+          "text": "Pergunta 2: Que padrões de TypeScript usas no dia a dia?"
+        },
+        {
+          "from": "user",
+          "text": "Tipagem estrita, unions discriminadas e interfaces reutilizáveis."
+        },
+        {
+          "from": "bot",
+          "text": "Pergunta 3: Conta-me uma otimização de performance que entregaste recentemente."
+        },
+        {
+          "from": "user",
+          "text": "Reduzi custos de render com memoização e virtualização de listas."
+        },
+        {
+          "from": "bot",
+          "text": "Pergunta 4: Como estruturas componentes para manter manutenção a longo prazo?"
+        },
+        {
+          "from": "user",
+          "text": "Separando UI, lógica de estado e domínio com fronteiras claras."
+        },
+        {
+          "from": "bot",
+          "text": "Pergunta 5: Como validas acessibilidade antes de publicar?"
+        },
+        {
+          "from": "user",
+          "text": "Testes de teclado, HTML semântico e validação rápida com leitor de ecrã."
+        },
+        {
+          "from": "bot",
+          "text": "Pergunta 6: Como colaboras com produto e design?"
+        },
+        {
+          "from": "user",
+          "text": "Planeamento semanal, protótipos cedo e feedback frequente."
+        },
+        {
+          "from": "bot",
+          "text": "Pergunta 7: Qual é a tua abordagem de testes em frontend?"
+        },
+        {
+          "from": "user",
+          "text": "Unitários para lógica e integração para jornadas críticas."
+        },
+        {
+          "from": "bot",
+          "text": "Pergunta 8: Dá um exemplo em que melhoraste a experiência de desenvolvimento."
+        },
+        {
+          "from": "user",
+          "text": "Criei regras partilhadas de lint e templates que reduziram retrabalho em PRs."
+        },
+        {
+          "from": "bot",
+          "text": "Pergunta 9: Como monitorizas problemas após o lançamento?"
+        },
+        {
+          "from": "user",
+          "text": "Com monitorização de erros, painéis e verificações pós-lançamento."
+        },
+        {
+          "from": "bot",
+          "text": "Pergunta 10: Porque queres esta vaga neste momento?"
+        },
+        {
+          "from": "user",
+          "text": "Porque o desafio do produto encaixa no meu perfil e objetivo de crescimento."
+        },
+        {
+          "from": "bot",
+          "text": "Excelente, obrigado. Entrevista concluída com sucesso."
+        }
       ]
     }
   },
@@ -151,15 +214,33 @@
     "plans": {
       "basic": {
         "description": "Para equipas pequenas que querem acelerar triagem inicial.",
-        "features": ["1 empresa", "Até 5 entrevistas ativas", "Perguntas ilimitadas", "Painel base", "Suporte por email"]
+        "features": [
+          "1 empresa",
+          "Até 5 entrevistas ativas",
+          "Perguntas ilimitadas",
+          "Painel base",
+          "Suporte por email"
+        ]
       },
       "free": {
         "description": "Ideal para testar a plataforma com limites de uso.",
-        "features": ["1 empresa", "Até 1 entrevista ativa", "Até 5 perguntas por entrevista", "Sem geração de perguntas por IA", "Sem exportação PDF"]
+        "features": [
+          "1 empresa",
+          "Até 1 entrevista ativa",
+          "Até 5 perguntas por entrevista",
+          "Sem geração de perguntas por IA",
+          "Sem exportação PDF"
+        ]
       },
       "pro": {
         "description": "Escala com mais volume e mais controlo operacional.",
-        "features": ["Até 3 empresas", "Entrevistas ativas ilimitadas", "Perguntas ilimitadas", "Insights de desempenho", "Prioridade no suporte"]
+        "features": [
+          "Até 3 empresas",
+          "Entrevistas ativas ilimitadas",
+          "Perguntas ilimitadas",
+          "Insights de desempenho",
+          "Prioridade no suporte"
+        ]
       }
     }
   },

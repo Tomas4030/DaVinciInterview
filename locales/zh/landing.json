@@ -29,28 +29,43 @@
     "preview": {
       "label": "自动化面试",
       "conversation": [
-        { "from": "bot", "text": "你好！我是 Acme 的招聘助手。准备开始了吗？" },
+        {
+          "from": "bot",
+          "text": "你好！我是 MatchWorky 的招聘助手。准备开始了吗？"
+        },
         { "from": "user", "text": "是的，开始吧。" },
         { "from": "bot", "text": "问题 1：你有多少年 React 经验？" },
         { "from": "user", "text": "大约 4 年，主要在产品团队。" },
         { "from": "bot", "text": "问题 2：你日常使用哪些 TypeScript 模式？" },
         { "from": "user", "text": "严格类型、可区分联合类型和可复用接口。" },
         { "from": "bot", "text": "问题 3：请介绍一次近期性能优化。" },
-        { "from": "user", "text": "我用 memoization 和列表虚拟化降低了渲染开销。" },
+        {
+          "from": "user",
+          "text": "我用 memoization 和列表虚拟化降低了渲染开销。"
+        },
         { "from": "bot", "text": "问题 4：你如何组织组件以保证长期可维护性？" },
         { "from": "user", "text": "通过清晰边界拆分 UI、状态逻辑和领域逻辑。" },
         { "from": "bot", "text": "问题 5：发布前你如何验证可访问性？" },
-        { "from": "user", "text": "键盘可用性检查、语义化 HTML 和屏幕阅读器快速测试。" },
+        {
+          "from": "user",
+          "text": "键盘可用性检查、语义化 HTML 和屏幕阅读器快速测试。"
+        },
         { "from": "bot", "text": "问题 6：描述你与产品和设计的协作方式。" },
         { "from": "user", "text": "每周规划、早期原型和高频反馈闭环。" },
         { "from": "bot", "text": "问题 7：你如何进行前端测试？" },
         { "from": "user", "text": "逻辑做单元测试，关键流程做集成测试。" },
         { "from": "bot", "text": "问题 8：举例说明你如何提升开发者体验。" },
-        { "from": "user", "text": "我建立了共享 lint 规则和模板，减少了 PR 返工。" },
+        {
+          "from": "user",
+          "text": "我建立了共享 lint 规则和模板，减少了 PR 返工。"
+        },
         { "from": "bot", "text": "问题 9：发布后你如何监控问题？" },
         { "from": "user", "text": "通过错误追踪、看板和发布后检查。" },
         { "from": "bot", "text": "问题 10：你为什么现在对这个岗位感兴趣？" },
-        { "from": "user", "text": "因为这个产品挑战与我的经验和成长目标一致。" },
+        {
+          "from": "user",
+          "text": "因为这个产品挑战与我的经验和成长目标一致。"
+        },
         { "from": "bot", "text": "很好，谢谢。面试已顺利完成。" }
       ]
     }
@@ -60,12 +75,30 @@
     "title": "更高效招聘所需的一切",
     "description": "从岗位创建到答复分析的一体化平台。无需外部工具，无需复杂流程。",
     "items": [
-      { "title": "对话式面试", "desc": "候选人在简洁聊天界面作答：无复杂表单、无 PDF、低摩擦。" },
-      { "title": "自动验证", "desc": "通过 OTP 验证邮箱和电话，确保每位候选人真实且唯一。" },
-      { "title": "候选人看板", "desc": "在清晰界面查看全部答复。支持筛选、搜索与一键导出。" },
-      { "title": "自定义问卷", "desc": "按岗位创建问题。轻松添加、排序和删除。" },
-      { "title": "AI 分析", "desc": "自动分析答复并生成评分和摘要，覆盖每位候选人。" },
-      { "title": "报告导出", "desc": "将申请导出为 PDF 或 CSV，便于团队共享或系统集成。" }
+      {
+        "title": "对话式面试",
+        "desc": "候选人在简洁聊天界面作答：无复杂表单、无 PDF、低摩擦。"
+      },
+      {
+        "title": "自动验证",
+        "desc": "通过 OTP 验证邮箱和电话，确保每位候选人真实且唯一。"
+      },
+      {
+        "title": "候选人看板",
+        "desc": "在清晰界面查看全部答复。支持筛选、搜索与一键导出。"
+      },
+      {
+        "title": "自定义问卷",
+        "desc": "按岗位创建问题。轻松添加、排序和删除。"
+      },
+      {
+        "title": "AI 分析",
+        "desc": "自动分析答复并生成评分和摘要，覆盖每位候选人。"
+      },
+      {
+        "title": "报告导出",
+        "desc": "将申请导出为 PDF 或 CSV，便于团队共享或系统集成。"
+      }
     ]
   },
   "howItWorks": {
@@ -75,18 +108,42 @@
     "description": "流程对团队简单，对候选人顺畅。",
     "stepLabel": "步骤",
     "steps": [
-      { "title": "创建岗位", "desc": "定义标题、描述和问题。你可以同时运行多个活跃岗位。", "highlight": "几分钟完成配置" },
-      { "title": "分享链接", "desc": "每个岗位都有唯一 URL。可在社媒、官网或邮件分享；候选人无需注册即可参与。", "highlight": "候选人零摩擦" },
-      { "title": "分析答复", "desc": "所有申请集中在看板中。AI 自动生成摘要与评分，帮助你聚焦优质候选人。", "highlight": "数据驱动决策" }
+      {
+        "title": "创建岗位",
+        "desc": "定义标题、描述和问题。你可以同时运行多个活跃岗位。",
+        "highlight": "几分钟完成配置"
+      },
+      {
+        "title": "分享链接",
+        "desc": "每个岗位都有唯一 URL。可在社媒、官网或邮件分享；候选人无需注册即可参与。",
+        "highlight": "候选人零摩擦"
+      },
+      {
+        "title": "分析答复",
+        "desc": "所有申请集中在看板中。AI 自动生成摘要与评分，帮助你聚焦优质候选人。",
+        "highlight": "数据驱动决策"
+      }
     ]
   },
   "testimonials": {
     "eyebrow": "客户评价",
     "title": "HR 团队怎么说",
     "items": [
-      { "quote": "过去我们要花几周筛简历。使用 MatchWorky 后，两天内就能锁定前 5 名候选人进入线下面试。", "author": "Ana Rodrigues", "role": "Head of People, TechStartup Lisbon" },
-      { "quote": "候选人体验非常好。没有挫败感，没有超长表单。大家都更愿意这样回答。", "author": "Miguel Santos", "role": "Talent Acquisition, Scale-up Porto" },
-      { "quote": "AI 摘要至少为每位候选人节省 2 小时。这对技术招聘来说是巨大改变。", "author": "Sofia Mendes", "role": "CTO, Digital Product" }
+      {
+        "quote": "过去我们要花几周筛简历。使用 MatchWorky 后，两天内就能锁定前 5 名候选人进入线下面试。",
+        "author": "Ana Rodrigues",
+        "role": "Head of People, TechStartup Lisbon"
+      },
+      {
+        "quote": "候选人体验非常好。没有挫败感，没有超长表单。大家都更愿意这样回答。",
+        "author": "Miguel Santos",
+        "role": "Talent Acquisition, Scale-up Porto"
+      },
+      {
+        "quote": "AI 摘要至少为每位候选人节省 2 小时。这对技术招聘来说是巨大改变。",
+        "author": "Sofia Mendes",
+        "role": "CTO, Digital Product"
+      }
     ]
   },
   "pricing": {
@@ -106,9 +163,36 @@
     "startNow": "立即开始",
     "trial": "所有套餐均含 14 天免费试用，无需信用卡。",
     "plans": {
-      "basic": { "description": "适合希望加速初筛的小团队。", "features": ["1 家公司", "最多 5 个活跃面试", "无限问题", "基础看板", "邮件支持"] },
-      "free": { "description": "适合在限制下体验平台功能。", "features": ["1 家公司", "最多 1 个活跃面试", "每个面试最多 5 个问题", "不支持 AI 生成问题", "不支持 PDF 导出"] },
-      "pro": { "description": "支持更大规模与更强运营控制。", "features": ["最多 3 家公司", "无限活跃面试", "无限问题", "性能洞察", "优先支持"] }
+      "basic": {
+        "description": "适合希望加速初筛的小团队。",
+        "features": [
+          "1 家公司",
+          "最多 5 个活跃面试",
+          "无限问题",
+          "基础看板",
+          "邮件支持"
+        ]
+      },
+      "free": {
+        "description": "适合在限制下体验平台功能。",
+        "features": [
+          "1 家公司",
+          "最多 1 个活跃面试",
+          "每个面试最多 5 个问题",
+          "不支持 AI 生成问题",
+          "不支持 PDF 导出"
+        ]
+      },
+      "pro": {
+        "description": "支持更大规模与更强运营控制。",
+        "features": [
+          "最多 3 家公司",
+          "无限活跃面试",
+          "无限问题",
+          "性能洞察",
+          "优先支持"
+        ]
+      }
     }
   },
   "cta": {

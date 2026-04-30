@@ -29,29 +29,92 @@
     "preview": {
       "label": "Automatisiertes Interview",
       "conversation": [
-        { "from": "bot", "text": "Hi! Ich bin Acmes Recruiting-Assistent. Bereit zu starten?" },
+        {
+          "from": "bot",
+          "text": "Hi! Ich bin MatchWorkys Recruiting-Assistent. Bereit zu starten?"
+        },
         { "from": "user", "text": "Ja, legen wir los." },
-        { "from": "bot", "text": "Frage 1: Wie viele Jahre Erfahrung hast du mit React?" },
+        {
+          "from": "bot",
+          "text": "Frage 1: Wie viele Jahre Erfahrung hast du mit React?"
+        },
         { "from": "user", "text": "Etwa 4 Jahre in Produktteams." },
-        { "from": "bot", "text": "Frage 2: Welche TypeScript-Patterns nutzt du täglich?" },
-        { "from": "user", "text": "Striktes Typing, discriminated unions und wiederverwendbare Interfaces." },
-        { "from": "bot", "text": "Frage 3: Erzähl mir von einer aktuellen Performance-Optimierung." },
-        { "from": "user", "text": "Ich habe Render-Kosten mit Memoization und List-Virtualisierung reduziert." },
-        { "from": "bot", "text": "Frage 4: Wie strukturierst du Komponenten für langfristige Wartbarkeit?" },
-        { "from": "user", "text": "Durch klare Trennung von UI, State-Logik und Domäne." },
-        { "from": "bot", "text": "Frage 5: Wie prüfst du Barrierefreiheit vor dem Release?" },
-        { "from": "user", "text": "Keyboard-Checks, semantisches HTML und kurze Screenreader-Tests." },
-        { "from": "bot", "text": "Frage 6: Beschreibe die Zusammenarbeit mit Produkt und Design." },
-        { "from": "user", "text": "Wöchentliche Planung, frühe Prototypen und häufige Feedback-Loops." },
-        { "from": "bot", "text": "Frage 7: Wie gehst du Testing in Frontend-Projekten an?" },
-        { "from": "user", "text": "Unit-Tests für Logik und Integrations-Tests für kritische Journeys." },
-        { "from": "bot", "text": "Frage 8: Nenne ein Beispiel für bessere Developer Experience." },
-        { "from": "user", "text": "Ich habe gemeinsame Lint-Regeln und Templates erstellt, die PR-Nacharbeit reduziert haben." },
-        { "from": "bot", "text": "Frage 9: Wie überwachst du Probleme nach dem Release?" },
-        { "from": "user", "text": "Mit Fehler-Tracking, Dashboards und Checks nach dem Release." },
-        { "from": "bot", "text": "Frage 10: Warum interessiert dich diese Rolle gerade jetzt?" },
-        { "from": "user", "text": "Weil die Produkt-Herausforderung zu meiner Erfahrung und meinen Zielen passt." },
-        { "from": "bot", "text": "Super, danke. Interview erfolgreich abgeschlossen." }
+        {
+          "from": "bot",
+          "text": "Frage 2: Welche TypeScript-Patterns nutzt du täglich?"
+        },
+        {
+          "from": "user",
+          "text": "Striktes Typing, discriminated unions und wiederverwendbare Interfaces."
+        },
+        {
+          "from": "bot",
+          "text": "Frage 3: Erzähl mir von einer aktuellen Performance-Optimierung."
+        },
+        {
+          "from": "user",
+          "text": "Ich habe Render-Kosten mit Memoization und List-Virtualisierung reduziert."
+        },
+        {
+          "from": "bot",
+          "text": "Frage 4: Wie strukturierst du Komponenten für langfristige Wartbarkeit?"
+        },
+        {
+          "from": "user",
+          "text": "Durch klare Trennung von UI, State-Logik und Domäne."
+        },
+        {
+          "from": "bot",
+          "text": "Frage 5: Wie prüfst du Barrierefreiheit vor dem Release?"
+        },
+        {
+          "from": "user",
+          "text": "Keyboard-Checks, semantisches HTML und kurze Screenreader-Tests."
+        },
+        {
+          "from": "bot",
+          "text": "Frage 6: Beschreibe die Zusammenarbeit mit Produkt und Design."
+        },
+        {
+          "from": "user",
+          "text": "Wöchentliche Planung, frühe Prototypen und häufige Feedback-Loops."
+        },
+        {
+          "from": "bot",
+          "text": "Frage 7: Wie gehst du Testing in Frontend-Projekten an?"
+        },
+        {
+          "from": "user",
+          "text": "Unit-Tests für Logik und Integrations-Tests für kritische Journeys."
+        },
+        {
+          "from": "bot",
+          "text": "Frage 8: Nenne ein Beispiel für bessere Developer Experience."
+        },
+        {
+          "from": "user",
+          "text": "Ich habe gemeinsame Lint-Regeln und Templates erstellt, die PR-Nacharbeit reduziert haben."
+        },
+        {
+          "from": "bot",
+          "text": "Frage 9: Wie überwachst du Probleme nach dem Release?"
+        },
+        {
+          "from": "user",
+          "text": "Mit Fehler-Tracking, Dashboards und Checks nach dem Release."
+        },
+        {
+          "from": "bot",
+          "text": "Frage 10: Warum interessiert dich diese Rolle gerade jetzt?"
+        },
+        {
+          "from": "user",
+          "text": "Weil die Produkt-Herausforderung zu meiner Erfahrung und meinen Zielen passt."
+        },
+        {
+          "from": "bot",
+          "text": "Super, danke. Interview erfolgreich abgeschlossen."
+        }
       ]
     }
   },
@@ -60,12 +123,30 @@
     "title": "Alles, was du für bessere Einstellungen brauchst",
     "description": "Eine vollständige Plattform von der Stellenerstellung bis zur Antwortanalyse. Keine externen Tools. Keine Komplexität.",
     "items": [
-      { "title": "Dialogbasierte Interviews", "desc": "Kandidaten antworten in einer einfachen Chat-Oberfläche - ohne verwirrende Formulare, ohne PDFs, ohne Hürden." },
-      { "title": "Automatische Verifizierung", "desc": "E-Mail und Telefonnummer werden per OTP verifiziert - so ist jeder Kandidat eindeutig identifiziert." },
-      { "title": "Kandidaten-Dashboard", "desc": "Alle Antworten in einer klaren Oberfläche: filtern, suchen und mit einem Klick exportieren." },
-      { "title": "Individuelle Fragebögen", "desc": "Erstelle rollenbezogene Fragen. Elemente einfach hinzufügen, sortieren und entfernen." },
-      { "title": "KI-Analyse", "desc": "Automatische Auswertung mit Punktzahl und KI-Zusammenfassung für jeden Kandidaten." },
-      { "title": "Berichts-Export", "desc": "Exportiere Bewerbungen als PDF oder CSV zum Teilen im Team oder zur Integration in andere Systeme." }
+      {
+        "title": "Dialogbasierte Interviews",
+        "desc": "Kandidaten antworten in einer einfachen Chat-Oberfläche - ohne verwirrende Formulare, ohne PDFs, ohne Hürden."
+      },
+      {
+        "title": "Automatische Verifizierung",
+        "desc": "E-Mail und Telefonnummer werden per OTP verifiziert - so ist jeder Kandidat eindeutig identifiziert."
+      },
+      {
+        "title": "Kandidaten-Dashboard",
+        "desc": "Alle Antworten in einer klaren Oberfläche: filtern, suchen und mit einem Klick exportieren."
+      },
+      {
+        "title": "Individuelle Fragebögen",
+        "desc": "Erstelle rollenbezogene Fragen. Elemente einfach hinzufügen, sortieren und entfernen."
+      },
+      {
+        "title": "KI-Analyse",
+        "desc": "Automatische Auswertung mit Punktzahl und KI-Zusammenfassung für jeden Kandidaten."
+      },
+      {
+        "title": "Berichts-Export",
+        "desc": "Exportiere Bewerbungen als PDF oder CSV zum Teilen im Team oder zur Integration in andere Systeme."
+      }
     ]
   },
   "howItWorks": {
@@ -75,18 +156,42 @@
     "description": "Der Prozess ist einfach für dein Team und reibungslos für Kandidaten.",
     "stepLabel": "Schritt",
     "steps": [
-      { "title": "Rolle erstellen", "desc": "Definiere Titel, Beschreibung und Fragen. Du kannst mehrere aktive Rollen gleichzeitig verwalten.", "highlight": "Setup in Minuten" },
-      { "title": "Link teilen", "desc": "Jede Rolle hat eine eindeutige URL. Teile sie über Social Media, Website oder E-Mail - ohne Konto für Kandidaten.", "highlight": "Keine Hürden für Kandidaten" },
-      { "title": "Antworten analysieren", "desc": "Alle Bewerbungen sind zentral im Dashboard verfügbar. Die KI liefert Zusammenfassung und Punktzahl, damit du dich auf Top-Kandidaten konzentrieren kannst.", "highlight": "Datenbasierte Entscheidungen" }
+      {
+        "title": "Rolle erstellen",
+        "desc": "Definiere Titel, Beschreibung und Fragen. Du kannst mehrere aktive Rollen gleichzeitig verwalten.",
+        "highlight": "Setup in Minuten"
+      },
+      {
+        "title": "Link teilen",
+        "desc": "Jede Rolle hat eine eindeutige URL. Teile sie über Social Media, Website oder E-Mail - ohne Konto für Kandidaten.",
+        "highlight": "Keine Hürden für Kandidaten"
+      },
+      {
+        "title": "Antworten analysieren",
+        "desc": "Alle Bewerbungen sind zentral im Dashboard verfügbar. Die KI liefert Zusammenfassung und Punktzahl, damit du dich auf Top-Kandidaten konzentrieren kannst.",
+        "highlight": "Datenbasierte Entscheidungen"
+      }
     ]
   },
   "testimonials": {
     "eyebrow": "Referenzen",
     "title": "Was HR-Teams sagen",
     "items": [
-      { "quote": "Früher brauchten wir Wochen für CV-Reviews. Mit MatchWorky hatten wir in zwei Tagen die Top 5 Kandidaten für persönliche Interviews.", "author": "Ana Rodrigues", "role": "Head of People, TechStartup Lisbon" },
-      { "quote": "Das Bewerbungserlebnis ist großartig. Keine Frustration, keine endlosen Formulare. Kandidaten antworten gern auf diese Weise.", "author": "Miguel Santos", "role": "Talent Acquisition, Scale-up Porto" },
-      { "quote": "Die KI-Zusammenfassung spart uns mindestens 2 Stunden pro Kandidat. Für uns ein echter Game Changer im Tech-Recruiting.", "author": "Sofia Mendes", "role": "CTO, Digital Product" }
+      {
+        "quote": "Früher brauchten wir Wochen für CV-Reviews. Mit MatchWorky hatten wir in zwei Tagen die Top 5 Kandidaten für persönliche Interviews.",
+        "author": "Ana Rodrigues",
+        "role": "Head of People, TechStartup Lisbon"
+      },
+      {
+        "quote": "Das Bewerbungserlebnis ist großartig. Keine Frustration, keine endlosen Formulare. Kandidaten antworten gern auf diese Weise.",
+        "author": "Miguel Santos",
+        "role": "Talent Acquisition, Scale-up Porto"
+      },
+      {
+        "quote": "Die KI-Zusammenfassung spart uns mindestens 2 Stunden pro Kandidat. Für uns ein echter Game Changer im Tech-Recruiting.",
+        "author": "Sofia Mendes",
+        "role": "CTO, Digital Product"
+      }
     ]
   },
   "pricing": {
@@ -106,9 +211,36 @@
     "startNow": "Jetzt starten",
     "trial": "Alle Tarife enthalten 14 Tage kostenlose Testphase. Keine Kreditkarte nötig.",
     "plans": {
-      "basic": { "description": "Für kleine Teams, die das erste Screening beschleunigen möchten.", "features": ["1 Unternehmen", "Bis zu 5 aktive Interviews", "Unbegrenzte Fragen", "Basis-Dashboard", "E-Mail-Support"] },
-      "free": { "description": "Ideal zum Testen der Plattform mit Limits.", "features": ["1 Unternehmen", "Bis zu 1 aktives Interview", "Bis zu 5 Fragen pro Interview", "Keine KI-Fragengenerierung", "Kein PDF-Export"] },
-      "pro": { "description": "Skaliere mit mehr Volumen und mehr operativer Kontrolle.", "features": ["Bis zu 3 Unternehmen", "Unbegrenzte aktive Interviews", "Unbegrenzte Fragen", "Performance-Insights", "Prioritäts-Support"] }
+      "basic": {
+        "description": "Für kleine Teams, die das erste Screening beschleunigen möchten.",
+        "features": [
+          "1 Unternehmen",
+          "Bis zu 5 aktive Interviews",
+          "Unbegrenzte Fragen",
+          "Basis-Dashboard",
+          "E-Mail-Support"
+        ]
+      },
+      "free": {
+        "description": "Ideal zum Testen der Plattform mit Limits.",
+        "features": [
+          "1 Unternehmen",
+          "Bis zu 1 aktives Interview",
+          "Bis zu 5 Fragen pro Interview",
+          "Keine KI-Fragengenerierung",
+          "Kein PDF-Export"
+        ]
+      },
+      "pro": {
+        "description": "Skaliere mit mehr Volumen und mehr operativer Kontrolle.",
+        "features": [
+          "Bis zu 3 Unternehmen",
+          "Unbegrenzte aktive Interviews",
+          "Unbegrenzte Fragen",
+          "Performance-Insights",
+          "Prioritäts-Support"
+        ]
+      }
     }
   },
   "cta": {
