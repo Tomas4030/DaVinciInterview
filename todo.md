@@ -1,11 +1,8 @@
 meter login com Google
 
-https://www.matchworky.com/en/plans melhorar pagina de plans 
-
 no registo acho que deves meter no e sobrenome
 facilipa depois
 uma depois escrevem o nome todo, sem necessidade
-tenho q meter para ele verificar o email tbm como uso para entrar na vaga 
 
 corrir bugs de convites onde o suer ja acetou e ainda esta pedente!
 

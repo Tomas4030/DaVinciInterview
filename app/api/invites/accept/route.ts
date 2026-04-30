@@ -6,7 +6,11 @@ import {
   getCompanyMemberByUserId,
 } from "@/lib/queries/companies";
 import { getUserById } from "@/lib/queries/users";
-import { getInviteByToken, markInviteAccepted } from "@/lib/queries/company-invites";
+import {
+  getInviteByToken,
+  markInviteAccepted,
+  markPendingInvitesAcceptedByCompanyAndEmail,
+} from "@/lib/queries/company-invites";
 
 export async function POST(request: NextRequest) {
   try {
@@ -54,6 +58,10 @@ export async function POST(request: NextRequest) {
     }
 
     await markInviteAccepted(invite.token);
+    await markPendingInvitesAcceptedByCompanyAndEmail({
+      companyId: invite.company_id,
+      email: invite.email,
+    });
 
     const company = await getCompanyById(invite.company_id);
     return NextResponse.json({

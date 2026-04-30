@@ -64,10 +64,18 @@ export async function listPendingInvitesByCompany(
 
   const [rows] = await query<CompanyInviteRecord>(
     `
-    SELECT *
-    FROM company_invites
-    WHERE company_id = ? AND status = 'pending' AND expires_at > NOW()
-    ORDER BY created_at DESC
+    SELECT ci.*
+    FROM company_invites ci
+    LEFT JOIN users u
+      ON LOWER(u.email) = LOWER(ci.email)
+    LEFT JOIN company_members cm
+      ON cm.company_id = ci.company_id
+     AND cm.user_id = u.id
+    WHERE ci.company_id = ?
+      AND ci.status = 'pending'
+      AND ci.expires_at > NOW()
+      AND cm.id IS NULL
+    ORDER BY ci.created_at DESC
     `,
     [normalizedCompanyId],
   );
@@ -121,6 +129,50 @@ export async function markInviteAccepted(token: string): Promise<void> {
     WHERE token = ?
     `,
     [String(token || "").trim()],
+  );
+}
+
+export async function markPendingInvitesAcceptedByCompanyAndEmail(input: {
+  companyId: string;
+  email: string;
+}): Promise<void> {
+  const companyId = String(input.companyId || "").trim();
+  const email = String(input.email || "").trim().toLowerCase();
+  if (!companyId || !email) return;
+
+  await query(
+    `
+    UPDATE company_invites
+    SET status = 'accepted', accepted_at = COALESCE(accepted_at, NOW())
+    WHERE company_id = ?
+      AND LOWER(email) = ?
+      AND status = 'pending'
+    `,
+    [companyId, email],
+  );
+}
+
+export async function cleanupOrphanPendingInvitesByCompany(
+  companyId: string,
+): Promise<void> {
+  const normalizedCompanyId = String(companyId || "").trim();
+  if (!normalizedCompanyId) return;
+
+  await query(
+    `
+    UPDATE company_invites ci
+    LEFT JOIN users u
+      ON LOWER(u.email) = LOWER(ci.email)
+    LEFT JOIN company_members cm
+      ON cm.company_id = ci.company_id
+     AND cm.user_id = u.id
+    SET ci.status = 'accepted',
+        ci.accepted_at = COALESCE(ci.accepted_at, NOW())
+    WHERE ci.company_id = ?
+      AND ci.status = 'pending'
+      AND cm.id IS NOT NULL
+    `,
+    [normalizedCompanyId],
   );
 }
 

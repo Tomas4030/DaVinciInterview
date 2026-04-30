@@ -3,6 +3,7 @@ import { ADMIN_SESSION_COOKIE, parseAdminToken } from "@/lib/admin-auth";
 import { sendCompanyInviteEmail } from "@/lib/email";
 import { getCompanyMembershipBySlug } from "@/lib/queries/companies";
 import {
+  cleanupOrphanPendingInvitesByCompany,
   createCompanyInvite,
   listPendingInvitesByCompany,
   revokeInviteById,
@@ -26,6 +27,7 @@ export async function GET(
     return NextResponse.json({ error: "Sem permissões" }, { status: 403 });
   }
 
+  await cleanupOrphanPendingInvitesByCompany(membership.company.id);
   const invites = await listPendingInvitesByCompany(membership.company.id);
   return NextResponse.json({ invites });
 }
@@ -69,6 +71,7 @@ export async function POST(
       locale,
     });
 
+    await cleanupOrphanPendingInvitesByCompany(membership.company.id);
     const invites = await listPendingInvitesByCompany(membership.company.id);
     return NextResponse.json({ invite, inviteUrl, invites }, { status: 201 });
   } catch (error: any) {
@@ -102,6 +105,7 @@ export async function DELETE(
   if (!inviteId) return NextResponse.json({ error: "inviteId é obrigatório" }, { status: 400 });
 
   await revokeInviteById(inviteId, membership.company.id);
+  await cleanupOrphanPendingInvitesByCompany(membership.company.id);
   const invites = await listPendingInvitesByCompany(membership.company.id);
   return NextResponse.json({ invites });
 }
