@@ -1,7 +1,7 @@
 {
   "meta": {
     "title": "MatchWorky — Entrevistas com IA para equipas de recrutamento",
-    "description": "Automatiza a triagem de candidatos com entrevistas conversacionais. Define as perguntas, partilha o link e analisa as respostas tudo numa plataforma.",
+    "description": "Automatize a triagem de candidatos com entrevistas conversacionais. Defina as perguntas, compartilhe o link e analise as respostas em uma única plataforma.",
     "ogTitle": "MatchWorky — Entrevistas com IA para empresas",
     "ogDescription": "Automatiza a triagem inicial e melhora a experiência de candidatura com entrevistas conversacionais inteligentes."
   },
@@ -15,11 +15,11 @@
     "startFree": "Começar grátis"
   },
   "hero": {
-    "badge": "Automatiza o teu processo de recrutamento",
+    "badge": "Automatize seu processo de recrutamento",
     "titleLine1": "Entrevistas com IA.",
     "titleHighlight": "Triagem",
-    "titleLine2": "sem esforço.",
-    "description": "O MatchWorky conduz entrevistas conversacionais automatizadas em nome da tua empresa. Define as perguntas, partilha o link com os candidatos e analisa as respostas tudo numa plataforma.",
+    "titleLine2": "sem sobrecarga.",
+    "description": "O MatchWorky conduz entrevistas conversacionais automatizadas em nome da sua empresa. Defina as perguntas, compartilhe o link com os candidatos e analise as respostas em uma única plataforma.",
     "cta": "Começar grátis",
     "stats": [
       { "value": "3×", "label": "mais rápido do que triagem manual" },
@@ -57,55 +57,55 @@
   },
   "features": {
     "eyebrow": "Funcionalidades",
-    "title": "Tudo o que precisas para recrutar melhor",
-    "description": "Uma plataforma completa desde a criação da vaga até à análise das respostas. Sem ferramentas externas. Sem complicações.",
+    "title": "Tudo o que você precisa para contratar melhor",
+    "description": "Uma plataforma completa, da criação da vaga à análise das respostas. Sem ferramentas externas. Sem complicação.",
     "items": [
       {
         "title": "Entrevistas conversacionais",
-        "desc": "O candidato responde numa interface de chat simples — sem formulários confusos, sem PDFs, sem fricção."
+        "desc": "O candidato responde em uma interface de chat simples — sem formulários confusos, sem PDFs e sem atrito."
       },
       {
         "title": "Verificação automática",
-        "desc": "Email e telemóvel validados por código OTP — garantes que cada candidato é único e autêntico."
+        "desc": "E-mail e celular validados por código OTP — garantindo que cada candidato seja único e autêntico."
       },
       {
-        "title": "Dashboard de candidaturas",
-        "desc": "Visualiza todas as respostas organizadas numa interface limpa. Filtra, pesquisa e exporta com um clique."
+        "title": "Painel de candidaturas",
+        "desc": "Visualize todas as respostas em uma interface limpa. Filtre, pesquise e exporte com um clique."
       },
       {
         "title": "Questionários personalizados",
-        "desc": "Cria perguntas específicas para cada vaga. Adiciona, reordena e remove sem esforço."
+        "desc": "Crie perguntas específicas para cada vaga. Adicione, reorganize e remova com facilidade."
       },
       {
         "title": "Análise com IA",
-        "desc": "Análise automática das respostas dos candidatos com scoring e resumo gerado por inteligência artificial."
+        "desc": "Análise automática das respostas dos candidatos com pontuação e resumo gerado por IA."
       },
       {
         "title": "Exportação de relatórios",
-        "desc": "Exporta candidaturas em PDF ou CSV para partilhar com a tua equipa ou integrar com outros sistemas."
+        "desc": "Exporte candidaturas em PDF ou CSV para compartilhar com sua equipe ou integrar com outros sistemas."
       }
     ]
   },
   "howItWorks": {
     "ariaLabel": "Como funciona o MatchWorky",
     "eyebrow": "Como funciona",
-    "title": "Da vaga à contratação em 3 passos",
-    "description": "O processo foi desenhado para ser simples para ti e agradável para os candidatos.",
+    "title": "Da vaga à contratação em 3 etapas",
+    "description": "O processo foi pensado para ser simples para você e fluido para os candidatos.",
     "stepLabel": "Passo",
     "steps": [
       {
-        "title": "Cria a tua vaga",
-        "desc": "Define o título, a descrição e as perguntas que queres fazer aos candidatos. Podes ter múltiplas vagas ativas em simultâneo.",
+        "title": "Crie sua vaga",
+        "desc": "Defina o título, a descrição e as perguntas que deseja fazer aos candidatos. Você pode manter várias vagas ativas ao mesmo tempo.",
         "highlight": "Configuração em minutos"
       },
       {
-        "title": "Partilha o link",
-        "desc": "Cada vaga tem um URL único. Partilha-o nas redes sociais, no teu site ou por email — os candidatos acedem sem criar conta.",
+        "title": "Compartilhe o link",
+        "desc": "Cada vaga tem uma URL única. Compartilhe nas redes sociais, no seu site ou por e-mail — os candidatos acessam sem criar conta.",
         "highlight": "Sem fricção para o candidato"
       },
       {
-        "title": "Analisa as respostas",
-        "desc": "Todas as candidaturas ficam no teu dashboard. A IA gera um resumo e scoring de cada candidato para que te foques nos melhores.",
+        "title": "Analise as respostas",
+        "desc": "Todas as candidaturas ficam no seu painel. A IA gera um resumo e uma pontuação de cada candidato para você focar nos melhores.",
         "highlight": "Decisões baseadas em dados"
       }
     ]
@@ -133,8 +133,8 @@
   },
   "pricing": {
     "eyebrow": "Planos",
-    "title": "Escolhe o plano ideal para a tua equipa",
-    "description": "Começa com um plano base e evolui sem migrações complexas. Cancela quando quiseres.",
+    "title": "Escolha o plano ideal para sua equipe",
+    "description": "Comece com um plano básico e evolua sem migrações complexas. Cancele quando quiser.",
     "monthly": "Mensal",
     "yearly": "Anual",
     "custom": "Grátis",
@@ -147,29 +147,29 @@
     "viewDetails": "Ver detalhes",
     "startNow": "Começar agora",
     "processing": "A processar...",
-    "trial": "Todos os planos incluem 14 dias de trial gratuito. Sem cartão de crédito.",
+    "trial": "Todos os planos incluem 14 dias de teste grátis. Sem cartão de crédito.",
     "plans": {
       "basic": {
-        "description": "Para equipas pequenas que querem acelerar triagem inicial.",
-        "features": ["1 empresa", "Até 5 entrevistas ativas", "Perguntas ilimitadas", "Dashboard base", "Suporte por email"]
+        "description": "Para equipes pequenas que querem acelerar a triagem inicial.",
+        "features": ["1 empresa", "Até 5 entrevistas ativas", "Perguntas ilimitadas", "Painel básico", "Suporte por e-mail"]
       },
       "free": {
         "description": "Ideal para testar a plataforma com limites de uso.",
         "features": ["1 empresa", "Até 1 entrevista ativa", "Até 5 perguntas por entrevista", "Sem geração de perguntas por IA", "Sem exportação PDF"]
       },
       "pro": {
-        "description": "Escala com mais volume e mais controlo operacional.",
-        "features": ["Até 3 empresas", "Entrevistas ativas ilimitadas", "Perguntas ilimitadas", "Insights de desempenho", "Prioridade no suporte"]
+        "description": "Escalone com mais volume e mais controle operacional.",
+        "features": ["Até 3 empresas", "Entrevistas ativas ilimitadas", "Perguntas ilimitadas", "Insights de desempenho", "Suporte prioritário"]
       }
     }
   },
   "cta": {
-    "eyebrow": "Começa hoje",
-    "title": "Pronto para recrutar mais rápido?",
-    "description": "Junta-te às equipas que já automatizaram a sua triagem de candidatos. Configura a tua primeira vaga em menos de 5 minutos.",
+    "eyebrow": "Comece hoje",
+    "title": "Pronto para contratar mais rápido?",
+    "description": "Junte-se às equipes que já automatizaram a triagem de candidatos. Configure sua primeira vaga em menos de 5 minutos.",
     "primary": "Começar grátis — 14 dias",
     "secondary": "Ver todos os planos",
-    "footnote": "Sem cartão de crédito. Cancela quando quiseres."
+    "footnote": "Sem cartão de crédito. Cancele quando quiser."
   },
   "footer": {
     "description": "Plataforma SaaS de entrevistas conversacionais com IA. Automatiza a triagem inicial e melhora a experiência de candidatura.",
