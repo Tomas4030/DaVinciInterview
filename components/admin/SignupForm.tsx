@@ -25,6 +25,9 @@ export default function SignupForm({ locale = "en", nextPath = "" }: SignupFormP
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [verificationCode, setVerificationCode] = useState("");
+  const [challengeId, setChallengeId] = useState("");
+  const [info, setInfo] = useState("");
   const [erro, setErro] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -34,20 +37,41 @@ export default function SignupForm({ locale = "en", nextPath = "" }: SignupFormP
     setLoading(true);
 
     try {
-      const response = await fetch(withBasePath("/api/auth/signup"), {
+      const endpoint = challengeId
+        ? "/api/auth/email-verification/complete"
+        : "/api/auth/email-verification/send";
+
+      const response = await fetch(withBasePath(endpoint), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name,
-          email,
-          password,
-          next: nextPath,
-        }),
+        body: JSON.stringify(
+          challengeId
+            ? {
+                challengeId,
+                code: verificationCode.trim(),
+              }
+            : {
+                action: "signup",
+                name,
+                email,
+                password,
+                next: nextPath,
+              },
+        ),
       });
 
       const data = await response.json();
       if (!response.ok) {
         setErro(data.error || tAuth(locale, "signupForm.defaultError"));
+        return;
+      }
+
+      if (!challengeId) {
+        setChallengeId(String(data.challengeId || ""));
+        setInfo(tAuth(locale, "signupForm.codeSent"));
+        if (data?.devCode) {
+          setInfo(tAuth(locale, "signupForm.devCode", { code: data.devCode }));
+        }
         return;
       }
 
@@ -83,6 +107,29 @@ export default function SignupForm({ locale = "en", nextPath = "" }: SignupFormP
           className="input-base"
         />
       </div>
+
+      {challengeId && (
+        <div>
+          <label className="block text-xs font-medium text-gray-600 mb-1.5" htmlFor="verificationCode">
+            {tAuth(locale, "signupForm.codeLabel")}
+          </label>
+          <input
+            id="verificationCode"
+            type="text"
+            value={verificationCode}
+            onChange={(e) => setVerificationCode(e.target.value)}
+            required
+            placeholder={tAuth(locale, "signupForm.codePlaceholder")}
+            className="input-base"
+          />
+        </div>
+      )}
+
+      {info && (
+        <div className="bg-amber-50 border border-amber-200 text-amber-700 text-sm rounded-xl px-4 py-3">
+          {info}
+        </div>
+      )}
 
       <div>
         <label className="block text-xs font-medium text-gray-600 mb-1.5" htmlFor="email">
@@ -120,7 +167,9 @@ export default function SignupForm({ locale = "en", nextPath = "" }: SignupFormP
       <button type="submit" disabled={loading} className="btn-primary w-full py-3">
         {loading
           ? tAuth(locale, "signupForm.loading")
-          : tAuth(locale, "signupForm.submit")}
+          : challengeId
+            ? tAuth(locale, "signupForm.verifySubmit")
+            : tAuth(locale, "signupForm.submit")}
       </button>
 
       <a

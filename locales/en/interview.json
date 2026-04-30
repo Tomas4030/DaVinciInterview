@@ -1,6 +1,8 @@
 {
   "verificationForm": {
     "nameRequired": "Name is required.",
+    "firstNameRequired": "First name is required.",
+    "lastNameRequired": "Last name is required.",
     "emailRequired": "Email is required.",
     "emailInvalid": "Invalid email.",
     "phoneRequired": "Phone number is required.",
@@ -11,6 +13,10 @@
     "intro": "Confirm your details to receive the verification code.",
     "nameLabel": "Full name",
     "namePlaceholder": "Your name",
+    "firstNameLabel": "First name",
+    "firstNamePlaceholder": "Your first name",
+    "lastNameLabel": "Last name",
+    "lastNamePlaceholder": "Your last name",
     "emailLabel": "Email",
     "emailPlaceholder": "name@email.com",
     "phoneLabel": "Phone number",

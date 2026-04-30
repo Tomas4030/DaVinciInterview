@@ -1,6 +1,8 @@
 {
   "verificationForm": {
     "nameRequired": "El nombre es obligatorio.",
+    "firstNameRequired": "El nombre es obligatorio.",
+    "lastNameRequired": "El apellido es obligatorio.",
     "emailRequired": "El correo es obligatorio.",
     "emailInvalid": "Correo inválido.",
     "phoneRequired": "El teléfono es obligatorio.",
@@ -11,6 +13,10 @@
     "intro": "Confirma tus datos para recibir el código de verificación.",
     "nameLabel": "Nombre completo",
     "namePlaceholder": "Tu nombre",
+    "firstNameLabel": "Nombre",
+    "firstNamePlaceholder": "Tu nombre",
+    "lastNameLabel": "Apellido",
+    "lastNamePlaceholder": "Tu apellido",
     "emailLabel": "Correo",
     "emailPlaceholder": "nombre@email.com",
     "phoneLabel": "Número de teléfono",

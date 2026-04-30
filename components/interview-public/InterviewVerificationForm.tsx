@@ -109,7 +109,8 @@ export default function InterviewVerificationForm({
 }: Props) {
   const router = useRouter();
 
-  const [candidateName, setCandidateName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState<E164Number | undefined>();
   const [phoneCountry, setPhoneCountry] =
@@ -119,7 +120,8 @@ export default function InterviewVerificationForm({
   const phoneCountryRef = useRef<CountryCode>(DEFAULT_COUNTRY);
 
   const [fieldErrors, setFieldErrors] = useState<{
-    name?: string;
+    firstName?: string;
+    lastName?: string;
     email?: string;
     phone?: string;
   }>({});
@@ -137,10 +139,16 @@ export default function InterviewVerificationForm({
     }
   }, [phone]);
 
-  function validateName(value: string) {
+  function validateFirstName(value: string) {
     return value.trim()
       ? undefined
-      : tInterview(locale, "verificationForm.nameRequired");
+      : tInterview(locale, "verificationForm.firstNameRequired");
+  }
+
+  function validateLastName(value: string) {
+    return value.trim()
+      ? undefined
+      : tInterview(locale, "verificationForm.lastNameRequired");
   }
 
   function validateEmail(value: string) {
@@ -160,10 +168,11 @@ export default function InterviewVerificationForm({
     return undefined;
   }
 
-  function handleBlur(field: "name" | "email" | "phone") {
+  function handleBlur(field: "firstName" | "lastName" | "email" | "phone") {
     setFieldErrors((prev) => {
       const next = { ...prev };
-      if (field === "name") next.name = validateName(candidateName);
+      if (field === "firstName") next.firstName = validateFirstName(firstName);
+      if (field === "lastName") next.lastName = validateLastName(lastName);
       if (field === "email") next.email = validateEmail(email);
       if (field === "phone") next.phone = validatePhone(phone);
       return next;
@@ -175,11 +184,14 @@ export default function InterviewVerificationForm({
     setGlobalError(null);
     setInfo(null);
 
-    const normalizedName = candidateName.trim();
+    const normalizedFirstName = firstName.trim();
+    const normalizedLastName = lastName.trim();
+    const normalizedName = `${normalizedFirstName} ${normalizedLastName}`.trim();
     const normalizedEmail = email.trim().toLowerCase();
 
     const errors = {
-      name: validateName(normalizedName),
+      firstName: validateFirstName(normalizedFirstName),
+      lastName: validateLastName(normalizedLastName),
       email: validateEmail(normalizedEmail),
       phone: validatePhone(phone),
     };
@@ -278,28 +290,56 @@ export default function InterviewVerificationForm({
             className="space-y-5 px-8 py-7"
           >
             <Field
-              id="name"
-              label={tInterview(locale, "verificationForm.nameLabel")}
-              error={fieldErrors.name}
+              id="firstName"
+              label={tInterview(locale, "verificationForm.firstNameLabel")}
+              error={fieldErrors.firstName}
             >
               <div className="relative">
                 <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--c-text)]/30">
                   <IconUser />
                 </span>
                 <input
-                  id="name"
+                  id="firstName"
                   type="text"
-                  value={candidateName}
+                  value={firstName}
                   onChange={(e) => {
-                    setCandidateName(e.target.value);
-                    setFieldErrors((prev) => ({ ...prev, name: undefined }));
+                    setFirstName(e.target.value);
+                    setFieldErrors((prev) => ({ ...prev, firstName: undefined }));
                   }}
-                  onBlur={() => handleBlur("name")}
-                  className={`${inputBase} ${fieldErrors.name ? inputErr : inputIdle} pl-10 pr-4 py-3`}
-                  placeholder={tInterview(locale, "verificationForm.namePlaceholder")}
-                  autoComplete="name"
+                  onBlur={() => handleBlur("firstName")}
+                  className={`${inputBase} ${fieldErrors.firstName ? inputErr : inputIdle} pl-10 pr-4 py-3`}
+                  placeholder={tInterview(locale, "verificationForm.firstNamePlaceholder")}
+                  autoComplete="given-name"
                   disabled={isLoading}
-                  aria-invalid={!!fieldErrors.name}
+                  aria-invalid={!!fieldErrors.firstName}
+                  required
+                />
+              </div>
+            </Field>
+
+            <Field
+              id="lastName"
+              label={tInterview(locale, "verificationForm.lastNameLabel")}
+              error={fieldErrors.lastName}
+            >
+              <div className="relative">
+                <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--c-text)]/30">
+                  <IconUser />
+                </span>
+                <input
+                  id="lastName"
+                  type="text"
+                  value={lastName}
+                  onChange={(e) => {
+                    setLastName(e.target.value);
+                    setFieldErrors((prev) => ({ ...prev, lastName: undefined }));
+                  }}
+                  onBlur={() => handleBlur("lastName")}
+                  className={`${inputBase} ${fieldErrors.lastName ? inputErr : inputIdle} pl-10 pr-4 py-3`}
+                  placeholder={tInterview(locale, "verificationForm.lastNamePlaceholder")}
+                  autoComplete="family-name"
+                  disabled={isLoading}
+                  aria-invalid={!!fieldErrors.lastName}
                   required
                 />
               </div>

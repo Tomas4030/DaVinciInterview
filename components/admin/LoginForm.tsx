@@ -25,6 +25,9 @@ export default function LoginForm({ locale = "en", nextPath = "" }: LoginFormPro
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [verificationCode, setVerificationCode] = useState("");
+  const [challengeId, setChallengeId] = useState("");
+  const [info, setInfo] = useState("");
   const [erro, setErro] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -34,10 +37,26 @@ export default function LoginForm({ locale = "en", nextPath = "" }: LoginFormPro
     setLoading(true);
 
     try {
-      const response = await fetch(withBasePath("/api/auth/login-admin"), {
+      const endpoint = challengeId
+        ? "/api/auth/email-verification/complete"
+        : "/api/auth/email-verification/send";
+
+      const response = await fetch(withBasePath(endpoint), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, next: nextPath }),
+        body: JSON.stringify(
+          challengeId
+            ? {
+              challengeId,
+              code: verificationCode.trim(),
+            }
+            : {
+              action: "login",
+              email,
+              password,
+              next: nextPath,
+            },
+        ),
       });
 
       if (!response.ok) {
@@ -48,6 +67,16 @@ export default function LoginForm({ locale = "en", nextPath = "" }: LoginFormPro
       }
 
       const data = await response.json();
+      if (!challengeId) {
+        setChallengeId(String(data.challengeId || ""));
+        setInfo(tAuth(locale, "loginForm.codeSent"));
+        if (data?.devCode) {
+          setInfo(tAuth(locale, "loginForm.devCode", { code: data.devCode }));
+        }
+        setLoading(false);
+        return;
+      }
+
       if (data.token) {
         localStorage.setItem("admin_token", data.token);
       }
@@ -108,7 +137,35 @@ export default function LoginForm({ locale = "en", nextPath = "" }: LoginFormPro
           placeholder={tAuth(locale, "loginForm.passwordPlaceholder")}
           className="input-base"
         />
+
+
       </div>
+
+      {challengeId && (
+        <div>
+          <label
+            className="block text-xs font-medium text-gray-600 mb-1.5"
+            htmlFor="verificationCode"
+          >
+            {tAuth(locale, "loginForm.codeLabel")}
+          </label>
+          <input
+            id="verificationCode"
+            type="text"
+            value={verificationCode}
+            onChange={(e) => setVerificationCode(e.target.value)}
+            required
+            placeholder={tAuth(locale, "loginForm.codePlaceholder")}
+            className="input-base"
+          />
+        </div>
+      )}
+
+      {info && (
+        <div className="bg-amber-50 border border-amber-200 text-amber-700 text-sm rounded-xl px-4 py-3">
+          {info}
+        </div>
+      )}
 
       <button
         type="submit"
@@ -139,7 +196,9 @@ export default function LoginForm({ locale = "en", nextPath = "" }: LoginFormPro
             {tAuth(locale, "loginForm.loading")}
           </span>
         ) : (
-          tAuth(locale, "loginForm.submit")
+          challengeId
+            ? tAuth(locale, "loginForm.verifySubmit")
+            : tAuth(locale, "loginForm.submit")
         )}
       </button>
 

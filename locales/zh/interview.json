@@ -1,6 +1,8 @@
 {
   "verificationForm": {
     "nameRequired": "姓名为必填项。",
+    "firstNameRequired": "名字为必填项。",
+    "lastNameRequired": "姓氏为必填项。",
     "emailRequired": "邮箱为必填项。",
     "emailInvalid": "邮箱无效。",
     "phoneRequired": "手机号为必填项。",
@@ -11,6 +13,10 @@
     "intro": "请确认你的信息以接收验证码。",
     "nameLabel": "姓名",
     "namePlaceholder": "你的姓名",
+    "firstNameLabel": "名字",
+    "firstNamePlaceholder": "你的名字",
+    "lastNameLabel": "姓氏",
+    "lastNamePlaceholder": "你的姓氏",
     "emailLabel": "邮箱",
     "emailPlaceholder": "name@email.com",
     "phoneLabel": "手机号",

@@ -1,6 +1,8 @@
 {
   "verificationForm": {
     "nameRequired": "Nome obrigatório.",
+    "firstNameRequired": "Nome obrigatório.",
+    "lastNameRequired": "Sobrenome obrigatório.",
     "emailRequired": "Email obrigatório.",
     "emailInvalid": "Email inválido.",
     "phoneRequired": "Telemóvel obrigatório.",
@@ -11,6 +13,10 @@
     "intro": "Confirma os teus dados para receberes o código de verificação.",
     "nameLabel": "Nome completo",
     "namePlaceholder": "O teu nome",
+    "firstNameLabel": "Nome",
+    "firstNamePlaceholder": "O teu nome",
+    "lastNameLabel": "Sobrenome",
+    "lastNamePlaceholder": "O teu sobrenome",
     "emailLabel": "Email",
     "emailPlaceholder": "nome@email.com",
     "phoneLabel": "Telemóvel",
@@ -59,7 +65,7 @@
   },
   "companyPublic": {
     "meta": {
-      "notFound": "Empresa n�o encontrada",
+      "notFound": "Empresa n�o encontrada",
       "title": "{{companyName}} - Entrevistas",
       "descriptionFallback": "Conhece as entrevistas abertas da {{companyName}}."
     },
@@ -85,7 +91,7 @@
       "countPlural": "{{count}} posicoes disponiveis",
       "emptyTitle": "Nenhuma vaga disponivel de momento.",
       "emptyDescription": "Volta em breve ou contacta o recrutador.",
-      "fallbackDescription": "Sem descri��o disponivel.",
+      "fallbackDescription": "Sem descri��o disponivel.",
       "questionSingular": "{{count}} pergunta",
       "questionPlural": "{{count}} perguntas",
       "start": "Iniciar",
@@ -99,14 +105,14 @@
       "employmentTypePartTime": "Part-time",
       "employmentTypeContract": "Contrato",
       "employmentTypeInternship": "Estagio",
-      "employmentTypeFallback": "N�o definido",
+      "employmentTypeFallback": "N�o definido",
       "contextLabel": "Contexto",
-      "experienceDesired": "Experi�ncia desejada",
-      "experienceNotRequired": "Experi�ncia n�o exigida"
+      "experienceDesired": "Experi�ncia desejada",
+      "experienceNotRequired": "Experi�ncia n�o exigida"
     },
     "howItWorks": {
       "ariaLabel": "Como funciona o processo",
-      "badge": "Processo simples e r�pido",
+      "badge": "Processo simples e r�pido",
       "title": "Como funciona",
       "description": "Em tres passos, escolhes uma vaga, respondes ao teu ritmo e submetes a candidatura sem complicacoes.",
       "stepLabel": "Passo",
@@ -121,13 +127,13 @@
           "num": "2",
           "title": "Responde ao teu ritmo",
           "desc": "A candidatura acontece em formato conversacional, de forma mais simples, natural e sem complicacoes.",
-          "highlight": "Experi�ncia simples e guiada"
+          "highlight": "Experi�ncia simples e guiada"
         },
         {
           "num": "3",
           "title": "Submete a candidatura",
           "desc": "Depois de concluires, as tuas respostas ficam prontas para a equipa de recrutamento analisar.",
-          "highlight": "Envio r�pido e claro"
+          "highlight": "Envio r�pido e claro"
         }
       ]
     }
