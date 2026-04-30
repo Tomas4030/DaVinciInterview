@@ -15,11 +15,11 @@
     "startFree": "Inizia gratis"
   },
   "hero": {
-    "badge": "Automatizza il tuo processo di assunzione",
+    "badge": "Automatizza il processo di assunzione",
     "titleLine1": "Colloqui con AI.",
     "titleHighlight": "Screening",
-    "titleLine2": "senza fatica.",
-    "description": "MatchWorky gestisce colloqui conversazionali automatizzati per la tua azienda. Definisci le domande, condividi il link con i candidati e analizza le risposte in un unico posto.",
+    "titleLine2": "senza complessità.",
+    "description": "MatchWorky gestisce colloqui conversazionali automatizzati per l'azienda. Definisci le domande, condividi il link con i candidati e analizza le risposte in un unico posto.",
     "cta": "Inizia gratis",
     "stats": [
       { "value": "3×", "label": "più veloce dello screening manuale" },
@@ -57,22 +57,22 @@
   },
   "features": {
     "eyebrow": "Funzionalità",
-    "title": "Tutto ciò che ti serve per assumere meglio",
-    "description": "Una piattaforma completa dalla creazione della posizione all'analisi delle risposte. Nessuno strumento esterno. Nessuna complessità.",
+    "title": "Tutto ciò che serve per assumere meglio",
+    "description": "Una piattaforma completa, dalla creazione della posizione all'analisi delle risposte. Nessuno strumento esterno. Nessuna complessità.",
     "items": [
       { "title": "Colloqui conversazionali", "desc": "I candidati rispondono in una chat semplice: niente moduli confusi, niente PDF, niente attrito." },
       { "title": "Verifica automatica", "desc": "Email e telefono verificati con codici OTP, per garantire candidati unici e autentici." },
-      { "title": "Dashboard candidati", "desc": "Visualizza tutte le risposte in un'interfaccia pulita. Filtra, cerca ed esporta con un clic." },
-      { "title": "Questionari personalizzati", "desc": "Crea domande specifiche per ruolo. Aggiungi, riordina e rimuovi con facilità." },
+      { "title": "Dashboard candidati", "desc": "Visualizza tutte le risposte in un'interfaccia pulita. Filtra, cerca ed esporta con un solo clic." },
+      { "title": "Questionari personalizzati", "desc": "Crea domande specifiche per ogni ruolo. Aggiungi, riordina e rimuovi con facilità." },
       { "title": "Analisi AI", "desc": "Analisi automatica delle risposte con punteggio e riepilogo AI per ogni candidato." },
-      { "title": "Esportazione report", "desc": "Esporta candidature in PDF o CSV per condividerle con il tuo team o integrarle con altri sistemi." }
+      { "title": "Esportazione report", "desc": "Esporta candidature in PDF o CSV per condividerle con il team o integrarle con altri sistemi." }
     ]
   },
   "howItWorks": {
     "ariaLabel": "Come funziona MatchWorky",
     "eyebrow": "Come funziona",
     "title": "Dalla posizione all'assunzione in 3 passaggi",
-    "description": "Il processo è pensato per essere semplice per il tuo team e fluido per i candidati.",
+    "description": "Il processo è pensato per essere semplice per il team e fluido per i candidati.",
     "stepLabel": "Passaggio",
     "steps": [
       { "title": "Crea il ruolo", "desc": "Definisci titolo, descrizione e domande per i candidati. Puoi gestire più ruoli attivi contemporaneamente.", "highlight": "Setup in pochi minuti" },
@@ -91,8 +91,8 @@
   },
   "pricing": {
     "eyebrow": "Piani",
-    "title": "Scegli il piano migliore per il tuo team",
-    "description": "Inizia con un piano base e scala senza migrazioni complesse. Annulla quando vuoi.",
+    "title": "Scegli il piano migliore per il team",
+    "description": "Inizia con un piano base e scala senza migrazioni complesse. Disdici quando vuoi.",
     "monthly": "Mensile",
     "yearly": "Annuale",
     "custom": "Gratis",
@@ -114,10 +114,10 @@
   "cta": {
     "eyebrow": "Inizia oggi",
     "title": "Pronto ad assumere più velocemente?",
-    "description": "Unisciti ai team che hanno già automatizzato lo screening candidati. Configura il tuo primo ruolo in meno di 5 minuti.",
+    "description": "Unisciti ai team che hanno già automatizzato lo screening candidati. Configura il primo ruolo in meno di 5 minuti.",
     "primary": "Inizia gratis — 14 giorni",
     "secondary": "Vedi tutti i piani",
-    "footnote": "Nessuna carta di credito richiesta. Annulla quando vuoi."
+    "footnote": "Nessuna carta di credito richiesta. Disdici quando vuoi."
   },
   "footer": {
     "description": "Piattaforma SaaS per colloqui conversazionali con AI. Automatizza lo screening iniziale e migliora l'esperienza candidato.",
