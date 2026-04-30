@@ -18,7 +18,7 @@
     "badge": "Automatiza tu proceso de contratación",
     "titleLine1": "Entrevistas con IA.",
     "titleHighlight": "Filtrado",
-    "titleLine2": "sin esfuerzo.",
+    "titleLine2": "sin sobrecarga.",
     "description": "MatchWorky realiza entrevistas conversacionales automatizadas para tu empresa. Define tus preguntas, comparte el enlace con candidatos y analiza respuestas en un solo lugar.",
     "cta": "Empieza gratis",
     "stats": [
@@ -45,9 +45,9 @@
         { "from": "user", "text": "Planificación semanal, prototipos tempranos y feedback frecuente." },
         { "from": "bot", "text": "Pregunta 7: ¿Cómo abordas testing en frontend?" },
         { "from": "user", "text": "Tests unitarios para lógica y de integración para flujos críticos." },
-        { "from": "bot", "text": "Pregunta 8: Comparte un ejemplo donde mejoraste la developer experience." },
+        { "from": "bot", "text": "Pregunta 8: Comparte un ejemplo en el que mejoraste la experiencia de desarrollo." },
         { "from": "user", "text": "Creé reglas de lint compartidas y plantillas que redujeron retrabajo en PRs." },
-        { "from": "bot", "text": "Pregunta 9: ¿Cómo monitorizas problemas después del release?" },
+        { "from": "bot", "text": "Pregunta 9: ¿Cómo monitorizas problemas después del despliegue?" },
         { "from": "user", "text": "Con seguimiento de errores, dashboards y revisiones post-lanzamiento." },
         { "from": "bot", "text": "Pregunta 10: ¿Por qué te interesa este puesto ahora?" },
         { "from": "user", "text": "Porque el reto del producto encaja con mi experiencia y objetivos de crecimiento." },
@@ -58,10 +58,10 @@
   "features": {
     "eyebrow": "Funciones",
     "title": "Todo lo que necesitas para contratar mejor",
-    "description": "Una plataforma completa desde la creación de vacantes hasta el análisis de respuestas. Sin herramientas externas. Sin complejidad.",
+    "description": "Una plataforma completa, desde la creación de vacantes hasta el análisis de respuestas. Sin herramientas externas. Sin complicaciones.",
     "items": [
       { "title": "Entrevistas conversacionales", "desc": "Los candidatos responden en un chat simple: sin formularios confusos, sin PDFs y sin fricción." },
-      { "title": "Verificación automática", "desc": "Email y teléfono verificados con códigos OTP para asegurar que cada candidato sea único y auténtico." },
+      { "title": "Verificación automática", "desc": "Correo electrónico y teléfono verificados con códigos OTP para asegurar que cada candidato sea único y auténtico." },
       { "title": "Panel de candidatos", "desc": "Visualiza todas las respuestas en una interfaz limpia. Filtra, busca y exporta con un clic." },
       { "title": "Cuestionarios personalizados", "desc": "Crea preguntas específicas por vacante. Añade, reordena y elimina fácilmente." },
       { "title": "Análisis con IA", "desc": "Análisis automático con puntuación y resúmenes generados por IA para cada candidato." },
@@ -72,11 +72,11 @@
     "ariaLabel": "Cómo funciona MatchWorky",
     "eyebrow": "Cómo funciona",
     "title": "De vacante a contratación en 3 pasos",
-    "description": "El proceso está diseñado para ser simple para tu equipo y fluido para candidatos.",
+    "description": "El proceso está diseñado para ser simple para tu equipo y fluido para los candidatos.",
     "stepLabel": "Paso",
     "steps": [
       { "title": "Crea tu vacante", "desc": "Define título, descripción y preguntas. Puedes tener múltiples vacantes activas al mismo tiempo.", "highlight": "Configura en minutos" },
-      { "title": "Comparte el enlace", "desc": "Cada vacante tiene una URL única. Compártela por redes, web o email; los candidatos acceden sin crear cuenta.", "highlight": "Sin fricción para candidatos" },
+      { "title": "Comparte el enlace", "desc": "Cada vacante tiene una URL única. Compártela en redes, en tu web o por correo electrónico; los candidatos acceden sin crear cuenta.", "highlight": "Sin fricción para candidatos" },
       { "title": "Analiza respuestas", "desc": "Todas las candidaturas se centralizan en tu panel. La IA genera resumen y puntuación para enfocarte en los mejores.", "highlight": "Decisiones con datos" }
     ]
   },
@@ -92,7 +92,7 @@
   "pricing": {
     "eyebrow": "Planes",
     "title": "Elige el mejor plan para tu equipo",
-    "description": "Empieza con un plan base y escala sin migraciones complejas. Cancela cuando quieras.",
+    "description": "Empieza con un plan básico y escala sin migraciones complejas. Cancela cuando quieras.",
     "monthly": "Mensual",
     "yearly": "Anual",
     "custom": "Gratis",
@@ -106,7 +106,7 @@
     "startNow": "Empezar",
     "trial": "Todos los planes incluyen 14 días de prueba gratis. No requiere tarjeta.",
     "plans": {
-      "basic": { "description": "Para equipos pequeños que quieren acelerar el filtrado inicial.", "features": ["1 empresa", "Hasta 5 entrevistas activas", "Preguntas ilimitadas", "Panel base", "Soporte por email"] },
+      "basic": { "description": "Para equipos pequeños que quieren acelerar el filtrado inicial.", "features": ["1 empresa", "Hasta 5 entrevistas activas", "Preguntas ilimitadas", "Panel básico", "Soporte por correo"] },
       "free": { "description": "Ideal para probar la plataforma con límites de uso.", "features": ["1 empresa", "Hasta 1 entrevista activa", "Hasta 5 preguntas por entrevista", "Sin generación de preguntas por IA", "Sin exportación PDF"] },
       "pro": { "description": "Escala con mayor volumen y más control operativo.", "features": ["Hasta 3 empresas", "Entrevistas activas ilimitadas", "Preguntas ilimitadas", "Insights de rendimiento", "Soporte prioritario"] }
     }

@@ -1,37 +1,37 @@
 {
   "contact": {
     "meta": {
-      "title": "Contact",
-      "description": "Reach the MatchWorky team for support, commercial questions, and privacy-related requests."
+      "title": "Contacto",
+      "description": "Contacta con el equipo de MatchWorky para soporte, consultas comerciales y solicitudes relacionadas con privacidad."
     },
-    "eyebrow": "Contact",
-    "title": "Talk to us",
-    "description": "If you need help with setup, billing, or privacy, our team replies through direct and practical channels.",
-    "sideNoteLabel": "Note",
-    "sideNoteTitle": "Response time",
-    "sideNoteBody": "Operational requests are answered on business days. Urgent access and security issues are prioritized the same day.",
+    "eyebrow": "Contacto",
+    "title": "Hablemos",
+    "description": "Si necesitas ayuda con configuración, facturación o privacidad, nuestro equipo responde por canales directos y prácticos.",
+    "sideNoteLabel": "Nota",
+    "sideNoteTitle": "Tiempo de respuesta",
+    "sideNoteBody": "Las solicitudes operativas se atienden en días laborables. Los casos urgentes de acceso y seguridad tienen prioridad el mismo día.",
     "sections": [
       {
-        "title": "Technical support",
+        "title": "Soporte técnico",
         "body": [
-          "Email: suporte@matchworky.pt",
-          "Include your company slug and a short description of the issue whenever possible."
+          "Correo: suporte@matchworky.pt",
+          "Incluye, siempre que puedas, el slug de tu empresa y una breve descripción del problema."
         ],
         "tone": "blue"
       },
       {
-        "title": "Sales and partnerships",
+        "title": "Ventas y alianzas",
         "body": [
-          "Email: hello@matchworky.pt",
-          "Share your expected hiring volume and current workflow so we can prepare a proposal aligned with your context."
+          "Correo: hello@matchworky.pt",
+          "Comparte tu volumen previsto de contratación y flujo actual para preparar una propuesta alineada con tu contexto."
         ],
         "tone": "yellow"
       },
       {
-        "title": "Privacy and data",
+        "title": "Privacidad y datos",
         "body": [
-          "Email: privacidade@matchworky.pt",
-          "Requests for access, correction, or deletion should reference the company responsible for the recruiting process."
+          "Correo: privacidade@matchworky.pt",
+          "Las solicitudes de acceso, corrección o eliminación deben indicar la empresa responsable del proceso de selección."
         ],
         "tone": "green"
       }
@@ -39,37 +39,37 @@
   },
   "about": {
     "meta": {
-      "title": "About",
-      "description": "Learn MatchWorky's mission and how we design clearer interview experiences for teams and candidates."
+      "title": "Sobre nosotros",
+      "description": "Conoce la misión de MatchWorky y cómo diseñamos experiencias de entrevista más claras para equipos y candidatos."
     },
-    "eyebrow": "Company",
-    "title": "About us",
-    "description": "MatchWorky was created to reduce friction in early-stage hiring with consistent interviews and objective response insights.",
-    "sideNoteLabel": "Note",
-    "sideNoteTitle": "Focus",
-    "sideNoteBody": "We build a product that is simple to run daily: create a role, share a link, review responses, and decide with context.",
+    "eyebrow": "Empresa",
+    "title": "Sobre nosotros",
+    "description": "MatchWorky nació para reducir la fricción en la fase inicial de contratación, con entrevistas consistentes y análisis objetivos de respuestas.",
+    "sideNoteLabel": "Nota",
+    "sideNoteTitle": "Enfoque",
+    "sideNoteBody": "Creamos un producto fácil de usar en el día a día: crear una vacante, compartir un enlace, revisar respuestas y decidir con contexto.",
     "sections": [
       {
-        "title": "1. Why we exist",
+        "title": "1. Por qué existimos",
         "body": [
-          "Many teams lose time with manual screening and unstructured first interviews.",
-          "We created a conversational layer to standardize this stage while preserving human judgment in final decisions."
+          "Muchos equipos pierden tiempo con filtrado manual y primeras entrevistas poco estructuradas.",
+          "Creamos una capa conversacional para estandarizar esta etapa, preservando el criterio humano en la decisión final."
         ],
         "tone": "neutral"
       },
       {
-        "title": "2. How we work",
+        "title": "2. Cómo trabajamos",
         "body": [
-          "The product prioritizes clarity: objective interface, comparable outcomes, and lean setup for each role.",
-          "Every improvement is validated by real usage from hiring teams, not short-term visual trends."
+          "El producto prioriza la claridad: interfaz objetiva, resultados comparables y configuración ágil para cada vacante.",
+          "Cada mejora se valida con uso real de equipos de contratación, no con tendencias visuales pasajeras."
         ],
         "tone": "blue"
       },
       {
-        "title": "3. Product principles",
+        "title": "3. Principios del producto",
         "body": [
-          "Respect for candidate experience, with transparent flows and direct communication.",
-          "Privacy by default, with company-controlled data and only the minimum required audit trail."
+          "Respeto por la experiencia del candidato, con flujos transparentes y comunicación directa.",
+          "Privacidad por defecto, con datos controlados por la empresa y solo el rastro mínimo necesario para auditoría."
         ],
         "tone": "green"
       }
@@ -77,45 +77,45 @@
   },
   "privacy": {
     "meta": {
-      "title": "Privacy Policy",
-      "description": "How personal data is collected, used, and protected in MatchWorky."
+      "title": "Política de privacidad",
+      "description": "Cómo se recopilan, utilizan y protegen los datos personales en MatchWorky."
     },
-    "eyebrow": "Privacy",
-    "title": "Privacy policy",
-    "description": "We explain clearly what data we process, why we process it, and how you can exercise your rights at any time.",
-    "sideNoteLabel": "Note",
-    "sideNoteTitle": "Responsibility",
-    "sideNoteBody": "Each customer company defines the legal basis for recruiting. MatchWorky acts as a data processor to operate interviews and analysis.",
+    "eyebrow": "Privacidad",
+    "title": "Política de privacidad",
+    "description": "Explicamos con claridad qué datos tratamos, por qué los tratamos y cómo puedes ejercer tus derechos en cualquier momento.",
+    "sideNoteLabel": "Nota",
+    "sideNoteTitle": "Responsabilidad",
+    "sideNoteBody": "Cada empresa cliente define la base legal del proceso de selección. MatchWorky actúa como encargado del tratamiento para operar entrevistas y análisis.",
     "sections": [
       {
-        "title": "1. Data collected",
+        "title": "1. Datos recopilados",
         "body": [
-          "We may collect identification and contact data, interview responses, and session technical metadata to ensure operation and basic auditing.",
-          "We do not collect sensitive information unless there is an objective need for the candidate process configured by the customer."
+          "Podemos recopilar datos de identificación y contacto, respuestas de entrevistas y metadatos técnicos de sesión para garantizar operación y auditoría básica.",
+          "No recopilamos información sensible salvo que exista una necesidad objetiva en el proceso de candidatura configurado por el cliente."
         ],
         "tone": "neutral"
       },
       {
-        "title": "2. Processing purposes",
+        "title": "2. Finalidades del tratamiento",
         "body": [
-          "Data is used to run interviews, show results in the admin dashboard, and enable structured candidate comparison.",
-          "We also use technical data for security, abuse prevention, and platform stability improvements."
+          "Los datos se usan para ejecutar entrevistas, mostrar resultados en el panel de administración y permitir comparaciones estructuradas de candidatos.",
+          "También usamos datos técnicos para seguridad, prevención de abuso y mejora de la estabilidad de la plataforma."
         ],
         "tone": "blue"
       },
       {
-        "title": "3. Retention and deletion",
+        "title": "3. Conservación y eliminación",
         "body": [
-          "Data remains available for the period defined by each customer, respecting legal obligations and legitimate hiring needs.",
-          "On request, records can be deleted or historical data can be anonymized when no longer needed for hiring decisions."
+          "Los datos se mantienen disponibles durante el periodo definido por cada cliente, respetando obligaciones legales y necesidades legítimas de contratación.",
+          "Si se solicita, pueden eliminarse registros o anonimizar históricos cuando dejen de ser necesarios para decisiones de contratación."
         ],
         "tone": "green"
       },
       {
-        "title": "4. Data subject rights",
+        "title": "4. Derechos de las personas interesadas",
         "body": [
-          "You may request access, correction, deletion, restriction of processing, and portability under applicable law.",
-          "Privacy requests can be submitted through the contact page and are routed for response within a reasonable timeframe."
+          "Puedes solicitar acceso, corrección, eliminación, limitación del tratamiento y portabilidad conforme a la legislación aplicable.",
+          "Las solicitudes de privacidad pueden enviarse desde la página de contacto y se canalizan para respuesta en un plazo razonable."
         ],
         "tone": "red"
       }
@@ -123,45 +123,45 @@
   },
   "terms": {
     "meta": {
-      "title": "Terms of Service",
-      "description": "Terms of use for MatchWorky for hiring teams and candidates."
+      "title": "Términos del servicio",
+      "description": "Términos de uso de MatchWorky para equipos de contratación y candidatos."
     },
     "eyebrow": "Legal",
-    "title": "Terms of service",
-    "description": "By using MatchWorky, you accept these terms to ensure clear, safe, and predictable usage for companies and candidates.",
-    "sideNoteLabel": "Note",
-    "sideNoteTitle": "Current version",
-    "sideNoteBody": "These terms apply to all use of the web platform. When updated, the revision date will be published on this page.",
+    "title": "Términos del servicio",
+    "description": "Al usar MatchWorky, aceptas estos términos para garantizar un uso claro, seguro y previsible para empresas y candidatos.",
+    "sideNoteLabel": "Nota",
+    "sideNoteTitle": "Versión actual",
+    "sideNoteBody": "Estos términos se aplican a todo uso de la plataforma web. Cuando se actualicen, la fecha de revisión se publicará en esta página.",
     "sections": [
       {
-        "title": "1. Platform usage",
+        "title": "1. Uso de la plataforma",
         "body": [
-          "The platform is intended for hiring teams that want to structure initial interviews with AI support.",
-          "It is not allowed to use the service for data collection without legal basis, abusive content, or any activity violating applicable law."
+          "La plataforma está dirigida a equipos de contratación que desean estructurar entrevistas iniciales con apoyo de IA.",
+          "No está permitido usar el servicio para recopilar datos sin base legal, difundir contenido abusivo o realizar actividades que infrinjan la legislación aplicable."
         ],
         "tone": "neutral"
       },
       {
-        "title": "2. Accounts and access",
+        "title": "2. Cuentas y acceso",
         "body": [
-          "Each company account is responsible for managing admin access and credential security.",
-          "We recommend regular review of panel users and immediate revocation of access that is no longer required."
+          "Cada cuenta empresarial es responsable de gestionar los accesos administrativos y la seguridad de sus credenciales.",
+          "Recomendamos revisar periódicamente los usuarios del panel y revocar de inmediato los accesos que ya no sean necesarios."
         ],
         "tone": "blue"
       },
       {
-        "title": "3. Interview data",
+        "title": "3. Datos de entrevistas",
         "body": [
-          "Data collected during interviews belongs to the customer creating the role and should follow their internal hiring policy.",
-          "MatchWorky processes data to provide screening, analysis, and reporting features, without parallel commercial use of that data."
+          "Los datos recopilados durante las entrevistas pertenecen al cliente que crea la vacante y deben seguir su política interna de contratación.",
+          "MatchWorky procesa estos datos para ofrecer funciones de filtrado, análisis e informes, sin uso comercial paralelo de esos datos."
         ],
         "tone": "green"
       },
       {
-        "title": "4. Availability and support",
+        "title": "4. Disponibilidad y soporte",
         "body": [
-          "We work to ensure high availability, but occasional interruptions may happen for maintenance, updates, or incident mitigation.",
-          "Operational issues can be reported through the contact page for technical follow-up."
+          "Trabajamos para garantizar alta disponibilidad, pero pueden producirse interrupciones puntuales por mantenimiento, actualizaciones o mitigación de incidentes.",
+          "Los problemas operativos pueden reportarse desde la página de contacto para su seguimiento técnico."
         ],
         "tone": "yellow"
       }
