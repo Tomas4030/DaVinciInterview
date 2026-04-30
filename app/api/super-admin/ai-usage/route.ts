@@ -15,7 +15,9 @@ export async function GET(request: NextRequest) {
     feature: searchParams.get("feature") || "",
     from: searchParams.get("from") || "",
     to: searchParams.get("to") || "",
-    limit: Number(searchParams.get("limit") || 200),
+    q: searchParams.get("q") || "",
+    page: Number(searchParams.get("page") || 1),
+    pageSize: Number(searchParams.get("pageSize") || 20),
   });
 
   return NextResponse.json({ logs });

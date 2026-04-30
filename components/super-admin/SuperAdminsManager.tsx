@@ -1,8 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { withBasePath } from "@/lib/base-path";
+import DataTable from "@/components/super-admin/DataTable";
+import StatusBadge from "@/components/super-admin/StatusBadge";
 
 type SuperAdminItem = {
   id: string;
@@ -17,14 +19,38 @@ type Props = {
   initialAdmins: SuperAdminItem[];
 };
 
+function initials(name: string): string {
+  return name
+    .split(" ")
+    .map((p) => p[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
+}
+
+function formatDate(value: string | null): string {
+  if (!value) return "-";
+  const date = new Date(value);
+  if (!Number.isFinite(date.getTime())) return value;
+  return new Intl.DateTimeFormat("pt-PT", { dateStyle: "short", timeStyle: "short" }).format(date);
+}
+
 export default function SuperAdminsManager({ initialAdmins }: Props) {
   const router = useRouter();
   const [admins, setAdmins] = useState(initialAdmins);
+  const [showCreate, setShowCreate] = useState(false);
+  const [query, setQuery] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const adminsFiltered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return admins;
+    return admins.filter((admin) => admin.name.toLowerCase().includes(q) || admin.email.toLowerCase().includes(q));
+  }, [admins, query]);
 
   async function refresh() {
     const response = await fetch(withBasePath("/api/super-admin/admins"), { cache: "no-store" });
@@ -55,6 +81,7 @@ export default function SuperAdminsManager({ initialAdmins }: Props) {
     setName("");
     setEmail("");
     setPassword("");
+    setShowCreate(false);
     await refresh();
     router.refresh();
     setLoading(false);
@@ -67,58 +94,81 @@ export default function SuperAdminsManager({ initialAdmins }: Props) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id, isActive: !isActive }),
     });
+
     const data = await response.json();
     if (!response.ok) {
       setError(String(data?.error || "Falha ao atualizar estado"));
       return;
     }
+
     await refresh();
     router.refresh();
   }
 
   return (
     <div className="space-y-4">
-      <form onSubmit={handleCreate} className="card grid gap-3 p-4 md:grid-cols-4">
-        <input className="input-base" placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} required />
-        <input className="input-base" placeholder="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-        <input className="input-base" placeholder="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} minLength={8} required />
-        <button className="btn-primary" type="submit" disabled={loading}>{loading ? "A criar..." : "Criar super admin"}</button>
-      </form>
-
-      {error ? <div className="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{error}</div> : null}
-
-      <div className="card overflow-x-auto p-4">
-        <table className="min-w-full text-left text-sm">
-          <thead>
-            <tr className="border-b border-[var(--c-border)] text-xs uppercase tracking-[0.08em] text-gray-500">
-              <th className="px-2 py-2">Name</th>
-              <th className="px-2 py-2">Email</th>
-              <th className="px-2 py-2">Status</th>
-              <th className="px-2 py-2">Last login</th>
-              <th className="px-2 py-2">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {admins.map((admin) => (
-              <tr key={admin.id} className="border-b border-[var(--c-border)]/60">
-                <td className="px-2 py-2">{admin.name}</td>
-                <td className="px-2 py-2">{admin.email}</td>
-                <td className="px-2 py-2">{admin.is_active ? "active" : "inactive"}</td>
-                <td className="px-2 py-2">{admin.last_login_at || "-"}</td>
-                <td className="px-2 py-2">
-                  <button
-                    type="button"
-                    onClick={() => toggleActive(admin.id, Boolean(admin.is_active))}
-                    className="rounded-lg border border-[var(--c-border)] px-2 py-1 text-xs"
-                  >
-                    {admin.is_active ? "Deactivate" : "Activate"}
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <input
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+          placeholder="Pesquisar por nome ou email"
+          className="w-full max-w-md rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm"
+        />
+        <button onClick={() => setShowCreate((value) => !value)} className="rounded-xl bg-indigo-600 px-4 py-2 text-sm font-medium text-white">
+          + Novo Super Admin
+        </button>
       </div>
+
+      {showCreate ? (
+        <form onSubmit={handleCreate} className="grid gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm md:grid-cols-4">
+          <input className="input-base" placeholder="Nome" value={name} onChange={(event) => setName(event.target.value)} required />
+          <input className="input-base" placeholder="Email" type="email" value={email} onChange={(event) => setEmail(event.target.value)} required />
+          <input className="input-base" placeholder="Password" type="password" value={password} onChange={(event) => setPassword(event.target.value)} minLength={8} required />
+          <button className="rounded-xl bg-indigo-600 px-3 py-2 text-sm font-medium text-white" type="submit" disabled={loading}>
+            {loading ? "A criar..." : "Criar"}
+          </button>
+        </form>
+      ) : null}
+
+      {error ? <div className="rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-700">{error}</div> : null}
+
+      <DataTable
+        columns={[
+          { key: "name", label: "Nome" },
+          { key: "email", label: "Email" },
+          { key: "status", label: "Status" },
+          { key: "last", label: "Último login" },
+          { key: "actions", label: "Ações", align: "right" },
+        ]}
+        footer={<span className="text-sm text-slate-600">Mostrando {adminsFiltered.length} super admins</span>}
+      >
+        {adminsFiltered.map((admin) => (
+          <tr key={admin.id} className="border-t border-slate-100">
+            <td className="px-4 py-3">
+              <div className="flex items-center gap-3">
+                <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-indigo-100 text-xs font-semibold text-indigo-700">
+                  {initials(admin.name)}
+                </span>
+                <span className="font-medium text-slate-900">{admin.name}</span>
+              </div>
+            </td>
+            <td className="px-4 py-3 text-slate-700">{admin.email}</td>
+            <td className="px-4 py-3">
+              <StatusBadge tone={admin.is_active ? "green" : "default"}>{admin.is_active ? "Ativo" : "Inativo"}</StatusBadge>
+            </td>
+            <td className="px-4 py-3 text-slate-700">{formatDate(admin.last_login_at)}</td>
+            <td className="px-4 py-3 text-right">
+              <button
+                type="button"
+                onClick={() => toggleActive(admin.id, Boolean(admin.is_active))}
+                className="rounded-lg border border-slate-200 px-2 py-1 text-xs text-slate-700"
+              >
+                {admin.is_active ? "Desativar" : "Ativar"}
+              </button>
+            </td>
+          </tr>
+        ))}
+      </DataTable>
     </div>
   );
 }
