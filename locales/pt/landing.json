@@ -1,7 +1,7 @@
 {
   "meta": {
     "title": "MatchWorky — Entrevistas com IA para equipas de recrutamento",
-    "description": "Automatiza a triagem de candidatos com entrevistas conversacionais. Define as perguntas, partilha o link e analisa as respostas tudo numa plataforma.",
+    "description": "Automatiza a triagem de candidatos com entrevistas conversacionais. Define as perguntas, partilha o link e analisa as respostas numa única plataforma.",
     "ogTitle": "MatchWorky — Entrevistas com IA para empresas",
     "ogDescription": "Automatiza a triagem inicial e melhora a experiência de candidatura com entrevistas conversacionais inteligentes."
   },
@@ -19,7 +19,7 @@
     "titleLine1": "Entrevistas com IA.",
     "titleHighlight": "Triagem",
     "titleLine2": "sem esforço.",
-    "description": "O MatchWorky conduz entrevistas conversacionais automatizadas em nome da tua empresa. Define as perguntas, partilha o link com os candidatos e analisa as respostas tudo numa plataforma.",
+    "description": "O MatchWorky conduz entrevistas conversacionais automatizadas em nome da tua empresa. Define as perguntas, partilha o link com os candidatos e analisa as respostas numa única plataforma.",
     "cta": "Começar grátis",
     "stats": [
       { "value": "3×", "label": "mais rápido do que triagem manual" },
@@ -45,10 +45,10 @@
         { "from": "user", "text": "Planeamento semanal, protótipos cedo e feedback frequente." },
         { "from": "bot", "text": "Pergunta 7: Qual é a tua abordagem de testes em frontend?" },
         { "from": "user", "text": "Unitários para lógica e integração para jornadas críticas." },
-        { "from": "bot", "text": "Pergunta 8: Dá um exemplo em que melhoraste developer experience." },
+         { "from": "bot", "text": "Pergunta 8: Dá um exemplo em que melhoraste a experiência de desenvolvimento." },
         { "from": "user", "text": "Criei regras partilhadas de lint e templates que reduziram retrabalho em PRs." },
-        { "from": "bot", "text": "Pergunta 9: Como monitorizas problemas após release?" },
-        { "from": "user", "text": "Com tracking de erros, dashboards e checks pós-release." },
+         { "from": "bot", "text": "Pergunta 9: Como monitorizas problemas após o lançamento?" },
+        { "from": "user", "text": "Com monitorização de erros, painéis e verificações pós-lançamento." },
         { "from": "bot", "text": "Pergunta 10: Porque queres esta vaga neste momento?" },
         { "from": "user", "text": "Porque o desafio do produto encaixa no meu perfil e objetivo de crescimento." },
         { "from": "bot", "text": "Excelente, obrigado. Entrevista concluída com sucesso." }
@@ -69,7 +69,7 @@
         "desc": "Email e telemóvel validados por código OTP — garantes que cada candidato é único e autêntico."
       },
       {
-        "title": "Dashboard de candidaturas",
+        "title": "Painel de candidaturas",
         "desc": "Visualiza todas as respostas organizadas numa interface limpa. Filtra, pesquisa e exporta com um clique."
       },
       {
@@ -147,11 +147,11 @@
     "viewDetails": "Ver detalhes",
     "startNow": "Começar agora",
     "processing": "A processar...",
-    "trial": "Todos os planos incluem 14 dias de trial gratuito. Sem cartão de crédito.",
+    "trial": "Todos os planos incluem 14 dias de teste gratuito. Sem cartão de crédito.",
     "plans": {
       "basic": {
         "description": "Para equipas pequenas que querem acelerar triagem inicial.",
-        "features": ["1 empresa", "Até 5 entrevistas ativas", "Perguntas ilimitadas", "Dashboard base", "Suporte por email"]
+        "features": ["1 empresa", "Até 5 entrevistas ativas", "Perguntas ilimitadas", "Painel base", "Suporte por email"]
       },
       "free": {
         "description": "Ideal para testar a plataforma com limites de uso.",

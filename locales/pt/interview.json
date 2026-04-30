@@ -1,8 +1,8 @@
 {
   "verificationForm": {
     "nameRequired": "Nome obrigatório.",
-    "firstNameRequired": "Nome obrigatório.",
-    "lastNameRequired": "Sobrenome obrigatório.",
+    "firstNameRequired": "Primeiro nome obrigatório.",
+    "lastNameRequired": "Apelido obrigatório.",
     "emailRequired": "Email obrigatório.",
     "emailInvalid": "Email inválido.",
     "phoneRequired": "Telemóvel obrigatório.",
@@ -13,10 +13,10 @@
     "intro": "Confirma os teus dados para receberes o código de verificação.",
     "nameLabel": "Nome completo",
     "namePlaceholder": "O teu nome",
-    "firstNameLabel": "Nome",
-    "firstNamePlaceholder": "O teu nome",
-    "lastNameLabel": "Sobrenome",
-    "lastNamePlaceholder": "O teu sobrenome",
+    "firstNameLabel": "Primeiro nome",
+    "firstNamePlaceholder": "O teu primeiro nome",
+    "lastNameLabel": "Apelido",
+    "lastNamePlaceholder": "O teu apelido",
     "emailLabel": "Email",
     "emailPlaceholder": "nome@email.com",
     "phoneLabel": "Telemóvel",
@@ -29,7 +29,7 @@
     "enterCodeError": "Introduz o código recebido no email.",
     "invalidCodeError": "Código inválido ou expirado.",
     "serverConnectionError": "Erro de ligação ao servidor.",
-    "resendError": "Erro ao reenviar código.",
+    "resendError": "Erro ao reenviar o código.",
     "resendConnectionError": "Erro de ligação ao servidor ao reenviar o código.",
     "resendSuccess": "Código reenviado. Verifica a tua caixa de entrada.",
     "title": "Verificação por código",
@@ -41,7 +41,7 @@
     "resending": "A reenviar…",
     "resendIn": "Reenviar em {{seconds}}s",
     "resendCode": "Reenviar código",
-    "secure": "O código expira em pouco tempo para proteger o teu acesso."
+    "secure": "O código expira rapidamente para manter o teu acesso seguro."
   },
   "chat": {
     "introSingular": "Bem-vindo à entrevista para {{title}}. Esta entrevista tem {{count}} pergunta. Quando estiveres pronto, clica em Começar.",
@@ -65,12 +65,12 @@
   },
   "companyPublic": {
     "meta": {
-      "notFound": "Empresa n�o encontrada",
+      "notFound": "Empresa não encontrada",
       "title": "{{companyName}} - Entrevistas",
       "descriptionFallback": "Conhece as entrevistas abertas da {{companyName}}."
     },
     "header": {
-      "publicPageAria": "Pagina publica de {{companyName}}",
+      "publicPageAria": "Página pública de {{companyName}}",
       "interviews": "Entrevistas",
       "howItWorks": "Como funciona",
       "viewInterviews": "Ver entrevistas"
@@ -79,61 +79,61 @@
       "interviewsNone": "Sem entrevistas abertas neste momento",
       "interviewsOpenSingular": "{{count}} entrevista aberta",
       "interviewsOpenPlural": "{{count}} entrevistas abertas",
-      "titlePrefix": "Constroi o teu futuro com a",
+      "titlePrefix": "Constrói o teu futuro com a",
       "descriptionFallback": "Explora as oportunidades abertas na {{companyName}}, responde ao teu ritmo e submete a tua candidatura em poucos minutos.",
-      "viewOpenRoles": "Ver vagas disponiveis",
+      "viewOpenRoles": "Ver vagas disponíveis",
       "howItWorks": "Como funciona"
     },
     "interviews": {
       "sectionTitle": "Vagas abertas",
-      "countNone": "Sem posicoes disponiveis de momento",
-      "countSingular": "{{count}} posicao disponivel",
-      "countPlural": "{{count}} posicoes disponiveis",
-      "emptyTitle": "Nenhuma vaga disponivel de momento.",
+      "countNone": "Sem posições disponíveis de momento",
+      "countSingular": "{{count}} vaga disponível",
+      "countPlural": "{{count}} vagas disponíveis",
+      "emptyTitle": "Nenhuma vaga disponível de momento.",
       "emptyDescription": "Volta em breve ou contacta o recrutador.",
-      "fallbackDescription": "Sem descri��o disponivel.",
+      "fallbackDescription": "Sem descrição disponível.",
       "questionSingular": "{{count}} pergunta",
       "questionPlural": "{{count}} perguntas",
       "start": "Iniciar",
       "startAria": "Iniciar entrevista: {{title}}",
       "workModeRemote": "Remoto",
-      "workModeHybrid": "Hibrido",
+      "workModeHybrid": "Híbrido",
       "workModeOnsite": "Presencial",
       "workModeFallback": "Entrevista",
-      "employmentTypeLabel": "Contrato",
-      "employmentTypeFullTime": "Full-time",
+      "employmentTypeLabel": "Tipo de contrato",
+      "employmentTypeFullTime": "Tempo inteiro",
       "employmentTypePartTime": "Part-time",
       "employmentTypeContract": "Contrato",
-      "employmentTypeInternship": "Estagio",
-      "employmentTypeFallback": "N�o definido",
+      "employmentTypeInternship": "Estágio",
+      "employmentTypeFallback": "Não definido",
       "contextLabel": "Contexto",
-      "experienceDesired": "Experi�ncia desejada",
-      "experienceNotRequired": "Experi�ncia n�o exigida"
+      "experienceDesired": "Experiência desejada",
+      "experienceNotRequired": "Experiência não exigida"
     },
     "howItWorks": {
       "ariaLabel": "Como funciona o processo",
-      "badge": "Processo simples e r�pido",
+      "badge": "Processo simples e rápido",
       "title": "Como funciona",
-      "description": "Em tres passos, escolhes uma vaga, respondes ao teu ritmo e submetes a candidatura sem complicacoes.",
+      "description": "Em três passos, escolhes uma vaga, respondes ao teu ritmo e submetes a candidatura sem complicações.",
       "stepLabel": "Passo",
       "steps": [
         {
           "num": "1",
           "title": "Escolhe a vaga",
-          "desc": "Ve as oportunidades abertas desta empresa e seleciona a que melhor combina com o teu perfil.",
-          "highlight": "Tudo centralizado num so sitio"
+          "desc": "Vê as oportunidades abertas desta empresa e seleciona a que melhor combina com o teu perfil.",
+          "highlight": "Tudo centralizado num só sítio"
         },
         {
           "num": "2",
           "title": "Responde ao teu ritmo",
-          "desc": "A candidatura acontece em formato conversacional, de forma mais simples, natural e sem complicacoes.",
-          "highlight": "Experi�ncia simples e guiada"
+          "desc": "A candidatura acontece em formato conversacional, de forma simples, natural e guiada.",
+          "highlight": "Experiência simples e guiada"
         },
         {
           "num": "3",
           "title": "Submete a candidatura",
-          "desc": "Depois de concluires, as tuas respostas ficam prontas para a equipa de recrutamento analisar.",
-          "highlight": "Envio r�pido e claro"
+          "desc": "Depois de concluíres, as tuas respostas ficam prontas para a equipa de recrutamento analisar.",
+          "highlight": "Envio rápido e claro"
         }
       ]
     }
