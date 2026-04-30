@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { withBasePath } from "@/lib/base-path";
 import { tAuth } from "@/lib/i18n/auth";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 type Props = {
   locale: string;
@@ -63,9 +64,9 @@ export default function InviteAcceptCard({ locale, token, isAuthenticated }: Pro
       </p>
 
       {error ? (
-        <div className="mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-          {error}
-        </div>
+        <Alert variant="destructive" className="mt-4">
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
       ) : null}
 
       {isAuthenticated ? (

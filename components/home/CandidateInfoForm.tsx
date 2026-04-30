@@ -10,6 +10,7 @@ import {
   validatePhoneNumberForCountry,
 } from "@/lib/validation";
 import { IconMail, IconPhone, IconShield } from "@/components/ui/Icons";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { withBasePath } from "@/lib/base-path";
 import { getCountryCallingCode } from "libphonenumber-js";
 
@@ -355,10 +356,12 @@ export default function CandidateInfoForm({
                 disabled={isLoading || isVerifyingCode}
                 autoFocus
               />
-              {errors.code && (
-                <p className="mt-2 text-sm text-red-500 text-center">
-                  {errors.code}
-                </p>
+            {errors.code && (
+                <Alert variant="destructive" className="mt-2 py-2">
+                  <AlertDescription className="text-center text-sm">
+                    {errors.code}
+                  </AlertDescription>
+                </Alert>
               )}
             </div>
 
@@ -411,19 +414,15 @@ export default function CandidateInfoForm({
           </form>
 
           {errors.general && (
-            <div className="mt-5 p-4 rounded-xl bg-red-50 border border-red-100">
-              <p className="text-sm text-red-600 text-center">
-                {errors.general}
-              </p>
-            </div>
+            <Alert variant="destructive" className="mt-5">
+              <AlertDescription className="text-center">{errors.general}</AlertDescription>
+            </Alert>
           )}
 
           {successMessage && (
-            <div className="mt-5 p-4 rounded-xl bg-green-50 border border-green-100">
-              <p className="text-sm text-green-600 text-center">
-                {successMessage}
-              </p>
-            </div>
+            <Alert variant="success" className="mt-5">
+              <AlertDescription className="text-center">{successMessage}</AlertDescription>
+            </Alert>
           )}
         </div>
       </div>
@@ -475,7 +474,9 @@ export default function CandidateInfoForm({
               />
             </div>
             {errors.email && (
-              <p className="text-sm text-red-500 pl-1">{errors.email}</p>
+              <Alert variant="destructive" className="py-2">
+                <AlertDescription className="text-sm">{errors.email}</AlertDescription>
+              </Alert>
             )}
           </div>
 
@@ -548,25 +549,25 @@ export default function CandidateInfoForm({
             </div>
 
             {errors.phone && (
-              <p className="text-sm text-red-500 pl-1">{errors.phone}</p>
+              <Alert variant="destructive" className="py-2">
+                <AlertDescription className="text-sm">{errors.phone}</AlertDescription>
+              </Alert>
             )}
           </div>
 
           {duplicateWarning && (
-            <div className="p-4 rounded-xl bg-amber-50 border border-amber-100">
-              <p className="text-sm text-amber-800 font-medium">
-                {duplicateWarning}
-              </p>
-              <p className="text-xs text-amber-700 mt-1">
+            <Alert variant="warning">
+              <AlertTitle>{duplicateWarning}</AlertTitle>
+              <AlertDescription className="text-xs mt-1">
                 Podes candidatar-te a outras vagas ou aguarda feedback.
-              </p>
-            </div>
+              </AlertDescription>
+            </Alert>
           )}
 
           {errors.general && (
-            <div className="p-4 rounded-xl bg-red-50 border border-red-100">
-              <p className="text-sm text-red-600">{errors.general}</p>
-            </div>
+            <Alert variant="destructive">
+              <AlertDescription>{errors.general}</AlertDescription>
+            </Alert>
           )}
 
           <button

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { withBasePath } from "@/lib/base-path";
 import { tAdmin } from "@/lib/i18n/admin";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 type CompanyMember = {
   id: string;
@@ -213,15 +214,15 @@ export default function AdminCompanyMembersManager({
   return (
     <div className="space-y-4">
       {error ? (
-        <div className="rounded-lg border border-red-200/80 bg-red-50/80 px-4 py-3 text-sm text-red-700">
-          {error}
-        </div>
+        <Alert variant="destructive">
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
       ) : null}
 
       {success ? (
-        <div className="rounded-lg border border-emerald-200/80 bg-emerald-50/80 px-4 py-3 text-sm text-emerald-700">
-          {success}
-        </div>
+        <Alert variant="success">
+          <AlertDescription>{success}</AlertDescription>
+        </Alert>
       ) : null}
 
       <form

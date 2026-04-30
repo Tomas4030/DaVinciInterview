@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { createPortal } from "react-dom";
 import { withBasePath } from "@/lib/base-path";
 import { tAdmin } from "@/lib/i18n/admin";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 type Props = {
   slug: string;
@@ -52,6 +53,7 @@ export default function DeleteInterviewButton({
   const [loading, setLoading] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     setMounted(true);
@@ -71,6 +73,7 @@ export default function DeleteInterviewButton({
   }, [showConfirmModal, loading]);
 
   async function handleConfirmDelete() {
+    setError("");
     setLoading(true);
 
     try {
@@ -83,14 +86,14 @@ export default function DeleteInterviewButton({
 
       const data = await response.json().catch(() => ({}));
       if (!response.ok) {
-        window.alert(data?.error || tAdmin(locale, "deleteInterview.defaultError"));
+        setError(data?.error || tAdmin(locale, "deleteInterview.defaultError"));
         return;
       }
 
       setShowConfirmModal(false);
       router.refresh();
     } catch {
-      window.alert(tAdmin(locale, "deleteInterview.networkError"));
+      setError(tAdmin(locale, "deleteInterview.networkError"));
     } finally {
       setLoading(false);
     }
@@ -131,6 +134,12 @@ export default function DeleteInterviewButton({
             <p className="mt-3 text-sm leading-6 text-[var(--c-muted)]">
               {tAdmin(locale, "deleteInterview.confirmBody")}
             </p>
+
+            {error ? (
+              <Alert variant="destructive" className="mt-4">
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            ) : null}
 
             <div className="mt-5 flex items-center justify-end gap-2">
               <button

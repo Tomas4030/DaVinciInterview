@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { withBasePath } from "@/lib/base-path";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 function slugify(value: string): string {
   return String(value || "")
@@ -165,9 +166,9 @@ export default function OnboardingCompanyForm({
   return (
     <form onSubmit={handleSubmit} className="card p-6 space-y-5">
       {submitError && (
-        <div className="bg-red-50 border border-red-100 text-red-600 text-sm rounded-xl px-4 py-3">
-          {submitError}
-        </div>
+        <Alert variant="destructive">
+          <AlertDescription>{submitError}</AlertDescription>
+        </Alert>
       )}
 
       <div className="">
@@ -222,7 +223,11 @@ export default function OnboardingCompanyForm({
         <p className="mt-1 text-xs text-gray-500">
           URL pública: /{effectiveSlug || "empresa"}
         </p>
-        {slugError && <p className="mt-1 text-xs text-red-600">{slugError}</p>}
+        {slugError && (
+          <Alert variant="destructive" className="mt-2 py-2 text-xs">
+            <AlertDescription>{slugError}</AlertDescription>
+          </Alert>
+        )}
         {!slugError && isSlugAvailable && (
           <p className="mt-1 text-xs text-emerald-600">Slug disponível</p>
         )}

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { withBasePath } from "@/lib/base-path";
 import { tAdmin } from "@/lib/i18n/admin";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 type Props = {
   slug: string;
@@ -66,15 +67,15 @@ export default function AdminCompanySettingsForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {error ? (
-        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-          {error}
-        </div>
+        <Alert variant="destructive">
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
       ) : null}
 
       {success ? (
-        <div className="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
-          {success}
-        </div>
+        <Alert variant="success">
+          <AlertDescription>{success}</AlertDescription>
+        </Alert>
       ) : null}
 
       <div className="space-y-4">

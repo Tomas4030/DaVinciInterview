@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { createPortal } from "react-dom";
 import { withBasePath } from "@/lib/base-path";
 import { tAdmin } from "@/lib/i18n/admin";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 type Props = {
   slug: string;
@@ -33,6 +34,7 @@ export default function ArchiveInterviewButton({
   const [loading, setLoading] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [error, setError] = useState("");
   const isArchived = currentStatus === "archived";
 
   useEffect(() => {
@@ -53,6 +55,7 @@ export default function ArchiveInterviewButton({
   }, [showConfirmModal, loading]);
 
   async function handleArchive() {
+    setError("");
     setLoading(true);
     try {
       const response = await fetch(withBasePath(`/api/companies/${slug}/interviews/${interviewId}`), {
@@ -62,7 +65,7 @@ export default function ArchiveInterviewButton({
       });
       const data = await response.json().catch(() => ({}));
       if (!response.ok) {
-        window.alert(
+        setError(
           data?.error ||
             tAdmin(
               locale,
@@ -76,7 +79,7 @@ export default function ArchiveInterviewButton({
       setShowConfirmModal(false);
       router.refresh();
     } catch {
-      window.alert(
+      setError(
         tAdmin(
           locale,
           isArchived
@@ -141,6 +144,12 @@ export default function ArchiveInterviewButton({
                 ? tAdmin(locale, "archiveInterview.unarchiveConfirmBody")
                 : tAdmin(locale, "archiveInterview.confirmBody")}
             </p>
+
+            {error ? (
+              <Alert variant="destructive" className="mt-4">
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            ) : null}
 
             <div className="mt-5 flex items-center justify-end gap-2">
               <button

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { withBasePath } from "@/lib/base-path";
 import { tAdmin } from "@/lib/i18n/admin";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   normalizeInterviewCardTheme,
   normalizeInterviewEmploymentType,
@@ -317,9 +318,9 @@ export default function AdminInterviewForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-6 pb-0">
       {error ? (
-        <div className="rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-sm font-medium text-red-700">
-          {error}
-        </div>
+        <Alert variant="destructive" className="rounded-2xl px-5 py-4 text-sm font-medium">
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
       ) : null}
 
       <div className="grid grid-cols-1 gap-5 xl:grid-cols-2">

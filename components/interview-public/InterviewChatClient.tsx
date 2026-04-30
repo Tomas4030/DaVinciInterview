@@ -4,6 +4,7 @@ import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { withBasePath } from "@/lib/base-path";
 import { tInterview } from "@/lib/i18n/interview";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 type QuestionItem = {
   id: number;
@@ -659,7 +660,9 @@ export default function InterviewChatClient({
           )}
 
           {error ? (
-            <p className="mt-2 text-sm text-red-600 text-center">{error}</p>
+            <Alert variant="destructive" className="mt-2">
+              <AlertDescription className="text-center">{error}</AlertDescription>
+            </Alert>
           ) : null}
         </div>
       </div>

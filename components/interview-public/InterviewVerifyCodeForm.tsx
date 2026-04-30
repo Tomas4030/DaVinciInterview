@@ -5,11 +5,11 @@ import { useRouter } from "next/navigation";
 import { withBasePath } from "@/lib/base-path";
 import { tInterview } from "@/lib/i18n/interview";
 import {
-  IconAlertCircle,
   IconArrowRight,
   IconMail,
   IconShield,
 } from "@/components/ui/Icons";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 type Props = {
   locale: string;
@@ -262,17 +262,18 @@ export default function InterviewVerifyCodeForm({
               />
 
               {error && (
-                <div className="flex items-center gap-1.5 text-red-500">
-                  <IconAlertCircle />
-                  <p className="text-[11px] font-medium">{error}</p>
-                </div>
+                <Alert variant="destructive" className="py-2">
+                  <AlertDescription className="text-[11px] font-medium">
+                    {error}
+                  </AlertDescription>
+                </Alert>
               )}
             </div>
 
             {successMessage && (
-              <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2.5">
-                <p className="text-[12px] text-emerald-700">{successMessage}</p>
-              </div>
+              <Alert variant="success" className="px-3 py-2.5">
+                <AlertDescription className="text-[12px]">{successMessage}</AlertDescription>
+              </Alert>
             )}
 
             <button

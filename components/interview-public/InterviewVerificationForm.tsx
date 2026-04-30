@@ -14,12 +14,12 @@ import examples from "libphonenumber-js/mobile/examples";
 import { withBasePath } from "@/lib/base-path";
 import { tInterview } from "@/lib/i18n/interview";
 import {
-  IconAlertCircle,
   IconArrowRight,
   IconMail,
   IconShield,
   IconUser,
 } from "@/components/ui/Icons";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 type Props = {
   locale: string;
@@ -92,10 +92,11 @@ function Field({
       </label>
       {children}
       {error && (
-        <div className="flex items-center gap-1.5 text-red-500">
-          <IconAlertCircle />
-          <p className="text-[12px] font-medium">{error}</p>
-        </div>
+        <Alert variant="destructive" className="py-2">
+          <AlertDescription className="text-[12px] font-medium">
+            {error}
+          </AlertDescription>
+        </Alert>
       )}
     </div>
   );
@@ -445,20 +446,17 @@ export default function InterviewVerificationForm({
             </Field>
 
             {globalError && (
-              <div className="flex items-start gap-2.5 rounded-xl border border-red-200 bg-red-50 px-4 py-3">
-                <span className="mt-px shrink-0 text-red-400">
-                  <IconAlertCircle />
-                </span>
-                <p className="text-[13px] leading-snug text-red-700">
+              <Alert variant="destructive">
+                <AlertDescription className="text-[13px] leading-snug">
                   {globalError}
-                </p>
-              </div>
+                </AlertDescription>
+              </Alert>
             )}
 
             {info && (
-              <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3">
-                <p className="text-[13px] text-amber-800">{info}</p>
-              </div>
+              <Alert variant="warning">
+                <AlertDescription className="text-[13px]">{info}</AlertDescription>
+              </Alert>
             )}
 
             <button

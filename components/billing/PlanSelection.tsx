@@ -6,6 +6,7 @@ import { withBasePath } from "@/lib/base-path";
 import { normalizeLocale } from "@/lib/i18n/locales";
 import PricingSection from "@/components/home/PricingSection";
 import type { PricingPlan } from "@/lib/pricing-plans";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 type Props = {
   locale: string;
@@ -65,9 +66,9 @@ export default function PlanSelection({ locale, userId }: Props) {
   return (
     <div className="space-y-6">
       {error ? (
-        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-          {error}
-        </div>
+        <Alert variant="destructive">
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
       ) : null}
 
       <PricingSection

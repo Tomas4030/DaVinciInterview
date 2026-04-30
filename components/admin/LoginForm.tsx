@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { withBasePath } from "@/lib/base-path";
 import { tAuth } from "@/lib/i18n/auth";
 import { normalizeLocale } from "@/lib/i18n/locales";
+import AlertPopup from "@/components/ui/alert-popup";
 
 type LoginFormProps = {
   locale?: string;
@@ -96,11 +97,9 @@ export default function LoginForm({ locale = "en", nextPath = "" }: LoginFormPro
 
   return (
     <form onSubmit={handleLogin} className="card p-6 space-y-4">
-      {erro && (
-        <div className="bg-red-50 border border-red-100 text-red-600 text-sm rounded-xl px-4 py-3">
-          {erro}
-        </div>
-      )}
+      {erro ? (
+        <AlertPopup message={erro} variant="destructive" onClose={() => setErro("")} />
+      ) : null}
 
       <div>
         <label
@@ -161,11 +160,9 @@ export default function LoginForm({ locale = "en", nextPath = "" }: LoginFormPro
         </div>
       )}
 
-      {info && (
-        <div className="bg-amber-50 border border-amber-200 text-amber-700 text-sm rounded-xl px-4 py-3">
-          {info}
-        </div>
-      )}
+      {info ? (
+        <AlertPopup message={info} variant="default" onClose={() => setInfo("")} />
+      ) : null}
 
       <button
         type="submit"
