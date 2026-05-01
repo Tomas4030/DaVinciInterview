@@ -1,7 +1,7 @@
 import "server-only";
 import { query } from "@/lib/db";
 import { hashPassword } from "@/lib/password";
-import { usdToEur } from "@/lib/currency";
+import { USD_TO_EUR_RATE, usdToEur } from "@/lib/currency";
 
 export type SuperAdminRecord = {
   id: string;
@@ -231,6 +231,10 @@ export async function listCompaniesUsageSummary(filters?: {
   from?: string;
   to?: string;
   q?: string;
+  plan?: string;
+  minCalls?: number;
+  minCostEur?: number;
+  minTokens?: number;
   page?: number;
   pageSize?: number;
 }): Promise<{
@@ -258,6 +262,28 @@ export async function listCompaniesUsageSummary(filters?: {
     companyValues.push(like, like);
   }
 
+  if (filters?.plan) {
+    whereCompanies.push("c.plan = ?");
+    companyValues.push(filters.plan);
+  }
+
+  if (Number.isFinite(filters?.minCalls)) {
+    whereCompanies.push("COALESCE(u.total_calls_30d, 0) >= ?");
+    companyValues.push(Math.max(Number(filters?.minCalls || 0), 0));
+  }
+
+  if (Number.isFinite(filters?.minTokens)) {
+    whereCompanies.push("COALESCE(u.total_tokens_30d, 0) >= ?");
+    companyValues.push(Math.max(Number(filters?.minTokens || 0), 0));
+  }
+
+  if (Number.isFinite(filters?.minCostEur)) {
+    const minCostEur = Math.max(Number(filters?.minCostEur || 0), 0);
+    const minCostUsd = USD_TO_EUR_RATE > 0 ? minCostEur / USD_TO_EUR_RATE : minCostEur;
+    whereCompanies.push("COALESCE(u.total_cost_30d_usd, 0) >= ?");
+    companyValues.push(minCostUsd);
+  }
+
   const pageSize = Math.min(Math.max(Number(filters?.pageSize || 10), 1), 500);
   const page = Math.max(Number(filters?.page || 1), 1);
   const offset = (page - 1) * pageSize;
@@ -266,9 +292,19 @@ export async function listCompaniesUsageSummary(filters?: {
     `
     SELECT COUNT(*) AS total
     FROM companies c
+    LEFT JOIN (
+      SELECT
+        company_id,
+        COUNT(*) AS total_calls_30d,
+        COALESCE(SUM(total_tokens), 0) AS total_tokens_30d,
+        COALESCE(SUM(cost_usd), 0) AS total_cost_30d_usd
+      FROM ai_usage_logs
+      WHERE DATE(created_at) BETWEEN ? AND ?
+      GROUP BY company_id
+    ) u ON u.company_id = c.id
     WHERE ${whereCompanies.join(" AND ")}
     `,
-    companyValues,
+    [from, to, ...companyValues],
   );
 
   const [rows] = await query<{
