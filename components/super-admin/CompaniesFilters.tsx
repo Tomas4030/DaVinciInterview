@@ -5,11 +5,19 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 type Props = {
   q: string;
-  from: string;
-  to: string;
+  plan: string;
+  minCalls: string;
+  minCost: string;
+  minTokens: string;
 };
 
-export default function CompaniesFilters({ q, from, to }: Props) {
+export default function CompaniesFilters({
+  q,
+  plan,
+  minCalls,
+  minCost,
+  minTokens,
+}: Props) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -20,19 +28,9 @@ export default function CompaniesFilters({ q, from, to }: Props) {
     setQuery(q);
   }, [q]);
 
-  const today = useMemo(() => new Date(), []);
-
-  function formatDate(date: Date): string {
-    return date.toISOString().slice(0, 10);
-  }
-
-  function applyQuickRange(days: number) {
-    const toDate = new Date(today);
-    const fromDate = new Date(today);
-    fromDate.setDate(fromDate.getDate() - days);
-    updateParam("from", formatDate(fromDate));
-    updateParam("to", formatDate(toDate));
-  }
+  const hasActiveFilters = useMemo(() => {
+    return Boolean(query || plan || minCalls || minCost || minTokens);
+  }, [query, plan, minCalls, minCost, minTokens]);
 
   function updateParam(key: string, value: string) {
     const params = new URLSearchParams(searchParams.toString());
@@ -56,34 +54,70 @@ export default function CompaniesFilters({ q, from, to }: Props) {
     return () => clearTimeout(timeout);
   }, [query, searchParams]);
 
+  function clearFilters() {
+    startTransition(() => {
+      router.replace(pathname);
+    });
+  }
+
   return (
-    <div className="flex flex-wrap items-center gap-2">
-      <input
-        value={query}
-        onChange={(event) => setQuery(event.target.value)}
-        placeholder="Pesquisar empresa..."
-        className="h-10 rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400"
-      />
-      <input
-        type="date"
-        defaultValue={from}
-        onChange={(event) => updateParam("from", event.target.value)}
-        className="h-10 rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-700 shadow-sm"
-      />
-      <input
-        type="date"
-        defaultValue={to}
-        onChange={(event) => updateParam("to", event.target.value)}
-        className="h-10 rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-700 shadow-sm"
-      />
-      <div className="flex items-center gap-1">
-        <button onClick={() => applyQuickRange(7)} className="h-10 rounded-xl border border-slate-200 bg-white px-3 text-xs font-medium text-slate-700">7d</button>
-        <button onClick={() => applyQuickRange(30)} className="h-10 rounded-xl border border-slate-200 bg-white px-3 text-xs font-medium text-slate-700">30d</button>
-        <button onClick={() => applyQuickRange(90)} className="h-10 rounded-xl border border-slate-200 bg-white px-3 text-xs font-medium text-slate-700">90d</button>
+    <section className="rounded-2xl border border-slate-200 bg-white p-4">
+      <div className="grid gap-2 md:grid-cols-2 xl:grid-cols-[minmax(220px,1.5fr)_minmax(130px,0.8fr)_minmax(120px,0.7fr)_minmax(160px,0.9fr)_minmax(130px,0.7fr)]">
+        <input
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+          placeholder="Pesquisar empresa..."
+          className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-slate-300"
+        />
+        <select
+          defaultValue={plan}
+          onChange={(event) => updateParam("plan", event.target.value)}
+          className="h-10 rounded-lg border border-slate-200 bg-white px-2.5 text-sm text-slate-700 outline-none transition focus:border-slate-300"
+        >
+          <option value="">Todos os planos</option>
+          <option value="basic">Basic</option>
+          <option value="pro">Pro</option>
+          <option value="enterprise">Enterprise</option>
+        </select>
+        <input
+          type="number"
+          min="0"
+          defaultValue={minCalls}
+          onChange={(event) => updateParam("minCalls", event.target.value)}
+          placeholder="Chamadas min"
+          className="h-10 rounded-lg border border-slate-200 bg-white px-2.5 text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-slate-300"
+        />
+        <input
+          type="number"
+          min="0"
+          step="0.01"
+          defaultValue={minCost}
+          onChange={(event) => updateParam("minCost", event.target.value)}
+          placeholder="Custo min EUR"
+          className="h-10 rounded-lg border border-slate-200 bg-white px-2.5 text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-slate-300"
+        />
+        <input
+          type="number"
+          min="0"
+          defaultValue={minTokens}
+          onChange={(event) => updateParam("minTokens", event.target.value)}
+          placeholder="Tokens min"
+          className="h-10 rounded-lg border border-slate-200 bg-white px-2.5 text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-slate-300"
+        />
       </div>
-      <span className={`text-xs text-slate-500 transition-opacity ${isPending ? "opacity-100" : "opacity-0"}`}>
-        A atualizar...
-      </span>
-    </div>
+
+      <div className="mt-3 flex items-center justify-between">
+        <p className="text-xs text-slate-400">{isPending ? "A atualizar..." : " "}</p>
+        {hasActiveFilters ? (
+          <button
+            type="button"
+            onClick={clearFilters}
+            className="text-xs font-medium text-slate-500 transition hover:text-slate-700"
+          >
+            Limpar filtros
+          </button>
+        ) : null}
+      </div>
+    </section>
   );
 }

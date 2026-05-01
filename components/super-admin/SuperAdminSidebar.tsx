@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import SuperAdminLogoutButton from "@/components/super-admin/SuperAdminLogoutButton";
 
 type Section = "overview" | "companies" | "ai-usage" | "admins";
@@ -19,8 +20,14 @@ export default function SuperAdminSidebar({ active }: Props) {
     <aside className="sticky top-0 hidden h-screen border-r border-[#eaeaea] bg-[#fbfbfa] px-5 py-6 lg:flex lg:flex-col">
       <div className="mb-10">
         <div className="flex items-center gap-2">
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#111111] text-xs font-bold text-white">
-            D
+          <span className="relative h-12 w-12 overflow-hidden">
+            <Image
+              src="/logo.webp"
+              alt="MatchWorky logo"
+              fill
+              className="object-contain"
+              sizes="48px"
+            />
           </span>
           <div>
             <p className="text-sm font-semibold tracking-tight text-[#111111]">

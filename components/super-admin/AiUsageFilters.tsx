@@ -26,19 +26,11 @@ export default function AiUsageFilters(props: Props) {
     setQuery(props.q);
   }, [props.q]);
 
-  const today = useMemo(() => new Date(), []);
-
-  function formatDate(date: Date): string {
-    return date.toISOString().slice(0, 10);
-  }
-
-  function applyQuickRange(days: number) {
-    const toDate = new Date(today);
-    const fromDate = new Date(today);
-    fromDate.setDate(fromDate.getDate() - days);
-    updateParam("from", formatDate(fromDate));
-    updateParam("to", formatDate(toDate));
-  }
+  const hasActiveFilters = useMemo(() => {
+    return Boolean(
+      props.companyId || props.feature || props.model || props.q || props.from || props.to,
+    );
+  }, [props.companyId, props.feature, props.model, props.q, props.from, props.to]);
 
   function updateParam(key: string, value: string) {
     const params = new URLSearchParams(searchParams.toString());
@@ -62,13 +54,19 @@ export default function AiUsageFilters(props: Props) {
     return () => clearTimeout(timeout);
   }, [query, searchParams]);
 
+  function clearFilters() {
+    startTransition(() => {
+      router.replace(pathname);
+    });
+  }
+
   return (
-    <section className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-[0_8px_30px_rgba(15,23,42,0.04)]">
-      <div className="grid gap-3 lg:grid-cols-[1fr,1fr,1fr,1fr,auto,auto]">
+    <section className="rounded-2xl border border-slate-200 bg-white p-4">
+      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-6">
         <select
           defaultValue={props.companyId}
           onChange={(event) => updateParam("companyId", event.target.value)}
-          className="h-11 rounded-xl border border-slate-200 px-4 text-sm"
+          className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 outline-none transition focus:border-slate-300"
         >
           <option value="">Todas as empresas</option>
           {props.companies.map((company) => (
@@ -79,7 +77,7 @@ export default function AiUsageFilters(props: Props) {
         <select
           defaultValue={props.feature}
           onChange={(event) => updateParam("feature", event.target.value)}
-          className="h-11 rounded-xl border border-slate-200 px-4 text-sm"
+          className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 outline-none transition focus:border-slate-300"
         >
           <option value="">Todas as features</option>
           {props.features.map((feature) => (
@@ -90,7 +88,7 @@ export default function AiUsageFilters(props: Props) {
         <select
           defaultValue={props.model}
           onChange={(event) => updateParam("model", event.target.value)}
-          className="h-11 rounded-xl border border-slate-200 px-4 text-sm"
+          className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 outline-none transition focus:border-slate-300"
         >
           <option value="">Todos os modelos</option>
           {props.models.map((model) => (
@@ -102,33 +100,36 @@ export default function AiUsageFilters(props: Props) {
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           placeholder="Pesquisar..."
-          className="h-11 rounded-xl border border-slate-200 px-4 text-sm outline-none"
+          className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 outline-none transition focus:border-slate-300"
         />
 
         <input
           type="date"
           defaultValue={props.from}
           onChange={(event) => updateParam("from", event.target.value)}
-          className="h-11 rounded-xl border border-slate-200 px-3 text-sm"
+          className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 outline-none transition focus:border-slate-300"
         />
 
         <input
           type="date"
           defaultValue={props.to}
           onChange={(event) => updateParam("to", event.target.value)}
-          className="h-11 rounded-xl border border-slate-200 px-3 text-sm"
+          className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 outline-none transition focus:border-slate-300"
         />
-
-        <div className="flex items-center gap-1 lg:col-span-2">
-          <button onClick={() => applyQuickRange(7)} className="h-11 rounded-xl border border-slate-200 bg-white px-3 text-xs font-medium text-slate-700">7d</button>
-          <button onClick={() => applyQuickRange(30)} className="h-11 rounded-xl border border-slate-200 bg-white px-3 text-xs font-medium text-slate-700">30d</button>
-          <button onClick={() => applyQuickRange(90)} className="h-11 rounded-xl border border-slate-200 bg-white px-3 text-xs font-medium text-slate-700">90d</button>
-        </div>
       </div>
 
-      <p className={`mt-2 text-xs text-slate-500 transition-opacity ${isPending ? "opacity-100" : "opacity-0"}`}>
-        A atualizar...
-      </p>
+      <div className="mt-3 flex items-center justify-between">
+        <p className="text-xs text-slate-400">{isPending ? "A atualizar..." : " "}</p>
+        {hasActiveFilters ? (
+          <button
+            type="button"
+            onClick={clearFilters}
+            className="text-xs font-medium text-slate-500 transition hover:text-slate-700"
+          >
+            Limpar filtros
+          </button>
+        ) : null}
+      </div>
     </section>
   );
 }
