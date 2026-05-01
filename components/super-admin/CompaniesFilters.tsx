@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState, useTransition } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
+import { useQueryParamUpdater } from "@/lib/use-query-param-updater";
 
 type Props = {
   q: string;
@@ -18,10 +18,7 @@ export default function CompaniesFilters({
   minCost,
   minTokens,
 }: Props) {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const [isPending, startTransition] = useTransition();
+  const { isPending, searchParams, updateParams, replacePath } = useQueryParamUpdater();
   const [query, setQuery] = useState(q);
 
   useEffect(() => {
@@ -33,14 +30,7 @@ export default function CompaniesFilters({
   }, [query, plan, minCalls, minCost, minTokens]);
 
   function updateParam(key: string, value: string) {
-    const params = new URLSearchParams(searchParams.toString());
-    if (value) params.set(key, value);
-    else params.delete(key);
-    params.set("page", "1");
-
-    startTransition(() => {
-      router.replace(`${pathname}?${params.toString()}`);
-    });
+    updateParams({ [key]: value }, { resetPage: true });
   }
 
   useEffect(() => {
@@ -55,9 +45,7 @@ export default function CompaniesFilters({
   }, [query, searchParams]);
 
   function clearFilters() {
-    startTransition(() => {
-      router.replace(pathname);
-    });
+    replacePath();
   }
 
   return (

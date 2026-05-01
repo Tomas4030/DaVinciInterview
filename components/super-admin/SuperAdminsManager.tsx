@@ -198,13 +198,23 @@ export default function SuperAdminsManager({ initialAdmins }: Props) {
               Mostrando {adminsFiltered.length} super admins
             </span>
             <div className="flex items-center gap-2 text-sm">
-              <button className="rounded-lg bg-slate-100 px-3 py-1 text-slate-400">
+              <button
+                type="button"
+                disabled
+                aria-disabled="true"
+                className="cursor-not-allowed rounded-lg bg-slate-100 px-3 py-1 text-slate-300"
+              >
                 ‹
               </button>
               <button className="rounded-lg bg-indigo-600 px-3 py-1 text-white">
                 1
               </button>
-              <button className="rounded-lg bg-slate-100 px-3 py-1 text-slate-400">
+              <button
+                type="button"
+                disabled
+                aria-disabled="true"
+                className="cursor-not-allowed rounded-lg bg-slate-100 px-3 py-1 text-slate-300"
+              >
                 ›
               </button>
             </div>

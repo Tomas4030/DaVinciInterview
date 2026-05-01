@@ -1,14 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSuperAdminSessionFromRequest } from "@/lib/super-admin-context";
 import { listCompaniesUsageSummary } from "@/lib/queries/super-admins";
-
-function csvEscape(value: string | number): string {
-  const stringValue = String(value ?? "");
-  if (stringValue.includes(",") || stringValue.includes("\"") || stringValue.includes("\n")) {
-    return `"${stringValue.replace(/\"/g, '""')}"`;
-  }
-  return stringValue;
-}
+import { csvEscape } from "@/lib/export-utils";
 
 export async function GET(request: NextRequest) {
   const session = getSuperAdminSessionFromRequest(request);

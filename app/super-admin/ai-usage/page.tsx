@@ -5,23 +5,14 @@ import DataTable from "@/components/super-admin/DataTable";
 import StatusBadge from "@/components/super-admin/StatusBadge";
 import AiUsageFilters from "@/components/super-admin/AiUsageFilters";
 import AiUsageExportDropdown from "@/components/super-admin/AiUsageExportDropdown";
+import TablePaginationLinks from "@/components/super-admin/TablePaginationLinks";
 import { getSuperAdminSessionFromServerCookies } from "@/lib/super-admin-context";
 import {
   listAiUsageFilterOptions,
   listAiUsageLogs,
 } from "@/lib/queries/super-admins";
 import { formatEur, formatNumber } from "@/lib/currency";
-
-function formatDateTime(value: string | Date | null | undefined): string {
-  if (!value) return "-";
-  const date = value instanceof Date ? value : new Date(value);
-  if (!Number.isFinite(date.getTime())) return String(value);
-
-  return new Intl.DateTimeFormat("pt-PT", {
-    dateStyle: "short",
-    timeStyle: "short",
-  }).format(date);
-}
+import { formatDateTimePt } from "@/lib/formatting";
 
 type Props = {
   searchParams?: {
@@ -76,6 +67,8 @@ export default async function SuperAdminAiUsagePage({ searchParams }: Props) {
     { calls: 0, prompt: 0, completion: 0, total: 0, cost: 0 },
   );
 
+  const listParams = { companyId, feature, model, from, to, q };
+
   return (
     <SuperAdminShell active="ai-usage">
       <div className="space-y-6">
@@ -84,7 +77,7 @@ export default async function SuperAdminAiUsagePage({ searchParams }: Props) {
             <h1 className="text-2xl font-bold tracking-tight text-slate-950">
               Uso de IA
             </h1>
-            <p className="mt-1 text-sm text-slate-500">
+            <p className="mt-1 text-sm text-[#787774]">
               Logs detalhados de uso de IA na plataforma
             </p>
           </div>
@@ -155,30 +148,19 @@ export default async function SuperAdminAiUsagePage({ searchParams }: Props) {
               <span className="text-sm text-slate-500">
                 Mostrando {rows.length} de {result.total} logs
               </span>
-              <div className="flex items-center gap-2 text-sm">
-                <a
-                  href={`/super-admin/ai-usage?${new URLSearchParams({ companyId, feature, model, from, to, q, page: String(Math.max(page - 1, 1)) }).toString()}`}
-                  className="rounded-lg bg-slate-100 px-3 py-1 text-slate-500"
-                >
-                  ‹
-                </a>
-                <span className="rounded-lg bg-indigo-600 px-3 py-1 text-white">
-                  {page}
-                </span>
-                <a
-                  href={`/super-admin/ai-usage?${new URLSearchParams({ companyId, feature, model, from, to, q, page: String(Math.min(page + 1, totalPages)) }).toString()}`}
-                  className="rounded-lg bg-slate-100 px-3 py-1 text-slate-500"
-                >
-                  ›
-                </a>
-              </div>
+              <TablePaginationLinks
+                basePath="/super-admin/ai-usage"
+                params={listParams}
+                page={page}
+                totalPages={totalPages}
+              />
             </>
           }
         >
           {rows.map((row) => (
             <tr key={row.id}>
               <td className="whitespace-nowrap px-5 py-4 text-slate-700">
-                {formatDateTime(row.created_at)}
+                {formatDateTimePt(row.created_at)}
               </td>
               <td className="px-5 py-4 font-medium text-slate-800">
                 {row.company_name || "-"}

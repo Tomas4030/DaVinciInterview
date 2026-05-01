@@ -4,9 +4,12 @@ import MetricCard from "@/components/super-admin/MetricCard";
 import DataTable from "@/components/super-admin/DataTable";
 import StatusBadge from "@/components/super-admin/StatusBadge";
 import CompaniesFilters from "@/components/super-admin/CompaniesFilters";
+import TablePaginationLinks from "@/components/super-admin/TablePaginationLinks";
 import { getSuperAdminSessionFromServerCookies } from "@/lib/super-admin-context";
 import { listCompaniesUsageSummary } from "@/lib/queries/super-admins";
 import { formatEur, formatNumber } from "@/lib/currency";
+import { getDefaultLast30DaysRange } from "@/lib/date-range";
+import { toQueryString } from "@/lib/url-query";
 
 const PLAN_PRICE: Record<string, number> = {
   basic: 49,
@@ -38,23 +41,14 @@ type Props = {
   };
 };
 
-function defaultFromDate(): string {
-  const date = new Date();
-  date.setDate(date.getDate() - 30);
-  return date.toISOString().slice(0, 10);
-}
-
-function defaultToDate(): string {
-  return new Date().toISOString().slice(0, 10);
-}
-
 export default async function SuperAdminCompaniesPage({ searchParams }: Props) {
   const session = getSuperAdminSessionFromServerCookies();
   if (!session) redirect("/super-admin/login");
 
   const q = String(searchParams?.q || "");
-  const from = defaultFromDate();
-  const to = defaultToDate();
+  const defaultRange = getDefaultLast30DaysRange();
+  const from = defaultRange.from;
+  const to = defaultRange.to;
   const plan = String(searchParams?.plan || "");
   const minCalls = String(searchParams?.minCalls || "");
   const minCost = String(searchParams?.minCost || "");
@@ -86,6 +80,8 @@ export default async function SuperAdminCompaniesPage({ searchParams }: Props) {
 
   const avgCost = rows.length ? totalCost / rows.length : 0;
 
+  const listParams = { q, plan, minCalls, minCost, minTokens };
+
   return (
     <SuperAdminShell active="companies">
       <div className="space-y-6">
@@ -94,13 +90,13 @@ export default async function SuperAdminCompaniesPage({ searchParams }: Props) {
             <h1 className="text-2xl font-bold tracking-tight text-slate-950">
               Empresas
             </h1>
-            <p className="mt-1 text-sm text-slate-500">
+            <p className="mt-1 text-sm text-[#787774]">
               Consumo de IA por empresa
             </p>
           </div>
 
           <a
-            href={`/api/super-admin/companies/export?${new URLSearchParams({ q, plan, minCalls, minCost, minTokens }).toString()}`}
+            href={`/api/super-admin/companies/export?${toQueryString(listParams)}`}
             className="inline-flex h-10 items-center rounded-lg border border-slate-200 bg-white px-4 text-sm font-medium text-slate-700 transition hover:border-slate-300 hover:text-slate-900"
           >
             Exportar
@@ -151,17 +147,12 @@ export default async function SuperAdminCompaniesPage({ searchParams }: Props) {
                 <span className="text-sm text-slate-500">
                   Mostrando {rows.length} de {result.total} empresas
                 </span>
-                <div className="flex items-center gap-2 text-sm">
-                  <a href={`/super-admin/companies?${new URLSearchParams({ q, plan, minCalls, minCost, minTokens, page: String(Math.max(page - 1, 1)) }).toString()}`} className="rounded-lg bg-slate-100 px-3 py-1 text-slate-500">
-                    ‹
-                  </a>
-                  <span className="rounded-lg bg-indigo-600 px-3 py-1 text-white">
-                    {page}
-                  </span>
-                  <a href={`/super-admin/companies?${new URLSearchParams({ q, plan, minCalls, minCost, minTokens, page: String(Math.min(page + 1, totalPages)) }).toString()}`} className="rounded-lg bg-slate-100 px-3 py-1 text-slate-500">
-                    ›
-                  </a>
-                </div>
+                <TablePaginationLinks
+                  basePath="/super-admin/companies"
+                  params={listParams}
+                  page={page}
+                  totalPages={totalPages}
+                />
               </>
             }
         >

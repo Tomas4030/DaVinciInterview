@@ -4,6 +4,8 @@ import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
 import { getSuperAdminSessionFromRequest } from "@/lib/super-admin-context";
 import { formatEur, formatNumber } from "@/lib/currency";
 import { listAiUsageLogs } from "@/lib/queries/super-admins";
+import { csvEscape, getIsoDateStamp } from "@/lib/export-utils";
+import { formatDateTimePt } from "@/lib/formatting";
 
 type ExportFormat = "xlsx" | "csv" | "pdf" | "json";
 
@@ -21,25 +23,6 @@ type AiUsageRow = {
   cost_eur: number;
   latency_ms: number | null;
 };
-
-function formatDateTimePt(value: string | Date | null | undefined): string {
-  if (!value) return "-";
-  const date = value instanceof Date ? value : new Date(value);
-  if (!Number.isFinite(date.getTime())) return String(value);
-  return new Intl.DateTimeFormat("pt-PT", { dateStyle: "short", timeStyle: "short" }).format(date);
-}
-
-function csvEscape(value: string | number): string {
-  const stringValue = String(value ?? "");
-  if (stringValue.includes(",") || stringValue.includes("\"") || stringValue.includes("\n")) {
-    return `"${stringValue.replace(/\"/g, '""')}"`;
-  }
-  return stringValue;
-}
-
-function getIsoDateStamp(): string {
-  return new Date().toISOString().slice(0, 10);
-}
 
 function getPeriodLabel(from: string, to: string): string {
   if (from && to) return `${from} a ${to}`;
