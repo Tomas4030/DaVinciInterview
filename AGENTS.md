@@ -3,7 +3,7 @@
 ## Quick reality check
 - Treat this as a **single Next.js 14 app** (App Router), not a monorepo.
 - `README.md` is partially stale: it still describes Supabase, but runtime data access is MySQL via `lib/db.ts` + `lib/queries/*`.
-- `lib/supabase.ts`, `lib/supabase-server.ts`, and `lib/supabase-admin.ts` are intentional hard-fail deprecations.
+- `lib/supabase.ts` is an intentional hard-fail deprecation sentinel after the Supabase -> MySQL migration.
 
 ## Commands that actually matter
 - Install: `npm install`
