@@ -21,6 +21,16 @@ export async function GET(request: NextRequest) {
     q: searchParams.get("q") || "",
     from: searchParams.get("from") || "",
     to: searchParams.get("to") || "",
+    plan: searchParams.get("plan") || "",
+    minCalls: searchParams.get("minCalls")
+      ? Number(searchParams.get("minCalls"))
+      : undefined,
+    minCostEur: searchParams.get("minCost")
+      ? Number(searchParams.get("minCost"))
+      : undefined,
+    minTokens: searchParams.get("minTokens")
+      ? Number(searchParams.get("minTokens"))
+      : undefined,
     page: 1,
     pageSize: 5000,
   });

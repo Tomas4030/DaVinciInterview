@@ -30,8 +30,10 @@ function statusTone(status?: string | null) {
 type Props = {
   searchParams?: {
     q?: string;
-    from?: string;
-    to?: string;
+    plan?: string;
+    minCalls?: string;
+    minCost?: string;
+    minTokens?: string;
     page?: string;
   };
 };
@@ -51,14 +53,22 @@ export default async function SuperAdminCompaniesPage({ searchParams }: Props) {
   if (!session) redirect("/super-admin/login");
 
   const q = String(searchParams?.q || "");
-  const from = searchParams?.from || defaultFromDate();
-  const to = searchParams?.to || defaultToDate();
+  const from = defaultFromDate();
+  const to = defaultToDate();
+  const plan = String(searchParams?.plan || "");
+  const minCalls = String(searchParams?.minCalls || "");
+  const minCost = String(searchParams?.minCost || "");
+  const minTokens = String(searchParams?.minTokens || "");
   const page = Math.max(Number(searchParams?.page || 1), 1);
 
   const result = await listCompaniesUsageSummary({
     q,
     from,
     to,
+    plan,
+    minCalls: minCalls ? Number(minCalls) : undefined,
+    minCostEur: minCost ? Number(minCost) : undefined,
+    minTokens: minTokens ? Number(minTokens) : undefined,
     page,
     pageSize: 10,
   });
@@ -89,15 +99,12 @@ export default async function SuperAdminCompaniesPage({ searchParams }: Props) {
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2">
-            <CompaniesFilters q={q} from={from} to={to} />
-            <a
-              href={`/api/super-admin/companies/export?${new URLSearchParams({ q, from, to }).toString()}`}
-              className="inline-flex h-10 items-center rounded-xl border border-slate-200 bg-white px-4 text-sm font-medium text-slate-700 shadow-sm"
-            >
-              Exportar
-            </a>
-          </div>
+          <a
+            href={`/api/super-admin/companies/export?${new URLSearchParams({ q, plan, minCalls, minCost, minTokens }).toString()}`}
+            className="inline-flex h-10 items-center rounded-lg border border-slate-200 bg-white px-4 text-sm font-medium text-slate-700 transition hover:border-slate-300 hover:text-slate-900"
+          >
+            Exportar
+          </a>
         </header>
 
         <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -121,6 +128,14 @@ export default async function SuperAdminCompaniesPage({ searchParams }: Props) {
           />
         </section>
 
+        <CompaniesFilters
+          q={q}
+          plan={plan}
+          minCalls={minCalls}
+          minCost={minCost}
+          minTokens={minTokens}
+        />
+
         <DataTable
           columns={[
             { key: "company", label: "Empresa" },
@@ -130,7 +145,6 @@ export default async function SuperAdminCompaniesPage({ searchParams }: Props) {
             { key: "cost", label: "Custo IA", align: "right" },
             { key: "tokens", label: "Tokens", align: "right" },
             { key: "margin", label: "Margem IA", align: "right" },
-            { key: "actions", label: "Ações", align: "right" },
           ]}
           footer={
             <>
@@ -138,13 +152,13 @@ export default async function SuperAdminCompaniesPage({ searchParams }: Props) {
                   Mostrando {rows.length} de {result.total} empresas
                 </span>
                 <div className="flex items-center gap-2 text-sm">
-                  <a href={`/super-admin/companies?${new URLSearchParams({ q, from, to, page: String(Math.max(page - 1, 1)) }).toString()}`} className="rounded-lg bg-slate-100 px-3 py-1 text-slate-500">
+                  <a href={`/super-admin/companies?${new URLSearchParams({ q, plan, minCalls, minCost, minTokens, page: String(Math.max(page - 1, 1)) }).toString()}`} className="rounded-lg bg-slate-100 px-3 py-1 text-slate-500">
                     ‹
                   </a>
                   <span className="rounded-lg bg-indigo-600 px-3 py-1 text-white">
                     {page}
                   </span>
-                  <a href={`/super-admin/companies?${new URLSearchParams({ q, from, to, page: String(Math.min(page + 1, totalPages)) }).toString()}`} className="rounded-lg bg-slate-100 px-3 py-1 text-slate-500">
+                  <a href={`/super-admin/companies?${new URLSearchParams({ q, plan, minCalls, minCost, minTokens, page: String(Math.min(page + 1, totalPages)) }).toString()}`} className="rounded-lg bg-slate-100 px-3 py-1 text-slate-500">
                     ›
                   </a>
                 </div>
@@ -187,11 +201,6 @@ export default async function SuperAdminCompaniesPage({ searchParams }: Props) {
                 </td>
                 <td className="px-5 py-4 text-right font-semibold text-emerald-600">
                   {planPrice ? `+${marginPercent}%` : "-"}
-                </td>
-                <td className="px-5 py-4 text-right">
-                  <button className="rounded-xl border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50">
-                    ›
-                  </button>
                 </td>
               </tr>
             );

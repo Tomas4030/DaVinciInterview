@@ -4,8 +4,12 @@ import MetricCard from "@/components/super-admin/MetricCard";
 import DataTable from "@/components/super-admin/DataTable";
 import StatusBadge from "@/components/super-admin/StatusBadge";
 import AiUsageFilters from "@/components/super-admin/AiUsageFilters";
+import AiUsageExportDropdown from "@/components/super-admin/AiUsageExportDropdown";
 import { getSuperAdminSessionFromServerCookies } from "@/lib/super-admin-context";
-import { listAiUsageFilterOptions, listAiUsageLogs } from "@/lib/queries/super-admins";
+import {
+  listAiUsageFilterOptions,
+  listAiUsageLogs,
+} from "@/lib/queries/super-admins";
 import { formatEur, formatNumber } from "@/lib/currency";
 
 function formatDateTime(value: string | Date | null | undefined): string {
@@ -85,27 +89,15 @@ export default async function SuperAdminAiUsagePage({ searchParams }: Props) {
             </p>
           </div>
 
-          <div className="flex items-center gap-2">
-            <a
-              href={`/api/super-admin/ai-usage/export?${new URLSearchParams({ companyId, feature, model, from, to, q }).toString()}`}
-              className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm"
-            >
-              Exportar
-            </a>
-          </div>
+          <AiUsageExportDropdown
+            companyId={companyId}
+            feature={feature}
+            model={model}
+            from={from}
+            to={to}
+            q={q}
+          />
         </header>
-
-        <AiUsageFilters
-          companyId={companyId}
-          feature={feature}
-          model={model}
-          q={q}
-          from={from}
-          to={to}
-          companies={options.companies}
-          features={options.features}
-          models={options.models}
-        />
 
         <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
           <MetricCard
@@ -135,6 +127,18 @@ export default async function SuperAdminAiUsagePage({ searchParams }: Props) {
           />
         </section>
 
+        <AiUsageFilters
+          companyId={companyId}
+          feature={feature}
+          model={model}
+          q={q}
+          from={from}
+          to={to}
+          companies={options.companies}
+          features={options.features}
+          models={options.models}
+        />
+
         <DataTable
           columns={[
             { key: "date", label: "Data" },
@@ -148,22 +152,28 @@ export default async function SuperAdminAiUsagePage({ searchParams }: Props) {
           ]}
           footer={
             <>
-                <span className="text-sm text-slate-500">
-                  Mostrando {rows.length} de {result.total} logs
+              <span className="text-sm text-slate-500">
+                Mostrando {rows.length} de {result.total} logs
+              </span>
+              <div className="flex items-center gap-2 text-sm">
+                <a
+                  href={`/super-admin/ai-usage?${new URLSearchParams({ companyId, feature, model, from, to, q, page: String(Math.max(page - 1, 1)) }).toString()}`}
+                  className="rounded-lg bg-slate-100 px-3 py-1 text-slate-500"
+                >
+                  ‹
+                </a>
+                <span className="rounded-lg bg-indigo-600 px-3 py-1 text-white">
+                  {page}
                 </span>
-                <div className="flex items-center gap-2 text-sm">
-                  <a href={`/super-admin/ai-usage?${new URLSearchParams({ companyId, feature, model, from, to, q, page: String(Math.max(page - 1, 1)) }).toString()}`} className="rounded-lg bg-slate-100 px-3 py-1 text-slate-500">
-                    ‹
-                  </a>
-                  <span className="rounded-lg bg-indigo-600 px-3 py-1 text-white">
-                    {page}
-                  </span>
-                  <a href={`/super-admin/ai-usage?${new URLSearchParams({ companyId, feature, model, from, to, q, page: String(Math.min(page + 1, totalPages)) }).toString()}`} className="rounded-lg bg-slate-100 px-3 py-1 text-slate-500">
-                    ›
-                  </a>
-                </div>
-              </>
-            }
+                <a
+                  href={`/super-admin/ai-usage?${new URLSearchParams({ companyId, feature, model, from, to, q, page: String(Math.min(page + 1, totalPages)) }).toString()}`}
+                  className="rounded-lg bg-slate-100 px-3 py-1 text-slate-500"
+                >
+                  ›
+                </a>
+              </div>
+            </>
+          }
         >
           {rows.map((row) => (
             <tr key={row.id}>
