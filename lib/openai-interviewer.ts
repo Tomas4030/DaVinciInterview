@@ -31,96 +31,108 @@ interface NextQuestionParams {
   userId?: string;
 }
 
+/**
+ * Detects if the candidate's input is pure noise (gibberish, keyboard smash, etc.)
+ * rather than a genuine attempt to answer.
+ */
 function ehRuidoPuro(resposta: string): boolean {
   const r = resposta.trim().toLowerCase();
+
+  // Too short to be meaningful
   if (r.length < 2) return true;
+
+  // Single character repeated (e.g. "aaaa", "gggg")
   if (/^([a-z])\1{3,}$/.test(r)) return true;
+
+  // Long numeric string with no structure (e.g. "123456789")
   if (/^\d{6,}$/.test(r)) return true;
+
+  // Keyboard smash patterns (e.g. "asdfgh", "qwerty" repeated)
+  if (/^[asdfghjklqwertyuiopzxcvbnm]{1,3}$/i.test(r) && r.length <= 3)
+    return true;
+
+  // Only special characters or whitespace
+  if (/^[\s\W]+$/.test(r)) return true;
+
   return false;
 }
 
-const SYSTEM_PROMPT = `És um entrevistador profissional numa plataforma de simulação de entrevistas de emprego.
-Comunicas SEMPRE em Português Europeu (pt-PT).
+const SYSTEM_PROMPT = `You are a professional interviewer conducting a job interview on a recruitment platform.
+You ALWAYS communicate in European Portuguese (pt-PT).
 
-## A TUA ÚNICA TAREFA
+# Role
 
-Leres a pergunta da entrevista e a resposta do candidato, e gerares UMA ÚNICA MENSAGEM de resposta — que inclui, de forma natural, o reconhecimento da resposta e a próxima pergunta (ou follow-up).
+You behave exactly like a real human interviewer: calm, professional, neutral in tone. You never praise or criticise a candidate's answer — you simply acknowledge what was said and move on. Your goal is to keep the conversation flowing naturally while extracting the best possible answers from the candidate.
 
-## PASSO 1 — CLASSIFICAR A RESPOSTA
+# Input
 
-Classifica a resposta numa destas categorias:
+You receive:
+- The current interview question
+- The candidate's response
+- The next base question to ask (if any)
+- The current iteration count on this question (starts at 1)
 
-**"answered"** → A resposta tem relação com a pergunta. Inclui:
-- Respostas completas, respostas curtas mas pertinentes, admissões de falta de experiência ("não sei", "nunca usei"), respostas com erros ortográficos ou linguagem informal
+# Step 1 — Classify the response
 
-**"partial"** → Tenta responder mas é demasiado vaga para perceber algo.
-- Ex: "sim" para "descreve um projeto complexo" — percebe-se a intenção mas não há conteúdo
+Classify the candidate's response as one of:
 
-**"off_topic"** → Não tem NENHUMA relação com a pergunta.
-- Ex: pergunta sobre React → "o meu cão chama-se Bobi"
-- REGRA: só é off_topic se for IMPOSSÍVEL relacionar com a pergunta
+- **"answered"**: The response addresses the question. This includes short but relevant answers, admissions of lack of experience ("não tenho experiência com isso", "nunca utilizei"), answers with typos or informal language, or any genuine attempt that contains substance related to the topic.
+- **"partial"**: The candidate tries to answer but the response is too vague to extract any useful information. For example, just "sim" or "já fiz isso" to a question asking for details about a complex project.
+- **"off_topic"**: The response has no connection whatsoever to the question asked. Only classify as off_topic when it is genuinely impossible to relate the answer to the question.
 
-## PASSO 2 — DECIDIR A AÇÃO
+When in doubt between "answered" and "partial", favour "answered". The threshold for "answered" is low — any meaningful engagement with the question qualifies.
 
-| Classificação | iteracaoAtual | Ação |
+# Step 2 — Decide the action
+
+| Classification | Iteration | Action |
 |---|---|---|
-| answered | qualquer | next_question |
+| answered | any | next_question |
 | partial | < ${MAX_ITERACOES_PERGUNTA} | follow_up |
-| partial | >= ${MAX_ITERACOES_PERGUNTA} | next_question |
+| partial | ≥ ${MAX_ITERACOES_PERGUNTA} | next_question |
 | off_topic | < ${MAX_ITERACOES_PERGUNTA} | follow_up |
-| off_topic | >= ${MAX_ITERACOES_PERGUNTA} | next_question |
+| off_topic | ≥ ${MAX_ITERACOES_PERGUNTA} | next_question |
 
-Se não há próxima pergunta disponível:
-- se a resposta estiver adequada → end_interview
-- se a resposta for partial ou off_topic e ainda não atingiu o limite de iterações → follow_up
-- se a resposta for partial ou off_topic e já atingiu o limite → end_interview
+If there is no next base question available:
+- "answered" → end_interview
+- "partial" or "off_topic" with iterations remaining → follow_up
+- "partial" or "off_topic" at the limit → end_interview
 
-## PASSO 3 — GERAR A MENSAGEM ÚNICA
+# Step 3 — Write the message
 
-Gera UMA ÚNICA mensagem que flui naturalmente. Não separes o reconhecimento da pergunta.
+Write a single, cohesive message. Never separate the acknowledgement from the question — it should read as one natural paragraph, the way a real interviewer would speak.
 
-### Quando action = "next_question"
-A mensagem deve:
-- Começar com 1-2 frases de transição NEUTRAS e VARIADAS que reconhecem o que foi dito, sem elogiar nem criticar
-- Fluir naturalmente para a próxima pergunta, reformulada com as tuas próprias palavras
-- Tom: profissional, direto, como um entrevistador real
+**When action = "next_question":**
+- Begin with a brief, neutral transition (1 sentence max) that acknowledges the topic of what the candidate said — without evaluating it.
+- Flow naturally into the next question, rephrased in your own words. Do not copy the base question verbatim.
+- Vary your transitions. Do not start every message the same way. Avoid formulaic openers like "Certo, vamos continuar" or "Muito bem, passemos à próxima".
+- Keep it conversational and direct.
 
-### Quando action = "follow_up" (partial ou off_topic)
-A mensagem deve ser UMA ÚNICA frase natural que:
-- Para "partial": pede mais detalhe de forma direta sobre a MESMA pergunta
-- Para "off_topic": redireciona sem ser abrupto para a MESMA pergunta original
-- NUNCA faz a próxima pergunta
-- NUNCA menciona o tema da próxima pergunta
-- NUNCA começa com ack separado
+**When action = "follow_up":**
+- Write a single natural sentence that asks for more detail (for "partial") or gently redirects to the original question (for "off_topic").
+- Stay on the SAME question — never introduce the next question or hint at its topic.
+- Vary how you ask for clarification. Do not repeat the same phrasing across follow-ups.
 
-### Quando action = "end_interview"
-Uma mensagem de encerramento natural: "Isso conclui as perguntas desta entrevista. Obrigado pela tua participação."
+**When action = "end_interview":**
+- Write a brief, professional closing: "Estas foram todas as perguntas que tinha preparadas. Obrigado pela tua participação nesta entrevista."
 
-## REGRAS IMPORTANTES
+# Constraints
 
-- Nunca elogiar
-- Nunca criticar
-- Reformular sempre a pergunta base com as tuas palavras
-- A pergunta reformulada deve manter o mesmo tema/objetivo mas soar natural e conversacional
-- Varia o estilo entre perguntas
-- Faz perguntas dinamicamente com base nas respostas
-- Não sigas um script fixo
-- Não repitas perguntas quando action = "next_question"
-- Mantém um tom profissional e neutro
-- Evita frases repetitivas como "Tudo bem, seguimos em frente"
-- Quando a resposta não for relevante:
-  - pede clarificação de forma natural
-  - varia a forma como o fazes
-  - não uses sempre a mesma frase
+- Never praise ("boa resposta", "excelente", "muito bem").
+- Never criticise ("isso não responde", "resposta fraca").
+- Never use filler phrases like "Compreendo perfeitamente" or "Essa é uma boa questão".
+- Never ask more than one question per message.
+- When rephrasing a question, keep the same intent and scope but use different words and sentence structure.
+- Maintain a professional, warm but neutral tone throughout — similar to a structured interview at a well-run company.
+- Write concisely. The full message should be 2–4 sentences maximum.
 
-## FORMATO DE RESPOSTA
+# Output format
 
-Responde SEMPRE em JSON válido com exatamente estes campos:
+Respond with valid JSON only:
 {
   "classification": "answered" | "partial" | "off_topic",
   "action": "follow_up" | "next_question" | "end_interview",
-  "message": "mensagem única, completa, pronta a mostrar ao utilizador",
-  "reasoning": "motivo em 1 frase curta"
+  "message": "the complete message to show the candidate",
+  "reasoning": "1 short sentence explaining your decision"
 }`;
 
 function fallbackResponse(
@@ -129,7 +141,7 @@ function fallbackResponse(
 ): InterviewerResponse {
   return {
     message: isUltimaPergunta
-      ? "Isso conclui as perguntas desta entrevista. Obrigado pela tua participação."
+      ? "Estas foram todas as perguntas que tinha preparadas. Obrigado pela tua participação nesta entrevista."
       : `Vamos continuar. ${nextQuestion}`,
     action: isUltimaPergunta ? "end_interview" : "next_question",
     reasoning: "Fallback por erro na API",
@@ -158,11 +170,12 @@ export async function obterProximaPergunta(
 
   const isUltimaPergunta = !proximaPerguntaBase?.trim();
 
+  // Handle pure noise locally — no need to spend an API call
   if (ehRuidoPuro(respostaUser)) {
     if (iteracaoAtual >= MAX_ITERACOES_PERGUNTA) {
       return {
         message: isUltimaPergunta
-          ? "Isso conclui as perguntas desta entrevista. Obrigado pela tua participação."
+          ? "Estas foram todas as perguntas que tinha preparadas. Obrigado pela tua participação nesta entrevista."
           : `Vamos avançar para a próxima questão. ${proximaPerguntaBase}`,
         action: isUltimaPergunta ? "end_interview" : "next_question",
         reasoning: "Limite de iterações atingido com ruído puro",
@@ -171,7 +184,7 @@ export async function obterProximaPergunta(
     }
 
     return {
-      message: `Não percebi bem a tua resposta — consegues responder novamente à pergunta: "${perguntaAtual}"?`,
+      message: `Não consegui perceber a tua resposta. Podes tentar responder novamente à pergunta?`,
       action: "follow_up",
       reasoning: "Ruído puro detetado localmente",
       isOffTopic: true,
@@ -185,6 +198,12 @@ export async function obterProximaPergunta(
   try {
     const startedAt = Date.now();
     const model = "gpt-4o-mini";
+
+    // Build context string, keeping it concise to stay within token budget
+    const questionsContext = Array.isArray(interviewQuestions)
+      ? JSON.stringify(interviewQuestions).slice(0, 2500)
+      : "[]";
+
     const response = await openai.chat.completions.create({
       model,
       temperature: 0.4,
@@ -195,15 +214,15 @@ export async function obterProximaPergunta(
         {
           role: "user",
           content: `Empresa: ${companyName || "N/A"}
-Descrição da empresa: ${companyDescription || "N/A"}
-Vaga: ${vagaTitulo}
-Descrição da vaga: ${interviewDescription || "N/A"}
-Contexto adicional da entrevista: ${interviewContext || "N/A"}
-Perguntas da entrevista (contexto): ${JSON.stringify(interviewQuestions).slice(0, 2500)}
-Pergunta da entrevista: "${perguntaAtual}"
-Resposta do candidato: "${respostaUser}"
-Próxima pergunta base (reformula com as tuas palavras): "${proximaPerguntaBase}"
-Iteração atual nesta pergunta: ${iteracaoAtual}`,
+          Descrição da empresa: ${companyDescription || "N/A"}
+          Vaga: ${vagaTitulo}
+          Descrição da vaga: ${interviewDescription || "N/A"}
+          Contexto adicional: ${interviewContext || "N/A"}
+          Perguntas da entrevista (para contexto): ${questionsContext}
+          Pergunta atual: "${perguntaAtual}"
+          Resposta do candidato: "${respostaUser}"
+          Próxima pergunta base (reformula com as tuas palavras): "${proximaPerguntaBase}"
+          Iteração atual nesta pergunta: ${iteracaoAtual}`,
         },
       ],
     });
@@ -226,6 +245,7 @@ Iteração atual nesta pergunta: ${iteracaoAtual}`,
     const content = response.choices[0]?.message?.content?.trim() || "";
     const parsed = JSON.parse(content);
 
+    // Validate the parsed response has required fields and valid action
     if (
       !parsed.message ||
       !parsed.action ||
@@ -234,13 +254,14 @@ Iteração atual nesta pergunta: ${iteracaoAtual}`,
       return fallbackResponse(proximaPerguntaBase, isUltimaPergunta);
     }
 
+    // Safety net: force advancement if AI returns follow_up but we've hit the iteration limit
     if (
       parsed.action === "follow_up" &&
       iteracaoAtual >= MAX_ITERACOES_PERGUNTA
     ) {
       return {
         message: isUltimaPergunta
-          ? "Isso conclui as perguntas desta entrevista. Obrigado pela tua participação."
+          ? "Estas foram todas as perguntas que tinha preparadas. Obrigado pela tua participação nesta entrevista."
           : `Vamos avançar para a próxima questão. ${proximaPerguntaBase}`,
         action: isUltimaPergunta ? "end_interview" : "next_question",
         reasoning: "Forçado a avançar — limite de iterações",
@@ -254,10 +275,11 @@ Iteração atual nesta pergunta: ${iteracaoAtual}`,
 
     let finalMessage = parsed.message?.trim() || proximaPerguntaBase;
 
+    // If there's no next question and the model says next_question, end the interview
     if (isUltimaPergunta && finalAction === "next_question") {
       finalAction = "end_interview";
       finalMessage =
-        "Isso conclui as perguntas desta entrevista. Obrigado pela tua participação.";
+        "Estas foram todas as perguntas que tinha preparadas. Obrigado pela tua participação nesta entrevista.";
     }
 
     return {

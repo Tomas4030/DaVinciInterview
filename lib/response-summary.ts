@@ -13,26 +13,36 @@ export type ResponseSummary = {
   source: "ai" | "heuristic";
 };
 
+// Accent-normalized tokens that indicate positive signals in Portuguese responses
 const POSITIVE_HINTS = [
-  "colabor",
-  "resultado",
-  "aprendi",
-  "melhorei",
-  "resolvi",
-  "lider",
-  "objetivo",
-  "entreg",
+  "colabor", // colaboração, colaborei
+  "resultado", // resultados
+  "aprendi", // aprendi, aprendizagem
+  "melhorei", // melhorei, melhoria
+  "resolvi", // resolvi, resolução
+  "lider", // liderança, liderei
+  "objetivo", // objetivo, objetivos
+  "entreg", // entrega, entreguei
+  "implementei", // implementação
+  "otimiz", // otimização, otimizei
+  "conquist", // conquista, conquistei
+  "desenvolvi", // desenvolvimento
+  "contribui", // contribuição
+  "eficien", // eficiência, eficiente
 ];
 
+// Accent-normalized tokens that indicate concern signals
 const NEGATIVE_HINTS = [
   "nao sei",
   "nao lembro",
+  "nao tenho experiencia",
   "dificil",
   "complicado",
   "problema",
-  "erro",
-  "falha",
+  "nunca fiz",
   "incerto",
+  "nao consigo",
+  "sem experiencia",
 ];
 
 function normalizeText(value: string): string {
@@ -81,37 +91,50 @@ function buildHeuristicSummary(
 
   if (averageChars >= 180) {
     strengths.push("Respostas com bom nível de detalhe e contexto.");
+  } else if (averageChars >= 80) {
+    strengths.push("Respostas com nível de detalhe razoável.");
   } else {
     concerns.push(
-      "Respostas curtas em várias perguntas; pode faltar profundidade.",
+      "Respostas curtas em várias perguntas — pode faltar profundidade.",
     );
   }
 
-  if (positiveScore > 0) {
-    strengths.push("Linguagem orientada para ação e aprendizagem.");
+  if (positiveScore >= 3) {
+    strengths.push(
+      "Linguagem orientada para resultados e aprendizagem contínua.",
+    );
+  } else if (positiveScore > 0) {
+    strengths.push(
+      "Alguns sinais de proatividade e orientação para resultados.",
+    );
   }
 
-  if (negativeScore > 0) {
+  if (negativeScore >= 3) {
     concerns.push(
-      "Existem sinais de insegurança em alguns pontos da entrevista.",
+      "Vários sinais de insegurança ou falta de experiência relevante.",
+    );
+  } else if (negativeScore > 0) {
+    concerns.push(
+      "Alguns sinais de incerteza em pontos específicos da entrevista.",
     );
   }
 
   if (strengths.length === 0) {
     strengths.push(
-      "Respostas consistentes e dentro do esperado para triagem inicial.",
+      "Respostas consistentes dentro do esperado para triagem inicial.",
     );
   }
 
   if (concerns.length === 0) {
     concerns.push(
-      "Não foram detetados sinais críticos de risco nesta leitura inicial.",
+      "Não foram detetados sinais críticos de risco nesta análise.",
     );
   }
 
+  const detailLevel = averageChars >= 160 ? "detalhado" : "objetivo";
   const executiveSummary = interviewTitle
-    ? `Resumo automático para ${interviewTitle}: perfil com tom ${sentiment} e conteúdo ${averageChars >= 160 ? "detalhado" : "objetivo"}.`
-    : `Resumo automático: perfil com tom ${sentiment} e conteúdo ${averageChars >= 160 ? "detalhado" : "objetivo"}.`;
+    ? `Resumo automático para "${interviewTitle}": perfil com tom ${sentiment} e conteúdo ${detailLevel}.`
+    : `Resumo automático: perfil com tom ${sentiment} e conteúdo ${detailLevel}.`;
 
   return {
     sentiment,
@@ -180,12 +203,26 @@ export async function summarizeInterviewResponses(
       messages: [
         {
           role: "system",
-          content:
-            "Tu és um analista de recrutamento. Responde apenas JSON válido com os campos sentiment, executiveSummary, strengths, concerns.",
+          content: `You are a recruitment analyst producing concise interview summaries. You write in European Portuguese (pt-PT). You respond with valid JSON only — no markdown, no text outside the JSON object.`,
         },
         {
           role: "user",
-          content: `Analisa esta entrevista${interviewTitle ? ` para a vaga ${interviewTitle}` : ""}.\n\n${interviewContext}\n\nRegras:\n- sentiment: positivo, neutro ou negativo\n- executiveSummary: 2 frases curtas\n- strengths: lista de 2-4 pontos\n- concerns: lista de 2-4 riscos\nRetorna apenas JSON.`,
+          content: `Analisa as respostas desta entrevista${interviewTitle ? ` para a vaga "${interviewTitle}"` : ""}.
+
+${interviewContext}
+
+Devolve um JSON com esta estrutura:
+{
+  "sentiment": "positivo" | "neutro" | "negativo",
+  "executiveSummary": "2 frases curtas sobre o desempenho geral",
+  "strengths": ["2-4 pontos fortes específicos observados nas respostas"],
+  "concerns": ["2-4 riscos ou áreas de preocupação específicas"]
+}
+
+Critérios:
+- "sentiment" reflete a impressão geral: positivo se o candidato demonstra competência e proatividade, negativo se há lacunas significativas, neutro se misto ou insuficiente para avaliar.
+- Os pontos devem ser específicos e baseados no conteúdo das respostas — evita generalidades.
+- Responde apenas com JSON válido.`,
         },
       ],
     });

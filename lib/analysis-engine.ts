@@ -1,10 +1,10 @@
 /**
- * Analysys Engine para Entrevistas
+ * Analysis Engine for Interviews
  *
- * Analisa respostas usando IA estruturada para gerar:
- * - Pontos fortes e fracos
- * - Scores por categoria
- * - Recomendação geral
+ * Analyses candidate responses using structured AI to generate:
+ * - Strengths and weaknesses
+ * - Scores by category
+ * - Overall recommendation
  */
 
 import { OpenAI } from "openai";
@@ -43,56 +43,43 @@ export interface AnalisisResultado {
   sugestoes_melhoria: string[];
 }
 
-const SYSTEM_PROMPT_ANALISADOR = `## ANALISTA DE ENTREVISTAS
+const SYSTEM_PROMPT_ANALISADOR = `You are a senior interview analyst. Your task is to evaluate a candidate's interview responses objectively and produce a structured assessment.
 
-Tu és um analista experiente de entrevistas técnicas e de RH. Tua função é:
-1. Avaliar respostas de candidatos a entrevistas
-2. Identificar pontos fortes e fracos
-3. Atribuir scores objetivos por categoria
-4. Fornecer recomendação clara (rejeitar/talvez/aceitar/excelente)
+You ALWAYS write in European Portuguese (pt-PT).
 
-## CRITÉRIOS DE AVALIAÇÃO
+# Evaluation criteria
 
-### Comunicação (0-100)
-- Clareza de linguagem
-- Estrutura lógica das respostas
-- Ausência de jargão desnecessário
-- Capacidade de explicar ideias complexas
+Score each category from 0 to 100 based on the evidence in the responses:
 
-### Conhecimento Técnico (0-100)
-- Demonstração de conhecimento relevante
-- Precisão das informações técnicas
-- Compreensão de conceitos-chave
-- Experiência prática demonstrada
+**Comunicação** — How clearly does the candidate express ideas? Is the language precise? Are complex concepts explained well?
 
-### Profundidade (0-100)
-- Aprofundamento em tópicos
-- Consideração de cenários complexos
-- Exemplos concretos fornecidos
-- Justificação de decisões
+**Conhecimento Técnico** — Does the candidate demonstrate relevant knowledge for the role? Are technical claims accurate and grounded in real experience?
 
-### Clareza (0-100)
-- Facilidade de compreensão
-- Organização das ideias
-- Concisão apropriada
-- Uso de exemplos efetivos
+**Profundidade** — Does the candidate go beyond surface-level answers? Are there concrete examples, metrics, or specific scenarios? Does the candidate consider trade-offs and edge cases?
 
-### Estruturação (0-100)
-- Respostas bem organizadas
-- Seguimento de sequência lógica
-- Conclusões claras
-- Capacidade de resumir
+**Clareza** — Are the answers easy to follow? Is there a logical flow? Does the candidate stay on topic?
 
-## RECOMENDAÇÕES
+**Estruturação** — Are the answers well-organised? Does the candidate present ideas in a structured way (problem → approach → result)?
 
-- REJEITAR: Score médio < 40 ou falhas críticas
-- TALVEZ: Score médio 40-55 com fraquezas óbvias
-- ACEITAR: Score médio 56-75, qualificado mas com espaço para melhoria
-- EXCELENTE: Score médio > 75 com sólida demonstração
+# Scoring guidelines
 
-## RESPOSTAS
+- 0–25: The candidate did not meaningfully address the questions or showed fundamental gaps.
+- 26–50: Some relevant content but significant weaknesses in depth, clarity, or accuracy.
+- 51–70: Competent responses that address the questions adequately with room for improvement.
+- 71–85: Strong responses with concrete examples, clear reasoning, and good depth.
+- 86–100: Exceptional responses demonstrating mastery, original thinking, and strong communication.
 
-Sempre em JSON estruturado.`;
+# Recommendation mapping
+
+Based on the average score across all categories:
+- **rejeitar** (average < 35): Clear lack of fit — critical gaps in multiple areas.
+- **talvez** (average 35–54): Mixed signals — some potential but notable concerns.
+- **aceitar** (average 55–74): Qualified candidate with a solid overall performance.
+- **excelente** (average ≥ 75): Outstanding candidate with consistently strong answers.
+
+# Output
+
+Respond with valid JSON only. No markdown, no explanation outside the JSON.`;
 
 async function analisarRespostasComIA(
   respostas: RespostaAnalisada[],
@@ -115,17 +102,13 @@ async function analisarRespostasComIA(
     const respostaFormatada = respostas
       .map(
         (r, idx) =>
-          `
-      P${idx + 1}: ${r.texto_pergunta}
-      R${idx + 1}: ${r.resposta_texto}
-      Qualidade estimada: ${r.qualidade}
-      `,
+          `P${idx + 1}: ${r.texto_pergunta}\nR${idx + 1}: ${r.resposta_texto}\nQualidade estimada: ${r.qualidade}`,
       )
-      .join("\n");
+      .join("\n\n");
 
     const response = await openai.chat.completions.create({
       model,
-      temperature: 0.5,
+      temperature: 0.3,
       max_tokens: 800,
       messages: [
         {
@@ -134,35 +117,29 @@ async function analisarRespostasComIA(
         },
         {
           role: "user",
-          content: `
-## ENTREVISTA PARA ANÁLISE
-
-Vaga: ${vagaTitulo}
+          content: `Vaga: ${vagaTitulo}
 Total de perguntas: ${respostas.length}
 
 ${respostaFormatada}
 
-## TAREFA
-
-Analisa estas respostas e fornece um JSON com:
+Analisa estas respostas e devolve um JSON com esta estrutura:
 {
-  "pontos_fortes": ["lista de 3-4 pontos"],
-  "pontos_fracos": ["lista de 3-4 pontos"],
+  "pontos_fortes": ["3-4 pontos específicos baseados nas respostas"],
+  "pontos_fracos": ["3-4 pontos específicos baseados nas respostas"],
   "scores": {
-    "comunicacao": número 0-100,
-    "conhecimentoTecnico": número 0-100,
-    "profundidade": número 0-100,
-    "clareza": número 0-100,
-    "estruturacao": número 0-100
+    "comunicacao": 0-100,
+    "conhecimentoTecnico": 0-100,
+    "profundidade": 0-100,
+    "clareza": 0-100,
+    "estruturacao": 0-100
   },
   "recomendacao_geral": "rejeitar" | "talvez" | "aceitar" | "excelente",
-  "justificacao_recomendacao": "texto curto (1-2 frases)",
-  "resumo_executivo": "2-3 frases sobre desempenho geral",
-  "sugestoes_melhoria": ["3-4 acções específicas para melhorar"]
+  "justificacao_recomendacao": "1-2 frases justificando a recomendação",
+  "resumo_executivo": "2-3 frases sobre o desempenho geral do candidato",
+  "sugestoes_melhoria": ["3-4 ações específicas que o candidato poderia melhorar"]
 }
 
-Responde APENAS em JSON válido.
-          `.trim(),
+Responde apenas com JSON válido.`,
         },
       ],
     });
@@ -226,7 +203,7 @@ Responde APENAS em JSON válido.
 }
 
 /**
- * Análise completa de uma sessão de entrevista
+ * Full analysis of an interview session
  */
 export async function analisarSessao(
   respostas: RespostaAnalisada[],
@@ -270,7 +247,7 @@ export async function analisarSessao(
 }
 
 /**
- * Gerar análise comparando candidatos (útil para leaderboard)
+ * Compare candidates (useful for leaderboard)
  */
 export async function compararCandidatos(
   candidatos: Array<{
@@ -303,7 +280,6 @@ export async function compararCandidatos(
     };
   }
 
-  // Calcular ranking
   const ranking = candidatos
     .map((c) => ({
       nome: c.nome,
@@ -327,7 +303,6 @@ export async function compararCandidatos(
 
   const vencedor = ranking[0]?.nome || "N/A";
 
-  // Destaques
   const destaques = [];
   if (ranking[0]) {
     destaques.push(

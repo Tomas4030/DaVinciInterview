@@ -121,7 +121,7 @@ async function compareCandidatesForInterview(
       score: computeCandidateScore(candidate),
       reason:
         candidate.summary.executiveSummary ||
-        "Perfil avaliado com base na consistencia das respostas.",
+        "Perfil avaliado com base na consistência das respostas.",
     }))
     .sort((a, b) => b.score - a.score);
 
@@ -130,7 +130,7 @@ async function compareCandidatesForInterview(
       ? ["Existe apenas um candidato nesta entrevista."]
       : [
           `Melhor score atual: ${heuristicRanking[0].email} (${heuristicRanking[0].score}).`,
-          `Maior distancia observada: ${Math.abs(heuristicRanking[0].score - heuristicRanking[heuristicRanking.length - 1].score)} pontos entre topo e ultimo classificado.`,
+          `Maior distância observada: ${Math.abs(heuristicRanking[0].score - heuristicRanking[heuristicRanking.length - 1].score)} pontos entre topo e último classificado.`,
         ];
 
   if (!process.env.OPENAI_API_KEY || candidates.length <= 1) {
@@ -161,27 +161,29 @@ async function compareCandidatesForInterview(
       messages: [
         {
           role: "system",
-          content:
-            "Tu es um analista de recrutamento. Responde apenas JSON valido com ranking e comparacao direta entre candidatos.",
+          content: `You are a recruitment analyst comparing candidates for the same role. You write in European Portuguese (pt-PT). Respond with valid JSON only — no markdown, no text outside the JSON.`,
         },
         {
           role: "user",
-          content: `Compara candidatos para a entrevista "${interviewTitle}".
+          content: `Compara os seguintes candidatos para a entrevista "${interviewTitle}".
 
-Dados: ${JSON.stringify(compactCandidates)}
+Dados dos candidatos:
+${JSON.stringify(compactCandidates, null, 2)}
 
-Retorna JSON com:
+Devolve um JSON com esta estrutura:
 {
   "ranking": [
-    {"sessaoId":"...", "score": 0-100, "reason": "1 frase"}
+    {"sessaoId": "...", "score": 0-100, "reason": "1 frase justificando a posição"}
   ],
-  "directComparison": ["insight 1", "insight 2", "insight 3"]
+  "directComparison": ["insight comparativo 1", "insight comparativo 2", "insight comparativo 3"]
 }
 
-Regras:
-- score deve ser consistente com os dados enviados
-- comparar pontos fortes e fracos entre candidatos
-- sem markdown, sem texto fora do JSON`,
+Critérios:
+- O score deve refletir o desempenho relativo entre candidatos com base nos dados fornecidos.
+- A "reason" deve ser específica — mencionar o que diferencia este candidato dos restantes.
+- Os insights em "directComparison" devem comparar diretamente os candidatos entre si (ex: "Candidato A demonstrou maior profundidade técnica que B, mas B comunicou de forma mais clara").
+- Ordena o ranking do melhor para o pior score.
+- Responde apenas com JSON válido.`,
         },
       ],
     });
@@ -208,7 +210,7 @@ Regras:
           score: clamp(Number(item?.score || 0), 0, 100),
           reason:
             String(item?.reason || "").trim() ||
-            "Comparacao gerada com base no desempenho geral.",
+            "Comparação gerada com base no desempenho geral.",
         };
       })
       .filter(Boolean) as Array<{
@@ -237,7 +239,7 @@ Regras:
       source: "ai",
     };
   } catch (error) {
-    console.warn("[ai-comparacao] fallback heuristico:", error);
+    console.warn("[ai-comparacao] fallback heurístico:", error);
     return {
       ranking: heuristicRanking,
       directComparison: heuristicComparison,
@@ -360,10 +362,10 @@ export async function buildAiComparisonsForCompany(
 
   for (const row of rows) {
     const vagaId = String(row.vaga_id || "sem-vaga");
-    const vagaTitle = String(row.vaga_title || "Vaga sem titulo");
+    const vagaTitle = String(row.vaga_title || "Vaga sem título");
     const interviewId = String(row.interview_id || "sem-entrevista");
     const interviewTitle = String(
-      row.interview_title || "Entrevista sem titulo",
+      row.interview_title || "Entrevista sem título",
     );
 
     if (!grouped.has(vagaId)) {
@@ -403,7 +405,7 @@ export async function buildAiComparisonsForCompany(
             jsonParse<InterviewAnalysis["ranking"]>(cached.ranking_json) || [],
           directComparison: jsonParse<string[]>(
             cached.direct_comparison_json,
-          ) || ["Sem comparacao disponivel."],
+          ) || ["Sem comparação disponível."],
           source: cached.source || "heuristic",
           generatedAt: cached.generated_at,
         });
